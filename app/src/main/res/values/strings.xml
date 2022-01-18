@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Mach-E Information</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_login">Ford Log-in</string>
+    <string name="action_logout">Ford Log-out</string>
+    <string name="action_OTA">OTA Update Info</string>
+
+    <!-- Widget things -->
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">Display status info for Mach-E</string>
+
+    <!-- Preference Titles -->
+    <string name="VIN">"Your vehicle's VIN"</string>
+    <string name="widget_update_frequency">Minutes between widget updates</string>
+    <string name="unit_title">Use Imperial Units (miles, psi, etc)</string>
+    <string name="dark_mode_title">Use system dark mode settings</string>
+    <string name="lastOTA">Time of last OTA change (this field is updated automatically)</string>
+
+    <string name="clear_alert">Clear alert</string>
+
+    <string name="disclamer">
+        Your login credentials are only used to gain access to the Ford website.  They are not stored in the app.
+    </string>
+
+    <!-- Default value for last known OTA update time-->
+    <string name="unknown_OTA_time">Unknown</string>
+    <string name="last_ota_time">LastOTATime</string>
+
+</resources>

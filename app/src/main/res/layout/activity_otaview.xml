@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OTAViewActivity">
+
+    <LinearLayout
+        android:id="@+id/widget_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/widget_margin">
+
+
+    <WebView
+        android:id="@+id/ota_webview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </WebView>
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_alert" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

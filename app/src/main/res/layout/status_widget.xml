@@ -1,0 +1,243 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.MacheWidget.AppWidget.Container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.MacheWidget.AppWidgetContainer"
+    android:padding="@dimen/widget_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <TextView style="@style/WidgetButtonVerticalSpace" />
+        <TextView
+            android:id="@+id/lastRefresh"
+            android:layout_marginLeft="24dp"
+            android:text="  Last refreshed:"
+            style="@style/WidgetTextView" />
+
+        <TextView style="@style/WidgetButtonVerticalSpace" />
+
+    <LinearLayout
+        android:id="@+id/widget_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/widget_margin">
+
+        <TextView android:layout_weight=".5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+        <!-- left column -->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="2">
+            <TextView style="@style/WidgetButtonVerticalSpace" />
+
+            <ImageView
+                android:layout_width="64px"
+                android:layout_height="64px"
+                android:src="@drawable/battery_dark" />
+            <ProgressBar
+                android:id="@+id/HBVChargeProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progressBackgroundTint="@color/dark_green"
+                android:progressTint="@color/green"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:progress="50"/><!--// 50 default progress value-->
+            <TextView
+                android:id="@+id/HVBChargeLevel"
+                android:text="  HVB level:"
+                style="@style/WidgetTextView" />
+            <TextView
+                android:id="@+id/estimatedRange"
+                android:text="  Est Range:"
+                style="@style/WidgetTextView" />
+            <TextView
+                android:id="@+id/LVBVoltage"
+                android:text="  LVB Voltage:"
+                style="@style/WidgetTextView" />
+
+            <TextView style="@style/WidgetButtonVerticalSpace" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/widget_margin">
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:layout_width="64px"
+                    android:layout_height="64px"
+                    android:id="@+id/plugIcon"
+                    android:src="@drawable/icons8_electrical_green_100" />
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:layout_width="80px"
+                    android:layout_height="80px"
+                    android:id="@+id/HVBIcon"
+                    android:src="@drawable/icons8_charging_battery_gray_100" />
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/remainingChargeTime"
+                style="@style/WidgetTextView" />
+
+            <TextView style="@style/WidgetButtonVerticalSpace" />
+
+            <TextView
+                android:text="Ingition/Lock/Alarm"
+                android:gravity="center"
+                style="@style/WidgetTextView" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/widget_margin">
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:id="@+id/ignitionStatusIcon"
+                    android:src="@drawable/icons8_ignition_red" />
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:id="@+id/lockStatusIcon"
+                    android:src="@drawable/icons8_lock_green" />
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:id="@+id/alarmStatusIcon"
+                    android:src="@drawable/icons8_alarm_gray" />
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:id="@+id/sleepStatusIcon"
+                    android:src="@drawable/icons8_sleep_gray" />
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/odometer"
+                style="@style/WidgetTextView" />
+
+            <TextView style="@style/WidgetButtonVerticalSpace" />
+
+        </LinearLayout>
+
+        <!-- right column -->
+        <TextView android:layout_weight=".5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="2">
+
+            <TextView style="@style/WidgetButtonVerticalSpace" />
+            <TextView
+                android:text="Windows/Doors"
+                android:gravity="center"
+                style="@style/WidgetTextView" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/widget_margin">FrameLayout
+            <ImageView
+                android:id="@+id/trunkFrunk"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:src="@drawable/car_nothing_open"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/widget_margin">
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:id="@+id/leftFrontDoor"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/icons8_left_front_window_up_green"/>
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:id="@+id/rightFrontDoor"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/icons8_right_front_window_up_green"/>
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/widget_margin">
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:id="@+id/leftRearDoor"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/icons8_left_rear_window_up_green"/>
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+                <ImageView
+                    android:id="@+id/rightRearDoor"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/icons8_right_rear_window_up_green"/>
+                <TextView style="@style/WidgetButtonHorizontalSpace" />
+            </LinearLayout>
+
+            <TextView style="@style/WidgetButtonVerticalSpace" />
+
+            <ImageView
+                android:layout_width="64px"
+                android:layout_height="64px"
+                android:src="@drawable/location_dark"/>
+            <TextView
+                android:id="@+id/location"
+                android:gravity="left"
+                android:text="  Location:"
+                style="@style/WidgetTextView" />
+
+            <TextView style="@style/WidgetButtonVerticalSpace" />
+
+            <TextView
+                android:id="@+id/OTAinfo"
+                android:text="Last OTA:"
+                style="@style/WidgetTextView" />
+
+            <TextView style="@style/WidgetButtonVerticalSpace" />
+
+        </LinearLayout>
+
+        <TextView android:layout_weight=".5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+    <TextView style="@style/WidgetButtonVerticalSpace" />
+    </LinearLayout>
+
+</RelativeLayout>

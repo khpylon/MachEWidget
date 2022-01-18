@@ -1,0 +1,28 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:key="VIN"
+        app:title="@string/VIN"
+        app:useSimpleSummaryProvider="true" />
+
+    <ListPreference
+        app:defaultValue="30"
+        app:entries="@array/pref_update_values"
+        app:entryValues="@array/pref_update_values"
+        app:key="update_frequency"
+        app:title="@string/widget_update_frequency"
+        app:positiveButtonText="@null"
+        app:negativeButtonText="@null"
+        app:useSimpleSummaryProvider="true" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:key="units"
+        app:title="@string/unit_title" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:key="dark_mode"
+        app:title="@string/dark_mode_title" />
+
+</PreferenceScreen>
