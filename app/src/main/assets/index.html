@@ -1,0 +1,51 @@
+<html>
+<head>
+<link rel="stylesheet" href="/assets/stylesheet.css">
+</head>
+<body>
+<h2>Using the app</h2>
+<p>All controls are located in the three-dot menu.
+    <ul>
+    <li>Select "Ford Log-in" to get started.  As noted on the screen, your user name and password are not stored in the app;
+    the only information retained from your account are your language and country settings, and the units of measure (distance, pressure, etc).
+        Your VIN is stored as is it necessary to access information specific to your vehicle. This
+        can be viewed/changed in "Settings" from the menu.</li>
+    <li>Select "Ford Log-out" if you want to stop the widget from updating.  This will remove the stored
+        access tokens and turn off automatic widget updates.</li>
+    <li>Select "OTA Update Info" to see information for the most recent over-the-air (OTA) update.  If a change to the OTA status
+    is noticed, the "Last OTA" portion of the widget will alert you to check here.</li>
+<li>Select "Settings" to change various application settings.  You can change your vehicle's VIN here (without needing to log in again), and change the
+    frequency at which the widget updates.
+</li></ul>
+</p>
+<h2>Icon information</h2>
+<p>Green icons are used to indicate the "normal" condition of a component when the car isn't in use  (i.e, it's in your garage or parking space).
+    For example, a door's icon is green when it is closed with the window up (closed)
+    <img src="/res/drawable/icons8_left_front_window_up_green.png" width="20">.
+    The exceptions are
+    <ul>
+        <li> when the ignition is off -- <img src="/res/drawable/icons8_ignition_red.png" width="20"></li>
+        <li> when the alarm is off -- <img src="/res/drawable/icons8_alarm_gray.png" width="20"></li>
+        <li> when car is not in deep sleep -- <img src="/res/drawable/icons8_sleep_gray.png" width="20"></li>
+    </ul>
+<p>The location of each icon represents which door, with the driver's door appearing in the top left.  This corresponds to the bird's eye view. The icons show a small up arrow
+<img src="/res/drawable/icons8_left_front_window_up_green.png" width="20">
+or down arrow
+<img src="/res/drawable/icons8_left_front_window_down_red.png" width="20">
+to indicate the window's position.  Similarly the icon shows the closed position
+<img src="/res/drawable/icons8_left_front_window_up_green.png" width="20">
+or open position
+<img src="/res/drawable/icons8_left_front_window_up_open_red.png" width="20">.  The trunk and frunk use similar icons.
+</p>
+The charging status is indicated with icons for the charge plug
+<img src="/res/drawable/icons8_electrical_green_100.png" width="20">
+and the high-voltage battery (HVB)
+<img src="/res/drawable/icons8_charging_battery_green_100.png" width="20">.
+A red charge plug and gray bettery icon indicate the car is unplugged; a green charge plug indicates the car is plugged in.  The battery
+icon will then indicate if the car is not charging
+<img src="/res/drawable/icons8_charging_battery_red_100.png" width="20">, or completed charging
+<img src="/res/drawable/icons8_charging_battery_green_100.png" width="20">, or is paused
+<img src="/res/drawable/icons8_charging_battery_paused_yellow_100.png" width="20">.
+
+</body>
+</html>

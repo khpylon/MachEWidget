@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please enter a username", Toast.LENGTH_SHORT).show();
                 } else if (password.length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please enter a password", Toast.LENGTH_SHORT).show();
-                } else if (VIN.length() != 17) {
+                } else if (newVIN.length() != 17 ) {
                     Toast.makeText(getApplicationContext(), "Please enter a valid VIN", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!newVIN.equals(VIN)) {

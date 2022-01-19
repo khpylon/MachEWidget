@@ -14,7 +14,7 @@
         <TextView
             android:id="@+id/lastRefresh"
             android:layout_marginLeft="24dp"
-            android:text="  Last refreshed:"
+            android:text="Not logged in"
             style="@style/WidgetTextView" />
 
         <TextView style="@style/WidgetButtonVerticalSpace" />

@@ -26,11 +26,11 @@
 
 <!--        <include layout="@layout/content_main" /> -->
 
-        <FrameLayout
-            android:id="@+id/your_placeholder"
+        <WebView
+            android:id="@+id/main_description"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </FrameLayout>
+            android:layout_height="wrap_content"/>
+
 
 
     </LinearLayout>

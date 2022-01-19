@@ -1,8 +1,11 @@
 package com.example.khughes.machewidget;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
+import androidx.webkit.WebViewAssetLoader;
+import androidx.webkit.WebViewClientCompat;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -16,9 +19,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,10 +53,38 @@ public class MainActivity extends AppCompatActivity {
         String marketPref = sharedPref.getString("VIN", "");
 
         context = this.getApplicationContext();
-//        if(BuildConfig.DEBUG) {
-//            StoredData appInfo = new StoredData(context);
-//            appInfo.resetCounters();
-//        }
+
+        WebView mWebView = findViewById(R.id.main_description);
+
+        final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))
+                .build();
+        mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
+        mWebView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+    }
+
+    private static class LocalContentWebViewClient extends WebViewClientCompat {
+
+        private final WebViewAssetLoader mAssetLoader;
+
+        LocalContentWebViewClient(WebViewAssetLoader assetLoader) {
+            mAssetLoader = assetLoader;
+        }
+
+        @Override
+        @RequiresApi(21)
+        public WebResourceResponse shouldInterceptRequest(WebView view,
+                                                          WebResourceRequest request) {
+            return mAssetLoader.shouldInterceptRequest(request.getUrl());
+        }
+
+        @Override
+        @SuppressWarnings("deprecation") // to support API < 21
+        public WebResourceResponse shouldInterceptRequest(WebView view,
+                                                          String url) {
+            return mAssetLoader.shouldInterceptRequest(Uri.parse(url));
+        }
     }
 
     @Override

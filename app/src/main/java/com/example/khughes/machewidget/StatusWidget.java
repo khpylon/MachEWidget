@@ -387,7 +387,7 @@ public class StatusWidget extends AppWidgetProvider {
             try {
                 String currentOTATime = OTAViewActivity.convertDate(otaStatus.getFuseResponse().getFuseResponseList().get(0).getLatestStatus().getDateTimestamp());
                 if (currentOTATime.compareTo(lastOTATime) > 0) {
-                    OTArefresh = "New OTA info found";
+                    OTArefresh = "New OTA\ninfo found";
                 } else {
                     OTArefresh = "Last OTA update:\n" + lastOTATime;
                 }
@@ -420,7 +420,7 @@ public class StatusWidget extends AppWidgetProvider {
                     updateAppWidget(context, appWidgetManager, appWidgetId);
                     break;
                 case UPDATE_OTA:
-                    updateAppWidget(context, appWidgetManager, appWidgetId);
+                    updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
                     break;
                 default:
                     updateAppLogout(context, appWidgetManager, appWidgetId);
