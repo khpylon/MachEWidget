@@ -119,6 +119,11 @@ public class StatusReceiver extends BroadcastReceiver {
     public static void nextAlarm(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         int delay = new Integer(sharedPref.getString("update_frequency", "10")) * 60;
+        nextAlarm(context, delay);
+    }
+
+    public static void nextAlarm(Context context, int delay) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(delay);
         String timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US));
         Log.i(MainActivity.CHANNEL_ID, "Next AlarmReceiver at " + timeText);

@@ -4,8 +4,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
+import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
+import androidx.webkit.WebViewFeature;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -13,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -33,6 +36,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -55,7 +60,10 @@ public class MainActivity extends AppCompatActivity {
         context = this.getApplicationContext();
 
         WebView mWebView = findViewById(R.id.main_description);
-
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            WebSettingsCompat.setForceDark(mWebView.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
+        }
         final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
                 .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))
@@ -110,6 +118,11 @@ public class MainActivity extends AppCompatActivity {
                 updateWidgetLoggedOut(context);
                 Toast.makeText(context, "Removing authentication token", Toast.LENGTH_LONG).show();
                 return true;
+            case R.id.action_refresh:
+                StatusReceiver.cancelAlarm(context);
+                StatusReceiver.nextAlarm(context, 5);
+                Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.action_ota_view:
                 settingsIntent = new Intent(this,
                         OTAViewActivity.class);
@@ -154,18 +167,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void updateWidgetCarStatus(Context context) {
-        updateWidget( context, StatusWidget.UPDATE_CAR);
+        updateWidget(context, StatusWidget.UPDATE_CAR);
     }
 
     public static void updateWidgetOTAStatus(Context context) {
-        updateWidget( context, StatusWidget.UPDATE_OTA);
+        updateWidget(context, StatusWidget.UPDATE_OTA);
     }
 
     public static void updateWidgetLoggedOut(Context context) {
-        updateWidget( context,StatusWidget.LOGGED_OUT);
+        updateWidget(context, StatusWidget.LOGGED_OUT);
     }
 
-    private  static void updateWidget(Context context, int updateType) {
+    private static void updateWidget(Context context, int updateType) {
         AppWidgetManager man = AppWidgetManager.getInstance(context);
         int[] ids = man.getAppWidgetIds(new ComponentName(context, StatusWidget.class));
         Intent updateIntent = new Intent();

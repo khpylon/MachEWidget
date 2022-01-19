@@ -2,9 +2,12 @@ package com.example.khughes.machewidget;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
+import androidx.webkit.WebSettingsCompat;
+import androidx.webkit.WebViewFeature;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -69,7 +72,7 @@ public class OTAViewActivity extends AppCompatActivity {
             }
             String description = ota.getFuseResponse().getLanguageText().getText();
             if (description != null) {
-                unencodedHtml += "<b>Description:</b><hr>" + description+ "<hr>";
+                unencodedHtml += "<b>Description:</b><hr>" + description + "<hr>";
             }
 
         } else {
@@ -80,8 +83,12 @@ public class OTAViewActivity extends AppCompatActivity {
 
         String encodedHtml = Base64.encodeToString(unencodedHtml.getBytes(),
                 Base64.NO_PADDING);
-        WebView view = findViewById(R.id.ota_webview);
-        view.loadData(encodedHtml, "text/html", "base64");
+        WebView mWebView = findViewById(R.id.ota_webview);
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            WebSettingsCompat.setForceDark(mWebView.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
+        }
+        mWebView.loadData(encodedHtml, "text/html", "base64");
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "");

@@ -368,6 +368,8 @@ public class StatusWidget extends AppWidgetProvider {
             }
         }
 
+//        updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
+
         views.setTextViewText(R.id.lastRefresh, refresh);
 
         // Instruct the widget manager to update the widget
@@ -375,11 +377,9 @@ public class StatusWidget extends AppWidgetProvider {
     }
 
     private void updateAppWidgetOTA(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.status_widget);
 
         OTAStatus otaStatus = new StoredData(context).getOTAStatus();
-
         if (otaStatus != null) {
             String OTArefresh;
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -392,22 +392,17 @@ public class StatusWidget extends AppWidgetProvider {
                     OTArefresh = "Last OTA update:\n" + lastOTATime;
                 }
                 views.setTextViewText(R.id.OTAinfo, OTArefresh);
-                // Instruct the widget manager to update the widget
-                appWidgetManager.updateAppWidget(appWidgetId, views);
             } catch (NullPointerException e) {
                 Log.e(MainActivity.CHANNEL_ID, "exception in StatusWidget.updateAppWidgetOTA: ", e);
             }
         }
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
 
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.status_widget);
 
-        views.setTextViewText(R.id.lastRefresh, "Not logged in");
-
-        // Instruct the widget manager to update the widget
-                appWidgetManager.updateAppWidget(appWidgetId, views);
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
 
 

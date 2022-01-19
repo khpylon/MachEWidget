@@ -55,15 +55,15 @@
                 android:progress="50"/><!--// 50 default progress value-->
             <TextView
                 android:id="@+id/HVBChargeLevel"
-                android:text="  HVB level:"
+                android:text="  HVB level: N/A"
                 style="@style/WidgetTextView" />
             <TextView
                 android:id="@+id/estimatedRange"
-                android:text="  Est Range:"
+                android:text="  Est Range: N/A"
                 style="@style/WidgetTextView" />
             <TextView
                 android:id="@+id/LVBVoltage"
-                android:text="  LVB Voltage:"
+                android:text="  LVB Voltage: N/A"
                 style="@style/WidgetTextView" />
 
             <TextView style="@style/WidgetButtonVerticalSpace" />
@@ -80,7 +80,7 @@
                     android:layout_width="64px"
                     android:layout_height="64px"
                     android:id="@+id/plugIcon"
-                    android:src="@drawable/icons8_electrical_green_100" />
+                    android:src="@drawable/icons8_electrical_gray_100" />
                 <TextView style="@style/WidgetButtonHorizontalSpace" />
                 <ImageView
                     android:layout_width="80px"
@@ -111,13 +111,13 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:id="@+id/ignitionStatusIcon"
-                    android:src="@drawable/icons8_ignition_red" />
+                    android:src="@drawable/icons8_ignition_gray" />
                 <TextView style="@style/WidgetButtonHorizontalSpace" />
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:id="@+id/lockStatusIcon"
-                    android:src="@drawable/icons8_lock_green" />
+                    android:src="@drawable/icons8_lock_gray" />
                 <TextView style="@style/WidgetButtonHorizontalSpace" />
                 <ImageView
                     android:layout_width="24dp"
@@ -166,7 +166,7 @@
                 android:id="@+id/trunkFrunk"
                 android:layout_width="60dp"
                 android:layout_height="40dp"
-                android:src="@drawable/car_nothing_open"/>
+                android:src="@drawable/car_nothing_gray"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -179,13 +179,13 @@
                     android:id="@+id/leftFrontDoor"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/icons8_left_front_window_up_green"/>
+                    android:src="@drawable/icons8_left_front_window_up_gray"/>
                 <TextView style="@style/WidgetButtonHorizontalSpace" />
                 <ImageView
                     android:id="@+id/rightFrontDoor"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/icons8_right_front_window_up_green"/>
+                    android:src="@drawable/icons8_right_front_window_up_gray"/>
                 <TextView style="@style/WidgetButtonHorizontalSpace" />
             </LinearLayout>
             <LinearLayout
@@ -199,13 +199,13 @@
                     android:id="@+id/leftRearDoor"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/icons8_left_rear_window_up_green"/>
+                    android:src="@drawable/icons8_left_rear_window_up_gray"/>
                 <TextView style="@style/WidgetButtonHorizontalSpace" />
                 <ImageView
                     android:id="@+id/rightRearDoor"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/icons8_right_rear_window_up_green"/>
+                    android:src="@drawable/icons8_right_rear_window_up_gray"/>
                 <TextView style="@style/WidgetButtonHorizontalSpace" />
             </LinearLayout>
 

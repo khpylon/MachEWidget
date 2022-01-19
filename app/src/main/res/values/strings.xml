@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">Mach-E Information</string>
+    <string name="app_name">Mach-E Info</string>
     <string name="action_settings">Settings</string>
     <string name="action_login">Ford Log-in</string>
     <string name="action_logout">Ford Log-out</string>
     <string name="action_OTA">OTA Update Info</string>
+    <string name="action_refresh">Refresh</string>
 
     <!-- Widget things -->
     <string name="add_widget">Add widget</string>
