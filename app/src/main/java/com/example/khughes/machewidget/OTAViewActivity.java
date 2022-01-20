@@ -50,7 +50,7 @@ public class OTAViewActivity extends AppCompatActivity {
 
         OTAStatus ota = new StoredData(context).getOTAStatus();
         String unencodedHtml = "<html><body>";
-        if (ota != null) {
+        if (ota != null && ota.getFuseResponse() != null) {
             String tmp;
             unencodedHtml += "<b>Alert status:</b> " + ((tmp = ota.getOtaAlertStatus()) != null ? tmp : "") + "<p>";
             for (OTAStatus.FuseResponse__1 fuse : ota.getFuseResponse().getFuseResponseList()) {
