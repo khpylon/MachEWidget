@@ -37,6 +37,13 @@ public class StatusWidget extends AppWidgetProvider {
     public static final int UPDATE_OTA = UPDATE_CAR + 1;
     public static final int LOGGED_OUT = UPDATE_OTA + 1;
 
+    private static final String CHARGING_STATUS_NOT_READY = "NotReady";
+    private static final String CHARGING_STATUS_CHARGING_AC = "ChargingAC";
+    private static final String CHARGING_STATUS_CHARGING_DC = "ChargingDC";
+    private static final String CHARGING_STATUS_TARGET_REACHED = "ChargeTargetReached";
+    private static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
+    private static final String CHARGING_STATUS_PAUSED = "EvsePaused";
+
     private static String refresh = "";
     private static int updateType = UPDATE_CAR;
 
@@ -162,15 +169,16 @@ public class StatusWidget extends AppWidgetProvider {
         if (pluggedIn) {
             String chargeStatus = carStatus.getVehiclestatus().getChargingStatus().getValue();
             switch (carStatus.getVehiclestatus().getChargingStatus().getValue()) {
-                case "NotReady":
+                case CHARGING_STATUS_NOT_READY:
                     views.setImageViewResource(R.id.HVBIcon, R.drawable.icons8_charging_battery_red_100);
                     break;
-                case "ChargingAC":
-                case "ChargingDC":
-                case "ChargeTargetReached":
+                case CHARGING_STATUS_CHARGING_AC:
+                case CHARGING_STATUS_CHARGING_DC:
+                case CHARGING_STATUS_TARGET_REACHED:
+                case CHARGING_STATUS_PRECONDITION:
                     views.setImageViewResource(R.id.HVBIcon, R.drawable.icons8_charging_battery_green_100);
                     break;
-                case "EvsePaused":
+                case CHARGING_STATUS_PAUSED:
                     views.setImageViewResource(R.id.HVBIcon, R.drawable.icons8_charging_battery_paused_yellow_100);
                     break;
                 default:
@@ -178,9 +186,11 @@ public class StatusWidget extends AppWidgetProvider {
                     break;
             }
 
-            if (chargeStatus.equals("ChargeTargetReached")) {
+            if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
                 remainingTime = "Target Reached";
-            } else if (chargeStatus.contains("Charging")) {
+            } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION))  {
+                remainingTime = "Preconditioning";
+            } else {
                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.US);
                 Calendar endChargeTime = Calendar.getInstance();
                 String endChargeTimeStr = carStatus.getVehiclestatus().getChargeEndTime().getValue();
