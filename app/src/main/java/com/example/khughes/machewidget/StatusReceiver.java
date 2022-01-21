@@ -52,6 +52,7 @@ public class StatusReceiver extends BroadcastReceiver {
             appInfo.incCounter(StoredData.BAD);
         } else {
             Log.d(MainActivity.CHANNEL_ID, "Hmmm... don't know what to do here");
+            getRefresh(appInfo.getRefreshToken());
             appInfo.incCounter(StoredData.UGLY);
         }
         int good = appInfo.getCounter(StoredData.GOOD);
