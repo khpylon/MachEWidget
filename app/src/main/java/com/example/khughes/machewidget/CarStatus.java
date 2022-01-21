@@ -9,7 +9,198 @@ import java.util.Map;
 public class CarStatus {
 
     // simpler getters go here
-    public Double getOdometer() { return getVehiclestatus().getOdometer().getValue(); }
+    public Double getOdometer() {
+        try {
+            return getVehiclestatus().getOdometer().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public Double getHVBFillLevel() {
+        try {
+            return getVehiclestatus().getBatteryFillLevel().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public Double getElVehDTE() {
+        try {
+            return getVehiclestatus().getElVehDTE().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public Integer getLVBVoltage() {
+        try {
+            return getVehiclestatus().getBattery().getBatteryStatusActual().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getFrunk() {
+        try {
+            return getVehiclestatus().getDoorStatus().getHoodDoor().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getTrunk() {
+        try {
+            return getVehiclestatus().getDoorStatus().getTailgateDoor().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getDriverDoor() {
+        try {
+            return getVehiclestatus().getDoorStatus().getDriverDoor().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getPassengerDoor() {
+        try {
+            return getVehiclestatus().getDoorStatus().getPassengerDoor().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getLeftRearDoor() {
+        try {
+            return getVehiclestatus().getDoorStatus().getLeftRearDoor().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getRightRearDoor() {
+        try {
+            return getVehiclestatus().getDoorStatus().getRightRearDoor().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getDriverWindow() {
+        try {
+            return getVehiclestatus().getWindowPosition().getDriverWindowPosition().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getPassengerWindow() {
+        try {
+            return getVehiclestatus().getWindowPosition().getPassWindowPosition().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getLeftRearWindow() {
+        try {
+            return getVehiclestatus().getWindowPosition().getRearDriverWindowPos().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getRighttRearWindow() {
+        try {
+            return getVehiclestatus().getWindowPosition().getRearPassWindowPos().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getIgnition() {
+        try {
+            return getVehiclestatus().getIgnitionStatus().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getLock() {
+        try {
+            return getVehiclestatus().getLockStatus().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getAlarm() {
+        try {
+            return getVehiclestatus().getAlarm().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public Boolean getDeepSleep() {
+        try {
+            return getVehiclestatus().getDeepSleepInProgress().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public Boolean getPlugStatus() {
+        try {
+            return getVehiclestatus().getPlugStatus().getValue() == 1;
+        } catch ( NullPointerException e ) {
+            return false;
+        }
+    }
+
+    public String getChargingStatus() {
+        try {
+            return getVehiclestatus().getChargingStatus().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getChargingEndTime() {
+        try {
+            return getVehiclestatus().getChargeEndTime().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getLatitude() {
+        try {
+            return getVehiclestatus().getGps().getLatitude();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getLongitude() {
+        try {
+            return getVehiclestatus().getGps().getLongitude();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getLastRefresh() {
+        try {
+            return getVehiclestatus().getLastRefresh();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
 
     public class Alarm {
         private String value;
