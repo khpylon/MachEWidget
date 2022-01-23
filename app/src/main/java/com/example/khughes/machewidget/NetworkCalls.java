@@ -194,6 +194,8 @@ public class NetworkCalls {
                         Log.i(MainActivity.CHANNEL_ID, "server is broken");
                     } else if (car.getVehiclestatus() != null) {
                         appInfo.setCarStatus(car);
+                        Notifications.checkLVBStatus(context, car);
+                        Notifications.checkTPMSStatus(context, car);
                         nextState = state.FSM(true, true, true, false, false);
 //                        nextState = state.goodVIN();
                         Log.i(MainActivity.CHANNEL_ID, "got status");

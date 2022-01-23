@@ -4,14 +4,26 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Generated;
+
 import java.util.List;
+
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
 public class OTAStatus {
 
+    // simpler getters go here
+    public String getOTADateTime() {
+        try {
+            return getFuseResponse().getFuseResponseList().get(0).getLatestStatus().getDateTimestamp();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+        
     @Generated("jsonschema2pojo")
     public class AsuActivationSchedule {
 

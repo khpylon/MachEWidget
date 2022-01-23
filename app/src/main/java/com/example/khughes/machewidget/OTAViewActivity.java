@@ -101,6 +101,7 @@ public class OTAViewActivity extends AppCompatActivity {
                 if (currentOTATime != null && !currentOTATime.equals("")) {
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     sharedPref.edit().putString(context.getResources().getString(R.string.last_ota_time), currentOTATime).apply();
+                    MainActivity.updateWidgetOTAStatus(context);
                     clear.setEnabled(false);
                 }
             }

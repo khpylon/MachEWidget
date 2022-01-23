@@ -55,6 +55,7 @@
                 android:resource="@xml/status_widget_info" />
         </receiver>
         <receiver android:name=".StatusReceiver" />
+        <receiver android:name=".Notifications" />
         <receiver
             android:name=".BootComplete"
             android:enabled="true"

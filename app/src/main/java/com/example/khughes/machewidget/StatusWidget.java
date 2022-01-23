@@ -1,5 +1,6 @@
 package com.example.khughes.machewidget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -10,6 +11,8 @@ import android.location.Geocoder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
@@ -85,13 +88,7 @@ public class StatusWidget extends AppWidgetProvider {
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId) {
-
-//        CharSequence widgetText = context.getString(R.string.appwidget_text);
-        // Construct the RemoteViews object
-
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.status_widget);
-        //  views.setTextViewText(R.id.appwidget_text, widgetText);
-
         CarStatus carStatus = new StoredData(context).getCarStatus();
 
         if (carStatus == null || carStatus.getVehiclestatus() == null) {
@@ -125,7 +122,11 @@ public class StatusWidget extends AppWidgetProvider {
         }
 
         Integer LVBLevel = carStatus.getLVBVoltage();
-        if (LVBLevel != null) {
+        String LVBStatus = carStatus.getLVBStatus();
+        if (LVBLevel != null && LVBStatus != null) {
+            views.setTextColor(R.id.LVBVoltage,
+                    context.getColor(LVBStatus.equals("STATUS_GOOD") ?
+                            R.color.white : R.color.red));
             views.setTextViewText(R.id.LVBVoltage, MessageFormat.format("LVB {0}V", LVBLevel));
         }
 
@@ -160,7 +161,7 @@ public class StatusWidget extends AppWidgetProvider {
         }
 
         door = carStatus.getRightRearDoor();
-        window = carStatus.getRighttRearWindow();
+        window = carStatus.getRightRearWindow();
         if (door != null && window != null) {
             views.setImageViewResource(R.id.rightRearDoor, getDoorResource(rightRearDoorIds, door, window));
         }
@@ -422,18 +423,16 @@ public class StatusWidget extends AppWidgetProvider {
             String OTArefresh;
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "");
-            try {
-                String currentOTATime = OTAViewActivity.convertDate(otaStatus.getFuseResponse().getFuseResponseList().get(0).getLatestStatus().getDateTimestamp());
-                if (currentOTATime.compareTo(lastOTATime) > 0) {
-                    OTArefresh = "New OTA\ninfo found";
-                } else {
-                    OTArefresh = "Last OTA update:\n" + lastOTATime;
-                }
-                views.setTextViewText(R.id.OTAinfo, OTArefresh);
-            } catch (NullPointerException e) {
-                Log.e(MainActivity.CHANNEL_ID, "exception in StatusWidget.updateAppWidgetOTA: ", e);
+            String currentOTATime = OTAViewActivity.convertDate(otaStatus.getOTADateTime());
+            if (currentOTATime != null && currentOTATime.compareTo(lastOTATime) > 0) {
+                Notifications.newOTA(context);
+                OTArefresh = "New OTA\ninfo found";
+            } else {
+                OTArefresh = "Last OTA update:\n" + lastOTATime;
             }
+            views.setTextViewText(R.id.OTAinfo, OTArefresh);
         }
+
         appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
 
@@ -446,6 +445,7 @@ public class StatusWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.HVBChargeLevel, "Charge N/A");
         views.setTextViewText(R.id.estimatedRange, "Range N/A");
         views.setTextViewText(R.id.LVBVoltage, "LVB N/A");
+        views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
 
         views.setImageViewResource(R.id.plugIcon, R.drawable.icons8_electrical_gray_100);
         views.setImageViewResource(R.id.HVBIcon, R.drawable.icons8_charging_battery_gray_100);
@@ -459,7 +459,6 @@ public class StatusWidget extends AppWidgetProvider {
         views.setImageViewResource(R.id.sleepStatusIcon, R.drawable.icons8_sleep_gray);
 
         views.setImageViewResource(R.id.trunkFrunk, R.drawable.car_nothing_gray);
-        views.setImageViewResource(R.id.trunkFrunk, R.drawable.car_nothing_gray);
         views.setImageViewResource(R.id.leftFrontDoor, R.drawable.icons8_left_front_window_up_gray);
         views.setImageViewResource(R.id.rightFrontDoor, R.drawable.icons8_right_front_window_up_gray);
         views.setImageViewResource(R.id.leftRearDoor, R.drawable.icons8_left_rear_window_up_gray);
@@ -469,7 +468,6 @@ public class StatusWidget extends AppWidgetProvider {
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
-
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {

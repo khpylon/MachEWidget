@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.HashMap;
+
 public class StoredData {
     private static final String TAG = "saveAppInfo";
     private static final String ACCESSTOKEN = "AccessToken";
@@ -14,6 +16,8 @@ public class StoredData {
     private static final String TOKENTIMEOUT = "TokenTimeout";
     private static final String CARSTATUS = "CarStatus";
     private static final String OTASTATUS = "OTAStatus";
+    private static final String HVBSTATUS = "HVBStatus";
+    private static final String TPMSSTATUS = "TPMSStatus";
     private static final String COUNTRY = "Country";
     private static final String LANGUAGE = "Language";
     private static final String SPEEDUNITS = "SpeedUnits";
@@ -88,6 +92,30 @@ public class StoredData {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putString(OTASTATUS, gson.toJson(status));
+        edit.commit();
+    }
+
+    public String getHVBStatus() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return pref.getString(HVBSTATUS, "STATUS_GOOD");
+    }
+
+    public void setHVBStatus(String status) {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString(HVBSTATUS, status);
+        edit.commit();
+    }
+
+    public String getTPMSStatus() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return pref.getString(TPMSSTATUS, "STATUS_GOOD");
+    }
+
+    public void setTPMSStatus(String status) {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString(TPMSSTATUS, status);
         edit.commit();
     }
 
