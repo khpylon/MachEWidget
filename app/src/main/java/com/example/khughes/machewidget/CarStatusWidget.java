@@ -1,9 +1,12 @@
 package com.example.khughes.machewidget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.location.Address;
@@ -22,14 +25,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static com.example.khughes.machewidget.StatusWidget.UPDATE_TYPE;
-import static com.example.khughes.machewidget.StatusWidget.WIDGET_IDS_KEY;
+import java.util.Set;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class CarStatusWidget extends AppWidgetProvider {
+    public static final String WIDGET_IDS_KEY = "com.example.khughes.machewidget.CARSTATUSWIDGET";
+
+    public static final String UPDATE_TYPE = "update_type";
+    public static final int UPDATE_CAR = 0;
+    public static final int UPDATE_OTA = UPDATE_CAR + 1;
+    public static final int LOGGED_OUT = UPDATE_OTA + 1;
+
+    private static int updateType = UPDATE_CAR;
+
+    private static final String WIDGET_CLICK = "Widget";
+    private static final String SETTINGS_CLICK = "SettingsButton";
+    private static final String FORDPASS_CLICK = "FordPassButton";
+    private static final String CHARGER_CLICK = "ChargerButton";
+    private static final String IGNITION_CLICK = "IgnitionButton";
 
     private static final String CHARGING_STATUS_NOT_READY = "NotReady";
     private static final String CHARGING_STATUS_CHARGING_AC = "ChargingAC";
@@ -38,7 +53,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
     private static final String CHARGING_STATUS_PAUSED = "EvsePaused";
 
-    private static void updateWindow(RemoteViews views, String window, int id, int drawable) {
+    private void updateWindow(RemoteViews views, String window, int id, int drawable) {
         // If we can't confirm the window is open, draw nothing.
         if (window == null || window.equals("Fully closed position")) {
             drawable = R.drawable.filler;
@@ -46,8 +61,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setImageViewResource(id, drawable);
     }
 
-    private static void updateTire(RemoteViews views, String pressure, String status,
-                                   String units, Double conversion, int id) {
+    private void updateTire(RemoteViews views, String pressure, String status,
+                            String units, Double conversion, int id) {
         // Get the tire pressure and do any conversion necessary.
         int drawable = R.drawable.pressure_oval;
         if (pressure != null) {
@@ -66,9 +81,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(id, pressure);
     }
 
-    private static void updateLocation(Context context, RemoteViews views, String latitude, String longitude) {
+    private void updateLocation(Context context, RemoteViews views, String latitude, String longitude) {
         List<Address> addresses = null;
-        int textWidth = 20;
         String streetName = "N/A";
         String cityState = "";
 
@@ -78,15 +92,20 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             addresses = mGeocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
-            Log.e(MainActivity.CHANNEL_ID, "exception in StatusWidget.updateAppWidget: ", e);
+            Log.e(MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
         }
+
+        // If an address was found, go with the first entry
         if (addresses != null && addresses.size() > 0) {
             Address address = addresses.get(0);
+
+            // Street address and name
             if (address.getSubThoroughfare() != null) {
                 streetName = address.getSubThoroughfare() + " ";
             }
             streetName += address.getThoroughfare();
 
+            // Other locality info (state, province, etc)
             if (address.getLocality() != null && address.getAdminArea() != null) {
                 String adminArea = address.getAdminArea();
                 Map<String, String> states = new HashMap<String, String>();
@@ -164,29 +183,33 @@ public class CarStatusWidget extends AppWidgetProvider {
                 if (states.containsKey(adminArea)) {
                     adminArea = states.get(adminArea);
                 }
-
-                // Try to keep strings from wrapping
-                if (streetName.length() > textWidth) {
-                    streetName = streetName.substring(0, textWidth - 3) + "...";
-                }
                 cityState = address.getLocality() + ", " + adminArea;
-                if (cityState.length() > textWidth) {
-                    cityState = cityState.substring(0, textWidth - 3) + "...";
-                }
             }
         }
-        views.setTextViewText(R.id.locationInfo,
-                MessageFormat.format("Location:\n  {0}\n  {1}",streetName , cityState));
+        views.setTextViewText(R.id.locationStreet, streetName);
+        views.setTextViewText(R.id.locationCity, cityState);
     }
 
-    private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                        int appWidgetId) {
+    protected PendingIntent getPendingSelfIntent(Context context, String action) {
+        Intent intent = new Intent(context, getClass());
+        intent.setAction(action);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+    }
 
+    private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                 int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
-        CarStatus carStatus = new StoredData(context).getCarStatus();
+
+        // Define actions for clicking on various icons, including the widget itself
+        views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, WIDGET_CLICK));
+        views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
+        views.setOnClickPendingIntent(R.id.fordpass, getPendingSelfIntent(context, FORDPASS_CLICK));
+        views.setOnClickPendingIntent(R.id.chargerapp, getPendingSelfIntent(context, CHARGER_CLICK));
+//        views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, IGNITION_CLICK));
 
         // If no status information, print something generic and return
         // TODO: also refresh the icons as if we're logged out?
+        CarStatus carStatus = new StoredData(context).getCarStatus();
         if (carStatus == null || carStatus.getVehiclestatus() == null) {
             views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.");
             return;
@@ -201,7 +224,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             lastUpdateTime.setTime(sdf.parse(carStatus.getLastRefresh()));// all done
         } catch (ParseException e) {
-            Log.e(MainActivity.CHANNEL_ID, "exception in StatusWidget.updateAppWidget: ", e);
+            Log.e(MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
         }
         Calendar currentTime = Calendar.getInstance();
         long minutes = (Duration.between(lastUpdateTime.toInstant(), currentTime.toInstant()).getSeconds() + 30) / 60;
@@ -401,7 +424,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         // Location
-        updateLocation( context, views, carStatus.getLatitude(), carStatus.getLongitude());
+        updateLocation(context, views, carStatus.getLatitude(), carStatus.getLongitude());
 
         // Tire pressures
         updateTire(views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
@@ -434,7 +457,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         // Door statuses are trickier since there are mixed images that need to be used....
-        //
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -460,13 +482,36 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.hasExtra(WIDGET_IDS_KEY)) {
+        String action = intent.getAction();
+        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE) && intent.hasExtra(WIDGET_IDS_KEY)) {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
-//            if (intent.hasExtra(UPDATE_TYPE)) {
-//                updateType = intent.getExtras().getInt(UPDATE_TYPE);
-//            }
+            if (intent.hasExtra(UPDATE_TYPE)) {
+                updateType = intent.getExtras().getInt(UPDATE_TYPE);
+            }
             this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
-        } else super.onReceive(context, intent);
+        } else if (action.equals(WIDGET_CLICK)) {
+            intent = new Intent(context, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } else if (action.equals(SETTINGS_CLICK)) {
+            intent = new Intent(context, SettingsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } else if (action.equals(FORDPASS_CLICK)) {
+            PackageManager pm = context.getApplicationContext().getPackageManager();
+            intent = pm.getLaunchIntentForPackage("com.ford.fordpass");
+            if (intent != null) {
+                context.startActivity(intent);
+            }
+        } else if (action.equals(CHARGER_CLICK)) {
+            PackageManager pm = context.getApplicationContext().getPackageManager();
+            intent = pm.getLaunchIntentForPackage("com.coulombtech");
+            if (intent != null) {
+                context.startActivity(intent);
+            }
+        } else if (action.equals(IGNITION_CLICK)) {
+        } else {
+            super.onReceive(context, intent);
+        }
     }
-
 }

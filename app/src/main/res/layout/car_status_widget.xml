@@ -76,26 +76,69 @@
         android:textSize="12dp" />
 
     <TextView
-        android:id="@+id/OTAinfo"
+        android:id="@+id/OTAHeader"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/LVBVoltage"
         android:layout_weight="1"
         android:gravity="left"
-        android:text="OTA Status:\n   new info"
+        android:text="OTA Status:"
         android:textColor="@color/white"
         android:textSize="12dp" />
 
     <TextView
-        android:id="@+id/locationInfo"
+        android:id="@+id/OTAInfo"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/OTAinfo"
+        android:layout_below="@id/OTAHeader"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="12dp"
         android:layout_weight="1"
         android:gravity="left"
-        android:text="Location:\n   Street\n   City"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        android:text="new info available" />
+
+    <TextView
+        android:id="@+id/locationHeader"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/OTAInfo"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Location:"
         android:textColor="@color/white"
         android:textSize="12dp" />
+    <TextView
+        android:id="@+id/locationStreet"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/locationHeader"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="12dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        android:text="Street" />
+    <TextView
+        android:id="@+id/locationCity"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/locationStreet"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="12dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        android:text="City" />
 
 
     <ImageView

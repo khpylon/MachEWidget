@@ -191,31 +191,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void updateWidgetCarStatus(Context context) {
-        updateWidget(context, StatusWidget.UPDATE_CAR);
+        updateWidget(context, CarStatusWidget.UPDATE_CAR);
     }
 
     public static void updateWidgetOTAStatus(Context context) {
-        updateWidget(context, StatusWidget.UPDATE_OTA);
+        updateWidget(context, CarStatusWidget.UPDATE_OTA);
     }
 
     public static void updateWidgetLoggedOut(Context context) {
-        updateWidget(context, StatusWidget.LOGGED_OUT);
+        updateWidget(context, CarStatusWidget.LOGGED_OUT);
     }
 
     private static void updateWidget(Context context, int updateType) {
         AppWidgetManager man = AppWidgetManager.getInstance(context);
-        int[] ids = man.getAppWidgetIds(new ComponentName(context, StatusWidget.class));
+//        int[] ids = man.getAppWidgetIds(new ComponentName(context, StatusWidget.class));
 //        Intent updateIntent = new Intent();
 //        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 //        updateIntent.putExtra(StatusWidget.WIDGET_IDS_KEY, ids);
 //        updateIntent.putExtra(StatusWidget.UPDATE_TYPE, updateType);
 //        context.sendBroadcast(updateIntent);
 
-        ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget.class));
+        int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget.class));
         Intent updateIntent = new Intent();
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        updateIntent.putExtra(StatusWidget.WIDGET_IDS_KEY, ids);
-        updateIntent.putExtra(StatusWidget.UPDATE_TYPE, updateType);
+        updateIntent.putExtra(CarStatusWidget.WIDGET_IDS_KEY, ids);
+        updateIntent.putExtra(CarStatusWidget.UPDATE_TYPE, updateType);
         context.sendBroadcast(updateIntent);
     }
 

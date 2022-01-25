@@ -58,16 +58,6 @@
                 android:resource="@xml/car_status_widget_info" />
         </receiver>
 
-        <receiver
-            android:name=".StatusWidget"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/status_widget_info" />
-        </receiver>
         <receiver android:name=".StatusReceiver" />
         <receiver android:name=".Notifications" />
         <receiver
@@ -85,5 +75,15 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <queries>
+        <!-- Specific apps you interact with, eg: -->
+        <package android:name="com.ford.fordpass" />
+        <package android:name="com.coulombtech" />  <!-- Chargepoint -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
 
 </manifest>

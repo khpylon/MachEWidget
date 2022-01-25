@@ -5,7 +5,7 @@
     android:initialLayout="@layout/car_status_widget"
     android:minWidth="312dp"
     android:minHeight="250dp"
-    android:previewImage="@drawable/new_appwidget_preview"
+    android:previewImage="@drawable/appwidget_preview"
 
     android:previewLayout="@layout/car_status_widget"
     android:targetCellWidth="5"
