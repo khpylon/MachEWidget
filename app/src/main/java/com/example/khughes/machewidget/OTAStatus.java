@@ -23,7 +23,15 @@ public class OTAStatus {
             return null;
         }
     }
-        
+    
+    public String getDescription() {
+        try {
+            return getFuseResponse().getLanguageText().getText();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
     @Generated("jsonschema2pojo")
     public class AsuActivationSchedule {
 

@@ -70,7 +70,7 @@ public class OTAViewActivity extends AppCompatActivity {
                 }
                 unencodedHtml += "</ul><hr>";
             }
-            String description = ota.getFuseResponse().getLanguageText().getText();
+            String description = ota.getDescription();
             if (description != null) {
                 unencodedHtml += "<b>Description:</b><hr>" + description + "<hr>";
             }

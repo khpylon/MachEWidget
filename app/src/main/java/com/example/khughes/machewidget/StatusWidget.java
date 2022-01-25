@@ -3,11 +3,13 @@ package com.example.khughes.machewidget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -32,6 +34,7 @@ import java.util.TimeZone;
 /**
  * Implementation of App Widget functionality.
  */
+
 public class StatusWidget extends AppWidgetProvider {
 
     public static final String WIDGET_IDS_KEY = "mywidgetproviderwidgetids";
@@ -47,8 +50,8 @@ public class StatusWidget extends AppWidgetProvider {
     private static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
     private static final String CHARGING_STATUS_PAUSED = "EvsePaused";
 
-    private static String refresh = "";
     private static int updateType = UPDATE_CAR;
+    private static int textWidth = 20;
 
     private int[][] leftFrontDoorIds = {
             {R.drawable.icons8_left_front_window_down_open_red, R.drawable.icons8_left_front_window_down_red,},
@@ -272,9 +275,6 @@ public class StatusWidget extends AppWidgetProvider {
                 streetName = address.getSubThoroughfare() + " ";
             }
             streetName += address.getThoroughfare();
-            if (streetName.length() > 20) {
-                streetName = streetName.substring(0, 20 - 3) + "...";
-            }
 
             if (address.getLocality() != null && address.getAdminArea() != null) {
                 String adminArea = address.getAdminArea();
@@ -353,9 +353,12 @@ public class StatusWidget extends AppWidgetProvider {
                 if (states.containsKey(adminArea)) {
                     adminArea = states.get(adminArea);
                 }
+                if (streetName.length() > textWidth) {
+                    streetName = streetName.substring(0, textWidth - 3) + "...";
+                }
                 String cityState = address.getLocality() + ", " + adminArea;
-                if (cityState.length() > 20) {
-                    cityState = cityState.substring(0, 20 - 3) + "...";
+                if (cityState.length() > textWidth) {
+                    cityState = cityState.substring(0, textWidth - 3) + "...";
                 }
                 streetName += "\n" + cityState;
             }
@@ -374,7 +377,7 @@ public class StatusWidget extends AppWidgetProvider {
         long minutes = (Duration.between(lastUpdateTime.toInstant(), currentTime.toInstant()).getSeconds() + 30) / 60;
         Log.i(MainActivity.CHANNEL_ID, "Last vehicle update was " + minutes + " minutes ago.");
 
-        refresh = "Last refresh: ";
+        String refresh = "Last refresh: ";
 // less than 1 minute
         if (minutes < 1) {
             refresh += minutes + " just now";
@@ -428,6 +431,9 @@ public class StatusWidget extends AppWidgetProvider {
                 Notifications.newOTA(context);
                 OTArefresh = "New OTA\ninfo found";
             } else {
+                if (lastOTATime.length() > textWidth) {
+                    lastOTATime = lastOTATime.substring(0, textWidth - 3) + "...";
+                }
                 OTArefresh = "Last OTA update:\n" + lastOTATime;
             }
             views.setTextViewText(R.id.OTAinfo, OTArefresh);
@@ -485,6 +491,28 @@ public class StatusWidget extends AppWidgetProvider {
                     break;
             }
         }
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+        Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.status_widget);
+        int minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+
+        if (minWidth < 300) {
+            if (textWidth != 16) {
+                textWidth = 16;
+                updateAppWidget(context, appWidgetManager, appWidgetId);
+                updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
+            }
+        } else {
+            if (textWidth != 20) {
+                textWidth = 20;
+                updateAppWidget(context, appWidgetManager, appWidgetId);
+                updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
+            }
+        }
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
 
     @Override
