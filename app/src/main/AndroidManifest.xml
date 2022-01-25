@@ -11,16 +11,18 @@
         android:theme="@style/Theme.MacheWidget">
         <activity
             android:name=".MainActivity"
-        android:exported="true">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings"
             android:exported="false"
+            android:label="@string/action_settings"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -28,22 +30,34 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/action_login"
             android:exported="false"
-            android:parentActivityName=".MainActivity" >
+            android:label="@string/action_login"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".OTAViewActivity"
-            android:label="@string/action_OTA"
             android:exported="false"
-            android:parentActivityName=".MainActivity" >
+            android:label="@string/action_OTA"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <receiver
+            android:name=".CarStatusWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/car_status_widget_info" />
+        </receiver>
+
         <receiver
             android:name=".StatusWidget"
             android:exported="true">
@@ -62,11 +76,14 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

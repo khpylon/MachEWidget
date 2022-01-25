@@ -160,6 +160,37 @@ public class CarStatus {
         }
     }
 
+    public String getLeftFrontTirePressure() {
+        try {
+            return getVehiclestatus().getTPMS().getLeftFrontTirePressure().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+    public String getRightFrontTirePressure() {
+        try {
+            return getVehiclestatus().getTPMS().getRightFrontTirePressure().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getLeftRearTirePressure() {
+        try {
+            return getVehiclestatus().getTPMS().getOuterLeftRearTirePressure().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
+    public String getRightRearTirePressure() {
+        try {
+            return getVehiclestatus().getTPMS().getOuterRightRearTirePressure().getValue();
+        } catch ( NullPointerException e ) {
+            return null;
+        }
+    }
+
     public String getIgnition() {
         try {
             return getVehiclestatus().getIgnitionStatus().getValue();
