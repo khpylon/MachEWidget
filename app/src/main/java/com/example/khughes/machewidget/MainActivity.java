@@ -58,13 +58,8 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false);
         SharedPreferences sharedPref = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        String marketPref = sharedPref.getString("VIN", "");
 
-        context = this.getApplicationContext();
-
-        updateWidgetCarStatus(context);
-
-            WebView mWebView = findViewById(R.id.main_description);
+        WebView mWebView = findViewById(R.id.main_description);
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
             WebSettingsCompat.setForceDark(mWebView.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
@@ -204,12 +199,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static void updateWidget(Context context, int updateType) {
         AppWidgetManager man = AppWidgetManager.getInstance(context);
-//        int[] ids = man.getAppWidgetIds(new ComponentName(context, StatusWidget.class));
-//        Intent updateIntent = new Intent();
-//        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//        updateIntent.putExtra(StatusWidget.WIDGET_IDS_KEY, ids);
-//        updateIntent.putExtra(StatusWidget.UPDATE_TYPE, updateType);
-//        context.sendBroadcast(updateIntent);
 
         int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget.class));
         Intent updateIntent = new Intent();

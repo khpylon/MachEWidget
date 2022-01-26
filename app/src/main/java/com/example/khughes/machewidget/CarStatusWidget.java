@@ -3,9 +3,9 @@ package com.example.khughes.machewidget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
@@ -13,6 +13,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -25,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Implementation of App Widget functionality.
@@ -52,6 +53,26 @@ public class CarStatusWidget extends AppWidgetProvider {
     private static final String CHARGING_STATUS_TARGET_REACHED = "ChargeTargetReached";
     private static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
     private static final String CHARGING_STATUS_PAUSED = "EvsePaused";
+
+    private static int[][] front = {
+            {R.drawable.left_fr_cl_right_fr_cl, R.drawable.left_fr_cl_right_fr_op},
+            {R.drawable.left_fr_op_right_fr_cl, R.drawable.left_fr_op_right_fr_op},
+    };
+
+    private static int[][] rear = {
+            {R.drawable.left_rr_cl_right_rr_cl, R.drawable.left_rr_cl_right_rr_op},
+            {R.drawable.left_rr_op_right_rr_cl, R.drawable.left_rr_op_right_rr_op},
+    };
+
+    private static int[][] left = {
+            {R.drawable.left_none, R.drawable.left_rear},
+            {R.drawable.left_front, R.drawable.left_both},
+    };
+
+    private static int[][] right = {
+            {R.drawable.right_none, R.drawable.right_rear},
+            {R.drawable.right_front, R.drawable.right_both},
+    };
 
     private void updateWindow(RemoteViews views, String window, int id, int drawable) {
         // If we can't confirm the window is open, draw nothing.
@@ -188,6 +209,11 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
         views.setTextViewText(R.id.locationStreet, streetName);
         views.setTextViewText(R.id.locationCity, cityState);
+    }
+
+    // Check if a door is open or closed.  Undefined defaults to closed.
+    private Boolean isDoorClosed(String status) {
+        return (status == null || status.equals("Closed"));
     }
 
     protected PendingIntent getPendingSelfIntent(Context context, String action) {
@@ -332,9 +358,11 @@ public class CarStatusWidget extends AppWidgetProvider {
                     break;
                 case CHARGING_STATUS_CHARGING_AC:
                 case CHARGING_STATUS_CHARGING_DC:
+                    views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_charging);
+                    break;
                 case CHARGING_STATUS_TARGET_REACHED:
                 case CHARGING_STATUS_PRECONDITION:
-                    views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_charging);
+                    views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_charged_green);
                     break;
                 case CHARGING_STATUS_PAUSED:
                     views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_yellow);
@@ -457,8 +485,70 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         // Door statuses are trickier since there are mixed images that need to be used....
+        int l_front_door = isDoorClosed(carStatus.getDriverDoor()) ? 0 : 1;
+        int r_front_door = isDoorClosed(carStatus.getPassengerDoor()) ? 0 : 1;
+        int l_rear_door = isDoorClosed(carStatus.getLeftRearDoor()) ? 0 : 1;
+        int r_rear_door = isDoorClosed(carStatus.getRightRearDoor()) ? 0 : 1;
+
+        views.setImageViewResource(R.id.front_doors, front[l_front_door][r_front_door]);
+        views.setImageViewResource(R.id.left_doors, left[l_front_door][l_rear_door]);
+        views.setImageViewResource(R.id.right_doors, right[r_front_door][r_rear_door]);
+        views.setImageViewResource(R.id.rear_doors, rear[l_rear_door][r_rear_door]);
 
         // Instruct the widget manager to update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    private void updateAppWidgetOTA(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+
+        OTAStatus otaStatus = new StoredData(context).getOTAStatus();
+        if (otaStatus != null) {
+            String OTArefresh;
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "");
+            String currentOTATime = OTAViewActivity.convertDate(otaStatus.getOTADateTime());
+            if (currentOTATime != null && currentOTATime.compareTo(lastOTATime) > 0) {
+                Notifications.newOTA(context);
+                OTArefresh = "New info found";
+            } else {
+                OTArefresh = lastOTATime;
+            }
+            views.setTextViewText(R.id.OTAInfo, OTArefresh);
+        }
+
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+    }
+
+    private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+
+        views.setTextViewText(R.id.lastRefresh, "Not logged in");
+        views.setTextViewText(R.id.odometer, "Odo: N/A");
+        views.setTextViewText(R.id.sleep, "Deep sleep: N/A");
+        views.setTextViewText(R.id.LVBVoltage, "LVB Volts: N/A");
+        views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
+        views.setTextViewText(R.id.OTAInfo, "N/A");
+        views.setTextViewText(R.id.locationStreet, "N/A");
+        views.setTextViewText(R.id.locationCity, "");
+
+        views.setProgressBar(R.id.HBVChargeProgress, 100, 0, false);
+        views.setTextViewText(R.id.HVBChargePercent, "Charge N/A");
+        views.setTextViewText(R.id.GOM, "N/A");
+        views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
+
+        views.setImageViewResource(R.id.plug, R.drawable.plug_icon_gray);
+        views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_gray);
+        views.setImageViewResource(R.id.lock, R.drawable.locked_icon_gray);
+        views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray);
+
+        views.setImageViewResource(R.id.frunk, R.drawable.frunk_closed);
+        views.setImageViewResource(R.id.trunk, R.drawable.trunk_closed);
+        views.setImageViewResource(R.id.left_doors, R.drawable.left_none);
+        views.setImageViewResource(R.id.right_doors, R.drawable.right_none);
+        views.setImageViewResource(R.id.front_doors, R.drawable.left_fr_cl_right_fr_cl);
+        views.setImageViewResource(R.id.rear_doors, R.drawable.left_rr_cl_right_rr_cl);
+
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
@@ -466,7 +556,17 @@ public class CarStatusWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+            switch (updateType) {
+                case UPDATE_CAR:
+                    updateAppWidget(context, appWidgetManager, appWidgetId);
+                    break;
+                case UPDATE_OTA:
+                    updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
+                    break;
+                default:
+                    updateAppLogout(context, appWidgetManager, appWidgetId);
+                    break;
+            }
         }
     }
 
@@ -505,6 +605,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             }
         } else if (action.equals(CHARGER_CLICK)) {
             PackageManager pm = context.getApplicationContext().getPackageManager();
+            //
             intent = pm.getLaunchIntentForPackage("com.coulombtech");
             if (intent != null) {
                 context.startActivity(intent);

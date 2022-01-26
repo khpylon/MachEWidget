@@ -11,8 +11,8 @@ The widget is shown below. Remember: <b>You need to place the widget on your pho
 <ol>
     <li>long press on an unoccupied spot on your screen</li>
     <li>choose "Widgets"</li>
-    <li> scroll down until you find this app</li>
-    <li> press and drag the widget onto your screen</li>
+    <li>scroll down until you find this app</li>
+    <li>press and drag the widget onto your screen</li>
 </ol>
 
 <img src="/res/drawable/appwidget_preview.png" width="100%"><hr>
@@ -35,33 +35,21 @@ The widget is shown below. Remember: <b>You need to place the widget on your pho
 
 </p>
 <h2>Icon information</h2>
-<p>Green icons are used to indicate the "normal" condition of a component when the car isn't in use  (i.e, it's in your garage or parking space).
-    For example, a door's icon is green when it is closed with the window up (closed)
-    <img src="/res/drawable/icons8_left_front_window_up_green.png" width="20">.
-    The exceptions are
-    <ul>
-        <li> when the ignition is off -- <img src="/res/drawable/icons8_ignition_red.png" width="20"></li>
-        <li> when the alarm is off -- <img src="/res/drawable/icons8_alarm_gray.png" width="20"></li>
-        <li> when car is not in deep sleep -- <img src="/res/drawable/icons8_sleep_gray.png" width="20"></li>
-    </ul>
-<p>The location of each icon represents which door, with the driver's door appearing in the top left.  This corresponds to the bird's eye view. The icons show a small up arrow
-<img src="/res/drawable/icons8_left_front_window_up_green.png" width="20">
-or down arrow
-<img src="/res/drawable/icons8_left_front_window_down_red.png" width="20">
-to indicate the window's position.  Similarly the icon shows the closed position
-<img src="/res/drawable/icons8_left_front_window_up_green.png" width="20">
-or open position
-<img src="/res/drawable/icons8_left_front_window_up_open_red.png" width="20">.  The trunk and frunk use similar icons.
-</p>
-The charging status is indicated with icons for the charge plug
-<img src="/res/drawable/icons8_electrical_green_100.png" width="20">
-and the high-voltage battery (HVB)
-<img src="/res/drawable/icons8_charging_battery_green_100.png" width="20">.
-A red charge plug and gray bettery icon indicate the car is unplugged; a green charge plug indicates the car is plugged in.  The battery
-icon will then indicate if the car is not charging
-<img src="/res/drawable/icons8_charging_battery_red_100.png" width="20">, or completed charging
-<img src="/res/drawable/icons8_charging_battery_green_100.png" width="20">, or is paused
-<img src="/res/drawable/icons8_charging_battery_paused_yellow_100.png" width="20">.
+<p>Red is normally used to indicate something unusual happening when you're not using the car.  The frunk, trunk, or doors will be highlighted
+    in red if they are not closed.  Similarly, if a window is not fully closed, a red icon will appear near the corresponding door --
+    <img src="/res/drawable/icons8_left_front_window_down_red.png" width="20">.</p>
 
+The charging status is indicated by icons for the charge plug
+<img src="/assets/plug_green.png" width="15">
+and the high-voltage battery (HVB)
+<img src="/assets/battery_charging.png" width="15">.
+A red charge plug and gray battery icon indicate the car is unplugged; a green charge plug indicates the car is plugged in.  When plugged in, the battery
+icon will indicate what is happening:
+<ul>
+    <li>Not charging -- <img src="/assets/battery_red.png" width="15"></li>
+    <li>Charge paused -- <img src="/assets/battery_yellow.png" width="15"></li>
+    <li>Charging -- <img src="/assets/battery_charging.png" width="15"></li>
+    <li>Charge finished -- <img src="/assets/battery_full.png" width="15"></li>
+</ul>
 </body>
 </html>

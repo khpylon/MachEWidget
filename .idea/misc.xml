@@ -9,11 +9,14 @@
         <entry key="app/src/main/res/drawable-v24/xic_launcher_foreground.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/drawable/background.xml" value="0.25416666666666665" />
         <entry key="app/src/main/res/drawable/battery_charging.xml" value="0.19427083333333334" />
+        <entry key="app/src/main/res/drawable/battery_icon_charged_green.xml" value="0.38697916666666665" />
         <entry key="app/src/main/res/drawable/battery_icon_gray.xml" value="0.19427083333333334" />
         <entry key="app/src/main/res/drawable/battery_icon_red.xml" value="0.19427083333333334" />
         <entry key="app/src/main/res/drawable/battery_icon_yellow.xml" value="0.19427083333333334" />
         <entry key="app/src/main/res/drawable/bell_icon_gray.xml" value="0.15364583333333334" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.20989583333333334" />
+        <entry key="app/src/main/res/drawable/locked_icon_gay.xml" value="0.38697916666666665" />
+        <entry key="app/src/main/res/drawable/plug_icon_green.xml" value="0.3421875" />
         <entry key="app/src/main/res/drawable/pressure_oval_red.xml" value="0.15364583333333334" />
         <entry key="app/src/main/res/drawable/xic_launcher_background.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.15715579710144928" />
