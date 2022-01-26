@@ -3,11 +3,11 @@
 ## Intro
 
 This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/tonesto7), which is in turn based on the earlier work of 
-[David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps] (https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
+[David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps](https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
 .  It is not a complete implementation of the functionality of their widgets, as it:
 - is only intended for the Ford Mustang Mach-E, as that's the only Ford I own
 - does not include all the function of tonesto7's Apple/iOS widget
-- does not currently support accounts outside of the United States
+- does not currently support accounts outside of the United States, although it may still work
 
 <img src="app/src/main/res/drawable/appwidget_preview.png" alt="Widget example" width="300" />
 
@@ -33,6 +33,12 @@ As listed above, this app
 - is only intended for the Ford Mustang Mach-E, as that's the only FOrd I own
 - does not include all the function of tonesto7's Apple/iOS widget
 - is not guaranteed to support accounts outside of the United States
+
+## To do
+
+- Allow user selection of other apps to launch (FordPass, ChargePoint, EA, etc.)
+- Enable/disable some displayed information (OTA, location, etc.)
+- Support commands such as lock/unlock, remote start
 
 ## Credits
 
