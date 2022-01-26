@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = PreferenceManager
                 .getDefaultSharedPreferences(this);
 
+        context = this.getApplicationContext();
+
         WebView mWebView = findViewById(R.id.main_description);
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {

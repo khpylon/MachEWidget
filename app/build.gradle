@@ -21,7 +21,7 @@ android {
         applicationId "com.example.khughes.machewidget"
         minSdk 29
         targetSdk 31
-        versionCode 2
+        versionCode 3
         versionName VersionDate()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
