@@ -3,12 +3,13 @@
 ## Intro
 
 This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/tonesto7), which is in turn based on the earlier work of 
-[David Schablowsky](https://github.com/dschablowsky/FordPassWidget).  It is not a complete implementation of the functionality of his widget, as it:
+[David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps] (https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
+.  It is not a complete implementation of the functionality of their widgets, as it:
 - is only intended for the Ford Mustang Mach-E, as that's the only Ford I own
 - does not include all the function of tonesto7's Apple/iOS widget
 - does not currently support accounts outside of the United States
 
-<img src="app/src/main/res/drawable-nodpi/widget_preview.png" alt="Widget example" width="300" />
+<img src="app/src/main/res/drawable/appwidget_preview.png" alt="Widget example" width="300" />
 
 My purpose for hosting this code on GitHub under the GPL v3 license is to provide a starting point for anyone who wants to extend its functionality.
 
@@ -38,9 +39,11 @@ As listed above, this app
 Thanks to [tonesto7](https://github.com/tonesto7/fordpass-scriptable) for his work on the new widget, and to
 [dschablowsky](https://github.com/dschablowsky/FordPassWidget) for his work on the original widget, 
 [d4v3y0rk](https://github.com/d4v3y0rk) for finding out the information about the ford api.
+Thanks to [@DevSecOps](https://www.macheforum.com/site/members/devsecops.7076/) for on the [Mach-E Forums](https://www.macheforum.com/site/) 
+for his valuable input and help with updating the appearace of the widget and the premitting the use of the assets from his app.
 Additional thanks to [marco79cgn](https://github.com/marco79cgn) and [Tobias Battenberg](https://github.com/mountbatt) for your widgets.
 
-Many of the icons used in this app are derived from free ones found on [Icon8](https://icons8.com/); thanks to the original creators.
+A number of the icons used in this app are derived from free ones found on [Icon8](https://icons8.com/); thanks to the original creators.
 
 ## Disclaimer
 
