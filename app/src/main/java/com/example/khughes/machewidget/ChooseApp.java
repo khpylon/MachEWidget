@@ -2,10 +2,12 @@ package com.example.khughes.machewidget;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
@@ -70,9 +72,10 @@ public class ChooseApp extends AppCompatActivity {
     private class CustomAdapter implements ListAdapter {
         ArrayList<AppList> arrayList;
         Context context;
+
         public CustomAdapter(Context context, ArrayList<AppList> arrayList) {
-            this.arrayList=arrayList;
-            this.context=context;
+            this.arrayList = arrayList;
+            this.context = context;
         }
 
         @Override
@@ -117,10 +120,10 @@ public class ChooseApp extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            AppList subjectData=arrayList.get(position);
-            if(convertView==null){
+            AppList subjectData = arrayList.get(position);
+            if (convertView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                convertView=layoutInflater.inflate(R.layout.applist_row, null);
+                convertView = layoutInflater.inflate(R.layout.applist_row, null);
 //            convertView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
@@ -128,9 +131,9 @@ public class ChooseApp extends AppCompatActivity {
 //                    System.out.println(x);
 //                }
 //            });
-                TextView tittle=convertView.findViewById(R.id.title);
-                TextView app=convertView.findViewById(R.id.appname);
-                ImageView imag=convertView.findViewById(R.id.list_image);
+                TextView tittle = convertView.findViewById(R.id.title);
+                TextView app = convertView.findViewById(R.id.appname);
+                ImageView imag = convertView.findViewById(R.id.list_image);
 
                 tittle.setText(subjectData.appName);
                 app.setText(subjectData.packageName);
@@ -161,6 +164,9 @@ public class ChooseApp extends AppCompatActivity {
         ArrayList<AppList> arrayList = new ArrayList<AppList>();
         List<String> packages = Arrays.asList(getResources().getStringArray(R.array.packages));
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Boolean noFilter = sharedPref.getBoolean("showAllApps", false);
+
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
 
         // Set the newly created intent category to launcher
@@ -182,9 +188,11 @@ public class ChooseApp extends AppCompatActivity {
             ActivityInfo activityInfo = resolveInfo.activityInfo;
 
             String packName = resolveInfo.activityInfo.applicationInfo.packageName;
+            Boolean isSystemPackage = (resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
 
             // If this is not a system app package
-            if(packages.contains(packName)) {
+            if ((noFilter == true && !isSystemPackage) ||
+                    (noFilter == false && packages.contains(packName))) {
                 ApplicationInfo appInfo = resolveInfo.activityInfo.applicationInfo;
                 CharSequence appName = getPackageManager().getApplicationLabel(appInfo);
                 Drawable icon = context.getPackageManager().getApplicationIcon(appInfo);
@@ -208,6 +216,7 @@ public class ChooseApp extends AppCompatActivity {
         String appName;
         String packageName;
         Drawable icon;
+
         public AppList(String app, String pack, Drawable iconName) {
             this.appName = app;
             this.packageName = pack;

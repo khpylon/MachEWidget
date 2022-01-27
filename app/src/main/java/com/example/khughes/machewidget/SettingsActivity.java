@@ -1,5 +1,6 @@
 package com.example.khughes.machewidget;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -12,6 +13,8 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    private static Context mContext = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,13 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        mContext = this.getApplicationContext();
+    }
+
+    @Override
+    public void onDestroy() {
+        MainActivity.updateWidget(mContext);
+        super.onDestroy();
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
@@ -55,7 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
                                     }
                                 };
 
-                                editText.setFilters(new InputFilter[] {filter});
+                                editText.setFilters(new InputFilter[]{filter});
                             }
                         });
             }

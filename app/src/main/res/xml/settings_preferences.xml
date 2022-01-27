@@ -15,6 +15,18 @@
         app:title="@string/widget_update_frequency"
         app:useSimpleSummaryProvider="true" />
 
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:key="showAllApps"
+        app:singleLineTitle="false"
+        app:title="@string/choose_apps_title" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:key="transparentBackground"
+        app:singleLineTitle="false"
+        app:title="@string/transparent_back" />
+
     <!--
     <SwitchPreferenceCompat
         app:defaultValue="false"

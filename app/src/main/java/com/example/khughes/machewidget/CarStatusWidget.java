@@ -239,7 +239,13 @@ public class CarStatusWidget extends AppWidgetProvider {
                                  int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
 
+        // Setup actions for specific widgets
         setCallbacks(context, views);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean useTranparency = sharedPref.getBoolean("transparentBackground", false);
+        views.setInt(R.id.thewidget, "setBackgroundResource",
+                useTranparency ? R.color.transparent_black :  R.color.black);
 
         // If no status information, print something generic and return
         // TODO: also refresh the icons as if we're logged out?

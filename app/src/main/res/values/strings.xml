@@ -14,7 +14,8 @@
     <!-- Preference Titles -->
     <string name="VIN">"Your vehicle's VIN"</string>
     <string name="widget_update_frequency">Minutes between widget updates</string>
-    <string name="unit_title">Use Imperial Units (miles, psi, etc)</string>
+    <string name="choose_apps_title">Allow any app to be linked to \"charger\" widget </string>
+    <string name="transparent_back">Use transparent background</string>
     <string name="dark_mode_title">Use system dark mode settings</string>
     <string name="lastOTA">Time of last OTA change (this field is updated automatically)</string>
 
