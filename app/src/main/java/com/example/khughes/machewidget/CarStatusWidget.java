@@ -17,8 +17,11 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -220,6 +223,15 @@ public class CarStatusWidget extends AppWidgetProvider {
         return (status == null || status.equals("Closed"));
     }
 
+    // Set background transparency
+    private void setBackground(Context context, RemoteViews views) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean useTranparency = sharedPref.getBoolean("transparentBackground", false);
+        views.setInt(R.id.thewidget, "setBackgroundResource",
+                useTranparency ? R.color.transparent_black : R.color.black);
+
+    }
+
     protected PendingIntent getPendingSelfIntent(Context context, String action) {
         Intent intent = new Intent(context, getClass());
         intent.setAction(action);
@@ -242,10 +254,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Setup actions for specific widgets
         setCallbacks(context, views);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean useTranparency = sharedPref.getBoolean("transparentBackground", false);
-        views.setInt(R.id.thewidget, "setBackgroundResource",
-                useTranparency ? R.color.transparent_black :  R.color.black);
+        // Set background transparency
+        setBackground(context, views);
 
         // If no status information, print something generic and return
         // TODO: also refresh the icons as if we're logged out?
@@ -521,12 +531,17 @@ public class CarStatusWidget extends AppWidgetProvider {
             String OTArefresh;
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "");
-            String currentOTATime = OTAViewActivity.convertDate(otaStatus.getOTADateTime());
-            if (currentOTATime != null && currentOTATime.compareTo(lastOTATime) > 0) {
-                Notifications.newOTA(context);
-                OTArefresh = "New info found";
+            String currentUTCOTATime = otaStatus.getOTADateTime();
+            if (currentUTCOTATime == null) {
+                OTArefresh = "Unknown";
             } else {
-                OTArefresh = lastOTATime;
+                String currentOTATime = OTAViewActivity.convertDate(currentUTCOTATime);
+                if (currentOTATime != null && currentOTATime.compareTo(lastOTATime) > 0) {
+                    Notifications.newOTA(context);
+                    OTArefresh = "New info found";
+                } else {
+                    OTArefresh = lastOTATime;
+                }
             }
             views.setTextViewText(R.id.OTAInfo, OTArefresh);
         }
@@ -539,6 +554,10 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         setCallbacks(context, views);
 
+        // Set background transparency
+        setBackground(context, views);
+
+        // Reset everything else
         views.setTextViewText(R.id.lastRefresh, "Not logged in");
         views.setTextViewText(R.id.odometer, "Odo: N/A");
         views.setTextViewText(R.id.sleep, "Deep sleep: N/A");
@@ -549,8 +568,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.locationCity, "");
 
         views.setProgressBar(R.id.HBVChargeProgress, 100, 0, false);
-        views.setTextViewText(R.id.HVBChargePercent, "Charge N/A");
-        views.setTextViewText(R.id.GOM, "N/A");
+        views.setTextViewText(R.id.HVBChargePercent, "N/A");
+        views.setTextViewText(R.id.GOM, "");
         views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
 
         views.setImageViewResource(R.id.plug, R.drawable.plug_icon_gray);
@@ -565,6 +584,16 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setImageViewResource(R.id.front_doors, R.drawable.left_fr_cl_right_fr_cl);
         views.setImageViewResource(R.id.rear_doors, R.drawable.left_rr_cl_right_rr_cl);
 
+        views.setImageViewResource(R.id.lfwindow, R.drawable.filler);
+        views.setImageViewResource(R.id.rfwindow, R.drawable.filler);
+        views.setImageViewResource(R.id.lrwindow, R.drawable.filler);
+        views.setImageViewResource(R.id.rrwindow, R.drawable.filler);
+
+        updateTire(views, null, null, "", 1.0, R.id.lftire);
+        updateTire(views, null, null, "", 1.0, R.id.rftire);
+        updateTire(views, null, null, "", 1.0, R.id.lrtire);
+        updateTire(views, null, null, "", 1.0, R.id.rrtire);
+
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
@@ -572,29 +601,31 @@ public class CarStatusWidget extends AppWidgetProvider {
         Bitmap bmp = Bitmap.createBitmap(icon.getIntrinsicWidth(), icon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-//        Paint paint = new Paint();
-//        ColorMatrix cm = new ColorMatrix();
-//        cm.setSaturation(0);
-//        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
-//        paint.setColorFilter(f);
         icon.draw(canvas);
-//        canvas.drawBitmap(bmp, 0F, 0F, paint);
         views.setImageViewBitmap(id, bmp);
     }
 
-    private void updateLinkedApp(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    private void updateLinkedApps(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
         try {
             String appPackageName = new StoredData(context).getAppPackage();
-            Drawable icon = context.getApplicationContext().getPackageManager().getApplicationIcon(appPackageName);
-            if (icon != null) {
-                setImageBitmap(views, icon, R.id.chargerapp);
+            if (appPackageName != null) {
+                Drawable icon = context.getApplicationContext().getPackageManager().getApplicationIcon(appPackageName);
+                if (icon != null) {
+                    setImageBitmap(views, icon, R.id.chargerapp);
+                }
+            } else {
+                views.setImageViewResource(R.id.chargerapp, R.drawable.x_gray);
             }
-            //    icon = context.getApplicationContext().getPackageManager().getApplicationIcon(
-//                    context.getResources().getString(R.string.fordpassPackage));
-//            setImageBitmap(views, icon, R.id.fordpass);
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            views.setImageViewResource(R.id.chargerapp, R.drawable.x_gray);
+        }
+        try {
+            Drawable icon = context.getApplicationContext().getPackageManager().getApplicationIcon(
+                    context.getResources().getString(R.string.fordpassPackage));
+            setImageBitmap(views, icon, R.id.fordpass);
+        } catch (PackageManager.NameNotFoundException e) {
+            views.setImageViewResource(R.id.fordpass, R.drawable.fordpass_bw);
         }
         appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
@@ -609,10 +640,10 @@ public class CarStatusWidget extends AppWidgetProvider {
             if (!state.equals(ProgramStateMachine.States.INITIAL_STATE)) {
                 updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
                 updateAppWidget(context, appWidgetManager, appWidgetId);
-                updateLinkedApp(context, appWidgetManager, appWidgetId);
             } else {
                 updateAppLogout(context, appWidgetManager, appWidgetId);
             }
+            updateLinkedApps(context, appWidgetManager, appWidgetId);
         }
     }
 
@@ -648,10 +679,17 @@ public class CarStatusWidget extends AppWidgetProvider {
             }
         } else if (action.equals(CHARGER_CLICK)) {
             PackageManager pm = context.getApplicationContext().getPackageManager();
-            String appPackageName = new StoredData(context).getAppPackage();
-            intent = pm.getLaunchIntentForPackage(appPackageName);
-            if (intent != null) {
-                context.startActivity(intent);
+            StoredData appInfo = new StoredData(context);
+            String appPackageName = appInfo.getAppPackage();
+            if (appPackageName != null) {
+                intent = pm.getLaunchIntentForPackage(appPackageName);
+                if (intent != null) {
+                    context.startActivity(intent);
+                } else {
+                    appInfo.setAppPackage("");
+                    MainActivity.updateWidget(context);
+                    Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
+                }
             }
         } else if (action.equals(IGNITION_CLICK)) {
         } else {
