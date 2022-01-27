@@ -7,6 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.location.Address;
@@ -22,6 +28,8 @@ import java.text.DecimalFormatSymbols;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -33,13 +41,6 @@ import java.util.Map;
  */
 public class CarStatusWidget extends AppWidgetProvider {
     public static final String WIDGET_IDS_KEY = "com.example.khughes.machewidget.CARSTATUSWIDGET";
-
-    public static final String UPDATE_TYPE = "update_type";
-    public static final int UPDATE_CAR = 0;
-    public static final int UPDATE_OTA = UPDATE_CAR + 1;
-    public static final int LOGGED_OUT = UPDATE_OTA + 1;
-
-    private static int updateType = UPDATE_CAR;
 
     private static final String WIDGET_CLICK = "Widget";
     private static final String SETTINGS_CLICK = "SettingsButton";
@@ -84,8 +85,16 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private void updateTire(RemoteViews views, String pressure, String status,
                             String units, Double conversion, int id) {
+        // Set the textview background color based on the status
+        int drawable;
+        if (status != null && !status.equals("Normal")) {
+            drawable = R.drawable.pressure_oval_red;
+        } else {
+            drawable = R.drawable.pressure_oval;
+        }
+        views.setInt(id, "setBackgroundResource", drawable);
+
         // Get the tire pressure and do any conversion necessary.
-        int drawable = R.drawable.pressure_oval;
         if (pressure != null) {
             Double value = Double.valueOf(pressure) * conversion;
             pressure = MessageFormat.format("{0}{1}", new DecimalFormat("#", // "#.0",
@@ -94,11 +103,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         } else {
             pressure = "N/A";
         }
-        // If the status is not good, change the textview background color
-        if (status != null && !status.equals("Normal")) {
-            drawable = R.drawable.pressure_oval_red;
-        }
-        views.setInt(id, "setBackgroundResource", drawable);
         views.setTextViewText(id, pressure);
     }
 
@@ -222,16 +226,20 @@ public class CarStatusWidget extends AppWidgetProvider {
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
-    private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                 int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
-
+    private void setCallbacks(Context context, RemoteViews views) {
         // Define actions for clicking on various icons, including the widget itself
         views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, WIDGET_CLICK));
         views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
         views.setOnClickPendingIntent(R.id.fordpass, getPendingSelfIntent(context, FORDPASS_CLICK));
         views.setOnClickPendingIntent(R.id.chargerapp, getPendingSelfIntent(context, CHARGER_CLICK));
 //        views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, IGNITION_CLICK));
+    }
+
+    private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                 int appWidgetId) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+
+        setCallbacks(context, views);
 
         // If no status information, print something generic and return
         // TODO: also refresh the icons as if we're logged out?
@@ -523,6 +531,8 @@ public class CarStatusWidget extends AppWidgetProvider {
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
 
+        setCallbacks(context, views);
+
         views.setTextViewText(R.id.lastRefresh, "Not logged in");
         views.setTextViewText(R.id.odometer, "Odo: N/A");
         views.setTextViewText(R.id.sleep, "Deep sleep: N/A");
@@ -552,20 +562,50 @@ public class CarStatusWidget extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
+    private void setImageBitmap(RemoteViews views, Drawable icon, int id) {
+        Bitmap bmp = Bitmap.createBitmap(icon.getIntrinsicWidth(), icon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+        icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//        Paint paint = new Paint();
+//        ColorMatrix cm = new ColorMatrix();
+//        cm.setSaturation(0);
+//        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+//        paint.setColorFilter(f);
+        icon.draw(canvas);
+//        canvas.drawBitmap(bmp, 0F, 0F, paint);
+        views.setImageViewBitmap(id, bmp);
+    }
+
+    private void updateLinkedApp(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+        try {
+            String appPackageName = new StoredData(context).getAppPackage();
+            Drawable icon = context.getApplicationContext().getPackageManager().getApplicationIcon(appPackageName);
+            if (icon != null) {
+                setImageBitmap(views, icon, R.id.chargerapp);
+            }
+            //    icon = context.getApplicationContext().getPackageManager().getApplicationIcon(
+//                    context.getResources().getString(R.string.fordpassPackage));
+//            setImageBitmap(views, icon, R.id.fordpass);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+    }
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        StoredData appInfo = new StoredData(context);
+        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState()).getCurrentState();
+
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            switch (updateType) {
-                case UPDATE_CAR:
-                    updateAppWidget(context, appWidgetManager, appWidgetId);
-                    break;
-                case UPDATE_OTA:
-                    updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
-                    break;
-                default:
-                    updateAppLogout(context, appWidgetManager, appWidgetId);
-                    break;
+            if (!state.equals(ProgramStateMachine.States.INITIAL_STATE)) {
+                updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
+                updateAppWidget(context, appWidgetManager, appWidgetId);
+                updateLinkedApp(context, appWidgetManager, appWidgetId);
+            } else {
+                updateAppLogout(context, appWidgetManager, appWidgetId);
             }
         }
     }
@@ -585,9 +625,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         String action = intent.getAction();
         if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE) && intent.hasExtra(WIDGET_IDS_KEY)) {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
-            if (intent.hasExtra(UPDATE_TYPE)) {
-                updateType = intent.getExtras().getInt(UPDATE_TYPE);
-            }
             this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
         } else if (action.equals(WIDGET_CLICK)) {
             intent = new Intent(context, MainActivity.class);
@@ -599,14 +636,14 @@ public class CarStatusWidget extends AppWidgetProvider {
             context.startActivity(intent);
         } else if (action.equals(FORDPASS_CLICK)) {
             PackageManager pm = context.getApplicationContext().getPackageManager();
-            intent = pm.getLaunchIntentForPackage("com.ford.fordpass");
+            intent = pm.getLaunchIntentForPackage(context.getResources().getString(R.string.fordpassPackage));
             if (intent != null) {
                 context.startActivity(intent);
             }
         } else if (action.equals(CHARGER_CLICK)) {
             PackageManager pm = context.getApplicationContext().getPackageManager();
-            //
-            intent = pm.getLaunchIntentForPackage("com.coulombtech");
+            String appPackageName = new StoredData(context).getAppPackage();
+            intent = pm.getLaunchIntentForPackage(appPackageName);
             if (intent != null) {
                 context.startActivity(intent);
             }

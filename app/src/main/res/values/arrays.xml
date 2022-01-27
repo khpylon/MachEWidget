@@ -5,4 +5,22 @@
         <item>30</item>
         <item>60</item>
     </string-array>
+
+    <string-array name="packages">
+        <item>com.ford.fordpass</item>
+        <item>com.coulombtech</item>
+        <item>com.iternio.abrpapp</item>
+        <item>com.crosschasm.evchargerlocator</item>
+        <item>net.chargeway.chargeway</item>
+        <item>com.ea.evowner</item>
+        <item>com.evconnect.ionic</item>
+        <item>com.driivz.mobile.android.evgo.driver</item>
+        <item>com.zecosystems.greenlots</item>
+        <item>com.xatori.Plugshare</item>
+        <item>com.waze</item>
+        <item>com.blinknetwork.blink</item>
+        <item>com.cleevio.ionity.android.app</item>
+        <item>com.addenergie.reseauver</item>
+    </string-array>
+
 </resources>

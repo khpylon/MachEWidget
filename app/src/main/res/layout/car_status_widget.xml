@@ -177,11 +177,11 @@
         android:id="@+id/chargerapp"
         android:layout_width="32dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="8dp"
-        android:src="@drawable/chargepoint_bw2"
         android:layout_below="@id/filler2"
+        android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/fordpass"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:src="@drawable/x_gray" />
 
     <LinearLayout
         android:id="@+id/box1"

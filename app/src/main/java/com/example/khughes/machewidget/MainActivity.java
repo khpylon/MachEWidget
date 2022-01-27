@@ -19,6 +19,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -33,6 +36,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -72,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
         mWebView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+
+        updateWidget(context);
 
         // Allow the app to display notifications
         createNotificationChannel();
@@ -120,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 appInfo.setAccessToken("");
                 appInfo.setProgramState(ProgramStateMachine.States.INITIAL_STATE);
                 StatusReceiver.cancelAlarm(context);
-                updateWidgetLoggedOut(context);
+                updateWidget(context);
                 Toast.makeText(context, "Removing authentication token", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.action_refresh:
@@ -128,9 +134,12 @@ public class MainActivity extends AppCompatActivity {
                 StatusReceiver.nextAlarm(context, 5);
                 Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.action_chooseapp:
+                settingsIntent = new Intent(this, ChooseApp.class);
+                startActivity(settingsIntent);
+                return true;
             case R.id.action_ota_view:
-                settingsIntent = new Intent(this,
-                        OTAViewActivity.class);
+                settingsIntent = new Intent(this, OTAViewActivity.class);
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_settings:
@@ -187,26 +196,12 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public static void updateWidgetCarStatus(Context context) {
-        updateWidget(context, CarStatusWidget.UPDATE_CAR);
-    }
-
-    public static void updateWidgetOTAStatus(Context context) {
-        updateWidget(context, CarStatusWidget.UPDATE_OTA);
-    }
-
-    public static void updateWidgetLoggedOut(Context context) {
-        updateWidget(context, CarStatusWidget.LOGGED_OUT);
-    }
-
-    private static void updateWidget(Context context, int updateType) {
+    public static void updateWidget(Context context) {
         AppWidgetManager man = AppWidgetManager.getInstance(context);
-
         int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget.class));
         Intent updateIntent = new Intent();
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         updateIntent.putExtra(CarStatusWidget.WIDGET_IDS_KEY, ids);
-        updateIntent.putExtra(CarStatusWidget.UPDATE_TYPE, updateType);
         context.sendBroadcast(updateIntent);
     }
 

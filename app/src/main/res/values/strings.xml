@@ -4,6 +4,7 @@
     <string name="action_login">Ford Log-in</string>
     <string name="action_logout">Ford Log-out</string>
     <string name="action_OTA">OTA Update Info</string>
+    <string name="action_chooseapp">Choose Linked Apps</string>
     <string name="action_refresh">Refresh</string>
 
     <!-- Widget things -->
@@ -26,6 +27,7 @@
     <!-- Default value for last known OTA update time-->
     <string name="unknown_OTA_time">Unknown</string>
     <string name="last_ota_time">LastOTATime</string>
-    <string name="appwidget_text">EXAMPLE</string>
+
+    <string name="fordpassPackage">"com.ford.fordpass"</string>
 
 </resources>

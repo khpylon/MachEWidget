@@ -96,7 +96,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 Log.d(MainActivity.CHANNEL_ID, "Status: " + action);
                 appInfo.setProgramState(action);
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
-                    MainActivity.updateWidgetCarStatus(mContext);
+                    MainActivity.updateWidget(mContext);
                 }
             }
         };
@@ -110,7 +110,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
-                    MainActivity.updateWidgetOTAStatus(mContext);
+                    MainActivity.updateWidget(mContext);
                 }
             }
         };

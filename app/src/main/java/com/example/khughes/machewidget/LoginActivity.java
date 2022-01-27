@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(MainActivity.CHANNEL_ID,"Status: " + action);
                 appInfo.setProgramState(action);
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
-                    MainActivity.updateWidgetCarStatus(getApplicationContext());
+                    MainActivity.updateWidget(getApplicationContext());
                     StatusReceiver.nextAlarm(getApplicationContext());
                     getOTAStatus(accessToken);
                     setResult(Activity.RESULT_OK);
@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS) ||
                         action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN)) {
-                    MainActivity.updateWidgetOTAStatus(getApplicationContext());
+                    MainActivity.updateWidget(getApplicationContext());
                 }
             }
         };

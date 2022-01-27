@@ -2,6 +2,7 @@ package com.example.khughes.machewidget;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,6 +24,7 @@ public class StoredData {
     private static final String SPEEDUNITS = "SpeedUnits";
     private static final String DISTANCEUNITS = "DistanceUnits";
     private static final String PRESSUREUNITS = "PressureUnits";
+    private static final String APPPACKAGE = "AppPackage";
     public static final String GOOD = "Good";
     public static final String BAD = "Bad";
     public static final String UGLY = "Ugly";
@@ -188,6 +190,18 @@ public class StoredData {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putString(PRESSUREUNITS, units);
+        edit.commit();
+    }
+
+    public String getAppPackage() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return pref.getString(APPPACKAGE, null);
+    }
+
+    public void setAppPackage(String name) {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString(APPPACKAGE, name);
         edit.commit();
     }
 

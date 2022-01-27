@@ -4,11 +4,10 @@
     android:initialKeyguardLayout="@layout/car_status_widget"
     android:initialLayout="@layout/car_status_widget"
     android:minWidth="312dp"
-    android:minHeight="250dp"
+    android:minHeight="276dp"
     android:previewImage="@drawable/appwidget_preview"
-
-    android:previewLayout="@layout/car_status_widget"
     android:targetCellWidth="5"
-    android:targetCellHeight="4"
+    android:targetCellHeight="5"
     android:updatePeriodMillis="86400000"
     android:widgetCategory="home_screen" />
+    <!--    android:previewLayout="@layout/car_status_widget" -->
