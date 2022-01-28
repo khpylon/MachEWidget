@@ -58,11 +58,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false);
-        SharedPreferences sharedPref = PreferenceManager
-                .getDefaultSharedPreferences(this);
-
         context = this.getApplicationContext();
 
         WebView mWebView = findViewById(R.id.main_description);
@@ -110,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // Only enable "Choose Linked Apps" if app buttons are enabled
+        Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
+        menu.findItem(R.id.action_chooseapp).setEnabled(showAppLinks);
+
         return true;
     }
 

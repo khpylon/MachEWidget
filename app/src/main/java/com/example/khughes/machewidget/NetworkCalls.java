@@ -175,7 +175,7 @@ public class NetworkCalls {
         ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS);
         ProgramStateMachine.States nextState;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String VIN = sharedPref.getString("VIN", "Null");
+        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
 
         if (!MainActivity.checkInternetConnection(context)) {
             nextState = state.FSM(false, true, false, false, false);
@@ -241,7 +241,7 @@ public class NetworkCalls {
         ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS);
         ProgramStateMachine.States nextState;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String VIN = sharedPref.getString("VIN", "Null");
+        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
         String country = appInfo.getCountry();
 
         if (!MainActivity.checkInternetConnection(context)) {

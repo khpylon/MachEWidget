@@ -164,22 +164,22 @@
         android:src="@drawable/settings" />
 
     <ImageView
-        android:id="@+id/fordpass"
+        android:id="@+id/leftappbutton"
         android:layout_width="32dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="8dp"
-        android:src="@drawable/fordpass_bw"
         android:layout_below="@id/filler2"
+        android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/settings"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:src="@drawable/x_gray" />
 
     <ImageView
-        android:id="@+id/chargerapp"
+        android:id="@+id/rightappbutton"
         android:layout_width="32dp"
         android:layout_height="40dp"
         android:layout_below="@id/filler2"
         android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@id/fordpass"
+        android:layout_toRightOf="@id/leftappbutton"
         android:layout_weight="1"
         android:src="@drawable/x_gray" />
 

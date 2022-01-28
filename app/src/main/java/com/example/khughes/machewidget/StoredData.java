@@ -24,7 +24,9 @@ public class StoredData {
     private static final String SPEEDUNITS = "SpeedUnits";
     private static final String DISTANCEUNITS = "DistanceUnits";
     private static final String PRESSUREUNITS = "PressureUnits";
-    private static final String APPPACKAGE = "AppPackage";
+
+    public static final String LEFTAPPPACKAGE = "LeftAppPackage";
+    public static final String RIGHTAPPPACKAGE = "RightAppPackage";
     public static final String GOOD = "Good";
     public static final String BAD = "Bad";
     public static final String UGLY = "Ugly";
@@ -193,17 +195,30 @@ public class StoredData {
         edit.commit();
     }
 
-    public String getAppPackage() {
+    public String getLeftAppPackage() {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-        return pref.getString(APPPACKAGE, null);
+        return pref.getString(LEFTAPPPACKAGE, "com.ford.fordpass");
     }
 
-    public void setAppPackage(String name) {
+    public void setLeftAppPackage(String name) {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
-        edit.putString(APPPACKAGE, name);
+        edit.putString(LEFTAPPPACKAGE, name);
         edit.commit();
     }
+
+    public String getRightAppPackage() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return pref.getString(RIGHTAPPPACKAGE, null);
+    }
+
+    public void setRightAppPackage(String name) {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString(RIGHTAPPPACKAGE, name);
+        edit.commit();
+    }
+
 
     public int getCounter(String key) {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);

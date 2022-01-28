@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
@@ -47,9 +48,15 @@ public class ChooseApp extends AppCompatActivity {
             CustomAdapter customAdapter = new CustomAdapter(this, arrayList);
             list.setAdapter(customAdapter);
             list.setOnItemClickListener((adapterView, view, i, l) -> {
+                RadioButton right = findViewById(R.id.rightIcon);
+                Boolean rightButton = right.isChecked();
                 AppList app = arrayList.get(i);
                 StoredData appInfo = new StoredData(getApplicationContext());
-                appInfo.setAppPackage(app.packageName);
+                if (rightButton == false) {
+                    appInfo.setLeftAppPackage(app.packageName);
+                } else {
+                    appInfo.setRightAppPackage(app.packageName);
+                }
                 MainActivity.updateWidget(getApplicationContext());
                 finish();
             });
@@ -165,7 +172,7 @@ public class ChooseApp extends AppCompatActivity {
         List<String> packages = Arrays.asList(getResources().getStringArray(R.array.packages));
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Boolean noFilter = sharedPref.getBoolean("showAllApps", false);
+        Boolean noFilter = sharedPref.getBoolean(context.getResources().getString(R.string.show_all_apps_key), false);
 
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
 

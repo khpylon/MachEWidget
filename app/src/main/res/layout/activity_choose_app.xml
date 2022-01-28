@@ -10,7 +10,43 @@
         android:layout_width = "match_parent"
         android:layout_height = "match_parent"
         android:orientation = "vertical">
-    <ListView
+
+    <RelativeLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:orientation = "horizontal">
+
+        <TextView
+            android:id="@+id/textview"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center_vertical"
+            android:text="Choose which button: "/>
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/textview"
+            android:layout_alignTop="@id/textview"
+            android:layout_marginLeft="4dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="Left Button" />
+
+            <RadioButton
+                android:id="@+id/rightIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Right Button" />
+        </RadioGroup>
+    </RelativeLayout>
+
+        <ListView
         android:id = "@+id/list"
         android:layout_width = "wrap_content"
         android:layout_height = "match_parent"

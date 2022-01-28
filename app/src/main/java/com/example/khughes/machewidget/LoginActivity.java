@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         VINWidget = findViewById(R.id.VIN);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        VIN = sharedPref.getString("VIN", "");
+        VIN = sharedPref.getString(this.getResources().getString(R.string.VIN_key), "");
         if (!VIN.equals("")) {
             VINWidget.getEditText().setText(VIN);
         }
@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     if (!newVIN.equals(VIN)) {
                         VIN = newVIN;
-                        sharedPref.edit().putString("VIN", VIN).apply();
+                        sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
                     }
                     appInfo.setProgramState(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
                     getAccess(username, password);

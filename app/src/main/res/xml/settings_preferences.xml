@@ -17,15 +17,23 @@
 
     <SwitchPreferenceCompat
         app:defaultValue="false"
+        app:key="transparentBackground"
+        app:singleLineTitle="false"
+        app:title="@string/transparent_back" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:key="showAppLinks"
+        app:singleLineTitle="false"
+        app:title="Enable app launcher buttons" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:dependency="showAppLinks"
         app:key="showAllApps"
         app:singleLineTitle="false"
         app:title="@string/choose_apps_title" />
 
-    <SwitchPreferenceCompat
-        app:defaultValue="false"
-        app:key="transparentBackground"
-        app:singleLineTitle="false"
-        app:title="@string/transparent_back" />
 
     <!--
     <SwitchPreferenceCompat

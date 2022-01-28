@@ -9,17 +9,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.Build;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -31,8 +26,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -47,8 +40,8 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private static final String WIDGET_CLICK = "Widget";
     private static final String SETTINGS_CLICK = "SettingsButton";
-    private static final String FORDPASS_CLICK = "FordPassButton";
-    private static final String CHARGER_CLICK = "ChargerButton";
+    private static final String LEFT_BUTTON_CLICK = "FordPassButton";
+    private static final String RIGHT_BUTTON_CLICK = "ChargerButton";
     private static final String IGNITION_CLICK = "IgnitionButton";
 
     private static final String CHARGING_STATUS_NOT_READY = "NotReady";
@@ -226,10 +219,9 @@ public class CarStatusWidget extends AppWidgetProvider {
     // Set background transparency
     private void setBackground(Context context, RemoteViews views) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean useTranparency = sharedPref.getBoolean("transparentBackground", false);
+        Boolean useTranparency = sharedPref.getBoolean(context.getResources().getString(R.string.transp_bg_key), false);
         views.setInt(R.id.thewidget, "setBackgroundResource",
                 useTranparency ? R.color.transparent_black : R.color.black);
-
     }
 
     protected PendingIntent getPendingSelfIntent(Context context, String action) {
@@ -242,8 +234,16 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Define actions for clicking on various icons, including the widget itself
         views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, WIDGET_CLICK));
         views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
-        views.setOnClickPendingIntent(R.id.fordpass, getPendingSelfIntent(context, FORDPASS_CLICK));
-        views.setOnClickPendingIntent(R.id.chargerapp, getPendingSelfIntent(context, CHARGER_CLICK));
+
+        Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean( context.getResources().getString(R.string.show_app_links_key) , true);
+        if (showAppLinks) {
+            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, LEFT_BUTTON_CLICK));
+            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, RIGHT_BUTTON_CLICK));
+        } else {
+            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
+        }
 //        views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, IGNITION_CLICK));
     }
 
@@ -598,34 +598,41 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void setImageBitmap(RemoteViews views, Drawable icon, int id) {
-        Bitmap bmp = Bitmap.createBitmap(icon.getIntrinsicWidth(), icon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        int size = (icon.getIntrinsicWidth() <= 96) ? icon.getIntrinsicWidth() : 96;
+        Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         icon.draw(canvas);
         views.setImageViewBitmap(id, bmp);
     }
 
-    private void updateLinkedApps(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+    private void setAppBitmap(Context context, RemoteViews views, String appPackageName, int id) {
         try {
-            String appPackageName = new StoredData(context).getAppPackage();
             if (appPackageName != null) {
                 Drawable icon = context.getApplicationContext().getPackageManager().getApplicationIcon(appPackageName);
                 if (icon != null) {
-                    setImageBitmap(views, icon, R.id.chargerapp);
+                    setImageBitmap(views, icon, id);
                 }
             } else {
-                views.setImageViewResource(R.id.chargerapp, R.drawable.x_gray);
+                views.setImageViewResource(id, R.drawable.x_gray);
             }
         } catch (PackageManager.NameNotFoundException e) {
-            views.setImageViewResource(R.id.chargerapp, R.drawable.x_gray);
+            views.setImageViewResource(id, R.drawable.x_gray);
         }
-        try {
-            Drawable icon = context.getApplicationContext().getPackageManager().getApplicationIcon(
-                    context.getResources().getString(R.string.fordpassPackage));
-            setImageBitmap(views, icon, R.id.fordpass);
-        } catch (PackageManager.NameNotFoundException e) {
-            views.setImageViewResource(R.id.fordpass, R.drawable.fordpass_bw);
+    }
+
+    private void updateLinkedApps(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+
+        Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean( context.getResources().getString(R.string.show_app_links_key) , true);
+
+        if (showAppLinks) {
+            setAppBitmap(context, views, new StoredData(context).getLeftAppPackage(), R.id.leftappbutton);
+            setAppBitmap(context, views, new StoredData(context).getRightAppPackage(), R.id.rightappbutton);
+        } else {
+            views.setImageViewResource(R.id.leftappbutton, R.drawable.filler);
+            views.setImageViewResource(R.id.rightappbutton, R.drawable.filler);
         }
         appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
@@ -671,22 +678,30 @@ public class CarStatusWidget extends AppWidgetProvider {
             intent = new Intent(context, SettingsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
-        } else if (action.equals(FORDPASS_CLICK)) {
-            PackageManager pm = context.getApplicationContext().getPackageManager();
-            intent = pm.getLaunchIntentForPackage(context.getResources().getString(R.string.fordpassPackage));
-            if (intent != null) {
-                context.startActivity(intent);
-            }
-        } else if (action.equals(CHARGER_CLICK)) {
-            PackageManager pm = context.getApplicationContext().getPackageManager();
+        } else if (action.equals(LEFT_BUTTON_CLICK)) {
             StoredData appInfo = new StoredData(context);
-            String appPackageName = appInfo.getAppPackage();
+            String appPackageName = appInfo.getLeftAppPackage();
             if (appPackageName != null) {
+                PackageManager pm = context.getApplicationContext().getPackageManager();
                 intent = pm.getLaunchIntentForPackage(appPackageName);
                 if (intent != null) {
                     context.startActivity(intent);
                 } else {
-                    appInfo.setAppPackage("");
+                    appInfo.setLeftAppPackage("");
+                    MainActivity.updateWidget(context);
+                    Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
+                }
+            }
+        } else if (action.equals(RIGHT_BUTTON_CLICK)) {
+            StoredData appInfo = new StoredData(context);
+            String appPackageName = appInfo.getRightAppPackage();
+            if (appPackageName != null) {
+                PackageManager pm = context.getApplicationContext().getPackageManager();
+                intent = pm.getLaunchIntentForPackage(appPackageName);
+                if (intent != null) {
+                    context.startActivity(intent);
+                } else {
+                    appInfo.setRightAppPackage("");
                     MainActivity.updateWidget(context);
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }

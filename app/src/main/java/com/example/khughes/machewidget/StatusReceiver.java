@@ -119,7 +119,7 @@ public class StatusReceiver extends BroadcastReceiver {
 
     public static void nextAlarm(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        int delay = new Integer(sharedPref.getString("update_frequency", "10")) * 60;
+        int delay = new Integer(sharedPref.getString( context.getResources().getString(R.string.update_frequency_key), "10")) * 60;
         nextAlarm(context, delay);
     }
 
