@@ -24,6 +24,7 @@ public class NetworkCalls {
     private static AccessTokenService OAuth2Client = AccessTokenServiceGenerator.createOAuth2Service(AccessTokenService.class);
     private static StatusService statusClient = StatusServiceGenerator.createService(StatusService.class);
     private static OTAStatusService OTAstatusClient = OTAStatusServiceGenerator.createService(OTAStatusService.class);
+    private static CommandService commandServiceClient = CommandServiceGenerator.createService(CommandService.class);
 
     public static void getAccessToken(Handler handler, Context context, String username, String password) {
         Thread t = new Thread(new Runnable() {
@@ -271,5 +272,94 @@ public class NetworkCalls {
         data.putExtra("action", nextState.name());
         return data;
     }
+
+    public static void remoteStart(Handler handler, Context context, String token) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = NetworkCalls.execCommand(context, token, "engine", "start", "put" );
+                Message m = Message.obtain();
+                m.setData(intent.getExtras());
+                handler.sendMessage(m);
+            }
+        });
+        t.start();
+    }
+
+    public static void remoteStop(Handler handler, Context context, String token) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = NetworkCalls.execCommand(context, token, "engine", "start", "delete" );
+                Message m = Message.obtain();
+                m.setData(intent.getExtras());
+                handler.sendMessage(m);
+            }
+        });
+        t.start();
+    }
+
+    public static void lockDoors(Handler handler, Context context, String token) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = NetworkCalls.execCommand(context, token, "doors", "lock", "put" );
+                Message m = Message.obtain();
+                m.setData(intent.getExtras());
+                handler.sendMessage(m);
+            }
+        });
+        t.start();
+    }
+
+    public static void unlockDoors(Handler handler, Context context, String token) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = NetworkCalls.execCommand(context, token, "doors", "lock", "delete" );
+                Message m = Message.obtain();
+                m.setData(intent.getExtras());
+                handler.sendMessage(m);
+            }
+        });
+        t.start();
+    }
+
+    private static Intent execCommand(Context context, String token, String component, String operation, String request) {
+        Intent data = new Intent();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
+        StoredData appInfo = new StoredData(context);
+        String country = appInfo.getCountry();
+
+        if (!MainActivity.checkInternetConnection(context)) {
+            data.putExtra("action", "Network down");
+        }
+        else {
+            Call<CommandStatus> call = null;
+            if(request.equals("put")) {
+                call = commandServiceClient.putCommand(token, VIN, component, operation);
+            } else {
+                call = commandServiceClient.deleteCommand(token, VIN, component, operation);
+            }
+            try {
+                Response<CommandStatus> response = call.execute();
+                if (response.isSuccessful()) {
+                    data.putExtra("action", "success");
+                    Log.i(MainActivity.CHANNEL_ID, "CMD successful....");
+                } else {
+                    data.putExtra("action", "failed");
+                    Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
+                    Log.i(MainActivity.CHANNEL_ID, "CMD UNSUCCESSFUL....");
+                }
+            } catch (IOException e) {
+                data.putExtra("action", "exception");
+                Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.putCommadn: ", e);
+            }
+        }
+        return data;
+    }
+
+
 
 }

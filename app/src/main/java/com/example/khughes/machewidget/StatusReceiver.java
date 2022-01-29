@@ -26,9 +26,10 @@ public class StatusReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent arg1) {
+        final int Millis = 1000;
+
         mContext = context;
         nextAlarm(mContext);
-
         appInfo = new StoredData(context);
         long timeout = appInfo.getTokenTimeout();
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
@@ -36,10 +37,15 @@ public class StatusReceiver extends BroadcastReceiver {
 
         ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState()).getCurrentState();
 
-        Log.d(MainActivity.CHANNEL_ID, "times are " + (timeout / 1000 - nowtime / 1000) + ", state is " + state.name());
+        Log.d(MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name());
 
         if (state.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
-            if (timeout + 5000 < nowtime) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            int delayInMillis = new Integer(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
+
+            // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
+            // the next update.
+            if (timeout + 5 * Millis < nowtime - delayInMillis) {
                 getRefresh(appInfo.getRefreshToken());
             } else {
                 getStatus(appInfo.getAccessToken());
@@ -80,7 +86,8 @@ public class StatusReceiver extends BroadcastReceiver {
                     LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
                     long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                     appInfo.setTokenTimeout(nextTime);
-                    getStatus(accessToken);getOTAStatus(accessToken);
+                    getStatus(accessToken);
+                    getOTAStatus(accessToken);
                 }
             }
         };
@@ -119,7 +126,7 @@ public class StatusReceiver extends BroadcastReceiver {
 
     public static void nextAlarm(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        int delay = new Integer(sharedPref.getString( context.getResources().getString(R.string.update_frequency_key), "10")) * 60;
+        int delay = new Integer(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60;
         nextAlarm(context, delay);
     }
 

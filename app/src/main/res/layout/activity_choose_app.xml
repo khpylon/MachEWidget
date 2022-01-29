@@ -21,28 +21,31 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:gravity="center_vertical"
-            android:text="Choose which button: "/>
+            android:typeface="sans"
+            android:padding="8dp"
+            android:text="Link app to "/>
 
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/textview"
             android:layout_alignTop="@id/textview"
-            android:layout_marginLeft="4dp"
             android:orientation="horizontal">
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
-                android:text="Left Button" />
+                android:typeface="sans"
+                android:text="Left button" />
 
             <RadioButton
                 android:id="@+id/rightIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Right Button" />
+                android:typeface="sans"
+                android:text="Right button" />
         </RadioGroup>
     </RelativeLayout>
 

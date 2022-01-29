@@ -14,6 +14,10 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -26,6 +30,8 @@ import java.text.DecimalFormatSymbols;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +49,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private static final String LEFT_BUTTON_CLICK = "FordPassButton";
     private static final String RIGHT_BUTTON_CLICK = "ChargerButton";
     private static final String IGNITION_CLICK = "IgnitionButton";
+    private static final String LOCK_CLICK = "LockButton";
 
     private static final String CHARGING_STATUS_NOT_READY = "NotReady";
     private static final String CHARGING_STATUS_CHARGING_AC = "ChargingAC";
@@ -236,7 +243,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
 
         Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean( context.getResources().getString(R.string.show_app_links_key) , true);
+                .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {
             views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, LEFT_BUTTON_CLICK));
             views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, RIGHT_BUTTON_CLICK));
@@ -244,7 +251,16 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
             views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
         }
-//        views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, IGNITION_CLICK));
+
+        Boolean enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.enable_commands_key), false);
+        if (enableCommands) {
+            views.setOnClickPendingIntent(R.id.lock, getPendingSelfIntent(context, LOCK_CLICK));
+            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, IGNITION_CLICK));
+        } else {
+            views.setOnClickPendingIntent(R.id.lock, getPendingSelfIntent(context, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, WIDGET_CLICK));
+        }
     }
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -625,7 +641,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
 
         Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean( context.getResources().getString(R.string.show_app_links_key) , true);
+                .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
 
         if (showAppLinks) {
             setAppBitmap(context, views, new StoredData(context).getLeftAppPackage(), R.id.leftappbutton);
@@ -635,6 +651,44 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setImageViewResource(R.id.rightappbutton, R.drawable.filler);
         }
         appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+    }
+
+    private Bundle bb = new Bundle();
+
+    private void start(Context context) {
+        Handler h = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                bb = msg.getData();
+                String xx = bb.getString("action");
+                Toast.makeText(context, xx, Toast.LENGTH_LONG).show();
+            }
+        };
+        NetworkCalls.remoteStart(h, context, new StoredData(context).getAccessToken());
+    }
+
+    private void lock(Context context) {
+        Handler h = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                bb = msg.getData();
+                String xx = bb.getString("action");
+                Toast.makeText(context, xx, Toast.LENGTH_LONG).show();
+            }
+        };
+        NetworkCalls.lockDoors(h, context, new StoredData(context).getAccessToken());
+    }
+
+    private void unlock(Context context) {
+        Handler h = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                bb = msg.getData();
+                String xx = bb.getString("action");
+                Toast.makeText(context, xx, Toast.LENGTH_LONG).show();
+            }
+        };
+        NetworkCalls.unlockDoors(h, context, new StoredData(context).getAccessToken());
     }
 
     @Override
@@ -663,6 +717,9 @@ public class CarStatusWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
     }
+
+    private static long lastIgnitionClicktime = 0;
+    private static long lastLockClicktime = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -706,7 +763,34 @@ public class CarStatusWidget extends AppWidgetProvider {
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }
             }
+        } else if (action.equals(LOCK_CLICK)) {
+            // Avoid performing the action on a single press (in case the widget is accidentally
+            // touched): require two presses within 500 ms of one another to activate.
+            LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+            long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            if (nowtime - lastLockClicktime < 500) {
+                CarStatus carStatus = new StoredData(context).getCarStatus();
+                if (carStatus != null && carStatus.getLock() != null) {
+                    if (carStatus.getLock().equals("LOCKED")) {
+                        unlock(context);
+                    } else {
+                        lock(context);
+                    }
+                }
+            }
+            lastLockClicktime = nowtime;
         } else if (action.equals(IGNITION_CLICK)) {
+            LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+            long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            if (nowtime - lastIgnitionClicktime < 500) {
+                CarStatus carStatus = new StoredData(context).getCarStatus();
+                if (carStatus != null && carStatus.getIgnition() != null) {
+                    if (carStatus.getIgnition().equals("Off")) {
+                        start(context);
+                    }
+                }
+            }
+            lastIgnitionClicktime = nowtime;
         } else {
             super.onReceive(context, intent);
         }

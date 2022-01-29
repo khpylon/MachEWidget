@@ -19,14 +19,16 @@
     <!-- Preference Titles -->
     <string name="VIN">"Your vehicle's VIN"</string>
     <string name="widget_update_frequency">Minutes between widget updates</string>
+    <string name="enable_commands">Enable lock and start commands on widget double-tap</string>
+    <string name="enable_app_launchers">Enable app launcher buttons</string>
     <string name="choose_apps_title">Allow any app to be linked to \"charger\" widget </string>
     <string name="transparent_back">Use transparent background</string>
-    <string name="dark_mode_title">Use system dark mode settings</string>
 
     <!-- Shared preference keys -->
     <string name="VIN_key">"VIN"</string>
     <string name="update_frequency_key">"update_frequency"</string>
     <string name="transp_bg_key">"transparentBackground"</string>
+    <string name="enable_commands_key">enableCommands</string>
     <string name="show_app_links_key">"showAppLinks"</string>
     <string name="show_all_apps_key">"showAllApps"</string>
 

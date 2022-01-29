@@ -1,38 +1,44 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
-        app:key="VIN"
+        app:key="@string/VIN_key"
         app:title="@string/VIN"
         app:useSimpleSummaryProvider="true" />
 
     <ListPreference
+        app:key="@string/update_frequency_key"
         app:defaultValue="30"
         app:entries="@array/pref_update_values"
         app:entryValues="@array/pref_update_values"
-        app:key="update_frequency"
         app:negativeButtonText="@null"
         app:positiveButtonText="@null"
         app:title="@string/widget_update_frequency"
         app:useSimpleSummaryProvider="true" />
 
     <SwitchPreferenceCompat
+        app:key="@string/enable_commands_key"
+        app:defaultValue="false"
+        app:singleLineTitle="false"
+        app:title="@string/enable_commands" />
+
+    <SwitchPreferenceCompat
+        app:key="@string/show_app_links_key"
+        app:defaultValue="true"
+        app:singleLineTitle="false"
+        app:title="@string/enable_app_launchers" />
+
+    <SwitchPreferenceCompat
+        app:key="@string/show_all_apps_key"
+        app:defaultValue="false"
+        app:dependency="showAppLinks"
+        app:singleLineTitle="false"
+        app:title="@string/choose_apps_title" />
+
+    <SwitchPreferenceCompat
         app:defaultValue="false"
         app:key="transparentBackground"
         app:singleLineTitle="false"
         app:title="@string/transparent_back" />
-
-    <SwitchPreferenceCompat
-        app:defaultValue="true"
-        app:key="showAppLinks"
-        app:singleLineTitle="false"
-        app:title="Enable app launcher buttons" />
-
-    <SwitchPreferenceCompat
-        app:defaultValue="false"
-        app:dependency="showAppLinks"
-        app:key="showAllApps"
-        app:singleLineTitle="false"
-        app:title="@string/choose_apps_title" />
 
 
     <!--
