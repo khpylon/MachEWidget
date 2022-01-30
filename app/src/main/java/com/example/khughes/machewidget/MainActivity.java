@@ -2,7 +2,6 @@ package com.example.khughes.machewidget;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewAssetLoader;
@@ -11,43 +10,22 @@ import androidx.webkit.WebViewFeature;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.RemoteViews;
 import android.widget.Toast;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
@@ -131,9 +109,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(context, "Removing authentication token", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.action_refresh:
-                StatusReceiver.cancelAlarm(context);
-                StatusReceiver.nextAlarm(context, 5);
-                Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
+                if (new StoredData(context).getLastUpdadeElapsedTime() > 5 * 60 * 1000) {
+                    StatusReceiver.cancelAlarm(context);
+                    StatusReceiver.nextAlarm(context, 5);
+                    Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "An update occurred within the past 5 minutes.", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             case R.id.action_chooseapp:
                 settingsIntent = new Intent(this, ChooseApp.class);

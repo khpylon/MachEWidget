@@ -16,10 +16,10 @@
         app:useSimpleSummaryProvider="true" />
 
     <SwitchPreferenceCompat
-        app:key="@string/enable_commands_key"
+        app:key="@string/last_refresh_time_key"
         app:defaultValue="false"
         app:singleLineTitle="false"
-        app:title="@string/enable_commands" />
+        app:title="@string/last_refresh_time" />
 
     <SwitchPreferenceCompat
         app:key="@string/show_app_links_key"
@@ -33,6 +33,12 @@
         app:dependency="showAppLinks"
         app:singleLineTitle="false"
         app:title="@string/choose_apps_title" />
+
+    <SwitchPreferenceCompat
+        app:key="@string/enable_commands_key"
+        app:defaultValue="false"
+        app:singleLineTitle="false"
+        app:title="@string/enable_commands" />
 
     <SwitchPreferenceCompat
         app:defaultValue="false"

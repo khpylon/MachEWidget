@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/lastRefresh"
-        android:layout_width="120dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/machelogo"
         android:layout_marginTop="30dp"
@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/odometer"
-        android:layout_width="120dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/lastRefresh"
         android:layout_weight="1"
@@ -394,7 +394,7 @@
     <TextView
         android:id="@+id/GOM"
         android:layout_width="180dp"
-        android:layout_height="32dp"
+        android:layout_height="40dp"
         android:layout_below="@id/rightfiller"
         android:layout_alignParentRight="true"
         android:gravity="center"

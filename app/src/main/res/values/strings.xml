@@ -23,6 +23,7 @@
     <string name="enable_app_launchers">Enable app launcher buttons</string>
     <string name="choose_apps_title">Allow any app to be linked to \"charger\" widget </string>
     <string name="transparent_back">Use transparent background</string>
+    <string name="last_refresh_time">Show time of last refresh instead of elaped time</string>
 
     <!-- Shared preference keys -->
     <string name="VIN_key">"VIN"</string>
@@ -31,6 +32,7 @@
     <string name="enable_commands_key">enableCommands</string>
     <string name="show_app_links_key">"showAppLinks"</string>
     <string name="show_all_apps_key">"showAllApps"</string>
+    <string name="last_refresh_time_key">refreshDisplayTime</string>
 
     <string name="clear_alert">Clear alert</string>
 

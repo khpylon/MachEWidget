@@ -25,21 +25,57 @@ import java.util.TimeZone;
 
 public class OTAViewActivity extends AppCompatActivity {
 
-    public static String convertDate(String UTCdate) {
+    public static String convertDate(String UTCdate, String format) {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.OTATIMEFORMAT, Locale.ENGLISH);
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
             cal.setTime(sdf.parse(UTCdate));
-            sdf = new SimpleDateFormat(Constants.LOCALTIMEFORMAT, Locale.ENGLISH);
+            sdf = new SimpleDateFormat(format, Locale.ENGLISH);
             return sdf.format(cal.getTime());
         } catch (ParseException e) {
             Log.e(MainActivity.CHANNEL_ID, "exception in OTAViewActivity.convertDate: ", e);
             return "";
         }
     }
+    public static long convertDateToMillis(String UTCdate) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.OTATIMEFORMAT, Locale.ENGLISH);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            cal.setTime(sdf.parse(UTCdate));
+            return cal.toInstant().toEpochMilli();
+        } catch (ParseException e) {
+            Log.e(MainActivity.CHANNEL_ID, "exception in OTAViewActivity.convertDateToMillis: ", e);
+            return 0;
+        }
+    }
 
-    private String currentOTATime = "";
+    public static String convertMillisToDate(long millis, String format) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.ENGLISH);
+        cal.setTimeInMillis(millis);
+        return sdf.format(cal.getTime());
+    }
+
+    public static long getLastOTATimeInMillis(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0");
+        if(lastOTATime.contains(":")) {
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(), Locale.ENGLISH);
+            try {
+                cal.setTime(sdf.parse(lastOTATime));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return cal.toInstant().toEpochMilli();
+        } else {
+            return Long.valueOf(lastOTATime);
+        }
+    }
+
+    private Long currentOTATime = Long.valueOf(0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,19 +86,20 @@ public class OTAViewActivity extends AppCompatActivity {
 
         OTAStatus ota = new StoredData(context).getOTAStatus();
         String unencodedHtml = "<html><body>";
+        String dateFormat = new StoredData(context).getTimeFormatByCountry();
         if (ota != null && ota.getFuseResponse() != null) {
             String tmp;
             unencodedHtml += "<b>Alert status:</b> " + ((tmp = ota.getOtaAlertStatus()) != null ? tmp : "") + "<p>";
             for (OTAStatus.FuseResponse__1 fuse : ota.getFuseResponse().getFuseResponseList()) {
                 unencodedHtml += "<ul>";
                 unencodedHtml += "<li><b>CorrelationID:</b> " + ((tmp = fuse.getOemCorrelationId()) != null ? tmp : "");
-                unencodedHtml += "<li><b>Created:</b> " + convertDate(fuse.getDeploymentCreationDate());
-                unencodedHtml += "<li><b>Expiration:</b> " + convertDate(fuse.getDeploymentExpirationTime());
+                unencodedHtml += "<li><b>Created:</b> " + convertDate(fuse.getDeploymentCreationDate(), dateFormat);
+                unencodedHtml += "<li><b>Expiration:</b> " + convertDate(fuse.getDeploymentExpirationTime(), dateFormat);
                 unencodedHtml += "<li><b>Priority:</b> " + ((tmp = fuse.getCommunicationPriority()) != null ? tmp : "");
                 unencodedHtml += "<li><b>Type:</b> " + ((tmp = fuse.getType()) != null ? tmp : "");
                 unencodedHtml += "<li><b>Final Acton:</b> \"" + ((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : "") + "\"";
                 if (fuse.getLatestStatus() != null) {
-                    currentOTATime = convertDate(fuse.getLatestStatus().getDateTimestamp());
+                    currentOTATime = convertDateToMillis(fuse.getLatestStatus().getDateTimestamp());
                     unencodedHtml += "<li><b>Latest status: </b>" + ((tmp = fuse.getLatestStatus().getAggregateStatus()) != null ? tmp : "") + "<ul>";
                     unencodedHtml += "<li><b>Details:</b> " + ((tmp = fuse.getLatestStatus().getDetailedStatus()) != null ? tmp : "");
                     unencodedHtml += "<li><b>Time Stamp:</b> " + currentOTATime;
@@ -91,16 +128,16 @@ public class OTAViewActivity extends AppCompatActivity {
         mWebView.loadData(encodedHtml, "text/html", "base64");
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "");
+        Long lastOTATime = getLastOTATimeInMillis(getApplicationContext());
 
         Button clear = findViewById(R.id.button);
-        clear.setEnabled(lastOTATime.equals("") || currentOTATime.compareTo(lastOTATime) > 0);
+        clear.setEnabled( currentOTATime > lastOTATime);
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (currentOTATime != null && !currentOTATime.equals("")) {
+                if (currentOTATime > 0) {
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    sharedPref.edit().putString(context.getResources().getString(R.string.last_ota_time), currentOTATime).apply();
+                    sharedPref.edit().putString(context.getResources().getString(R.string.last_ota_time), currentOTATime.toString()).apply();
                     MainActivity.updateWidget(context);
                     clear.setEnabled(false);
                 }

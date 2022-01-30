@@ -20,6 +20,11 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class NetworkCalls {
+    public static final String COMMAND_SUCCESSFUL = "Command successful.";
+    public static final String COMMAND_FAILED = "Command failed.";
+    public static final String COMMAND_NO_NETWORK = "Network error.";
+    public static final String COMMAND_EXCEPTION = "Exception occurred.";
+
     private static AccessTokenService fordClient = AccessTokenServiceGenerator.createFordService(AccessTokenService.class);
     private static AccessTokenService OAuth2Client = AccessTokenServiceGenerator.createOAuth2Service(AccessTokenService.class);
     private static StatusService statusClient = StatusServiceGenerator.createService(StatusService.class);
@@ -56,8 +61,6 @@ public class NetworkCalls {
                 if (response.isSuccessful()) {
                     AccessToken accessToken = response.body();
                     data.putExtra("access_token", accessToken.getAccessToken());
-//                    data.putExtra("refresh_token", accessToken.getRefreshToken());
-//                    data.putExtra("expires", accessToken.getExpiresIn());
 
                     Map<String, String> jsonParams = new ArrayMap<>();
                     jsonParams.put("code", accessToken.getAccessToken());
@@ -177,12 +180,13 @@ public class NetworkCalls {
         ProgramStateMachine.States nextState;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
+        String language = appInfo.getLanguage();
 
         if (!MainActivity.checkInternetConnection(context)) {
             nextState = state.FSM(false, true, false, false, false);
 //             nextState = state.networkDown();
         } else {
-            Call<CarStatus> call = statusClient.getStatus(token, VIN);
+            Call<CarStatus> call = statusClient.getStatus(token, language, Constants.APID, VIN);
             try {
                 Response<CarStatus> response = call.execute();
                 if (response.isSuccessful()) {
@@ -195,6 +199,7 @@ public class NetworkCalls {
                         Log.i(MainActivity.CHANNEL_ID, "server is broken");
                     } else if (car.getVehiclestatus() != null) {
                         appInfo.setCarStatus(car);
+                        appInfo.setLastUpdateTime();
                         Notifications.checkLVBStatus(context, car);
                         Notifications.checkTPMSStatus(context, car);
                         nextState = state.FSM(true, true, true, false, false);
@@ -243,13 +248,14 @@ public class NetworkCalls {
         ProgramStateMachine.States nextState;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
+        String language = appInfo.getLanguage();
         String country = appInfo.getCountry();
 
         if (!MainActivity.checkInternetConnection(context)) {
             nextState = state.FSM(false, true, false, false, false);
 //             nextState = state.networkDown();
         } else {
-            Call<OTAStatus> call = OTAstatusClient.getOTAStatus(token, country, VIN);
+            Call<OTAStatus> call = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
             try {
                 Response<OTAStatus> response = call.execute();
                 if (response.isSuccessful()) {
@@ -277,7 +283,7 @@ public class NetworkCalls {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "engine", "start", "put" );
+                Intent intent = NetworkCalls.execCommand(context, token, "engine", "start", "put");
                 Message m = Message.obtain();
                 m.setData(intent.getExtras());
                 handler.sendMessage(m);
@@ -290,7 +296,7 @@ public class NetworkCalls {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "engine", "start", "delete" );
+                Intent intent = NetworkCalls.execCommand(context, token, "engine", "start", "delete");
                 Message m = Message.obtain();
                 m.setData(intent.getExtras());
                 handler.sendMessage(m);
@@ -303,7 +309,7 @@ public class NetworkCalls {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "doors", "lock", "put" );
+                Intent intent = NetworkCalls.execCommand(context, token, "doors", "lock", "put");
                 Message m = Message.obtain();
                 m.setData(intent.getExtras());
                 handler.sendMessage(m);
@@ -316,7 +322,7 @@ public class NetworkCalls {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "doors", "lock", "delete" );
+                Intent intent = NetworkCalls.execCommand(context, token, "doors", "lock", "delete");
                 Message m = Message.obtain();
                 m.setData(intent.getExtras());
                 handler.sendMessage(m);
@@ -330,36 +336,34 @@ public class NetworkCalls {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
         StoredData appInfo = new StoredData(context);
-        String country = appInfo.getCountry();
+        String language = appInfo.getLanguage();
 
         if (!MainActivity.checkInternetConnection(context)) {
-            data.putExtra("action", "Network down");
-        }
-        else {
+            data.putExtra("action", COMMAND_NO_NETWORK);
+        } else {
             Call<CommandStatus> call = null;
-            if(request.equals("put")) {
-                call = commandServiceClient.putCommand(token, VIN, component, operation);
+            if (request.equals("put")) {
+                call = commandServiceClient.putCommand(token, language,
+                        Constants.APID, VIN, component, operation);
             } else {
-                call = commandServiceClient.deleteCommand(token, VIN, component, operation);
+                call = commandServiceClient.deleteCommand(token, language,
+                        Constants.APID, VIN, component, operation);
             }
             try {
                 Response<CommandStatus> response = call.execute();
                 if (response.isSuccessful()) {
-                    data.putExtra("action", "success");
+                    data.putExtra("action", COMMAND_SUCCESSFUL);
                     Log.i(MainActivity.CHANNEL_ID, "CMD successful....");
                 } else {
-                    data.putExtra("action", "failed");
+                    data.putExtra("action", COMMAND_FAILED);
                     Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
                     Log.i(MainActivity.CHANNEL_ID, "CMD UNSUCCESSFUL....");
                 }
             } catch (IOException e) {
-                data.putExtra("action", "exception");
-                Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.putCommadn: ", e);
+                data.putExtra("action", COMMAND_EXCEPTION);
+                Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.putCommand: ", e);
             }
         }
         return data;
     }
-
-
-
 }

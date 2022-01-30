@@ -8,12 +8,16 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface OTAStatusService {
-    @Headers({"Accept: application/json", "Accept-Language: en-US", "Accept-Encoding: gzip, deflate, br",
-            "Application-Id: " + Constants.APID, "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
+    @Headers({"Accept: application/json",
+            "Accept-Encoding: gzip, deflate, br",
+            "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
             "Referer: https://ford.com", "Origin: https://ford.com'"})
     @GET("status")
-    Call<OTAStatus> getOTAStatus(@Header("auth-token") String token, @Query("country") String country,
-                              @Query("vin") String VIN);
+    Call<OTAStatus> getOTAStatus(@Header("auth-token") String token,
+                                 @Header("Accept-Language") String language,
+                                 @Header("Application-Id") String APID,
+                                 @Query("country") String country,
+                                 @Query("vin") String VIN);
 
     ////    https://www.digitalservices.ford.com/owner/api/v2/ota/status?country=USA&vin='+VIN
 }

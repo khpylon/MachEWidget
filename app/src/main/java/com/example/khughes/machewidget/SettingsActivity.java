@@ -48,7 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
 
             // Changing any of these preferences requires updating the widget
-            for( int id : new int[] {R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key} ) {
+            for( int id : new int[] {R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key} ) {
                 Preference showApps = findPreference(this.getResources().getString(id));
                 showApps.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override

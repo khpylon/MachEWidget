@@ -20,11 +20,7 @@
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:label="@string/action_settings"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+            android:label="@string/action_settings">
         </activity>
         <activity
             android:name=".ChooseApp"

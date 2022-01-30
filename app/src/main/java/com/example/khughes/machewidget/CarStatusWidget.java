@@ -297,37 +297,44 @@ public class CarStatusWidget extends AppWidgetProvider {
         Log.i(MainActivity.CHANNEL_ID, "Last vehicle update was " + minutes + " minutes ago.");
 
         String refresh = "Last refresh:\n  ";
-// less than 1 minute
-        if (minutes < 1) {
-            refresh += minutes + " just now";
-// less than a hour
-        } else if (minutes < 60) {
-            refresh += minutes + " min ago";
-// less than a day
-        } else if (minutes / 60 < 24) {
-            refresh += (minutes / 60) + " hr";
-// right on the hour
-            if ((minutes % 60) == 0) {
-                if (minutes == 60) {
-                    refresh += " ago";
-                } else {
-                    refresh += "s ago";
-                }
-                // hours and minutes
-            } else {
-                if (minutes >= 120) {
-                    refresh += "s";
-                }
-                refresh += ", " + (minutes % 60) + " min ago";
-            }
-// days
+        Boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.last_refresh_time_key), false);
+        if (displayTime) {
+            sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(), Locale.ENGLISH);
+            refresh += sdf.format(lastUpdateTime.getTime());
         } else {
-            long days = minutes / (24 * 60);
-            if (days == 1) {
-                refresh += " 1 day ago";
-
+            // less than 1 minute
+            if (minutes < 1) {
+                refresh += "just now";
+                // less than an hour
+            } else if (minutes < 60) {
+                refresh += minutes + " min ago";
+                // less than a day
+            } else if (minutes / 60 < 24) {
+                refresh += (minutes / 60) + " hr";
+                // right on the hour
+                if ((minutes % 60) == 0) {
+                    if (minutes == 60) {
+                        refresh += " ago";
+                    } else {
+                        refresh += "s ago";
+                    }
+                    // hours and minutes
+                } else {
+                    if (minutes >= 120) {
+                        refresh += "s";
+                    }
+                    refresh += ", " + (minutes % 60) + " min ago";
+                }
             } else {
-                refresh += days + " days ago";
+                long days = minutes / (24 * 60);
+                // one day
+                if (days == 1) {
+                    refresh += " 1 day ago";
+                    // multiple days
+                } else {
+                    refresh += days + " days ago";
+                }
             }
         }
         views.setTextViewText(R.id.lastRefresh, refresh);
@@ -388,8 +395,16 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setImageViewResource(R.id.plug, pluggedIn ?
                 R.drawable.plug_icon_green : R.drawable.plug_icon_gray);
 
+        String rangeCharge;
+        // Estimated range
+        Double range = carStatus.getElVehDTE();
+        if (range != null && range > 0) {
+            rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
+        } else {
+            rangeCharge = "";
+        }
+
         // High-voltage battery
-        String remainingTime = "Not charging";
         if (pluggedIn) {
             String chargeStatus = carStatus.getChargingStatus();
             switch (chargeStatus) {
@@ -412,45 +427,49 @@ public class CarStatusWidget extends AppWidgetProvider {
                     break;
             }
 
-            if (chargeStatus == null) {
-                remainingTime = "";
-            } else if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
-                remainingTime = "Target Reached";
-            } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
-                remainingTime = "Preconditioning";
-            } else {
-                sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.US);
-                Calendar endChargeTime = Calendar.getInstance();
-                String endChargeTimeStr = carStatus.getVehiclestatus().getChargeEndTime().getValue();
-                try {
-                    endChargeTime.setTime(sdf.parse(carStatus.getVehiclestatus().getChargeEndTime().getValue()));
+            // If charging, display any status information
+            if (chargeStatus != null) {
+                // Normally there will be something from the GOM; if so, display this info below it
+                if (!rangeCharge.equals("")) {
+                    rangeCharge += "\n";
+                }
+                if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
+                    rangeCharge += "Target Reached";
+                } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
+                    rangeCharge += "Preconditioning";
+                } else {
+                    sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.US);
+                    Calendar endChargeTime = Calendar.getInstance();
+                    String endChargeTimeStr = carStatus.getVehiclestatus().getChargeEndTime().getValue();
+                    try {
+                        endChargeTime.setTime(sdf.parse(carStatus.getVehiclestatus().getChargeEndTime().getValue()));
 
-                    Calendar nowTime = Calendar.getInstance();
-                    long min = Duration.between(nowTime.toInstant(), endChargeTime.toInstant()).getSeconds() / 60;
-                    if (min > 0) {
-                        int hours = (int) min / 60;
-                        min %= 60;
-                        if (hours > 0) {
-                            remainingTime = Integer.toString(hours) + " hr";
-                            if (min > 0) {
-                                remainingTime += ", ";
-                            }
-                        } else {
-                            remainingTime = "";
-                        }
+                        Calendar nowTime = Calendar.getInstance();
+                        long min = Duration.between(nowTime.toInstant(), endChargeTime.toInstant()).getSeconds() / 60;
                         if (min > 0) {
-                            remainingTime += Integer.toString((int) min) + " min";
+                            int hours = (int) min / 60;
+                            min %= 60;
+                            if (hours > 0) {
+                                rangeCharge += Integer.toString(hours) + " hr";
+                                if (min > 0) {
+                                    rangeCharge += ", ";
+                                }
+                            } else {
+                            }
+                            if (min > 0) {
+                                rangeCharge += Integer.toString((int) min) + " min";
+                            }
+                            rangeCharge += " left";
                         }
-                        remainingTime += " left.";
+                    } catch (ParseException e) {
+                        Log.e(MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
                     }
-                } catch (ParseException e) {
-                    Log.e(MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
                 }
             }
         } else {
             views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
         }
-        //views.setTextViewText(R.id.remainingChargeTime, remainingTime);
+        views.setTextViewText(R.id.GOM, rangeCharge);
 
         // High-voltage battery charge levels
         Double chargeLevel = carStatus.getHVBFillLevel();
@@ -459,15 +478,6 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.HVBChargePercent,
                     MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
                             DecimalFormatSymbols.getInstance(Locale.US)).format(chargeLevel)));
-        }
-
-        // Estimated range
-        Double range = carStatus.getElVehDTE();
-        if (range != null && range > 0) {
-            views.setTextViewText(R.id.GOM,
-                    MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits));
-        } else {
-            views.setTextViewText(R.id.GOM, "");
         }
 
         // 12 volt battery status
@@ -535,34 +545,28 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setImageViewResource(R.id.right_doors, right[r_front_door][r_rear_door]);
         views.setImageViewResource(R.id.rear_doors, rear[l_rear_door][r_rear_door]);
 
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
-    }
-
-    private void updateAppWidgetOTA(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
-
+        // OTA status
         OTAStatus otaStatus = new StoredData(context).getOTAStatus();
         if (otaStatus != null) {
             String OTArefresh;
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "");
+            Long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context);
             String currentUTCOTATime = otaStatus.getOTADateTime();
             if (currentUTCOTATime == null) {
                 OTArefresh = "Unknown";
             } else {
-                String currentOTATime = OTAViewActivity.convertDate(currentUTCOTATime);
-                if (currentOTATime != null && currentOTATime.compareTo(lastOTATime) > 0) {
+                Long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+                if (currentOTATime > lastOTATime) {
                     Notifications.newOTA(context);
                     OTArefresh = "New info found";
                 } else {
-                    OTArefresh = lastOTATime;
+                    OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, new StoredData(context).getTimeFormatByCountry());
                 }
             }
             views.setTextViewText(R.id.OTAInfo, OTArefresh);
         }
 
-        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+        // Instruct the widget manager to update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
@@ -653,42 +657,32 @@ public class CarStatusWidget extends AppWidgetProvider {
         appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
 
-    private Bundle bb = new Bundle();
+    private Bundle bundle = new Bundle();
 
-    private void start(Context context) {
-        Handler h = new Handler(Looper.getMainLooper()) {
+    private Handler getHandler(Context context) {
+        return new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                bb = msg.getData();
-                String xx = bb.getString("action");
-                Toast.makeText(context, xx, Toast.LENGTH_LONG).show();
+                String result = msg.getData().getString("action");
+                if (result != null && result.equals(NetworkCalls.COMMAND_SUCCESSFUL)) {
+                    StatusReceiver.cancelAlarm(context);
+                    StatusReceiver.nextAlarm(context, 5);
+                }
+                Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
             }
         };
-        NetworkCalls.remoteStart(h, context, new StoredData(context).getAccessToken());
+    }
+
+    private void start(Context context) {
+        NetworkCalls.remoteStart(getHandler(context), context, new StoredData(context).getAccessToken());
     }
 
     private void lock(Context context) {
-        Handler h = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                bb = msg.getData();
-                String xx = bb.getString("action");
-                Toast.makeText(context, xx, Toast.LENGTH_LONG).show();
-            }
-        };
-        NetworkCalls.lockDoors(h, context, new StoredData(context).getAccessToken());
+        NetworkCalls.lockDoors(getHandler(context), context, new StoredData(context).getAccessToken());
     }
 
     private void unlock(Context context) {
-        Handler h = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                bb = msg.getData();
-                String xx = bb.getString("action");
-                Toast.makeText(context, xx, Toast.LENGTH_LONG).show();
-            }
-        };
-        NetworkCalls.unlockDoors(h, context, new StoredData(context).getAccessToken());
+        NetworkCalls.unlockDoors(getHandler(context), context, new StoredData(context).getAccessToken());
     }
 
     @Override
@@ -699,7 +693,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             if (!state.equals(ProgramStateMachine.States.INITIAL_STATE)) {
-                updateAppWidgetOTA(context, appWidgetManager, appWidgetId);
                 updateAppWidget(context, appWidgetManager, appWidgetId);
             } else {
                 updateAppLogout(context, appWidgetManager, appWidgetId);
@@ -720,6 +713,14 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private static long lastIgnitionClicktime = 0;
     private static long lastLockClicktime = 0;
+
+    // Flag to avoid executing a command before we receive a status update.
+    private static Boolean awaitingUpdate = false;
+
+    // This is called when SharedPreferences for car status is executed.
+    public static void clearAwaitingFlag() {
+        awaitingUpdate = false;
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -770,12 +771,13 @@ public class CarStatusWidget extends AppWidgetProvider {
             long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             if (nowtime - lastLockClicktime < 500) {
                 CarStatus carStatus = new StoredData(context).getCarStatus();
-                if (carStatus != null && carStatus.getLock() != null) {
+                if (!awaitingUpdate && carStatus != null && carStatus.getLock() != null) {
                     if (carStatus.getLock().equals("LOCKED")) {
                         unlock(context);
                     } else {
                         lock(context);
                     }
+                    awaitingUpdate = true;
                 }
             }
             lastLockClicktime = nowtime;
@@ -784,9 +786,10 @@ public class CarStatusWidget extends AppWidgetProvider {
             long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             if (nowtime - lastIgnitionClicktime < 500) {
                 CarStatus carStatus = new StoredData(context).getCarStatus();
-                if (carStatus != null && carStatus.getIgnition() != null) {
+                if (!awaitingUpdate && carStatus != null && carStatus.getIgnition() != null) {
                     if (carStatus.getIgnition().equals("Off")) {
                         start(context);
+                        awaitingUpdate = true;
                     }
                 }
             }

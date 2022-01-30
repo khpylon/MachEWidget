@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 
 public class StoredData {
@@ -24,6 +26,7 @@ public class StoredData {
     private static final String SPEEDUNITS = "SpeedUnits";
     private static final String DISTANCEUNITS = "DistanceUnits";
     private static final String PRESSUREUNITS = "PressureUnits";
+    private static final String LASTUPDATETIME = "LastUpdateTime";
 
     public static final String LEFTAPPPACKAGE = "LeftAppPackage";
     public static final String RIGHTAPPPACKAGE = "RightAppPackage";
@@ -36,6 +39,22 @@ public class StoredData {
 
     public StoredData(Context context) {
         mContext = context;
+    }
+
+    public void setLastUpdateTime() {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
+        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        edit.putLong(LASTUPDATETIME, nowtime).apply();
+    }
+
+    public long getLastUpdadeTime() {
+        return mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).getLong(LASTUPDATETIME, 0);
+    }
+
+    public long getLastUpdadeElapsedTime() {
+        long lastUpdate = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).getLong(LASTUPDATETIME, 0);
+        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return nowtime - lastUpdate;
     }
 
     public String getAccessToken() {
@@ -85,6 +104,7 @@ public class StoredData {
         SharedPreferences.Editor edit = pref.edit();
         edit.putString(CARSTATUS, gson.toJson(status));
         edit.commit();
+        CarStatusWidget.clearAwaitingFlag();
     }
 
     public OTAStatus getOTAStatus() {
@@ -158,7 +178,12 @@ public class StoredData {
         edit.putString(COUNTRY, country);
         edit.commit();
     }
-    
+
+    public String getTimeFormatByCountry() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return pref.getString(COUNTRY, "USA").equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+    }
+
     public String getSpeedUnits() {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         return pref.getString(SPEEDUNITS, "MPH");
@@ -185,7 +210,7 @@ public class StoredData {
 
     public String getPressureUnits() {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-        return pref.getString(PRESSUREUNITS,"PSI");
+        return pref.getString(PRESSUREUNITS, "PSI");
     }
 
     public void setPressureUnits(String units) {
