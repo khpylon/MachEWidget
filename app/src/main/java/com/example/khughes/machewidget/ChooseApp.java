@@ -73,7 +73,6 @@ public class ChooseApp extends AppCompatActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-
     }
 
     private class CustomAdapter implements ListAdapter {
@@ -97,12 +96,10 @@ public class ChooseApp extends AppCompatActivity {
 
         @Override
         public void registerDataSetObserver(DataSetObserver observer) {
-
         }
 
         @Override
         public void unregisterDataSetObserver(DataSetObserver observer) {
-
         }
 
         @Override
@@ -131,13 +128,6 @@ public class ChooseApp extends AppCompatActivity {
             if (convertView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 convertView = layoutInflater.inflate(R.layout.applist_row, null);
-//            convertView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Object x = v.getTag();
-//                    System.out.println(x);
-//                }
-//            });
                 TextView tittle = convertView.findViewById(R.id.title);
                 TextView app = convertView.findViewById(R.id.appname);
                 ImageView imag = convertView.findViewById(R.id.list_image);
@@ -145,7 +135,6 @@ public class ChooseApp extends AppCompatActivity {
                 tittle.setText(subjectData.appName);
                 app.setText(subjectData.packageName);
                 imag.setImageDrawable(subjectData.icon);
-
             }
             return convertView;
         }
@@ -159,7 +148,6 @@ public class ChooseApp extends AppCompatActivity {
         public int getViewTypeCount() {
             return arrayList.size();
         }
-
 
         @Override
         public boolean isEmpty() {
@@ -216,6 +204,8 @@ public class ChooseApp extends AppCompatActivity {
             }
         });
 
+        // Add an entry to the top of the list to ley user remove the current app.
+        arrayList.add(0, new AppList("Remove current app", null, null));
         return arrayList;
     }
 
