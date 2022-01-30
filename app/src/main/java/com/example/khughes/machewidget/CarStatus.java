@@ -12,7 +12,7 @@ public class CarStatus {
     public Double getOdometer() {
         try {
             return getVehiclestatus().getOdometer().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -20,7 +20,7 @@ public class CarStatus {
     public Double getHVBFillLevel() {
         try {
             return getVehiclestatus().getBatteryFillLevel().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -28,7 +28,7 @@ public class CarStatus {
     public Double getElVehDTE() {
         try {
             return getVehiclestatus().getElVehDTE().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -36,7 +36,7 @@ public class CarStatus {
     public Integer getLVBVoltage() {
         try {
             return getVehiclestatus().getBattery().getBatteryStatusActual().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -44,7 +44,7 @@ public class CarStatus {
     public String getLVBStatus() {
         try {
             return getVehiclestatus().getBattery().getBatteryHealth().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -52,7 +52,7 @@ public class CarStatus {
     public String getFrunk() {
         try {
             return getVehiclestatus().getDoorStatus().getHoodDoor().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class CarStatus {
     public String getTrunk() {
         try {
             return getVehiclestatus().getDoorStatus().getTailgateDoor().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -68,7 +68,7 @@ public class CarStatus {
     public String getDriverDoor() {
         try {
             return getVehiclestatus().getDoorStatus().getDriverDoor().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -76,7 +76,7 @@ public class CarStatus {
     public String getPassengerDoor() {
         try {
             return getVehiclestatus().getDoorStatus().getPassengerDoor().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -84,7 +84,7 @@ public class CarStatus {
     public String getLeftRearDoor() {
         try {
             return getVehiclestatus().getDoorStatus().getLeftRearDoor().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -92,7 +92,7 @@ public class CarStatus {
     public String getRightRearDoor() {
         try {
             return getVehiclestatus().getDoorStatus().getRightRearDoor().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class CarStatus {
     public String getDriverWindow() {
         try {
             return getVehiclestatus().getWindowPosition().getDriverWindowPosition().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -108,7 +108,7 @@ public class CarStatus {
     public String getPassengerWindow() {
         try {
             return getVehiclestatus().getWindowPosition().getPassWindowPosition().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -116,7 +116,7 @@ public class CarStatus {
     public String getLeftRearWindow() {
         try {
             return getVehiclestatus().getWindowPosition().getRearDriverWindowPos().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -124,7 +124,7 @@ public class CarStatus {
     public String getRightRearWindow() {
         try {
             return getVehiclestatus().getWindowPosition().getRearPassWindowPos().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -132,14 +132,15 @@ public class CarStatus {
     public String getLeftFrontTireStatus() {
         try {
             return getVehiclestatus().getTPMS().getLeftFrontTireStatus().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
+
     public String getRightFrontTireStatus() {
         try {
             return getVehiclestatus().getTPMS().getRightFrontTireStatus().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -147,7 +148,7 @@ public class CarStatus {
     public String getLeftRearTireStatus() {
         try {
             return getVehiclestatus().getTPMS().getOuterLeftRearTireStatus().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -155,7 +156,7 @@ public class CarStatus {
     public String getRightRearTireStatus() {
         try {
             return getVehiclestatus().getTPMS().getOuterRightRearTireStatus().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -163,14 +164,15 @@ public class CarStatus {
     public String getLeftFrontTirePressure() {
         try {
             return getVehiclestatus().getTPMS().getLeftFrontTirePressure().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
+
     public String getRightFrontTirePressure() {
         try {
             return getVehiclestatus().getTPMS().getRightFrontTirePressure().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -178,7 +180,7 @@ public class CarStatus {
     public String getLeftRearTirePressure() {
         try {
             return getVehiclestatus().getTPMS().getOuterLeftRearTirePressure().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -186,7 +188,7 @@ public class CarStatus {
     public String getRightRearTirePressure() {
         try {
             return getVehiclestatus().getTPMS().getOuterRightRearTirePressure().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -194,7 +196,7 @@ public class CarStatus {
     public String getIgnition() {
         try {
             return getVehiclestatus().getIgnitionStatus().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -202,7 +204,7 @@ public class CarStatus {
     public String getLock() {
         try {
             return getVehiclestatus().getLockStatus().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -210,7 +212,7 @@ public class CarStatus {
     public String getAlarm() {
         try {
             return getVehiclestatus().getAlarm().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -218,7 +220,7 @@ public class CarStatus {
     public Boolean getDeepSleep() {
         try {
             return getVehiclestatus().getDeepSleepInProgress().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -226,7 +228,7 @@ public class CarStatus {
     public Boolean getPlugStatus() {
         try {
             return getVehiclestatus().getPlugStatus().getValue() == 1;
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return false;
         }
     }
@@ -234,7 +236,7 @@ public class CarStatus {
     public String getChargingStatus() {
         try {
             return getVehiclestatus().getChargingStatus().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -242,7 +244,7 @@ public class CarStatus {
     public String getChargingEndTime() {
         try {
             return getVehiclestatus().getChargeEndTime().getValue();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -250,7 +252,7 @@ public class CarStatus {
     public String getLatitude() {
         try {
             return getVehiclestatus().getGps().getLatitude();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -258,15 +260,19 @@ public class CarStatus {
     public String getLongitude() {
         try {
             return getVehiclestatus().getGps().getLongitude();
-        } catch ( NullPointerException e ) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
 
     public String getLastRefresh() {
         try {
-            return getVehiclestatus().getLastRefresh();
-        } catch ( NullPointerException e ) {
+            String lastRefresh = getVehiclestatus().getLastRefresh();
+            if (lastRefresh.contains("01-01-2018")) {
+                lastRefresh = getVehiclestatus().getLastModifiedDate();
+            }
+            return lastRefresh;
+        } catch (NullPointerException e) {
             return null;
         }
     }
