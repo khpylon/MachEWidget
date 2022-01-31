@@ -1,10 +1,21 @@
 # Changelog
 
-## 2022.01.29
-- Pass Application-Id and Accept-Language info for network transmissions.
-- Display information below estimated range when plugged into charger.
-- Force widget update on successful command execution (lock, unlock, remote start).
-- Remove parent activity for Settings; this avoids needing to go back through the main activity when "Settings" is pressed in the widget.
-- Add transparency to the unlocked icon.
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## 2022.01.30
+### Added
+- Support for locking/unlocking doors and remote start by double-clicking on their icon.
 - Allow choice of how to see last refresh time information.
-  Change format of displayed dates.
+- Allow user to enable/disable linked app widget buttons.
+- Display information below estimated range when plugged into charger.
+
+## Changed
+- Change format of displayed dates.
+- Limit manual refresh to once every five minutes.
+- Remove parent activity for Settings (this avoids needing to go back through the main activity when "Settings" is pressed in the widget).
+
+## Fixed
+- Icons without correct transparency.
