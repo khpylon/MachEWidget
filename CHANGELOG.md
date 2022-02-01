@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.02.01
+### Added
+- Allow display of OTA status and location to be disabled on the widget
+
+### Fixed
+- Incorrect display of last OTA status in the OTA Update Info activity. 
+
 ## 2022.01.30
 ### Added
 - Support for locking/unlocking doors and remote start by double-clicking on their icon.
@@ -12,10 +19,10 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 - Allow user to enable/disable linked app widget buttons.
 - Display information below estimated range when plugged into charger.
 
-## Changed
+### Changed
 - Change format of displayed dates.
 - Limit manual refresh to once every five minutes.
 - Remove parent activity for Settings (this avoids needing to go back through the main activity when "Settings" is pressed in the widget).
 
-## Fixed
+### Fixed
 - Icons without correct transparency.

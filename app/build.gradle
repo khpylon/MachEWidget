@@ -1,9 +1,9 @@
+import java.text.SimpleDateFormat
+import java.util.TimeZone
+
 plugins {
     id 'com.android.application'
-}
-
-static def VersionDate() {
-    return new Date().format("yyyy.MM.dd").toString();
+    id "org.ajoberstar.grgit" version "1.7.2"
 }
 
 android {
@@ -22,7 +22,7 @@ android {
         minSdk 29
         targetSdk 31
         versionCode 3
-        versionName VersionDate()
+        versionName "2022.02.01"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -32,6 +32,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    task versionTxt { task ->
+        doLast {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss z");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            new File(projectDir, "VERSION.txt").text =
+"""Version: ${defaultConfig.versionName}
+Commit: ${grgit.head().abbreviatedId}
+Build date: ${sdf.format(new Date())}
+Application-name: com.example.khughes.machewidget
+"""
+        }
+    }
+
+    preBuild.dependsOn versionTxt
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -46,7 +60,6 @@ android {
 }
 
 dependencies {
-
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'

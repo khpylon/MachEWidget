@@ -36,9 +36,8 @@ As listed above, this app
 
 ## To do
 
-- Allow user selection of other apps to launch (FordPass, ChargePoint, EA, etc.)
-- Enable/disable some displayed information (OTA, location, etc.)
-- Support commands such as lock/unlock, remote start
+- Support for multiple VINs, using a "nickname" to differentiate.
+- Notify you when a new version of the app is available, and possibly allow for download and install.
 
 ## Credits
 

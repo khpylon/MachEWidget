@@ -24,6 +24,8 @@
     <string name="choose_apps_title">Allow any app to be linked to \"charger\" widget </string>
     <string name="transparent_back">Use transparent background</string>
     <string name="last_refresh_time">Show time of last refresh instead of elaped time</string>
+    <string name="show_location">Display location on widget</string>
+    <string name="show_OTA">Display OTA info on widget</string>
 
     <!-- Shared preference keys -->
     <string name="VIN_key">"VIN"</string>
@@ -33,6 +35,8 @@
     <string name="show_app_links_key">"showAppLinks"</string>
     <string name="show_all_apps_key">"showAllApps"</string>
     <string name="last_refresh_time_key">refreshDisplayTime</string>
+    <string name="show_location_key">showLocation</string>
+    <string name="show_OTA_key">showOTA</string>
 
     <string name="clear_alert">Clear alert</string>
 

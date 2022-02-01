@@ -97,12 +97,12 @@ public class OTAViewActivity extends AppCompatActivity {
                 unencodedHtml += "<li><b>Expiration:</b> " + convertDate(fuse.getDeploymentExpirationTime(), dateFormat);
                 unencodedHtml += "<li><b>Priority:</b> " + ((tmp = fuse.getCommunicationPriority()) != null ? tmp : "");
                 unencodedHtml += "<li><b>Type:</b> " + ((tmp = fuse.getType()) != null ? tmp : "");
-                unencodedHtml += "<li><b>Final Acton:</b> \"" + ((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : "") + "\"";
+                unencodedHtml += "<li><b>Final Action:</b> \"" + ((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : "") + "\"";
                 if (fuse.getLatestStatus() != null) {
                     currentOTATime = convertDateToMillis(fuse.getLatestStatus().getDateTimestamp());
                     unencodedHtml += "<li><b>Latest status: </b>" + ((tmp = fuse.getLatestStatus().getAggregateStatus()) != null ? tmp : "") + "<ul>";
                     unencodedHtml += "<li><b>Details:</b> " + ((tmp = fuse.getLatestStatus().getDetailedStatus()) != null ? tmp : "");
-                    unencodedHtml += "<li><b>Time Stamp:</b> " + currentOTATime;
+                    unencodedHtml += "<li><b>Time Stamp:</b> " + convertMillisToDate(currentOTATime, new StoredData(context).getTimeFormatByCountry());
                     unencodedHtml += "</ul></li>";
                 }
                 unencodedHtml += "</ul><hr>";

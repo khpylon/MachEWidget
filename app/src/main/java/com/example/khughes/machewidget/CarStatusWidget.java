@@ -51,6 +51,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private static final String IGNITION_CLICK = "IgnitionButton";
     private static final String LOCK_CLICK = "LockButton";
 
+    private static final String PADDING= "   ";
     private static final String CHARGING_STATUS_NOT_READY = "NotReady";
     private static final String CHARGING_STATUS_CHARGING_AC = "ChargingAC";
     private static final String CHARGING_STATUS_CHARGING_DC = "ChargingDC";
@@ -109,10 +110,13 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(id, pressure);
     }
 
-    private void updateLocation(Context context, RemoteViews views, String latitude, String longitude) {
+    private void updateLocation(Context context, RemoteViews views, String latitude, String longitude, int dataLine) {
         List<Address> addresses = null;
-        String streetName = "N/A";
+        String streetName = PADDING;
         String cityState = "";
+        int[] ids = new int[]{R.id.DataLine1, R.id.DataLine2, R.id.DataLine3, R.id.DataLine4, R.id.DataLine5};
+
+        views.setTextViewText(ids[dataLine], "Location:");
 
         Geocoder mGeocoder = new Geocoder(context, Locale.getDefault());
         Double lat = Double.valueOf(latitude);
@@ -129,7 +133,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
             // Street address and name
             if (address.getSubThoroughfare() != null) {
-                streetName = address.getSubThoroughfare() + " ";
+                streetName += address.getSubThoroughfare() + " ";
             }
             streetName += address.getThoroughfare();
 
@@ -211,11 +215,13 @@ public class CarStatusWidget extends AppWidgetProvider {
                 if (states.containsKey(adminArea)) {
                     adminArea = states.get(adminArea);
                 }
-                cityState = address.getLocality() + ", " + adminArea;
+                cityState = PADDING + address.getLocality() + ", " + adminArea;
             }
+        } else {
+            streetName = PADDING + "N/A";
         }
-        views.setTextViewText(R.id.locationStreet, streetName);
-        views.setTextViewText(R.id.locationCity, cityState);
+        views.setTextViewText(ids[dataLine+1], streetName);
+        views.setTextViewText(ids[dataLine+2], cityState);
     }
 
     // Check if a door is open or closed.  Undefined defaults to closed.
@@ -501,9 +507,6 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.odometer, "Odo: ---");
         }
 
-        // Location
-        updateLocation(context, views, carStatus.getLatitude(), carStatus.getLongitude());
-
         // Tire pressures
         updateTire(views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
                 pressureUnits, pressureConversion, R.id.lftire);
@@ -547,7 +550,11 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         // OTA status
         OTAStatus otaStatus = new StoredData(context).getOTAStatus();
-        if (otaStatus != null) {
+        Boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true);
+        int dataLine = 0;
+        if (displayOTA && otaStatus != null) {
+            views.setTextViewText(R.id.DataLine1, "OTA Status:");
             String OTArefresh;
             Long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context);
             String currentUTCOTATime = otaStatus.getOTADateTime();
@@ -562,7 +569,20 @@ public class CarStatusWidget extends AppWidgetProvider {
                     OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, new StoredData(context).getTimeFormatByCountry());
                 }
             }
-            views.setTextViewText(R.id.OTAInfo, OTArefresh);
+            views.setTextViewText(R.id.DataLine2, PADDING + OTArefresh);
+            dataLine += 2;
+        }
+
+        // Location
+        if (PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.show_location_key), true)) {
+            updateLocation(context, views, carStatus.getLatitude(), carStatus.getLongitude(), dataLine);
+            dataLine += 3;
+        }
+
+        while (dataLine < 5) {
+            views.setTextViewText(new int[]{R.id.DataLine1, R.id.DataLine2, R.id.DataLine3, R.id.DataLine4, R.id.DataLine5}[dataLine], "");
+            dataLine += 1;
         }
 
         // Instruct the widget manager to update the widget
@@ -583,9 +603,11 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.sleep, "Deep sleep: N/A");
         views.setTextViewText(R.id.LVBVoltage, "LVB Volts: N/A");
         views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
-        views.setTextViewText(R.id.OTAInfo, "N/A");
-        views.setTextViewText(R.id.locationStreet, "N/A");
-        views.setTextViewText(R.id.locationCity, "");
+        views.setTextViewText(R.id.DataLine1, "");
+        views.setTextViewText(R.id.DataLine2, "");
+        views.setTextViewText(R.id.DataLine3, "");
+        views.setTextViewText(R.id.DataLine4, "");
+        views.setTextViewText(R.id.DataLine5, "");
 
         views.setProgressBar(R.id.HBVChargeProgress, 100, 0, false);
         views.setTextViewText(R.id.HVBChargePercent, "N/A");
@@ -745,7 +767,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 if (intent != null) {
                     context.startActivity(intent);
                 } else {
-                    appInfo.setLeftAppPackage("");
+                    appInfo.setLeftAppPackage(null);
                     MainActivity.updateWidget(context);
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }
@@ -759,7 +781,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 if (intent != null) {
                     context.startActivity(intent);
                 } else {
-                    appInfo.setRightAppPackage("");
+                    appInfo.setRightAppPackage(null);
                     MainActivity.updateWidget(context);
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }

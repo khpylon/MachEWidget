@@ -35,6 +35,18 @@
         app:title="@string/choose_apps_title" />
 
     <SwitchPreferenceCompat
+        app:key="@string/show_location_key"
+        app:defaultValue="true"
+        app:singleLineTitle="false"
+        app:title="@string/show_location" />
+
+    <SwitchPreferenceCompat
+        app:key="@string/show_OTA_key"
+        app:defaultValue="true"
+        app:singleLineTitle="false"
+        app:title="@string/show_OTA" />
+
+    <SwitchPreferenceCompat
         app:key="@string/enable_commands_key"
         app:defaultValue="false"
         app:singleLineTitle="false"

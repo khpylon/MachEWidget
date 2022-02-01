@@ -22,10 +22,10 @@
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/machelogo"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         android:layout_weight="1"
         android:gravity="left"
-        android:text="Last refresh:\n  N/A"
+        android:text="Last refresh:\n   N/A"
         android:textColor="@color/white"
         android:textSize="12dp" />
 
@@ -76,8 +76,8 @@
         android:textSize="12dp" />
 
     <TextView
-        android:id="@+id/OTAHeader"
-        android:layout_width="120dp"
+        android:id="@+id/DataLine1"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/LVBVoltage"
         android:layout_weight="1"
@@ -87,25 +87,24 @@
         android:textSize="12dp" />
 
     <TextView
-        android:id="@+id/OTAInfo"
-        android:layout_width="120dp"
+        android:id="@+id/DataLine2"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/OTAHeader"
+        android:layout_below="@id/DataLine1"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="12dp"
         android:layout_weight="1"
         android:ellipsize="end"
         android:gravity="left"
         android:maxLines="1"
-        android:text="N/A"
+        android:text="   N/A"
         android:textColor="@color/white"
         android:textSize="12dp" />
 
     <TextView
-        android:id="@+id/locationHeader"
-        android:layout_width="120dp"
+        android:id="@+id/DataLine3"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/OTAInfo"
+        android:layout_below="@id/DataLine2"
         android:layout_weight="1"
         android:gravity="left"
         android:text="Location:"
@@ -113,27 +112,25 @@
         android:textSize="12dp" />
 
     <TextView
-        android:id="@+id/locationStreet"
-        android:layout_width="120dp"
+        android:id="@+id/DataLine4"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/locationHeader"
+        android:layout_below="@id/DataLine3"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="12dp"
         android:layout_weight="1"
         android:gravity="left"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/white"
         android:textSize="12dp"
-        android:text="N/A" />
+        android:text="   N/A" />
 
     <TextView
-        android:id="@+id/locationCity"
-        android:layout_width="120dp"
+        android:id="@+id/DataLine5"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/locationStreet"
+        android:layout_below="@id/DataLine4"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="12dp"
         android:layout_weight="1"
         android:gravity="left"
         android:ellipsize="end"
