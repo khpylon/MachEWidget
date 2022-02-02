@@ -127,6 +127,20 @@ public class Notifications extends BroadcastReceiver {
         }
     }
 
+    private static final int APP_NOTIFICATION = 938;
+
+    public static void newApp(Context context) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("App update")
+                .setContentText("A new app version was found.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(APP_NOTIFICATION, builder.build());
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();

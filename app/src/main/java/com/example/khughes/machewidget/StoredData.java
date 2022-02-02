@@ -27,6 +27,7 @@ public class StoredData {
     private static final String DISTANCEUNITS = "DistanceUnits";
     private static final String PRESSUREUNITS = "PressureUnits";
     private static final String LASTUPDATETIME = "LastUpdateTime";
+    private static final String LATESTVERSION = "LasestVersion";
 
     public static final String LEFTAPPPACKAGE = "LeftAppPackage";
     public static final String RIGHTAPPPACKAGE = "RightAppPackage";
@@ -244,6 +245,17 @@ public class StoredData {
         edit.commit();
     }
 
+    public String getLatestVersion() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        return pref.getString(LATESTVERSION, "");
+    }
+
+    public void setLatestVersion(String name) {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString(LATESTVERSION, name);
+        edit.commit();
+    }
 
     public int getCounter(String key) {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);

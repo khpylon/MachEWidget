@@ -62,6 +62,7 @@
                 android:resource="@xml/car_status_widget_info" />
         </receiver>
         <receiver android:name=".StatusReceiver" />
+        <receiver android:name=".UpdateReceiver" />
         <receiver android:name=".Notifications" />
         <receiver
             android:name=".BootComplete"
