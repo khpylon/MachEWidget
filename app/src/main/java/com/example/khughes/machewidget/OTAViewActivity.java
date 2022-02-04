@@ -59,11 +59,13 @@ public class OTAViewActivity extends AppCompatActivity {
     }
 
     public static long getLastOTATimeInMillis(Context context) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0");
         if(lastOTATime.contains(":")) {
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(), Locale.ENGLISH);
+            SimpleDateFormat sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(VIN), Locale.ENGLISH);
             try {
                 cal.setTime(sdf.parse(lastOTATime));
             } catch (ParseException e) {
@@ -81,12 +83,13 @@ public class OTAViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otaview);
+        String VIN = PreferenceManager.getDefaultSharedPreferences(this).getString(this.getResources().getString(R.string.VIN_key), "");
 
         Context context = getApplicationContext();
 
-        OTAStatus ota = new StoredData(context).getOTAStatus();
+        OTAStatus ota = new StoredData(context).getOTAStatus(VIN);
         String unencodedHtml = "<html><body>";
-        String dateFormat = new StoredData(context).getTimeFormatByCountry();
+        String dateFormat = new StoredData(context).getTimeFormatByCountry(VIN);
         if (ota != null && ota.getFuseResponse() != null) {
             String tmp;
             unencodedHtml += "<b>Alert status:</b> " + ((tmp = ota.getOtaAlertStatus()) != null ? tmp : "") + "<p>";
@@ -102,7 +105,7 @@ public class OTAViewActivity extends AppCompatActivity {
                     currentOTATime = convertDateToMillis(fuse.getLatestStatus().getDateTimestamp());
                     unencodedHtml += "<li><b>Latest status: </b>" + ((tmp = fuse.getLatestStatus().getAggregateStatus()) != null ? tmp : "") + "<ul>";
                     unencodedHtml += "<li><b>Details:</b> " + ((tmp = fuse.getLatestStatus().getDetailedStatus()) != null ? tmp : "");
-                    unencodedHtml += "<li><b>Time Stamp:</b> " + convertMillisToDate(currentOTATime, new StoredData(context).getTimeFormatByCountry());
+                    unencodedHtml += "<li><b>Time Stamp:</b> " + convertMillisToDate(currentOTATime, dateFormat);
                     unencodedHtml += "</ul></li>";
                 }
                 unencodedHtml += "</ul><hr>";

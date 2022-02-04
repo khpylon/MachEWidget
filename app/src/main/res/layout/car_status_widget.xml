@@ -18,11 +18,22 @@
         android:src="@drawable/mache_logo" />
 
     <TextView
-        android:id="@+id/lastRefresh"
+        android:id="@+id/profile"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/machelogo"
         android:layout_marginTop="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Profile: "
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/lastRefresh"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile"
         android:layout_weight="1"
         android:gravity="left"
         android:text="Last refresh:\n   N/A"

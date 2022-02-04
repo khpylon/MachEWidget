@@ -39,13 +39,13 @@ public class Notifications extends BroadcastReceiver {
 
     private static Boolean LVBNotificationVisible = false;
 
-    public static void checkLVBStatus(Context context, CarStatus carStatus) {
+    public static void checkLVBStatus(Context context, CarStatus carStatus, String VIN) {
         StoredData appInfo = new StoredData(context);
-        String lastHVBStatus = appInfo.getHVBStatus();
+        String lastHVBStatus = appInfo.getHVBStatus(VIN);
         String currentLVBStatus = carStatus.getLVBStatus();
         if (currentLVBStatus != null && !currentLVBStatus.equals(lastHVBStatus)) {
             // Save the current status
-            appInfo.setHVBStatus(currentLVBStatus);
+            appInfo.setHVBStatus(VIN,currentLVBStatus);
             // If the current status is bad and we haven't already posted the notification, then post it
             if (!currentLVBStatus.equals("STATUS_GOOD") && !LVBNotificationVisible) {
                 Intent intent = new Intent(context, Notifications.class);
@@ -80,9 +80,9 @@ public class Notifications extends BroadcastReceiver {
 
     private static Boolean TPMSNotificationVisible = false;
 
-    public static void checkTPMSStatus(Context context, CarStatus carStatus) {
+    public static void checkTPMSStatus(Context context, CarStatus carStatus, String VIN) {
         StoredData appInfo = new StoredData(context);
-        String lastTPMSStatus = appInfo.getTPMSStatus();
+        String lastTPMSStatus = appInfo.getTPMSStatus(VIN);
         Map<String, String> currentTPMSStatus = new HashMap<String, String>();
         currentTPMSStatus.put(LEFT_FRONT_TIRE, carStatus.getLeftFrontTireStatus());
         currentTPMSStatus.put(RIGHT_FRONT_TIRE, carStatus.getRightFrontTireStatus());
@@ -103,7 +103,7 @@ public class Notifications extends BroadcastReceiver {
 
         if (!lastTPMSStatus.equals(badTire)) {
             // Save the current status
-            appInfo.setTPMSStatus(badTire);
+            appInfo.setTPMSStatus(VIN,badTire);
             // If the current status is bad and we haven't already posted the notification, then post it
             if (!badTire.equals("") && !TPMSNotificationVisible) {
                 Intent intent = new Intent(context, Notifications.class);

@@ -36,8 +36,9 @@ As listed above, this app
 
 ## To do
 
-- Support for multiple VINs, using a "nickname" to differentiate.
+- Support for multiple VINs, using a profile "nickname" to differentiate.
 - Notify you when a new version of the app is available, and possibly allow for download and install.
+- Display information using more graphics and less text where possible. 
 
 ## Credits
 

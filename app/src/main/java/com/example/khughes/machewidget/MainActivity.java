@@ -8,27 +8,28 @@ import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
 import androidx.webkit.WebViewFeature;
 
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.nio.file.Path;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
+
+     test();
+
+        ProfileManager.upgradeToProfiles(context);
 
         // Initiate check for a new app version
         Intent updateIntent = new Intent(context, UpdateReceiver.class);
@@ -66,6 +71,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Allow the app to display notifications
         createNotificationChannel();
+    }
+
+    private void test() {
+
+//        ProfileManager.upgradeToProfiles(context);
+//        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
+        StoredData appInfo = new StoredData(context);
+//
+//        CarStatus status = appInfo.getCarStatus(VIN);
+//        OTAStatus ota = appInfo.getOTAStatus(VIN);
+//        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        long lastOTATime = Long.valueOf(sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0"));
+//
+
     }
 
     private static class LocalContentWebViewClient extends WebViewClientCompat {
@@ -108,20 +128,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_login:
-                Intent settingsIntent = new Intent(this,
-                        LoginActivity.class);
+//                Intent settingsIntent = new Intent(this, LoginActivity.class);
+                Intent settingsIntent = new Intent(this, ProfileManager.class);
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_logout:
-                StoredData appInfo = new StoredData(context);
-                appInfo.setAccessToken("");
-                appInfo.setProgramState(ProgramStateMachine.States.INITIAL_STATE);
-                StatusReceiver.cancelAlarm(context);
-                updateWidget(context);
-                Toast.makeText(context, "Removing authentication token", Toast.LENGTH_LONG).show();
+//                StoredData appInfo = new StoredData(context);
+//                appInfo.setAccessToken(VIN,"");
+//                appInfo.setProgramState(VIN, ProgramStateMachine.States.INITIAL_STATE);
+//                StatusReceiver.cancelAlarm(context);
+//                updateWidget(context);
+//                Toast.makeText(context, "Removing authentication token", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.action_refresh:
-                if (new StoredData(context).getLastUpdadeElapsedTime() > 5 * 60 * 1000) {
+                String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+                if (new StoredData(context).getLastUpdateElapsedTime() > 5 * 60 * 1000) {
                     StatusReceiver.cancelAlarm(context);
                     StatusReceiver.nextAlarm(context, 5);
                     Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();

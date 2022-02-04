@@ -9,25 +9,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MacheWidget">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:label="@string/action_settings">
-        </activity>
+            android:label="@string/action_settings"></activity>
         <activity
             android:name=".ChooseApp"
             android:exported="false"
             android:label="@string/action_chooseapp"
             android:parentActivityName=".MainActivity">
-             <meta-data
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".ProfileManager"
+            android:exported="false"
+            android:label="tmp manager">
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
@@ -75,6 +84,7 @@
             </intent-filter>
         </receiver>
     </application>
+
     <queries>
 
         <!-- Specific apps you interact with, eg: -->
@@ -83,13 +93,13 @@
 
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
+
         <package android:name="com.coulombtech" /> <!-- Chargepoint -->
         <package android:name="com.ford.fordpass" />
     </queries>
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

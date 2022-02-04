@@ -30,12 +30,14 @@ public class StatusReceiver extends BroadcastReceiver {
 
         mContext = context;
         nextAlarm(mContext);
+
+        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
         appInfo = new StoredData(context);
-        long timeout = appInfo.getTokenTimeout();
+        long timeout = appInfo.getTokenTimeout(VIN);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
         long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState()).getCurrentState();
+        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
 
         Log.d(MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name());
 
@@ -46,19 +48,19 @@ public class StatusReceiver extends BroadcastReceiver {
             // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
             // the next update.
             if (timeout + 5 * Millis < nowtime - delayInMillis) {
-                getRefresh(appInfo.getRefreshToken());
+                getRefresh(appInfo.getRefreshToken(VIN));
             } else {
-                getStatus(appInfo.getAccessToken());
-                getOTAStatus(appInfo.getAccessToken());
+                getStatus(appInfo.getAccessToken(VIN));
+                getOTAStatus(appInfo.getAccessToken(VIN));
             }
             appInfo.incCounter(StoredData.GOOD);
         } else if (state.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN) ||
                 state.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN)) {
-            getRefresh(appInfo.getRefreshToken());
+            getRefresh(appInfo.getRefreshToken(VIN));
             appInfo.incCounter(StoredData.BAD);
         } else {
             Log.d(MainActivity.CHANNEL_ID, "Hmmm... don't know what to do here");
-            getRefresh(appInfo.getRefreshToken());
+            getRefresh(appInfo.getRefreshToken(VIN));
             appInfo.incCounter(StoredData.UGLY);
         }
         int good = appInfo.getCounter(StoredData.GOOD);
@@ -74,18 +76,19 @@ public class StatusReceiver extends BroadcastReceiver {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
+                String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
                 Log.d(MainActivity.CHANNEL_ID, "Refresh: " + action);
-                appInfo.setProgramState(action);
+                appInfo.setProgramState(VIN,action);
                 if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) || action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     String accessToken = bb.getString("access_token");
-                    appInfo.setAccessToken(accessToken);
-                    appInfo.setRefreshToken(bb.getString("refresh_token"));
+                    appInfo.setAccessToken(VIN,accessToken);
+                    appInfo.setRefreshToken(VIN,bb.getString("refresh_token"));
                     int expires = bb.getInt("expires", 0);
                     LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
                     long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    appInfo.setTokenTimeout(nextTime);
+                    appInfo.setTokenTimeout(VIN,nextTime);
                     getStatus(accessToken);
                     getOTAStatus(accessToken);
                 }
@@ -95,13 +98,14 @@ public class StatusReceiver extends BroadcastReceiver {
     }
 
     private void getStatus(String accessToken) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
                 Log.d(MainActivity.CHANNEL_ID, "Status: " + action);
-                appInfo.setProgramState(action);
+                appInfo.setProgramState(VIN,action);
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(mContext);
                 }

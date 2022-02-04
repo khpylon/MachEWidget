@@ -41,6 +41,7 @@ public class ChooseApp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_app);
+        String VIN = PreferenceManager.getDefaultSharedPreferences(this).getString(this.getResources().getString(R.string.VIN_key), "");
 
         final ListView list = findViewById(R.id.list);
         ArrayList<AppList> arrayList = getApps(this);
@@ -53,9 +54,9 @@ public class ChooseApp extends AppCompatActivity {
                 AppList app = arrayList.get(i);
                 StoredData appInfo = new StoredData(getApplicationContext());
                 if (rightButton == false) {
-                    appInfo.setLeftAppPackage(app.packageName);
+                    appInfo.setLeftAppPackage(VIN,app.packageName);
                 } else {
-                    appInfo.setRightAppPackage(app.packageName);
+                    appInfo.setRightAppPackage(VIN,app.packageName);
                 }
                 MainActivity.updateWidget(getApplicationContext());
                 finish();

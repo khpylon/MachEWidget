@@ -44,6 +44,7 @@ import java.util.Map;
 public class CarStatusWidget extends AppWidgetProvider {
     public static final String WIDGET_IDS_KEY = "com.example.khughes.machewidget.CARSTATUSWIDGET";
 
+    private static final String PROFILE_CLICK = "Profile";
     private static final String WIDGET_CLICK = "Widget";
     private static final String SETTINGS_CLICK = "SettingsButton";
     private static final String LEFT_BUTTON_CLICK = "FordPassButton";
@@ -247,6 +248,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Define actions for clicking on various icons, including the widget itself
         views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, WIDGET_CLICK));
         views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
+        views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, PROFILE_CLICK));
 
         Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
@@ -272,6 +274,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
         // Setup actions for specific widgets
         setCallbacks(context, views);
@@ -279,11 +282,15 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Set background transparency
         setBackground(context, views);
 
+        views.setTextViewText(R.id.profile, new StoredData(context).getProfileName(VIN));
+
         // If no status information, print something generic and return
         // TODO: also refresh the icons as if we're logged out?
-        CarStatus carStatus = new StoredData(context).getCarStatus();
+        CarStatus carStatus = new StoredData(context).getCarStatus(VIN);
         if (carStatus == null || carStatus.getVehiclestatus() == null) {
             views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.");
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+
             return;
         }
 
@@ -306,7 +313,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         Boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.last_refresh_time_key), false);
         if (displayTime) {
-            sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(), Locale.ENGLISH);
+            sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(VIN), Locale.ENGLISH);
             refresh += sdf.format(lastUpdateTime.getTime());
         } else {
             // less than 1 minute
@@ -349,7 +356,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         StoredData appInfo = new StoredData(context);
         Double distanceConversion;
         String distanceUnits;
-        if (appInfo.getSpeedUnits().equals("MPH")) {
+        if (appInfo.getSpeedUnits(VIN).equals("MPH")) {
             distanceConversion = Constants.KMTOMILES;
             distanceUnits = "miles";
         } else {
@@ -358,7 +365,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
         Double pressureConversion;
         String pressureUnits;
-        if (appInfo.getPressureUnits().equals("PSI")) {
+        if (appInfo.getPressureUnits(VIN).equals("PSI")) {
             pressureConversion = Constants.KPATOPSI;
             pressureUnits = "psi";
         } else {
@@ -549,7 +556,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setImageViewResource(R.id.rear_doors, rear[l_rear_door][r_rear_door]);
 
         // OTA status
-        OTAStatus otaStatus = new StoredData(context).getOTAStatus();
+        OTAStatus otaStatus = new StoredData(context).getOTAStatus(VIN);
         Boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.show_OTA_key), true);
         int dataLine = 0;
@@ -566,7 +573,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                     Notifications.newOTA(context);
                     OTArefresh = "New info found";
                 } else {
-                    OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, new StoredData(context).getTimeFormatByCountry());
+                    OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
                 }
             }
             views.setTextViewText(R.id.DataLine2, PADDING + OTArefresh);
@@ -591,11 +598,14 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
         setCallbacks(context, views);
 
         // Set background transparency
         setBackground(context, views);
+
+        views.setTextViewText(R.id.profile, new StoredData(context).getProfileName(VIN));
 
         // Reset everything else
         views.setTextViewText(R.id.lastRefresh, "Not logged in");
@@ -663,15 +673,15 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
     }
 
-    private void updateLinkedApps(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    private void updateLinkedApps(Context context, AppWidgetManager appWidgetManager, int appWidgetId, String VIN) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
 
         Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
 
         if (showAppLinks) {
-            setAppBitmap(context, views, new StoredData(context).getLeftAppPackage(), R.id.leftappbutton);
-            setAppBitmap(context, views, new StoredData(context).getRightAppPackage(), R.id.rightappbutton);
+            setAppBitmap(context, views, new StoredData(context).getLeftAppPackage(VIN), R.id.leftappbutton);
+            setAppBitmap(context, views, new StoredData(context).getRightAppPackage(VIN), R.id.rightappbutton);
         } else {
             views.setImageViewResource(R.id.leftappbutton, R.drawable.filler);
             views.setImageViewResource(R.id.rightappbutton, R.drawable.filler);
@@ -696,21 +706,26 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void start(Context context) {
-        NetworkCalls.remoteStart(getHandler(context), context, new StoredData(context).getAccessToken());
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        NetworkCalls.remoteStart(getHandler(context), context, new StoredData(context).getAccessToken(VIN));
     }
 
     private void lock(Context context) {
-        NetworkCalls.lockDoors(getHandler(context), context, new StoredData(context).getAccessToken());
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        NetworkCalls.lockDoors(getHandler(context), context, new StoredData(context).getAccessToken(VIN));
     }
 
     private void unlock(Context context) {
-        NetworkCalls.unlockDoors(getHandler(context), context, new StoredData(context).getAccessToken());
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        NetworkCalls.unlockDoors(getHandler(context), context, new StoredData(context).getAccessToken(VIN));
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         StoredData appInfo = new StoredData(context);
-        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState()).getCurrentState();
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
+        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
 
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
@@ -719,7 +734,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             } else {
                 updateAppLogout(context, appWidgetManager, appWidgetId);
             }
-            updateLinkedApps(context, appWidgetManager, appWidgetId);
+            updateLinkedApps(context, appWidgetManager, appWidgetId, VIN);
         }
     }
 
@@ -746,10 +761,15 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
         String action = intent.getAction();
         if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE) && intent.hasExtra(WIDGET_IDS_KEY)) {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
             this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
+        } else if (action.equals(PROFILE_CLICK)) {
+            String alias = ProfileManager.changeProfile(context);
+            MainActivity.updateWidget(context);
         } else if (action.equals(WIDGET_CLICK)) {
             intent = new Intent(context, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -760,28 +780,28 @@ public class CarStatusWidget extends AppWidgetProvider {
             context.startActivity(intent);
         } else if (action.equals(LEFT_BUTTON_CLICK)) {
             StoredData appInfo = new StoredData(context);
-            String appPackageName = appInfo.getLeftAppPackage();
+            String appPackageName = appInfo.getLeftAppPackage(VIN);
             if (appPackageName != null) {
                 PackageManager pm = context.getApplicationContext().getPackageManager();
                 intent = pm.getLaunchIntentForPackage(appPackageName);
                 if (intent != null) {
                     context.startActivity(intent);
                 } else {
-                    appInfo.setLeftAppPackage(null);
+                    appInfo.setLeftAppPackage(VIN,null);
                     MainActivity.updateWidget(context);
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }
             }
         } else if (action.equals(RIGHT_BUTTON_CLICK)) {
             StoredData appInfo = new StoredData(context);
-            String appPackageName = appInfo.getRightAppPackage();
+            String appPackageName = appInfo.getRightAppPackage(VIN);
             if (appPackageName != null) {
                 PackageManager pm = context.getApplicationContext().getPackageManager();
                 intent = pm.getLaunchIntentForPackage(appPackageName);
                 if (intent != null) {
                     context.startActivity(intent);
                 } else {
-                    appInfo.setRightAppPackage(null);
+                    appInfo.setRightAppPackage(VIN,null);
                     MainActivity.updateWidget(context);
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }
@@ -792,7 +812,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
             long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             if (nowtime - lastLockClicktime < 500) {
-                CarStatus carStatus = new StoredData(context).getCarStatus();
+                CarStatus carStatus = new StoredData(context).getCarStatus(VIN);
                 if (!awaitingUpdate && carStatus != null && carStatus.getLock() != null) {
                     if (carStatus.getLock().equals("LOCKED")) {
                         unlock(context);
@@ -807,7 +827,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
             long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             if (nowtime - lastIgnitionClicktime < 500) {
-                CarStatus carStatus = new StoredData(context).getCarStatus();
+                CarStatus carStatus = new StoredData(context).getCarStatus(VIN);
                 if (!awaitingUpdate && carStatus != null && carStatus.getIgnition() != null) {
                     if (carStatus.getIgnition().equals("Off")) {
                         start(context);

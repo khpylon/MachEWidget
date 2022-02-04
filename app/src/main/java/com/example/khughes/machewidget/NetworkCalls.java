@@ -45,6 +45,8 @@ public class NetworkCalls {
     }
 
     private static Intent getAccessToken(Context context, String username, String password) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
 //        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState());
@@ -74,11 +76,11 @@ public class NetworkCalls {
                             data.putExtra("access_token", accessToken.getAccessToken());
                             data.putExtra("refresh_token", accessToken.getRefreshToken());
                             data.putExtra("expires", accessToken.getExpiresIn());
-                            appInfo.setLanguage(accessToken.getUserProfile().getLanguage());
-                            appInfo.setCountry(accessToken.getUserProfile().getCountry());
-                            appInfo.setPressureUnits(accessToken.getUserProfile().getUomPressure());
-                            appInfo.setDistanceUnits(accessToken.getUserProfile().getUomDistance());
-                            appInfo.setSpeedUnits(accessToken.getUserProfile().getUomSpeed());
+                            appInfo.setLanguage(VIN, accessToken.getUserProfile().getLanguage());
+                            appInfo.setCountry(VIN, accessToken.getUserProfile().getCountry());
+                            appInfo.setPressureUnits(VIN,accessToken.getUserProfile().getUomPressure());
+                            appInfo.setDistanceUnits(VIN, accessToken.getUserProfile().getUomDistance());
+                            appInfo.setSpeedUnits(VIN, accessToken.getUserProfile().getUomSpeed());
                             nextState = state.FSM(true, true, false, false, false);
 //                     nextState = state.loginGood();
                         } else {
@@ -99,7 +101,7 @@ public class NetworkCalls {
                 Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
             }
         }
-        appInfo.setProgramState(nextState);
+        appInfo.setProgramState(VIN, nextState);
         data.putExtra("action", nextState.name());
         return data;
     }
@@ -118,6 +120,8 @@ public class NetworkCalls {
     }
 
     private static Intent refreshAccessToken(Context context, String token) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
 //        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState());
@@ -154,7 +158,7 @@ public class NetworkCalls {
                 Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.refreshAccessToken: ", e);
             }
         }
-        appInfo.setProgramState(nextState);
+        appInfo.setProgramState(VIN, nextState);
         data.putExtra("action", nextState.name());
         return data;
     }
@@ -173,14 +177,14 @@ public class NetworkCalls {
     }
 
     private static Intent getStatus(Context context, String token) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
 //        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState());
         ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS);
         ProgramStateMachine.States nextState;
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
-        String language = appInfo.getLanguage();
+        String language = appInfo.getLanguage(VIN);
 
         if (!MainActivity.checkInternetConnection(context)) {
             nextState = state.FSM(false, true, false, false, false);
@@ -198,10 +202,10 @@ public class NetworkCalls {
 //                         nextState = state.serverDown();
                         Log.i(MainActivity.CHANNEL_ID, "server is broken");
                     } else if (car.getVehiclestatus() != null) {
-                        appInfo.setCarStatus(car);
-                        appInfo.setLastUpdateTime();
-                        Notifications.checkLVBStatus(context, car);
-                        Notifications.checkTPMSStatus(context, car);
+                        appInfo.setCarStatus(VIN, car);
+                        appInfo.setLastUpdateTime(VIN);
+                        Notifications.checkLVBStatus(context, car, VIN);
+                        Notifications.checkTPMSStatus(context, car, VIN);
                         nextState = state.FSM(true, true, true, false, false);
 //                        nextState = state.goodVIN();
                         Log.i(MainActivity.CHANNEL_ID, "got status");
@@ -222,7 +226,7 @@ public class NetworkCalls {
                 Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
             }
         }
-        appInfo.setProgramState(nextState);
+        appInfo.setProgramState(VIN, nextState);
         data.putExtra("action", nextState.name());
         return data;
     }
@@ -241,15 +245,16 @@ public class NetworkCalls {
     }
 
     private static Intent getOTAStatus(Context context, String token) {
+
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
 //        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState());
         ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS);
         ProgramStateMachine.States nextState;
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
-        String language = appInfo.getLanguage();
-        String country = appInfo.getCountry();
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
+        String language = appInfo.getLanguage(VIN);
+        String country = appInfo.getCountry(VIN);
 
         if (!MainActivity.checkInternetConnection(context)) {
             nextState = state.FSM(false, true, false, false, false);
@@ -260,7 +265,7 @@ public class NetworkCalls {
                 Response<OTAStatus> response = call.execute();
                 if (response.isSuccessful()) {
                     Log.i(MainActivity.CHANNEL_ID, "OTA status successful....");
-                    appInfo.setOTAStatus(response.body());
+                    appInfo.setOTAStatus(VIN, response.body());
                 } else {
                     nextState = state.FSM(true, true, false, false, false);
 //                    nextState = state.loginBad();
@@ -274,7 +279,7 @@ public class NetworkCalls {
             }
         }
         nextState = state.FSM(true, true, true, false, false);
-        appInfo.setProgramState(nextState);
+        appInfo.setProgramState(VIN, nextState);
         data.putExtra("action", nextState.name());
         return data;
     }
@@ -332,11 +337,11 @@ public class NetworkCalls {
     }
 
     private static Intent execCommand(Context context, String token, String component, String operation, String request) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
         Intent data = new Intent();
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "Null");
         StoredData appInfo = new StoredData(context);
-        String language = appInfo.getLanguage();
+        String language = appInfo.getLanguage(VIN);
 
         if (!MainActivity.checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
