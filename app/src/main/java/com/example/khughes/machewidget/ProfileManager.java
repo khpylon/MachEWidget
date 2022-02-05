@@ -44,8 +44,8 @@ public class ProfileManager extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         // There are no request codes
                         Intent data = result.getData();
-                        String VIN = data.getStringExtra("VIN");
-                        String alias = data.getStringExtra("alias");
+                        String VIN = data.getStringExtra(LoginActivity.VINIDENTIFIER);
+                        String alias = data.getStringExtra(LoginActivity.PROFILENAME);
                         // Update the current active profile
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
 
@@ -53,7 +53,7 @@ public class ProfileManager extends AppCompatActivity {
                         Profile match = arrayList.stream().filter(p -> p.getVIN().equals(VIN)).findFirst().orElse(null);
                         if (match != null) {
                             // if the alias changed, update it
-                            if (!match.getAlias().equals(alias)) {
+                            if (!match.getProfileName().equals(alias)) {
                                 match.setAlias(alias);
                                 new StoredData(getApplicationContext()).setProfileName(VIN, alias);
                                 sortProfiles();
@@ -120,7 +120,7 @@ public class ProfileManager extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             final Profile profile = arrayList.get(position);
-            holder.aliasView.setText(profile.getAlias());
+            holder.profileNameView.setText(profile.getProfileName());
             holder.VINView.setText(profile.getVIN());
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -151,12 +151,8 @@ public class ProfileManager extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),
                         LoginActivity.class);
                 String VIN = arrayList.get(position).getVIN();
-                if(VIN.equals(BLANK_VIN)) {
-                    intent.putExtra("VIN", "");
-                } else {
-                    intent.putExtra("VIN", VIN);
-                }
-                intent.putExtra("alias", arrayList.get(position).getAlias());
+                intent.putExtra(LoginActivity.VINIDENTIFIER, VIN.equals(BLANK_VIN) ? "" : VIN);
+                intent.putExtra(LoginActivity.PROFILENAME, arrayList.get(position).getProfileName());
                 someActivityResultLauncher.launch(intent);
             });
 
@@ -169,20 +165,19 @@ public class ProfileManager extends AppCompatActivity {
     }
 
     private static class ViewHolder extends RecyclerView.ViewHolder { //implements View.OnClickListener {
-        private TextView aliasView;
+        private TextView profileNameView;
         private TextView VINView;
         private ImageView delete;
         private RelativeLayout relativeLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            aliasView = (TextView) itemView.findViewById(R.id.alias);
+            profileNameView = (TextView) itemView.findViewById(R.id.alias);
             VINView = (TextView) itemView.findViewById(R.id.VIN);
             delete = itemView.findViewById(R.id.profiledelete);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.profile_rowlayout);
         }
     }
-
 
     private ArrayList<Profile> getProfiles(Context context) {
         ArrayList<Profile> profiles = new ArrayList<>();
@@ -226,10 +221,30 @@ public class ProfileManager extends AppCompatActivity {
 
     // This method is used to set up profiles when coming from older app versions
     public static void upgradeToProfiles(Context context) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        if(new StoredData(context).notUsingProfiles(VIN)) {
-            //TODO new StoredData(context).deleteOldCredentials();
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), null);
+        StoredData appInfo = new StoredData(context);
+        String token = appInfo.getAccessToken(StoredData.TAG);
+
+        // If an update to profiles has occurred, there will be no "access token" data in main preferences file.
+        if(VIN != null && !token.equals("")) {
+            appInfo.addProfile(VIN, "");
+            appInfo.setAccessToken(VIN,appInfo.getAccessToken(StoredData.TAG));
+            appInfo.setRefreshToken(VIN,appInfo.getRefreshToken(StoredData.TAG));
+            appInfo.setProgramState(VIN,appInfo.getProgramState(StoredData.TAG));
+            appInfo.setTokenTimeout(VIN,appInfo.getTokenTimeout(StoredData.TAG));
+            appInfo.setCarStatus(VIN, appInfo.getCarStatus(StoredData.TAG));
+            appInfo.setOTAStatus(VIN, appInfo.getOTAStatus(StoredData.TAG));
+            appInfo.setHVBStatus(VIN, appInfo.getHVBStatus(StoredData.TAG));
+            appInfo.setTPMSStatus(VIN, appInfo.getTPMSStatus(StoredData.TAG));
+            appInfo.setCountry(VIN, appInfo.getCountry(StoredData.TAG));
+            appInfo.setLanguage(VIN, appInfo.getLanguage(StoredData.TAG));
+            appInfo.setSpeedUnits(VIN, appInfo.getSpeedUnits(StoredData.TAG));
+            appInfo.setDistanceUnits(VIN, appInfo.getDistanceUnits(StoredData.TAG));
+            appInfo.setPressureUnits(VIN, appInfo.getPressureUnits(StoredData.TAG));
+            appInfo.setLastUpdateTime(VIN, appInfo.getLastUpdateTime(StoredData.TAG));
+            appInfo.setLeftAppPackage(VIN, appInfo.getLeftAppPackage(StoredData.TAG));
+            appInfo.setRightAppPackage(VIN, appInfo.getRightAppPackage(StoredData.TAG));
+            appInfo.deleteOldCredentials();
         }
-        // TODO migrate stuff
     }
 }

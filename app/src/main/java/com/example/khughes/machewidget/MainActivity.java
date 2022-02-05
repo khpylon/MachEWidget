@@ -1,6 +1,7 @@
 package com.example.khughes.machewidget;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.webkit.WebSettingsCompat;
@@ -13,6 +14,7 @@ import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -42,9 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
 
-     test();
-
-        ProfileManager.upgradeToProfiles(context);
+        // Handle any changes to the app.
+        performUpdates(context);
 
         // Initiate check for a new app version
         Intent updateIntent = new Intent(context, UpdateReceiver.class);
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         context.sendBroadcast(updateIntent);
 
+        // Create the webview containing instruction for use.
         WebView mWebView = findViewById(R.id.main_description);
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
@@ -67,29 +69,20 @@ public class MainActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
         mWebView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
+        // Update the widget
         updateWidget(context);
 
         // Allow the app to display notifications
         createNotificationChannel();
     }
 
-    private void test() {
-
-//        ProfileManager.upgradeToProfiles(context);
-//        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
-        StoredData appInfo = new StoredData(context);
-//
-//        CarStatus status = appInfo.getCarStatus(VIN);
-//        OTAStatus ota = appInfo.getOTAStatus(VIN);
-//        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        long lastOTATime = Long.valueOf(sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0"));
-//
-
+    // This method is intended to bundle various changes from older versions to the most recent.
+    private void performUpdates(Context context) {
+        // Convert over to profiles (Version 2022.02.06)
+        ProfileManager.upgradeToProfiles(context);
     }
 
     private static class LocalContentWebViewClient extends WebViewClientCompat {
-
         private final WebViewAssetLoader mAssetLoader;
 
         LocalContentWebViewClient(WebViewAssetLoader assetLoader) {
@@ -128,17 +121,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_login:
-//                Intent settingsIntent = new Intent(this, LoginActivity.class);
-                Intent settingsIntent = new Intent(this, ProfileManager.class);
-                startActivity(settingsIntent);
-                return true;
-            case R.id.action_logout:
-//                StoredData appInfo = new StoredData(context);
-//                appInfo.setAccessToken(VIN,"");
-//                appInfo.setProgramState(VIN, ProgramStateMachine.States.INITIAL_STATE);
-//                StatusReceiver.cancelAlarm(context);
-//                updateWidget(context);
-//                Toast.makeText(context, "Removing authentication token", Toast.LENGTH_LONG).show();
+                // Depending on whether profiles are being used, either start the profile manager or go straight to login screen
+                Boolean profiles = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+                Intent intent = new Intent(this, profiles ? ProfileManager.class : LoginActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.action_refresh:
                 String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
@@ -151,18 +137,32 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             case R.id.action_chooseapp:
-                settingsIntent = new Intent(this, ChooseApp.class);
-                startActivity(settingsIntent);
+                intent = new Intent(this, ChooseApp.class);
+                startActivity(intent);
                 return true;
             case R.id.action_ota_view:
-                settingsIntent = new Intent(this, OTAViewActivity.class);
-                startActivity(settingsIntent);
+                intent = new Intent(this, OTAViewActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.action_settings:
-                settingsIntent = new Intent(this,
-                        SettingsActivity.class);
-                startActivity(settingsIntent);
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 return true;
+            case R.id.action_about:
+                AlertDialog error = new AlertDialog.Builder(this)
+                        .setTitle(R.string.app_name)
+                        .setMessage("Version "+BuildConfig.VERSION_NAME+ "\n" +
+                                "https://github.com/khpylon/MachEWidget")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Continue with delete operation
+                                finish();
+                            }
+                        })
+                        .setIcon(R.mipmap.ic_launcher_round)
+                        .show();
+
+                break;
             default:
                 // Do nothing
         }

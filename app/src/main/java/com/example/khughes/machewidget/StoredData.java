@@ -20,7 +20,7 @@ import java.util.Map;
 import static android.content.Context.MODE_PRIVATE;
 
 public class StoredData {
-    private static final String TAG = "saveAppInfo";
+    public static final String TAG = "saveAppInfo";
     private static final String VINLIST = "VINs";
 
     private static final String PROFILENAME = "Alias";
@@ -53,12 +53,6 @@ public class StoredData {
         mContext = context;
     }
 
-    // Test whether profile information was being used (did the user just upgrade)
-    public Boolean notUsingProfiles(String VIN) {
-        SharedPreferences prefs = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return prefs.contains(PROFILENAME) == false;
-    }
-
     // Profile specific methods
 
     public ArrayList<String> getProfiles() {
@@ -70,30 +64,17 @@ public class StoredData {
         clearProfiles();
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit();
         for (String VIN : profiles) {
-            edit.putBoolean(VIN, true);
+            edit.putInt(VIN, 0);
         }
         edit.apply();
     }
 
-//    public void addProfile(Profile profile) {
-//        String VIN = profile.getVIN();
-//
-//        // Just in case, remove old info if it exists
-//        removeProfile(VIN);
-//
-//        // Add the VIN to profile lsit
-//        mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().putBoolean(VIN, true).apply();
-//
-//        // Store the profile name
-//        setProfileName(VIN, profile.getAlias());
-//    }
-
     public void addProfile(String VIN, String profileName) {
         // Just in case, remove old info if it exists
-      // TODO  removeProfile(VIN);
+        removeProfile(VIN);
 
         // Add the VIN to profile lsit
-        mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().putBoolean(VIN, true).apply();
+        mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().putInt(VIN, 0).apply();
 
         // Store the profile name
         setProfileName(VIN, profileName);
@@ -123,13 +104,18 @@ public class StoredData {
     // Remove all keys not specific to a profile (pretty much everything)
     public void deleteOldCredentials() {
         SharedPreferences prefs = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
+        SharedPreferences.Editor edit = prefs.edit();
 
-        // keep the latest version  info
+        // Keep the latest version info
         String version = getLatestVersion();
         for (String key : prefs.getAll().keySet()) {
-            prefs.edit().remove(key);
+            // This key should not be present anyway, but just in case it is don't remove it
+            if(!key.equals(StoredData.LATESTVERSION)) {
+                edit.remove(key);
+            }
         }
-        setLatestVersion( version );
+        // Use commit to be sure changes finish before
+        edit.apply();
     }
 
     // Getters/setters for specific attributes
@@ -144,6 +130,10 @@ public class StoredData {
 
     public void setLastUpdateTime(String VIN ) {
         long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putLong(LASTUPDATETIME, nowtime).apply();
+    }
+
+    public void setLastUpdateTime(String VIN, long nowtime ) {
         mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putLong(LASTUPDATETIME, nowtime).apply();
     }
 

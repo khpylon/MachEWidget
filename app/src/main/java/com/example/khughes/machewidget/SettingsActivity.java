@@ -1,6 +1,7 @@
 package com.example.khughes.machewidget;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -14,6 +15,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -48,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
 
             // Changing any of these preferences requires updating the widget
-            for( int id : new int[] {R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key, R.string.show_location_key} ) {
+            for (int id : new int[]{R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key, R.string.show_location_key}) {
                 Preference showApps = findPreference(this.getResources().getString(id));
                 showApps.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
@@ -63,31 +65,41 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.settings_preferences, rootKey);
-            // Only allow number and upper-case letters (no punctuation) in a VIN
             EditTextPreference vinPreference = findPreference(this.getResources().getString(R.string.VIN_key));
-            if (vinPreference != null) {
-                vinPreference.setOnBindEditTextListener(
-                        new EditTextPreference.OnBindEditTextListener() {
-                            @Override
-                            public void onBindEditText(@NonNull EditText editText) {
-                                InputFilter filter = new InputFilter() {
-                                    public CharSequence filter(CharSequence source, int start, int end,
-                                                               Spanned dest, int dstart, int dend) {
-                                        String result = "";
-                                        for (int i = start; i < end; i++) {
-                                            char c = source.charAt(i);
-                                            if (!Character.isLetterOrDigit(c)) { // Accept only letter & digits ; otherwise just return
-                                                return "";
-                                            }
-                                            result += Character.toUpperCase(c);
-                                        }
-                                        return result;
-                                    }
-                                };
 
-                                editText.setFilters(new InputFilter[]{filter});
-                            }
-                        });
+            Context context = getContext();
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            Boolean profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+
+            // When profiles are enabled, you can't change the VIN here
+            if (profilesActive) {
+                vinPreference.setEnabled(false);
+            } else {
+                // Only allow number and upper-case letters (no punctuation) in a VIN
+                if (vinPreference != null) {
+                    vinPreference.setOnBindEditTextListener(
+                            new EditTextPreference.OnBindEditTextListener() {
+                                @Override
+                                public void onBindEditText(@NonNull EditText editText) {
+                                    InputFilter filter = new InputFilter() {
+                                        public CharSequence filter(CharSequence source, int start, int end,
+                                                                   Spanned dest, int dstart, int dend) {
+                                            String result = "";
+                                            for (int i = start; i < end; i++) {
+                                                char c = source.charAt(i);
+                                                if (!Character.isLetterOrDigit(c)) { // Accept only letter & digits ; otherwise just return
+                                                    return "";
+                                                }
+                                                result += Character.toUpperCase(c);
+                                            }
+                                            return result;
+                                        }
+                                    };
+
+                                    editText.setFilters(new InputFilter[]{filter});
+                                }
+                            });
+                }
             }
         }
     }

@@ -2,9 +2,9 @@
     <string name="app_name">Mach-E Info</string>
     <string name="action_settings">Settings</string>
     <string name="action_login">Ford Log-in</string>
-    <string name="action_logout">Ford Log-out</string>
     <string name="action_OTA">OTA Update Info</string>
     <string name="action_chooseapp">Choose Linked Apps</string>
+    <string name="action_profile">Manage Profiles</string>
     <string name="action_refresh">Refresh</string>
 
     <!-- Widget things -->
@@ -15,6 +15,7 @@
     <string name="unknown_OTA_time">Unknown</string>
     <string name="last_ota_time">LastOTATime</string>
 
+    <string name="profile_instructions">Click on a profile to log in with that VIN.  Click on an unused entry to create a login for a new vehicle.  Click on the "X" to delete a profile.</string>
 
     <!-- Preference Titles -->
     <string name="VIN">"Your vehicle's VIN"</string>
@@ -26,6 +27,7 @@
     <string name="last_refresh_time">Show time of last refresh instead of elaped time</string>
     <string name="show_location">Display location on widget</string>
     <string name="show_OTA">Display OTA info on widget</string>
+    <string name="show_profiles">Enable multiple user profiles</string>
 
     <!-- Shared preference keys -->
     <string name="VIN_key">"VIN"</string>
@@ -37,6 +39,7 @@
     <string name="last_refresh_time_key">refreshDisplayTime</string>
     <string name="show_location_key">showLocation</string>
     <string name="show_OTA_key">showOTA</string>
+    <string name="show_profiles_key">showProfiles</string>
 
     <string name="clear_alert">Clear alert</string>
 

@@ -35,7 +35,7 @@
         <activity
             android:name=".ProfileManager"
             android:exported="false"
-            android:label="tmp manager">
+            android:label="@string/action_profile">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -99,7 +99,6 @@
     </queries>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

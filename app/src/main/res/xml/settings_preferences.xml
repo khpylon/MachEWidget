@@ -54,21 +54,14 @@
 
     <SwitchPreferenceCompat
         app:defaultValue="false"
-        app:key="transparentBackground"
+        app:key="@string/show_profiles_key"
         app:singleLineTitle="false"
-        app:title="@string/transparent_back" />
+        app:title="@string/show_profiles" />
 
-
-    <!--
     <SwitchPreferenceCompat
         app:defaultValue="false"
-        app:key="units"
-        app:title="@string/unit_title" />
-
-    <SwitchPreferenceCompat
-        app:defaultValue="true"
-        app:key="dark_mode"
-        app:title="@string/dark_mode_title" />
-    -->
+        app:key="@string/transp_bg_key"
+        app:singleLineTitle="false"
+        app:title="@string/transparent_back" />
 
 </PreferenceScreen>

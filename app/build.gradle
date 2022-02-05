@@ -22,7 +22,7 @@ android {
         minSdk 29
         targetSdk 31
         versionCode 3
-        versionName "2022.02.01"
+        versionName "2022.02.06"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -65,7 +65,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
-    implementation 'com.android.support:appcompat-v7:27.0.2'
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.2'
     implementation 'com.google.code.gson:gson:2.8.9'

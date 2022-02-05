@@ -8,11 +8,6 @@
         android:title="@string/action_login"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_logout"
-        android:orderInCategory="10"
-        android:title="@string/action_logout"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_ota_view"
         android:orderInCategory="20"
         android:title="@string/action_OTA"
@@ -32,4 +27,10 @@
         android:orderInCategory="30"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="99"
+        android:title="About"
+        app:showAsAction="never" />
+
 </menu>

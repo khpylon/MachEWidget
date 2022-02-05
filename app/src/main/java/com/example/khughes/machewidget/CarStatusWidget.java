@@ -248,10 +248,15 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Define actions for clicking on various icons, including the widget itself
         views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, WIDGET_CLICK));
         views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
-        views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, PROFILE_CLICK));
 
-        Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+
+        if(profilesActive) {
+            views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, PROFILE_CLICK));
+        }
+
+        Boolean showAppLinks = sharedPref.getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {
             views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, LEFT_BUTTON_CLICK));
             views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, RIGHT_BUTTON_CLICK));
@@ -273,7 +278,9 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+        Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+
+        RemoteViews views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.profile_car_status_widget :R.layout.car_status_widget);
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
         // Setup actions for specific widgets
@@ -290,7 +297,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         if (carStatus == null || carStatus.getVehiclestatus() == null) {
             views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.");
             appWidgetManager.updateAppWidget(appWidgetId, views);
-
             return;
         }
 
@@ -597,7 +603,9 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+        Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+
+        RemoteViews views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.profile_car_status_widget :R.layout.car_status_widget);
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
         setCallbacks(context, views);

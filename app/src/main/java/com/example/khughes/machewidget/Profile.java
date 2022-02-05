@@ -67,7 +67,7 @@ public class Profile {
         this.VIN = VIN;
     }
 
-    public String getAlias() {
+    public String getProfileName() {
         return alias;
     }
 
