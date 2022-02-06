@@ -31,10 +31,6 @@ public class SettingsActivity extends AppCompatActivity {
                     .replace(R.id.settings, new SettingsFragment())
                     .commit();
         }
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
         mContext = this.getApplicationContext();
     }
 
@@ -49,13 +45,30 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
+            // If update frequency is changed, sent the info to the Alarm Manager
+            Preference showApps = findPreference(this.getResources().getString(R.string.update_frequency_key));
+            showApps.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    StatusReceiver.cancelAlarm(getContext());
+                    StatusReceiver.nextAlarm(getContext(),Integer.valueOf((String) newValue));
+                    return true;
+                }
+            });
+
             // Changing any of these preferences requires updating the widget
-            for (int id : new int[]{R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key, R.string.show_location_key}) {
-                Preference showApps = findPreference(this.getResources().getString(id));
+            for (int id : new int[]{R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key,
+                    R.string.show_location_key}) {
+                showApps = findPreference(this.getResources().getString(id));
                 showApps.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        MainActivity.updateWidget(mContext);
+                        if (preference.getKey().equals(getResources().getString(R.string.update_frequency_key))) {
+                            StatusReceiver.cancelAlarm(getContext());
+                            StatusReceiver.nextAlarm(getContext());
+                        } else {
+                            MainActivity.updateWidget(mContext);
+                        }
                         return true;
                     }
                 });

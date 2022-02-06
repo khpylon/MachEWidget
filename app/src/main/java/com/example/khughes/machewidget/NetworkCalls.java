@@ -49,8 +49,8 @@ public class NetworkCalls {
 
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
-//        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState());
-        ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
+        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState(VIN));
+//        ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
         ProgramStateMachine.States nextState;
 
         if (!MainActivity.checkInternetConnection(context)) {
@@ -124,8 +124,8 @@ public class NetworkCalls {
 
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
-//        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState());
-        ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
+        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState(VIN));
+//        ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
         ProgramStateMachine.States nextState;
 
         if (!MainActivity.checkInternetConnection(context)) {
@@ -181,8 +181,8 @@ public class NetworkCalls {
 
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
-//        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState());
-        ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS);
+        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState(VIN));
+//        ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS);
         ProgramStateMachine.States nextState;
         String language = appInfo.getLanguage(VIN);
 
@@ -245,13 +245,13 @@ public class NetworkCalls {
     }
 
     private static Intent getOTAStatus(Context context, String token) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
-//        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState());
-        ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS);
+        ProgramStateMachine state = new ProgramStateMachine(appInfo.getProgramState(VIN));
+//        ProgramStateMachine state = new ProgramStateMachine(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS);
         ProgramStateMachine.States nextState;
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
         String language = appInfo.getLanguage(VIN);
         String country = appInfo.getCountry(VIN);

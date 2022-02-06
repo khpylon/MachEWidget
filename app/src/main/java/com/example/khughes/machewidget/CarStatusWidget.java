@@ -51,6 +51,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private static final String RIGHT_BUTTON_CLICK = "ChargerButton";
     private static final String IGNITION_CLICK = "IgnitionButton";
     private static final String LOCK_CLICK = "LockButton";
+    private static final String REFRESH_CLICK = "Refresh";
 
     private static final String PADDING= "   ";
     private static final String CHARGING_STATUS_NOT_READY = "NotReady";
@@ -125,7 +126,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             addresses = mGeocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
-            Log.e(MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+            Log.e(MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget (normal)");
         }
 
         // If an address was found, go with the first entry
@@ -274,6 +275,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.lock, getPendingSelfIntent(context, WIDGET_CLICK));
             views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, WIDGET_CLICK));
         }
+        views.setOnClickPendingIntent(R.id.lastRefresh, getPendingSelfIntent(context, REFRESH_CLICK));
     }
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -758,6 +760,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private static long lastIgnitionClicktime = 0;
     private static long lastLockClicktime = 0;
+    private static long lastRefreshClicktime[] = {0,0};
 
     // Flag to avoid executing a command before we receive a status update.
     private static Boolean awaitingUpdate = false;
@@ -844,6 +847,16 @@ public class CarStatusWidget extends AppWidgetProvider {
                 }
             }
             lastIgnitionClicktime = nowtime;
+        } else if (action.equals(REFRESH_CLICK)) {
+            LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+            long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            if (nowtime - lastRefreshClicktime[0] < 500) {
+                long lastUpdateInMillis = new StoredData(context).getLastUpdateTime(VIN);
+                String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, new StoredData(context).getTimeFormatByCountry(VIN));
+                Toast.makeText(context,"Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
+            }
+            lastRefreshClicktime[0] = lastRefreshClicktime[1];
+            lastRefreshClicktime[1] = nowtime;
         } else {
             super.onReceive(context, intent);
         }

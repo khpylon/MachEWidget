@@ -8,7 +8,7 @@
     <ListPreference
         app:key="@string/update_frequency_key"
         app:defaultValue="30"
-        app:entries="@array/pref_update_values"
+        app:entries="@array/pref_update_titles"
         app:entryValues="@array/pref_update_values"
         app:negativeButtonText="@null"
         app:positiveButtonText="@null"

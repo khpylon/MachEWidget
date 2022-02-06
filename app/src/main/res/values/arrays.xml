@@ -1,9 +1,24 @@
 <resources>
+    <string-array name="pref_update_titles">
+        <item>5 min</item>
+        <item>10 min</item>
+        <item>15 min</item>
+        <item>20 min</item>
+        <item>30 min</item>
+        <item>One hour</item>
+        <item>Two hours</item>
+        <item>Never</item>
+    </string-array>
+
     <string-array name="pref_update_values">
         <item>5</item>
         <item>10</item>
+        <item>15</item>
+        <item>20</item>
         <item>30</item>
         <item>60</item>
+        <item>120</item>
+        <item>0</item>
     </string-array>
 
     <string-array name="packages">

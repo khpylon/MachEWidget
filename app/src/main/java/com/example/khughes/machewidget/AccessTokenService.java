@@ -32,6 +32,4 @@ public interface AccessTokenService {
             "Authorization: Basic ZWFpLWNsaWVudDo="})
     @PUT("refresh")
     Call<AccessToken> refreshAccessToken(@Body RequestBody token);
-
-
 }

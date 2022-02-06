@@ -47,9 +47,14 @@ public class StatusReceiver extends BroadcastReceiver {
 
             // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
             // the next update.
-            if (timeout + 5 * Millis < nowtime - delayInMillis) {
+            long calculation = (timeout - delayInMillis - 5 * Millis) - nowtime;
+            Log.d(MainActivity.CHANNEL_ID, "Calculating time as " + calculation);
+//            if (timeout + 5 * Millis < nowtime - delayInMillis) {
+            if (timeout - delayInMillis - 5 * Millis < nowtime) {
+                Log.d(MainActivity.CHANNEL_ID, "Need to refresh token");
                 getRefresh(appInfo.getRefreshToken(VIN));
             } else {
+                Log.d(MainActivity.CHANNEL_ID, "Token good? Just grab info");
                 getStatus(appInfo.getAccessToken(VIN));
                 getOTAStatus(appInfo.getAccessToken(VIN));
             }
@@ -80,15 +85,15 @@ public class StatusReceiver extends BroadcastReceiver {
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
                 Log.d(MainActivity.CHANNEL_ID, "Refresh: " + action);
-                appInfo.setProgramState(VIN,action);
+                appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) || action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     String accessToken = bb.getString("access_token");
-                    appInfo.setAccessToken(VIN,accessToken);
-                    appInfo.setRefreshToken(VIN,bb.getString("refresh_token"));
+                    appInfo.setAccessToken(VIN, accessToken);
+                    appInfo.setRefreshToken(VIN, bb.getString("refresh_token"));
                     int expires = bb.getInt("expires", 0);
                     LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
                     long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    appInfo.setTokenTimeout(VIN,nextTime);
+                    appInfo.setTokenTimeout(VIN, nextTime);
                     getStatus(accessToken);
                     getOTAStatus(accessToken);
                 }
@@ -105,7 +110,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
                 Log.d(MainActivity.CHANNEL_ID, "Status: " + action);
-                appInfo.setProgramState(VIN,action);
+                appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(mContext);
                 }
@@ -118,11 +123,11 @@ public class StatusReceiver extends BroadcastReceiver {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                bb = msg.getData();
-                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+//                bb = msg.getData();
+//                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
+//                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(mContext);
-                }
+//                }
             }
         };
         NetworkCalls.getOTAStatus(h, mContext, accessToken);
@@ -130,8 +135,10 @@ public class StatusReceiver extends BroadcastReceiver {
 
     public static void nextAlarm(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        int delay = new Integer(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60;
-        nextAlarm(context, delay);
+        int delay = new Integer(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10"));
+        if (delay != 0) {
+            nextAlarm(context, delay * 60);
+        }
     }
 
     public static void nextAlarm(Context context, int delay) {

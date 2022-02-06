@@ -30,7 +30,13 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.apache.commons.compress.utils.Charsets;
+
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public class MainActivity extends AppCompatActivity {

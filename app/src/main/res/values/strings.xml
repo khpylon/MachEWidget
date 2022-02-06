@@ -19,7 +19,7 @@
 
     <!-- Preference Titles -->
     <string name="VIN">"Your vehicle's VIN"</string>
-    <string name="widget_update_frequency">Minutes between widget updates</string>
+    <string name="widget_update_frequency">Time between widget updates</string>
     <string name="enable_commands">Enable lock and start commands on widget double-tap</string>
     <string name="enable_app_launchers">Enable app launcher buttons</string>
     <string name="choose_apps_title">Allow any app to be linked to \"charger\" widget </string>

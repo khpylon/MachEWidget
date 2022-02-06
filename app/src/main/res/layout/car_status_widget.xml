@@ -10,10 +10,10 @@
 
     <ImageView
         android:id="@+id/machelogo"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_width="120dp"
         android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:src="@drawable/mache_logo" />
 
     <TextView
@@ -27,6 +27,35 @@
         android:text="Last refresh:\n   N/A"
         android:textColor="@color/white"
         android:textSize="12dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/odometer"
+        android:orientation="horizontal">
+<!--
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/o7"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/o7"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/o7"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/o7"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/o7"/>
+-->
+    </LinearLayout>
 
     <TextView
         android:id="@+id/odometer"

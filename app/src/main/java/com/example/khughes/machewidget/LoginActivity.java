@@ -76,9 +76,8 @@ public class LoginActivity extends AppCompatActivity {
             aliasWidget.getEditText().setText(alias);
             VIN = getIntent().getStringExtra(VINIDENTIFIER);
         } else {
-            String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+            VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         }
-
 
         if (VIN != null && !VIN.equals("")) {
             VINWidget.getEditText().setText(VIN);
@@ -115,11 +114,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if (username.length() == 0) {
-                    Toast.makeText(getApplicationContext(), "Please enter a username", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please enter a username.", Toast.LENGTH_SHORT).show();
                 } else if (password.length() == 0) {
-                    Toast.makeText(getApplicationContext(), "Please enter a password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please enter a password.", Toast.LENGTH_SHORT).show();
                 } else if (VIN.length() != 17) {
-                    Toast.makeText(getApplicationContext(), "Please enter a valid VIN", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please enter a valid VIN.", Toast.LENGTH_SHORT).show();
                 } else {
                     appInfo.setProgramState(VIN, ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
                     sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
@@ -147,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                         action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN) ||
                         action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     String accessToken = bb.getString("access_token");
+                    Toast.makeText(getApplicationContext(), "Log-in successful; attempting to get status.", Toast.LENGTH_SHORT).show();
                     appInfo.setAccessToken(VIN, accessToken);
                     appInfo.setRefreshToken(VIN, bb.getString("refresh_token"));
                     int expires = bb.getInt("expires", 0);
@@ -177,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                     MainActivity.updateWidget(getApplicationContext());
                     StatusReceiver.nextAlarm(getApplicationContext());
                     getOTAStatus(accessToken);
-
+                    Toast.makeText(getApplicationContext(), "Status retrieved successfully.", Toast.LENGTH_SHORT).show();
                     Intent data = new Intent();
                     data.putExtra(VINIDENTIFIER, VIN);
                     if( profilesActive) {
@@ -197,12 +197,12 @@ public class LoginActivity extends AppCompatActivity {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                bb = msg.getData();
-                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS) ||
-                        action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN)) {
+//                bb = msg.getData();
+//                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
+//                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS) ||
+//                        action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN)) {
                     MainActivity.updateWidget(getApplicationContext());
-                }
+//                }
             }
         };
         NetworkCalls.getOTAStatus(h, getApplicationContext(), accessToken);
