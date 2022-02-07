@@ -154,21 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_about:
-                AlertDialog error = new AlertDialog.Builder(this)
-                        .setTitle(R.string.app_name)
-                        .setMessage("Version "+BuildConfig.VERSION_NAME+ "\n" +
-                                "https://github.com/khpylon/MachEWidget")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Continue with delete operation
-                                finish();
-                            }
-                        })
-                        .setIcon(R.mipmap.ic_launcher_round)
-                        .show();
-
-                break;
             default:
                 // Do nothing
         }

@@ -1,7 +1,9 @@
 package com.example.khughes.machewidget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -51,7 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     StatusReceiver.cancelAlarm(getContext());
-                    StatusReceiver.nextAlarm(getContext(),Integer.valueOf((String) newValue));
+                    StatusReceiver.nextAlarm(getContext(), Integer.valueOf((String) newValue));
                     return true;
                 }
             });
@@ -73,6 +75,23 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 });
             }
+
+            // Set app version info
+            Preference version = findPreference(this.getResources().getString(R.string.version_key));
+            version.setSummary(BuildConfig.VERSION_NAME);
+
+            // Provide a link to the GitHub repository
+            Preference github = findPreference(this.getResources().getString(R.string.github_repo_key));
+            github.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(Constants.REPOURL));
+                    startActivity(intent);
+                    return true;
+                }
+            });
+
         }
 
         @Override

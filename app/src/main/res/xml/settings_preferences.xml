@@ -64,4 +64,15 @@
         app:singleLineTitle="false"
         app:title="@string/transparent_back" />
 
+    <PreferenceCategory >
+        <Preference
+            app:key="@string/github_repo_key"
+            app:selectable="true"
+            app:title="@string/github_title"
+            app:summary="@string/github_summary"/>
+        <Preference
+            app:key="@string/version_key"
+            app:selectable="false"
+            app:title="@string/version" />
+    </PreferenceCategory>
 </PreferenceScreen>
