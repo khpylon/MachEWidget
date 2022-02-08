@@ -16,7 +16,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 
 ## 2022.02.06
 ### Added
-- Support for multiple user profiles
+- Support for multiple user profiles.
 - Alert user when a new version of the app is available.
 
 ## 2022.02.01
