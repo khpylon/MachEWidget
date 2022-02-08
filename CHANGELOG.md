@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.02.08
+### Added
+- Widget should allow resizing, so you can fit to your available space.
+- "About" moved from menu to Settings; it includes a link to the GitHub repo.
+
+### Fixed
+- Corrected an exception which caused the last OTA date to be displayed incorrectly.
+- Corrected some typos in the instructions.
+
 ## 2022.02.06
 ### Added
 - Support for multiple user profiles

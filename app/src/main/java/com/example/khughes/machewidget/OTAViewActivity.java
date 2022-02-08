@@ -38,6 +38,7 @@ public class OTAViewActivity extends AppCompatActivity {
             return "";
         }
     }
+
     public static long convertDateToMillis(String UTCdate) {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.OTATIMEFORMAT, Locale.ENGLISH);
@@ -63,13 +64,19 @@ public class OTAViewActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0");
-        if(lastOTATime.contains(":")) {
+        if (lastOTATime.contains(":")) {
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(VIN), Locale.ENGLISH);
+            SimpleDateFormat sdf;
+            // Determine the format of the date
+            if (lastOTATime.length() == Constants.OLDLOCALTIMEFORMAT.length()) {
+                sdf = new SimpleDateFormat(Constants.OLDLOCALTIMEFORMAT, Locale.ENGLISH);
+            } else {
+                sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(VIN), Locale.ENGLISH);
+            }
             try {
                 cal.setTime(sdf.parse(lastOTATime));
             } catch (ParseException e) {
-                e.printStackTrace();
+                Log.e(MainActivity.CHANNEL_ID, "exception in OTAViewActivity.getLastOTATimeInMillis: ", e);
             }
             return cal.toInstant().toEpochMilli();
         } else {
@@ -134,7 +141,7 @@ public class OTAViewActivity extends AppCompatActivity {
         Long lastOTATime = getLastOTATimeInMillis(getApplicationContext());
 
         Button clear = findViewById(R.id.button);
-        clear.setEnabled( currentOTATime > lastOTATime);
+        clear.setEnabled(currentOTATime > lastOTATime);
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
