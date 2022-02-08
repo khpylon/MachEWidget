@@ -103,7 +103,9 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Get the tire pressure and do any conversion necessary.
         if (pressure != null) {
             Double value = Double.valueOf(pressure) * conversion;
-            pressure = MessageFormat.format("{0}{1}", new DecimalFormat("#", // "#.0",
+            // If conversion is really small, show value in tenths
+            String pattern = conversion >= 0.1 ? "#" : "#.0";
+            pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
                     DecimalFormatSymbols.getInstance(Locale.US)).format(value), units);
             views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval);
         } else {
@@ -362,9 +364,15 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         // Get conversion factors for Metric vs Imperial measurement units
         StoredData appInfo = new StoredData(context);
+        Integer units = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(
+                        context.getResources().getString(R.string.units_key),
+                        context.getResources().getString(R.string.units_system)
+                ));
+
         Double distanceConversion;
         String distanceUnits;
-        if (appInfo.getSpeedUnits(VIN).equals("MPH")) {
+        if ((units == Constants.UNITS_SYSTEM && appInfo.getSpeedUnits(VIN).equals("MPH") ) || units == Constants.UNITS_IMPERIAL) {
             distanceConversion = Constants.KMTOMILES;
             distanceUnits = "miles";
         } else {
@@ -373,9 +381,12 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
         Double pressureConversion;
         String pressureUnits;
-        if (appInfo.getPressureUnits(VIN).equals("PSI")) {
+        if ((units == Constants.UNITS_SYSTEM && appInfo.getPressureUnits(VIN).equals("PSI")) || units == Constants.UNITS_IMPERIAL) {
             pressureConversion = Constants.KPATOPSI;
             pressureUnits = "psi";
+        } else if (units == Constants.UNITS_SYSTEM && appInfo.getPressureUnits(VIN).equals("BAR")) {
+            pressureConversion = Constants.KPATOBAR;
+            pressureUnits = "bar";
         } else {
             pressureConversion = 1.0;
             pressureUnits = "kPa";

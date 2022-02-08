@@ -20,6 +20,7 @@
     <!-- Preference Titles -->
     <string name="VIN">"Your vehicle's VIN"</string>
     <string name="widget_update_frequency">Time between widget updates</string>
+    <string name="units">Units to display</string>
     <string name="enable_commands">Enable lock and start commands on widget double-tap</string>
     <string name="enable_app_launchers">Enable app launcher buttons</string>
     <string name="choose_apps_title">Allow any app to be linked to \"charger\" widget </string>
@@ -35,6 +36,7 @@
     <!-- Shared preference keys -->
     <string name="VIN_key">"VIN"</string>
     <string name="update_frequency_key">"update_frequency"</string>
+    <string name="units_key">units</string>
     <string name="transp_bg_key">"transparentBackground"</string>
     <string name="enable_commands_key">enableCommands</string>
     <string name="show_app_links_key">"showAppLinks"</string>
@@ -45,6 +47,11 @@
     <string name="show_profiles_key">showProfiles</string>
     <string name="github_repo_key">githubRepo</string>
     <string name="version_key">appVersion</string>
+
+    <!-- Values for setting units (see arrays.xml) -->
+    <string name="units_system">0</string>
+    <string name="units_metric">1</string>
+    <string name="units_imperial">2</string>
 
     <string name="clear_alert">Clear alert</string>
 

@@ -21,6 +21,19 @@
         <item>0</item>
     </string-array>
 
+    <string-array name="units_titles">
+        <item>System</item>
+        <item>Metric (km, kPa)</item>
+        <item>Imperial (miles, psi)</item>
+    </string-array>
+
+    <!-- make sure these match values in Constants.java -->
+    <string-array name="units_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="packages">
         <item>com.ford.fordpass</item>
         <item>com.coulombtech</item>

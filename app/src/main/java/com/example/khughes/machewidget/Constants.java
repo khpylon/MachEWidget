@@ -9,7 +9,13 @@ public class Constants {
     public static final String OLDLOCALTIMEFORMAT = "yyyy-MM-dd HH:mm:ss z"; // 2022-01-29 13:00:00 PST
     public static final Double KMTOMILES = 0.6213711922;
     public static final Double KPATOPSI = 0.14503774;
+    public static final Double KPATOBAR = 0.01;
     public static final int SERVER_ERROR = 402;
+
+    // Make sure these match values in arrays.xml
+    public static final int UNITS_SYSTEM = 0;
+    public static final int UNITS_METRIC = 1;
+    public static final int UNITS_IMPERIAL = 2;
 
     public static final String REPOURL = "https://github.com/khpylon/MachEWidget";
 }

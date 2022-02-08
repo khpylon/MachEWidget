@@ -47,6 +47,8 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
+            String VIN = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getContext().getResources().getString(R.string.VIN_key), "");
+
             // If update frequency is changed, sent the info to the Alarm Manager
             Preference showApps = findPreference(this.getResources().getString(R.string.update_frequency_key));
             showApps.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -54,6 +56,16 @@ public class SettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     StatusReceiver.cancelAlarm(getContext());
                     StatusReceiver.nextAlarm(getContext(), Integer.valueOf((String) newValue));
+                    return true;
+                }
+            });
+
+            // Update the widget once the user pick a new unit preference.
+            Preference units = findPreference(this.getResources().getString(R.string.units_key));
+            units.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    MainActivity.updateWidget(mContext);
                     return true;
                 }
             });
@@ -79,6 +91,17 @@ public class SettingsActivity extends AppCompatActivity {
             // Set app version info
             Preference version = findPreference(this.getResources().getString(R.string.version_key));
             version.setSummary(BuildConfig.VERSION_NAME);
+            version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    StoredData appInfo = new StoredData(getContext());
+                    String units = "units = " + appInfo.getSpeedUnits(VIN) +
+                            ", " + appInfo.getDistanceUnits(VIN) +
+                            ", " + appInfo.getPressureUnits(VIN);
+                    Toast.makeText(getContext(), units, Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            });
 
             // Provide a link to the GitHub repository
             Preference github = findPreference(this.getResources().getString(R.string.github_repo_key));
