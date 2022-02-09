@@ -2,13 +2,14 @@ package com.example.khughes.machewidget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.util.ArrayMap;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
+
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -78,7 +79,7 @@ public class NetworkCalls {
                             data.putExtra("expires", accessToken.getExpiresIn());
                             appInfo.setLanguage(VIN, accessToken.getUserProfile().getLanguage());
                             appInfo.setCountry(VIN, accessToken.getUserProfile().getCountry());
-                            appInfo.setPressureUnits(VIN,accessToken.getUserProfile().getUomPressure());
+                            appInfo.setPressureUnits(VIN, accessToken.getUserProfile().getUomPressure());
                             appInfo.setDistanceUnits(VIN, accessToken.getUserProfile().getUomDistance());
                             appInfo.setSpeedUnits(VIN, accessToken.getUserProfile().getUomSpeed());
                             nextState = state.FSM(true, true, false, false, false);
@@ -197,7 +198,7 @@ public class NetworkCalls {
                     Log.i(MainActivity.CHANNEL_ID, "status successful....");
 //                    String tmp =response.toString();
                     CarStatus car = response.body();
-                    if (car.getStatus() == Constants.SERVER_ERROR) {
+                    if (car.getStatus() == Constants.HTTP_SERVER_ERROR) {
                         nextState = state.FSM(true, true, false, false, true);
 //                         nextState = state.serverDown();
                         Log.i(MainActivity.CHANNEL_ID, "server is broken");
@@ -219,6 +220,10 @@ public class NetworkCalls {
 //                    nextState = state.loginBad();
                     Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
                     Log.i(MainActivity.CHANNEL_ID, "status UNSUCCESSFUL....");
+                    // For either of these client errors, we probably need to refresh the access token
+                    if(response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED ) {
+                        nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
+                    }
                 }
             } catch (IOException e) {
                 nextState = state.FSM(true, true, false, false, false);
@@ -263,14 +268,24 @@ public class NetworkCalls {
             Call<OTAStatus> call = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
             try {
                 Response<OTAStatus> response = call.execute();
-                if (response.isSuccessful()) {
+                if ( response.isSuccessful()) {
                     Log.i(MainActivity.CHANNEL_ID, "OTA status successful....");
                     appInfo.setOTAStatus(VIN, response.body());
+                    nextState = state.getCurrentState();
                 } else {
                     nextState = state.FSM(true, true, false, false, false);
-//                    nextState = state.loginBad();
+                    Gson gson = new Gson();
+                    Map<String, String> map = gson.fromJson(response.raw().toString(), Map.class);
+                    if (map.containsKey("error") && map.get("error").contains("UpstreamException")) {
+                        OTAStatus status = new OTAStatus();
+                        status.setError("UpstreamException");
+                    }
                     Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
                     Log.i(MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL....");
+                    // For either of these client errors, we probably need to refresh the access token
+                    if(response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED ) {
+                        nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
+                    }
                 }
             } catch (IOException e) {
                 nextState = state.FSM(true, true, false, false, false);
@@ -278,7 +293,6 @@ public class NetworkCalls {
                 Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
             }
         }
-        nextState = state.FSM(true, true, true, false, false);
         appInfo.setProgramState(VIN, nextState);
         data.putExtra("action", nextState.name());
         return data;

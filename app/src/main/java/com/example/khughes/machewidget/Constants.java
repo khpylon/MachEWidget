@@ -10,7 +10,10 @@ public class Constants {
     public static final Double KMTOMILES = 0.6213711922;
     public static final Double KPATOPSI = 0.14503774;
     public static final Double KPATOBAR = 0.01;
-    public static final int SERVER_ERROR = 402;
+
+    public static final int HTTP_BAD_REQUEST = 400;
+    public static final int HTTP_UNAUTHORIZED = 401;
+    public static final int HTTP_SERVER_ERROR = 402;
 
     // Make sure these match values in arrays.xml
     public static final int UNITS_SYSTEM = 0;
