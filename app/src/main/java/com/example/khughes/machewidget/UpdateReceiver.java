@@ -52,7 +52,8 @@ public class UpdateReceiver extends BroadcastReceiver {
                     input.close();
                     return current;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(MainActivity.CHANNEL_ID, "exception in " + this.getClass().getName() + "." +
+                            this.getClass().getEnclosingMethod().getName() + ": " + e);
                 } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
@@ -86,7 +87,7 @@ public class UpdateReceiver extends BroadcastReceiver {
 
     public static void nextAlarm(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(1); // TODO .plusHours(12);
+        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(4);
         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         Intent intent = new Intent(context, UpdateReceiver.class);
