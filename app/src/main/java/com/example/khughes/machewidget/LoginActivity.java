@@ -146,13 +146,12 @@ public class LoginActivity extends AppCompatActivity {
                         action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN) ||
                         action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     String accessToken = bb.getString("access_token");
+                    String refreshToken = bb.getString("refresh_token");
                     Toast.makeText(getApplicationContext(), "Log-in successful; attempting to get status.", Toast.LENGTH_SHORT).show();
-                    appInfo.setAccessToken(VIN, accessToken);
-                    appInfo.setRefreshToken(VIN, bb.getString("refresh_token"));
                     int expires = bb.getInt("expires", 0);
                     LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
                     long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    appInfo.setTokenTimeout(VIN, nextTime);
+                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
                     getStatus(accessToken);
                 } else {
                     Toast.makeText(getApplicationContext(), "Unable to login to server: check your username and/or password?", Toast.LENGTH_LONG).show();

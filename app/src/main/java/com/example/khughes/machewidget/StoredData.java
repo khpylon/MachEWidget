@@ -64,6 +64,7 @@ public class StoredData {
 
     public enum StringCompressor {
         ;
+
         public static byte[] compress(String text) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
@@ -82,7 +83,7 @@ public class StoredData {
             try {
                 byte[] buffer = new byte[8192];
                 int len;
-                while((len = in.read(buffer))>0)
+                while ((len = in.read(buffer)) > 0)
                     baos.write(buffer, 0, len);
                 return new String(baos.toByteArray(), "UTF-8");
             } catch (IOException e) {
@@ -104,7 +105,7 @@ public class StoredData {
         for (String VIN : profiles) {
             edit.putInt(VIN, 0);
         }
-        edit.commit();
+        commitWait(edit);
     }
 
     public void addProfile(String VIN, String profileName) {
@@ -112,7 +113,7 @@ public class StoredData {
         removeProfile(VIN);
 
         // Add the VIN to profile lsit
-        mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().putInt(VIN, 0).commit();
+        commitWait(mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().putInt(VIN, 0));
 
         // Store the profile name
         setProfileName(VIN, profileName);
@@ -129,7 +130,7 @@ public class StoredData {
         String match = profiles.stream().filter(s -> s.equals(VIN)).findFirst().orElse(null);
         if (match != null) {
             // remove the VIN from the profile list
-            mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().remove(VIN).commit();
+            commitWait(mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().remove(VIN));
 
             // Remove the actual file from storage
             Path dir = mContext.getFilesDir().getParentFile().toPath();
@@ -147,31 +148,31 @@ public class StoredData {
         String version = getLatestVersion();
         for (String key : prefs.getAll().keySet()) {
             // This key should not be present anyway, but just in case it is don't remove it
-            if(!key.equals(StoredData.LATESTVERSION)) {
+            if (!key.equals(StoredData.LATESTVERSION)) {
                 edit.remove(key);
             }
         }
         // Use commit to be sure changes finish before
-        edit.commit();
+        commitWait(edit);
     }
 
     // Getters/setters for specific attributes
 
+    private boolean commitWait (SharedPreferences.Editor edit) {
+        for(int i = 0 ; i < 10 ; ++i ) {
+            if(edit.commit()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setProfileName(String VIN, String token) {
-        mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putString(PROFILENAME, token).commit();
+        commitWait(mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putString(PROFILENAME, token));
     }
 
     public String getProfileName(String VIN) {
         return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getString(PROFILENAME, "");
-    }
-
-    public void setLastUpdateTime(String VIN ) {
-        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putLong(LASTUPDATETIME, nowtime).commit();
-    }
-
-    public void setLastUpdateTime(String VIN, long nowtime ) {
-        mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putLong(LASTUPDATETIME, nowtime).commit();
     }
 
     public long getLastUpdateTime(String VIN) {
@@ -190,19 +191,36 @@ public class StoredData {
         return pref.getString(ACCESSTOKEN, "");
     }
 
-    public void setAccessToken(String VIN, String token) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(ACCESSTOKEN, token).commit();
-    }
+//    public void setAccessToken(String VIN, String token) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(ACCESSTOKEN, token).commit();
+//    }
 
     public String getRefreshToken(String VIN) {
         SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
         return pref.getString(REFRESHTOKEN, "");
     }
 
-    public void setRefreshToken(String VIN, String token) {
+//    public void setRefreshToken(String VIN, String token) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(REFRESHTOKEN, token).commit();
+//    }
+
+    public long getTokenTimeout(String VIN) {
+        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+        return pref.getLong(TOKENTIMEOUT, 0);
+    }
+
+//    public void setTokenTimeout(String VIN, long time) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putLong(TOKENTIMEOUT, time).commit();
+//    }
+
+    public void setTokenInfo(String VIN, String access, String refresh, long time) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(REFRESHTOKEN, token).commit();
+        edit.putString(ACCESSTOKEN, access);
+        edit.putString(REFRESHTOKEN, refresh);
+        commitWait(edit.putLong(TOKENTIMEOUT, time));
     }
 
     public ProgramStateMachine.States getProgramState(String VIN) {
@@ -213,7 +231,7 @@ public class StoredData {
 
     public void setProgramState(String VIN, ProgramStateMachine.States state) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(PROGRAMSTATE, state.name()).commit();
+        commitWait(edit.putString(PROGRAMSTATE, state.name()));
     }
 
     public CarStatus getCarStatus(String VIN) {
@@ -228,14 +246,17 @@ public class StoredData {
     public void setCarStatus(String VIN, CarStatus status) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
         String str = new String(StoredData.StringCompressor.compress(gson.toJson(status)), Charsets.ISO_8859_1);
-        edit.putString(CARSTATUS, str).commit();
+        edit.putString(CARSTATUS, str);
+        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        edit.putLong(LASTUPDATETIME, nowtime);
+        commitWait(edit);
         CarStatusWidget.clearAwaitingFlag();
     }
 
     public OTAStatus getOTAStatus(String VIN) {
         SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        String status= pref.getString(OTASTATUS, "{}");
-        if(!status.equals("{}") && !status.contains("otaAlertStatus")) {
+        String status = pref.getString(OTASTATUS, "{}");
+        if (!status.equals("{}") && !status.contains("otaAlertStatus")) {
             status = StringCompressor.decompress(status.getBytes(Charsets.ISO_8859_1));
         }
         return gson.fromJson(status, OTAStatus.class);
@@ -244,7 +265,8 @@ public class StoredData {
     public void setOTAStatus(String VIN, OTAStatus status) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
         String str = new String(StoredData.StringCompressor.compress(gson.toJson(status)), Charsets.ISO_8859_1);
-        edit.putString(OTASTATUS, str).commit();
+        edit.putString(OTASTATUS, str);
+        commitWait(edit);
     }
 
     public String getHVBStatus(String VIN) {
@@ -254,7 +276,8 @@ public class StoredData {
 
     public void setHVBStatus(String VIN, String status) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(HVBSTATUS, status).commit();
+        edit.putString(HVBSTATUS, status);
+        commitWait(edit);
     }
 
     public String getTPMSStatus(String VIN) {
@@ -264,17 +287,8 @@ public class StoredData {
 
     public void setTPMSStatus(String VIN, String status) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(TPMSSTATUS, status).commit();
-    }
-
-    public long getTokenTimeout(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getLong(TOKENTIMEOUT, 0);
-    }
-
-    public void setTokenTimeout(String VIN, long time) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putLong(TOKENTIMEOUT, time).commit();
+        edit.putString(TPMSSTATUS, status);
+        commitWait(edit);
     }
 
     public String getLanguage(String VIN) {
@@ -284,7 +298,8 @@ public class StoredData {
 
     public void setLanguage(String VIN, String language) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(LANGUAGE, language).commit();
+        edit.putString(LANGUAGE, language);
+        commitWait(edit);
     }
 
     public String getCountry(String VIN) {
@@ -294,7 +309,8 @@ public class StoredData {
 
     public void setCountry(String VIN, String country) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(COUNTRY, country).commit();
+        edit.putString(COUNTRY, country);
+        commitWait(edit);
     }
 
     public String getTimeFormatByCountry(String VIN) {
@@ -309,7 +325,8 @@ public class StoredData {
 
     public void setSpeedUnits(String VIN, String units) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(SPEEDUNITS, units).commit();
+        edit.putString(SPEEDUNITS, units);
+        commitWait(edit);
     }
 
     public int getDistanceUnits(String VIN) {
@@ -319,7 +336,8 @@ public class StoredData {
 
     public void setDistanceUnits(String VIN, int units) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putInt(DISTANCEUNITS, units).commit();
+        edit.putInt(DISTANCEUNITS, units);
+        commitWait(edit);
     }
 
     public String getPressureUnits(String VIN) {
@@ -329,7 +347,8 @@ public class StoredData {
 
     public void setPressureUnits(String VIN, String units) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(PRESSUREUNITS, units).commit();
+        edit.putString(PRESSUREUNITS, units);
+        commitWait(edit);
     }
 
     public String getLeftAppPackage(String VIN) {
@@ -339,7 +358,8 @@ public class StoredData {
 
     public void setLeftAppPackage(String VIN, String name) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(LEFTAPPPACKAGE, name).commit();
+        edit.putString(LEFTAPPPACKAGE, name);
+        commitWait(edit);
     }
 
     public String getRightAppPackage(String VIN) {
@@ -349,7 +369,8 @@ public class StoredData {
 
     public void setRightAppPackage(String VIN, String name) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(RIGHTAPPPACKAGE, name).commit();
+        edit.putString(RIGHTAPPPACKAGE, name);
+        commitWait(edit);
     }
 
     public String getLatestVersion() {
@@ -359,7 +380,8 @@ public class StoredData {
 
     public void setLatestVersion(String name) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
-        edit.putString(LATESTVERSION, name).commit();
+        edit.putString(LATESTVERSION, name);
+        commitWait(edit);
     }
 
     public int getCounter(String key) {
@@ -372,14 +394,14 @@ public class StoredData {
         edit.putInt(GOOD, 0);
         edit.putInt(BAD, 0);
         edit.putInt(UGLY, 0);
-        edit.commit();
+        commitWait(edit);
     }
 
     public int incCounter(String key) {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         int value = pref.getInt(key, 0) + 1;
-        edit.putInt(key, value).commit();
+        commitWait(edit.putInt(key, value));
         return value;
     }
 }

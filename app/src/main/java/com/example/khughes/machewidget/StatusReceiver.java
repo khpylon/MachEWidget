@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -49,7 +50,6 @@ public class StatusReceiver extends BroadcastReceiver {
             // the next update.
             long calculation = (timeout - delayInMillis - 5 * Millis) - nowtime;
             Log.d(MainActivity.CHANNEL_ID, "Calculating time as " + calculation);
-//            if (timeout + 5 * Millis < nowtime - delayInMillis) {
             if (timeout - delayInMillis - 5 * Millis < nowtime) {
                 Log.d(MainActivity.CHANNEL_ID, "Need to refresh token");
                 getRefresh(appInfo.getRefreshToken(VIN));
@@ -88,12 +88,11 @@ public class StatusReceiver extends BroadcastReceiver {
                 appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) || action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     String accessToken = bb.getString("access_token");
-                    appInfo.setAccessToken(VIN, accessToken);
-                    appInfo.setRefreshToken(VIN, bb.getString("refresh_token"));
+                    String refreshToken = bb.getString("refresh_token");
                     int expires = bb.getInt("expires", 0);
                     LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
                     long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    appInfo.setTokenTimeout(VIN, nextTime);
+                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
                     getStatus(accessToken);
                     getOTAStatus(accessToken);
                 }
@@ -123,11 +122,7 @@ public class StatusReceiver extends BroadcastReceiver {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-//                bb = msg.getData();
-//                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-//                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
-                    MainActivity.updateWidget(mContext);
-//                }
+                MainActivity.updateWidget(mContext);
             }
         };
         NetworkCalls.getOTAStatus(h, mContext, accessToken);

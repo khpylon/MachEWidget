@@ -228,10 +228,7 @@ public class ProfileManager extends AppCompatActivity {
         // If an update to profiles has occurred, there will be no "access token" data in main preferences file.
         if(VIN != null && !token.equals("")) {
             appInfo.addProfile(VIN, "");
-            appInfo.setAccessToken(VIN,appInfo.getAccessToken(StoredData.TAG));
-            appInfo.setRefreshToken(VIN,appInfo.getRefreshToken(StoredData.TAG));
             appInfo.setProgramState(VIN,appInfo.getProgramState(StoredData.TAG));
-            appInfo.setTokenTimeout(VIN,appInfo.getTokenTimeout(StoredData.TAG));
             appInfo.setCarStatus(VIN, appInfo.getCarStatus(StoredData.TAG));
             appInfo.setOTAStatus(VIN, appInfo.getOTAStatus(StoredData.TAG));
             appInfo.setHVBStatus(VIN, appInfo.getHVBStatus(StoredData.TAG));
@@ -241,9 +238,12 @@ public class ProfileManager extends AppCompatActivity {
             appInfo.setSpeedUnits(VIN, appInfo.getSpeedUnits(StoredData.TAG));
             appInfo.setDistanceUnits(VIN, appInfo.getDistanceUnits(StoredData.TAG));
             appInfo.setPressureUnits(VIN, appInfo.getPressureUnits(StoredData.TAG));
-            appInfo.setLastUpdateTime(VIN, appInfo.getLastUpdateTime(StoredData.TAG));
             appInfo.setLeftAppPackage(VIN, appInfo.getLeftAppPackage(StoredData.TAG));
             appInfo.setRightAppPackage(VIN, appInfo.getRightAppPackage(StoredData.TAG));
+            appInfo.setTokenInfo(VIN,
+                    appInfo.getAccessToken(StoredData.TAG),
+                    appInfo.getRefreshToken(StoredData.TAG),
+                    appInfo.getTokenTimeout(StoredData.TAG));
             appInfo.deleteOldCredentials();
         }
     }
