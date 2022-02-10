@@ -274,11 +274,13 @@ public class NetworkCalls {
                     nextState = state.getCurrentState();
                 } else {
                     nextState = state.FSM(true, true, false, false, false);
-                    Gson gson = new Gson();
-                    Map<String, String> map = gson.fromJson(response.raw().toString(), Map.class);
-                    if (map.containsKey("error") && map.get("error").contains("UpstreamException")) {
-                        OTAStatus status = new OTAStatus();
-                        status.setError("UpstreamException");
+                    try {
+                        if (response.errorBody().string().contains("UpstreamException")) {
+                            OTAStatus status = new OTAStatus();
+                            status.setError("UpstreamException");
+                        }
+                    } catch (IOException e ) {
+                        Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
                     }
                     Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
                     Log.i(MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL....");
