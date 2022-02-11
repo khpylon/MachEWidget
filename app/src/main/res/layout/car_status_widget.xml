@@ -312,7 +312,7 @@
         android:layout_alignLeft="@id/frunk"
         android:layout_alignTop="@id/frunk"
         android:layout_marginLeft="33.3dp"
-        android:layout_marginTop="116dp"
+        android:layout_marginTop="110dp"
         android:background="@drawable/locked_icon_gray" />
 
     <ImageView
@@ -418,7 +418,7 @@
         android:textColor="@color/white"
         android:textSize="12dp" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/box3"
         android:layout_width="171.6dp"
         android:layout_height="20dp"
@@ -438,8 +438,9 @@
 
         <ProgressBar
             android:id="@+id/HBVChargeProgress"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_toRightOf="@id/HVBIcon"
             android:scaleY="4"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:progressBackgroundTint="@color/dull_green"
@@ -451,14 +452,15 @@
 
         <TextView
             android:id="@+id/HVBChargePercent"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textSize="12dp"
+            android:layout_toRightOf="@id/HVBIcon"
+            android:textSize="10dp"
             android:gravity="center"
             android:text="N/A"
             android:textColor="@color/white"
             android:layout_weight="1" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
