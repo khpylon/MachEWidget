@@ -15,15 +15,10 @@
         app:title="@string/widget_update_frequency"
         app:useSimpleSummaryProvider="true" />
 
-    <ListPreference
-        app:key="@string/units_key"
-        app:defaultValue="0"
-        app:entries="@array/units_titles"
-        app:entryValues="@array/units_values"
-        app:negativeButtonText="@null"
-        app:positiveButtonText="@null"
-        app:title="@string/units"
-        app:useSimpleSummaryProvider="true" />
+    <SwitchPreferenceCompat
+        app:key="@string/save_credentials_key"
+        app:defaultValue="false"
+        app:title="@string/save_credentials" />
 
     <SwitchPreferenceCompat
         app:key="@string/last_refresh_time_key"
@@ -67,6 +62,17 @@
         app:key="@string/show_profiles_key"
         app:singleLineTitle="false"
         app:title="@string/show_profiles" />
+
+    <ListPreference
+        app:key="@string/units_key"
+        app:defaultValue="0"
+        app:entries="@array/units_titles"
+        app:entryValues="@array/units_values"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/units"
+        app:useSimpleSummaryProvider="true" />
+
 
     <SwitchPreferenceCompat
         app:defaultValue="false"

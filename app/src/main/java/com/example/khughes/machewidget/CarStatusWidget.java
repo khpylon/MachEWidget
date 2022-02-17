@@ -574,6 +574,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setImageViewResource(R.id.right_doors, right[r_front_door][r_rear_door]);
         views.setImageViewResource(R.id.rear_doors, rear[l_rear_door][r_rear_door]);
 
+        views.setTextColor(R.id.DataLine2, context.getColor(R.color.white));
         // OTA status
         OTAStatus otaStatus = new StoredData(context).getOTAStatus(VIN);
         Boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
@@ -588,9 +589,12 @@ public class CarStatusWidget extends AppWidgetProvider {
                 OTArefresh = "Unknown";
             } else {
                 Long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+
+                // If there's new information, display that data/time in green
                 if (currentOTATime > lastOTATime) {
                     Notifications.newOTA(context);
-                    OTArefresh = "New info found";
+                    views.setTextColor(R.id.DataLine2, context.getColor(R.color.green));
+                    OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
                 } else {
                     OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
                 }
@@ -634,6 +638,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.sleep, "Deep sleep: N/A");
         views.setTextViewText(R.id.LVBVoltage, "LVB Volts: N/A");
         views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
+        views.setTextColor(R.id.DataLine2, context.getColor(R.color.white));
         views.setTextViewText(R.id.DataLine1, "");
         views.setTextViewText(R.id.DataLine2, "");
         views.setTextViewText(R.id.DataLine3, "");

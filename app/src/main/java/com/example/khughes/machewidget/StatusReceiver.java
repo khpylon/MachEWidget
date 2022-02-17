@@ -42,7 +42,19 @@ public class StatusReceiver extends BroadcastReceiver {
 
         Log.d(MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name());
 
-        if (state.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+        // Check whether credentials are being saved
+        Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
+
+        if (state.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN)) {
+            if (savingCredentials) {
+                Log.d(MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
+                getAccess();
+                appInfo.incCounter(StoredData.UGLY);
+            } else {
+                Log.e(MainActivity.CHANNEL_ID, "Log-in required but credentials are not being saved.");
+            }
+        } else if (state.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             int delayInMillis = new Integer(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
 
@@ -64,18 +76,48 @@ public class StatusReceiver extends BroadcastReceiver {
             getRefresh(appInfo.getRefreshToken(VIN));
             appInfo.incCounter(StoredData.BAD);
         } else {
-            Log.d(MainActivity.CHANNEL_ID, "Hmmm... don't know what to do here");
-            getRefresh(appInfo.getRefreshToken(VIN));
+            if (savingCredentials) {
+                Log.d(MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Trying to login");
+                getAccess();
+            } else {
+                Log.d(MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
+            }
             appInfo.incCounter(StoredData.UGLY);
         }
         int good = appInfo.getCounter(StoredData.GOOD);
         int bad = appInfo.getCounter(StoredData.BAD);
         int ugly = appInfo.getCounter(StoredData.UGLY);
 
-        Log.d(MainActivity.CHANNEL_ID, "good = " + good + ", bad = " + bad + ",ugly = " + ugly);
+        Log.d(MainActivity.CHANNEL_ID, "good = " + good + ", bad = " + bad + ", ugly = " + ugly);
     }
 
     private Bundle bb = new Bundle();
+
+    private void getAccess() {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+        Handler h = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                bb = msg.getData();
+                String xx = bb.getString("action");
+                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
+                Log.i(MainActivity.CHANNEL_ID, "Access: " + action);
+                appInfo.setProgramState(VIN, action);
+                if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) ||
+                        action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN) ||
+                        action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+                    String accessToken = bb.getString("access_token");
+                    String refreshToken = bb.getString("refresh_token");
+                    int expires = bb.getInt("expires", 0);
+                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
+                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
+                    getStatus(accessToken);
+                }
+            }
+        };
+        NetworkCalls.getAccessToken(h, mContext, appInfo.getUsername(VIN), appInfo.getPassword(VIN));
+    }
 
     private void getRefresh(String refreshToken) {
         Handler h = new Handler(Looper.getMainLooper()) {
@@ -84,7 +126,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                Log.d(MainActivity.CHANNEL_ID, "Refresh: " + action);
+                Log.i(MainActivity.CHANNEL_ID, "Refresh: " + action);
                 appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) || action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     String accessToken = bb.getString("access_token");
@@ -108,7 +150,7 @@ public class StatusReceiver extends BroadcastReceiver {
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                Log.d(MainActivity.CHANNEL_ID, "Status: " + action);
+                Log.i(MainActivity.CHANNEL_ID, "Status: " + action);
                 appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(mContext);

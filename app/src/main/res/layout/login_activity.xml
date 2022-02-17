@@ -15,9 +15,9 @@
         android:layout_centerInParent="true">
 
         <TextView
+            android:id="@+id/credentials"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/disclamer"/>
+            android:layout_height="wrap_content"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

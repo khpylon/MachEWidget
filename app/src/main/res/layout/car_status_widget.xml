@@ -443,7 +443,7 @@
             android:layout_toRightOf="@id/HVBIcon"
             android:scaleY="4"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:progressBackgroundTint="@color/dull_green"
+            android:progressBackgroundTint="@color/quantum_yellow"
             android:progressTint="@color/bright_green"
             android:max="100"
             android:progress="5"

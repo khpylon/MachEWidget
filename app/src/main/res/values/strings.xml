@@ -29,6 +29,7 @@
     <string name="show_location">Display location on widget</string>
     <string name="show_OTA">Display OTA info on widget</string>
     <string name="show_profiles">Enable multiple user profiles</string>
+    <string name="save_credentials">Save log-in credentials</string>
     <string name="github_title">GitHub repo</string>
     <string name="github_summary">Link to the code repository</string>
     <string name="version">App version</string>
@@ -45,6 +46,7 @@
     <string name="show_location_key">showLocation</string>
     <string name="show_OTA_key">showOTA</string>
     <string name="show_profiles_key">showProfiles</string>
+    <string name="save_credentials_key">saveCredentials</string>
     <string name="github_repo_key">githubRepo</string>
     <string name="version_key">appVersion</string>
 
@@ -56,6 +58,9 @@
     <string name="clear_alert">Clear alert</string>
 
     <string name="disclamer">
+        Your login credentials are only used to gain access to the Ford website.  They are stored encrypted in the app.
+    </string>
+    <string name="other_disclamer">
         Your login credentials are only used to gain access to the Ford website.  They are not stored in the app.
     </string>
 

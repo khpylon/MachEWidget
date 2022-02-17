@@ -1,5 +1,6 @@
 package com.example.khughes.machewidget;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private StoredData appInfo;
 
     private Boolean profilesActive;
+    private Boolean savingCredentials;
 
     private String VIN;
     private String alias;
@@ -46,6 +49,17 @@ public class LoginActivity extends AppCompatActivity {
         appInfo = new StoredData(this);
 
         setContentView(profilesActive ? R.layout.profile_login_activity : R.layout.login_activity);
+
+        savingCredentials = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
+
+        TextView disclaimerView = findViewById(R.id.credentials);
+
+        if (savingCredentials) {
+            disclaimerView.setText(R.string.disclamer);
+        } else {
+            disclaimerView.setText(R.string.other_disclamer);
+        }
 
         ArrayList<Profile> profiles = new ArrayList<>();
         for (String VIN : appInfo.getProfiles()) {
@@ -145,6 +159,18 @@ public class LoginActivity extends AppCompatActivity {
                 if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) ||
                         action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN) ||
                         action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+
+                    // If profiles are not being used, update the VIN list.
+                    if (!profilesActive) {
+                        new StoredData(getApplicationContext()).addProfile(VIN, alias);
+                    }
+
+                    // See if we should save the login credentials
+                    if (savingCredentials) {
+                        appInfo.setUsername(VIN, username);
+                        appInfo.setPassword(VIN, password);
+                    }
+
                     String accessToken = bb.getString("access_token");
                     String refreshToken = bb.getString("refresh_token");
                     Toast.makeText(getApplicationContext(), "Log-in successful; attempting to get status.", Toast.LENGTH_SHORT).show();
@@ -179,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Status retrieved successfully.", Toast.LENGTH_SHORT).show();
                     Intent data = new Intent();
                     data.putExtra(VINIDENTIFIER, VIN);
-                    if( profilesActive) {
+                    if (profilesActive) {
                         data.putExtra(PROFILENAME, aliasWidget.getEditText().getText().toString());
                     }
                     setResult(Activity.RESULT_OK, data);
@@ -196,12 +222,7 @@ public class LoginActivity extends AppCompatActivity {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-//                bb = msg.getData();
-//                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-//                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS) ||
-//                        action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN)) {
-                    MainActivity.updateWidget(getApplicationContext());
-//                }
+                MainActivity.updateWidget(getApplicationContext());
             }
         };
         NetworkCalls.getOTAStatus(h, getApplicationContext(), accessToken);

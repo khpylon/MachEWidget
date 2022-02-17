@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
 
-            // Initialize preferences
+        // Initialize preferences
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false);
         SharedPreferences sharedPref = PreferenceManager
                 .getDefaultSharedPreferences(this);

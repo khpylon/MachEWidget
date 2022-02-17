@@ -70,6 +70,16 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
+            // No matter the choice, erase the username and password for all profiles
+            Preference cred = findPreference(this.getResources().getString(R.string.save_credentials_key));
+            cred.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    new StoredData(mContext).clearUsernameAndPassword();
+                    return true;
+                }
+            });
+
             // Changing any of these preferences requires updating the widget
             for (int id : new int[]{R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key,
                     R.string.show_location_key}) {

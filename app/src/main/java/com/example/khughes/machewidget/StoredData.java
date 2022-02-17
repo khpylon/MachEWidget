@@ -13,16 +13,17 @@ import org.apache.commons.compress.utils.Charsets;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
+import java.util.Random;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -49,14 +50,16 @@ public class StoredData {
     private static final String LASTUPDATETIME = "LastUpdateTime";
     private static final String LEFTAPPPACKAGE = "LeftAppPackage";
     private static final String RIGHTAPPPACKAGE = "RightAppPackage";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
 
     private static final String LATESTVERSION = "LatestVersion";
     public static final String GOOD = "Good";
     public static final String BAD = "Bad";
     public static final String UGLY = "Ugly";
 
-    private Context mContext;
-    private Gson gson = new GsonBuilder().create();
+    private final Context mContext;
+    private final Gson gson = new GsonBuilder().create();
 
     public StoredData(Context context) {
         mContext = context;
@@ -69,7 +72,7 @@ public class StoredData {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 OutputStream out = new DeflaterOutputStream(baos);
-                out.write(text.getBytes("UTF-8"));
+                out.write(text.getBytes(StandardCharsets.UTF_8));
                 out.close();
             } catch (IOException e) {
                 throw new AssertionError(e);
@@ -83,9 +86,10 @@ public class StoredData {
             try {
                 byte[] buffer = new byte[8192];
                 int len;
-                while ((len = in.read(buffer)) > 0)
+                while ((len = in.read(buffer)) > 0) {
                     baos.write(buffer, 0, len);
-                return new String(baos.toByteArray(), "UTF-8");
+                }
+                return new String(baos.toByteArray(), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 throw new AssertionError(e);
             }
@@ -133,8 +137,8 @@ public class StoredData {
             commitWait(mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().remove(VIN));
 
             // Remove the actual file from storage
-            Path dir = mContext.getFilesDir().getParentFile().toPath();
-            File f = new File(dir.toString() + "/shared_prefs", VIN + ".xml");
+            File f = new File (mContext.getDataDir(), "/shared_prefs");;
+            f = new File(f, VIN + ".xml");
             f.delete();
         }
     }
@@ -145,6 +149,14 @@ public class StoredData {
         SharedPreferences.Editor edit = prefs.edit();
 
         // Keep the latest version info
+        File f = new File (mContext.getDataDir(), "/shared_prefs");
+        String t = f.toPath().toString();
+        for (File m: f.listFiles()) {
+            t = m.getName().toUpperCase();
+            if(t.toUpperCase().startsWith("3FMT") && t.toUpperCase().endsWith(".XML")) {
+                System.out.println(t);
+            }
+        }
         String version = getLatestVersion();
         for (String key : prefs.getAll().keySet()) {
             // This key should not be present anyway, but just in case it is don't remove it
@@ -158,17 +170,17 @@ public class StoredData {
 
     // Getters/setters for specific attributes
 
-    private boolean commitWait (SharedPreferences.Editor edit) {
-        for(int i = 0 ; i < 10 ; ++i ) {
-            if(edit.commit()) {
+    private boolean commitWait(SharedPreferences.Editor edit) {
+        for (int i = 0; i < 10; ++i) {
+            if (edit.commit()) {
                 return true;
             }
         }
         return false;
     }
 
-    public void setProfileName(String VIN, String token) {
-        commitWait(mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putString(PROFILENAME, token));
+    public void setProfileName(String VIN, String name) {
+        commitWait(mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putString(PROFILENAME, name));
     }
 
     public String getProfileName(String VIN) {
@@ -191,30 +203,15 @@ public class StoredData {
         return pref.getString(ACCESSTOKEN, "");
     }
 
-//    public void setAccessToken(String VIN, String token) {
-//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-//        edit.putString(ACCESSTOKEN, token).commit();
-//    }
-
     public String getRefreshToken(String VIN) {
         SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
         return pref.getString(REFRESHTOKEN, "");
     }
 
-//    public void setRefreshToken(String VIN, String token) {
-//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-//        edit.putString(REFRESHTOKEN, token).commit();
-//    }
-
     public long getTokenTimeout(String VIN) {
         SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
         return pref.getLong(TOKENTIMEOUT, 0);
     }
-
-//    public void setTokenTimeout(String VIN, long time) {
-//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-//        edit.putLong(TOKENTIMEOUT, time).commit();
-//    }
 
     public void setTokenInfo(String VIN, String access, String refresh, long time) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
@@ -371,6 +368,89 @@ public class StoredData {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
         edit.putString(RIGHTAPPPACKAGE, name);
         commitWait(edit);
+    }
+
+    private void createPassword(String VIN) {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
+        if (!pref.contains(PASSWORD)) {
+            byte[] array = new byte[64];
+            new Random().nextBytes(array);
+            commitWait(pref.edit().putString(PASSWORD, new String(array, StandardCharsets.UTF_8)));
+        }
+    }
+
+    private String getCryptoString(String VIN, String tag) {
+        String value = "";
+
+        // Just in case, make sure we're supposed to save this
+        Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
+        if (savingCredentials) {
+            createPassword(VIN);
+            SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
+            String password = pref.getString(PASSWORD, null);
+            pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+            String cipher = pref.getString(tag, null);
+            if (password != null && cipher != null) {
+                try {
+                    value = NetworkCalls.decrypt(mContext, password.toCharArray(), cipher);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return value;
+    }
+
+    private void setCryptoString(String VIN, String tag, String value) {
+
+        // Just in case, make sure we're supposed to save this
+        Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
+        if (savingCredentials) {
+            createPassword(VIN);
+            SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
+            String password = pref.getString(PASSWORD, null);
+            pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+            if (password != null) {
+                try {
+                    String cipher = NetworkCalls.encrypt(mContext, password.toCharArray(), value);
+                    commitWait(pref.edit().putString(tag, cipher));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void clearCryptoString(String VIN, String tag) {
+        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+        if(pref.contains(tag)) {
+            commitWait(pref.edit().remove(tag));
+        }
+    }
+
+    public String getUsername(String VIN) {
+        return getCryptoString(VIN, USERNAME);
+    }
+
+    public void setUsername(String VIN, String name) {
+        setCryptoString(VIN, USERNAME, name);
+    }
+
+    public String getPassword(String VIN) {
+        return getCryptoString(VIN, PASSWORD);
+    }
+
+    public void setPassword(String VIN, String name) {
+        setCryptoString(VIN, PASSWORD, name);
+    }
+
+    public void clearUsernameAndPassword() {
+        for (String VIN : getProfiles()) {
+            clearCryptoString(VIN, USERNAME);
+            clearCryptoString(VIN, PASSWORD);
+        }
     }
 
     public String getLatestVersion() {
