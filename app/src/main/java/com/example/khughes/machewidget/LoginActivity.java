@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +72,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton button, boolean value) {
                 savingCredentials = value;
                 sharedPref.edit().putBoolean(context.getResources().getString(R.string.save_credentials_key), value).commit();
+                if (savingCredentials == false) {
+                    new StoredData(context).clearUsernameAndPassword();
+                }
                 updateDisclamer(disclaimerView, savingCredentials);
             }
         });
