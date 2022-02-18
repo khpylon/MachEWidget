@@ -62,6 +62,14 @@
             android:textColor="#fff"
             android:id="@+id/login"/>
 
+        <Switch
+            android:id="@+id/storeCredentials"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="@string/save_credentials" />
+
     </LinearLayout>
+
 
 </RelativeLayout>

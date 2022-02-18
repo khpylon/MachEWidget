@@ -12,6 +12,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,14 @@ public class LoginActivity extends AppCompatActivity {
     private String alias;
     private Button login;
 
+    private void updateDisclamer(TextView view, boolean saved) {
+        if (saved) {
+            view.setText(R.string.disclamer);
+        } else {
+            view.setText(R.string.other_disclamer);
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,16 +60,22 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(profilesActive ? R.layout.profile_login_activity : R.layout.login_activity);
 
-        savingCredentials = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
+        savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
 
         TextView disclaimerView = findViewById(R.id.credentials);
 
-        if (savingCredentials) {
-            disclaimerView.setText(R.string.disclamer);
-        } else {
-            disclaimerView.setText(R.string.other_disclamer);
-        }
+        Switch credentials = findViewById(R.id.storeCredentials);
+        credentials.setChecked(savingCredentials);
+        credentials.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton button, boolean value) {
+                savingCredentials = value;
+                sharedPref.edit().putBoolean(context.getResources().getString(R.string.save_credentials_key), value).commit();
+                updateDisclamer(disclaimerView, savingCredentials);
+            }
+        });
+
+        updateDisclamer(disclaimerView, savingCredentials);
 
         ArrayList<Profile> profiles = new ArrayList<>();
         for (String VIN : appInfo.getProfiles()) {
