@@ -48,6 +48,7 @@ public class StoredData {
     private static final String DISTANCEUNITS = "DistanceUnits";
     private static final String PRESSUREUNITS = "PressureUnits";
     private static final String LASTUPDATETIME = "LastUpdateTime";
+    private static final String LASTALARMTIME = "LastAlarmTime";
     private static final String LEFTAPPPACKAGE = "LeftAppPackage";
     private static final String RIGHTAPPPACKAGE = "RightAppPackage";
     private static final String USERNAME = "username";
@@ -196,6 +197,17 @@ public class StoredData {
         long lastUpdate = mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTUPDATETIME, 0);
         long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         return nowtime - lastUpdate;
+    }
+
+    public void SetLastAlarmTime(String VIN) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        commitWait(edit.putLong(LASTALARMTIME, nowtime));
+    }
+
+    public long getLastAlarmTime() {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
     }
 
     public String getAccessToken(String VIN) {

@@ -11,35 +11,20 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import com.google.gson.Gson;
-
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.spec.AlgorithmParameterSpec;
 import java.util.Base64;
 import java.util.Map;
-import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -50,12 +35,6 @@ public class NetworkCalls {
     public static final String COMMAND_FAILED = "Command failed.";
     public static final String COMMAND_NO_NETWORK = "Network error.";
     public static final String COMMAND_EXCEPTION = "Exception occurred.";
-
-    private static AccessTokenService fordClient = AccessTokenServiceGenerator.createFordService(AccessTokenService.class);
-    private static AccessTokenService OAuth2Client = AccessTokenServiceGenerator.createOAuth2Service(AccessTokenService.class);
-    private static StatusService statusClient = StatusServiceGenerator.createService(StatusService.class);
-    private static OTAStatusService OTAstatusClient = OTAStatusServiceGenerator.createService(OTAStatusService.class);
-    private static CommandService commandServiceClient = CommandServiceGenerator.createService(CommandService.class);
 
     public static void getAccessToken(Handler handler, Context context, String username, String password) {
         Thread t = new Thread(new Runnable() {
@@ -83,6 +62,8 @@ public class NetworkCalls {
             nextState = state.FSM(false, false, false, false, false);
 //             nextState = state.networkDown();
         } else {
+            AccessTokenService fordClient = NetworkServiceGenerators.createFordService(AccessTokenService.class, context);
+            AccessTokenService OAuth2Client = NetworkServiceGenerators.createOAuth2Service(AccessTokenService.class, context);
             Call<AccessToken> call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
             try {
                 Response<AccessToken> response = call.execute();
@@ -161,7 +142,7 @@ public class NetworkCalls {
             Map<String, String> jsonParams = new ArrayMap<>();
             jsonParams.put("refresh_token", token);
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (new JSONObject(jsonParams)).toString());
-
+            AccessTokenService OAuth2Client = NetworkServiceGenerators.createOAuth2Service(AccessTokenService.class, context);
             Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
             try {
                 Response<AccessToken> response = call.execute();
@@ -176,7 +157,8 @@ public class NetworkCalls {
 //                     nextState = state.goodVIN();
                 } else {
                     Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
-                    Log.i(MainActivity.CHANNEL_ID, "refresh unsuccessful");
+                    Log.i(MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
+                    getAccessToken(context, appInfo.getUsername(VIN), appInfo.getPassword(VIN));
                     nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
 //                    nextState = state.FSM(true, false, true, false, false);
 //                     nextState = state.loginBad();
@@ -219,6 +201,7 @@ public class NetworkCalls {
             nextState = state.FSM(false, true, false, false, false);
 //             nextState = state.networkDown();
         } else {
+            StatusService statusClient = NetworkServiceGenerators.createCarStatusService(StatusService.class, context);
             Call<CarStatus> call = statusClient.getStatus(token, language, Constants.APID, VIN);
             try {
                 Response<CarStatus> response = call.execute();
@@ -292,6 +275,7 @@ public class NetworkCalls {
             nextState = state.FSM(false, true, false, false, false);
 //             nextState = state.networkDown();
         } else {
+            OTAStatusService OTAstatusClient = NetworkServiceGenerators.createOTAStatusService(OTAStatusService.class, context);
             Call<OTAStatus> call = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
             try {
                 Response<OTAStatus> response = call.execute();
@@ -389,6 +373,8 @@ public class NetworkCalls {
         if (!MainActivity.checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
         } else {
+//            CommandService commandServiceClient = CommandServiceGenerator.createService(CommandService.class);
+            CommandService commandServiceClient = NetworkServiceGenerators.createCommandService(CommandService.class);
             Call<CommandStatus> call = null;
             if (request.equals("put")) {
                 call = commandServiceClient.putCommand(token, language,
@@ -413,33 +399,6 @@ public class NetworkCalls {
             }
         }
         return data;
-    }
-
-    public static void reference(Context context) {
-        byte[] array = new byte[16];
-        new Random().nextBytes(array);
-        char[] generatedString = new String(array, StandardCharsets.UTF_8).toCharArray();
-
-        try {
-            NetworkCalls.generateKey();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String password = "don'tknowhwat2use";
-        String intermediate = null;
-        try {
-            intermediate = NetworkCalls.encrypt(context, generatedString, password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String result = null;
-        try {
-            result = NetworkCalls.decrypt(context, generatedString, intermediate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(password.equals(result));
     }
 
     // Code for encryption and decryption of personal data

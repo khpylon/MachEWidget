@@ -80,7 +80,16 @@
         app:singleLineTitle="false"
         app:title="@string/transparent_back" />
 
-    <PreferenceCategory >
+    <PreferenceCategory
+        app:title="Developer options">
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="@string/okhttp3_key"
+            app:singleLineTitle="false"
+            app:title="@string/okhttp3" />
+    </PreferenceCategory>
+
+    <PreferenceCategory>
         <Preference
             app:key="@string/github_repo_key"
             app:selectable="true"
