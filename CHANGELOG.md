@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.02.xx
+### Changes
+- Add a toggle switch for storing credentials to the log-in screen.
+
 ## 2022.02.17
 ### Changes
 - Add an option (under "Settings") to store FordPass login credentials (username and password). These are

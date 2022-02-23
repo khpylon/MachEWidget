@@ -33,6 +33,22 @@ public class CarStatus {
         }
     }
 
+    public Double getDistanceToEmpty() {
+        try {
+            return getVehiclestatus().getFuel().getDistanceToEmpty();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+    public Double getFuelLevel() {
+        try {
+            return getVehiclestatus().getFuel().getFuelLevel();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
     public Integer getLVBVoltage() {
         try {
             return getVehiclestatus().getBattery().getBatteryStatusActual().getValue();
@@ -57,7 +73,7 @@ public class CarStatus {
         }
     }
 
-    public String getTrunk() {
+    public String getTailgate() {
         try {
             return getVehiclestatus().getDoorStatus().getTailgateDoor().getValue();
         } catch (NullPointerException e) {
@@ -1176,6 +1192,56 @@ public class CarStatus {
 
         public void setValue(String value) {
             this.value = value;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(String timestamp) {
+            this.timestamp = timestamp;
+        }
+
+    }
+
+    @Generated("jsonschema2pojo")
+    public class Fuel {
+
+        @SerializedName("fuelLevel")
+        @Expose
+        private Double fuelLevel;
+        @SerializedName("distanceToEmpty")
+        @Expose
+        private Double distanceToEmpty;
+        @SerializedName("status")
+        @Expose
+        private String status;
+        @SerializedName("timestamp")
+        @Expose
+        private String timestamp;
+
+        public Double getFuelLevel() {
+            return fuelLevel;
+        }
+
+        public void setFuelLevel(Double fuelLevel) {
+            this.fuelLevel = fuelLevel;
+        }
+
+        public Double getDistanceToEmpty() {
+            return distanceToEmpty;
+        }
+
+        public void setDistanceToEmpty(Double distanceToEmpty) {
+            this.distanceToEmpty = distanceToEmpty;
         }
 
         public String getStatus() {
@@ -2924,7 +2990,7 @@ public class CarStatus {
         private Odometer odometer;
         @SerializedName("fuel")
         @Expose
-        private Object fuel;
+        private Fuel fuel;
         @SerializedName("gps")
         @Expose
         private Gps gps;
@@ -3065,11 +3131,11 @@ public class CarStatus {
             this.odometer = odometer;
         }
 
-        public Object getFuel() {
+        public Fuel getFuel() {
             return fuel;
         }
 
-        public void setFuel(Object fuel) {
+        public void setFuel(Fuel fuel) {
             this.fuel = fuel;
         }
 

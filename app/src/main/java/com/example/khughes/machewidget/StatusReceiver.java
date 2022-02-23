@@ -38,6 +38,9 @@ public class StatusReceiver extends BroadcastReceiver {
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
         long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        // Store time when we run the update;
+        appInfo.SetLastAlarmTime(VIN);
+
         ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
 
         Log.d(MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name());

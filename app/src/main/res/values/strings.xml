@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Mach-E Info</string>
+    <string name="f150_app_name">F-150 Info</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_login">Ford Log-in</string>
     <string name="action_OTA">OTA Update Info</string>
@@ -31,6 +33,7 @@
     <string name="show_profiles">Enable multiple user profiles</string>
     <string name="save_credentials">Save log-in credentials</string>
     <string name="okhttp3">Enable verbose HTTP logging</string>
+    <string name="f150_mode">F-150 mode</string>
     <string name="github_title">GitHub repo</string>
     <string name="github_summary">Link to the code repository</string>
     <string name="version">App version</string>
@@ -48,6 +51,7 @@
     <string name="show_OTA_key">showOTA</string>
     <string name="show_profiles_key">showProfiles</string>
     <string name="okhttp3_key">OkHttp3_key</string>
+    <string name="f150_mode_key">f150_mode</string>
     <string name="save_credentials_key">saveCredentials</string>
     <string name="github_repo_key">githubRepo</string>
     <string name="version_key">appVersion</string>

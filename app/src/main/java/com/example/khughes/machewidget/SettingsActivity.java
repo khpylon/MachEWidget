@@ -1,8 +1,10 @@
 package com.example.khughes.machewidget;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -76,6 +78,26 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     new StoredData(mContext).clearUsernameAndPassword();
+                    return true;
+                }
+            });
+
+            // Decide on the app appearance
+            Preference f150mode = findPreference(this.getResources().getString(R.string.f150_mode_key));
+            f150mode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    PackageManager manager = getContext().getPackageManager();
+                    String packageName = getContext().getPackageName();
+                    String firstActivity = packageName + ".MainActivity";
+                    String secondActivity = firstActivity + "Alias";
+                    Boolean value = (Boolean) newValue;
+                    manager.setComponentEnabledSetting(new ComponentName(packageName,
+                                    value ? firstActivity : secondActivity),
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                    manager.setComponentEnabledSetting(new ComponentName(packageName,
+                                    value ? secondActivity : firstActivity),
+                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
                     return true;
                 }
             });

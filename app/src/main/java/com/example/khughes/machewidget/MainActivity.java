@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -52,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize preferences
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false);
-        SharedPreferences sharedPref = PreferenceManager
-                .getDefaultSharedPreferences(this);
 
         // Handle any changes to the app.
         performUpdates(context);
@@ -78,7 +77,12 @@ public class MainActivity extends AppCompatActivity {
                 .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))
                 .build();
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
-        mWebView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+
+        Boolean MachE = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false) == false;
+        mWebView.loadUrl(MachE ?
+                "https://appassets.androidplatform.net/assets/index_mache.html" :
+                "https://appassets.androidplatform.net/assets/index_f150.html");
+        
 
         // Update the widget
         updateWidget(context);
@@ -202,10 +206,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!networkInfo.isAvailable()) {
-            return false;
-        }
-        return true;
+        return networkInfo.isAvailable();
     }
 
     public static void updateWidget(Context context) {
