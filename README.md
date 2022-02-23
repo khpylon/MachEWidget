@@ -38,7 +38,8 @@ As listed above, this app
 
 ## To do
 
-- Display information using more graphics and less text where possible. 
+- Display information using more graphics and less text where possible.
+- 
 
 ## Credits
 

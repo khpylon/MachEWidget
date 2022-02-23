@@ -25,9 +25,6 @@ import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -435,18 +432,21 @@ public class CarStatusWidget extends AppWidgetProvider {
             }
         }
 
+        String rangeCharge = "";
 
-        String rangeCharge;
         // Estimated range
-        Double range = carStatus.getElVehDTE();
+        Double range;
+        if (MachE) {
+            range = carStatus.getElVehDTE();
+        } else {
+            range = carStatus.getDistanceToEmpty();
+        }
         if (range != null && range > 0) {
             rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
-        } else {
-            rangeCharge = "";
         }
 
+        // Charging port
         if (MachE) {
-            // Charging port
             Boolean pluggedIn = carStatus.getPlugStatus();
             views.setImageViewResource(R.id.plug, pluggedIn ?
                     R.drawable.plug_icon_green : R.drawable.plug_icon_gray);
@@ -911,6 +911,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                     } else {
                         lock(context);
                     }
+                    StatusReceiver.nextAlarm(context, 15);
                     awaitingUpdate = true;
                 }
             }
@@ -923,6 +924,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 if (!awaitingUpdate && carStatus != null && carStatus.getIgnition() != null) {
                     if (carStatus.getIgnition().equals("Off")) {
                         start(context);
+                        StatusReceiver.nextAlarm(context, 15);
                         awaitingUpdate = true;
                     }
                 }
