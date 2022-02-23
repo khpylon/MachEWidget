@@ -1,5 +1,7 @@
 # Mustang Mach-E Widget for Android
 
+[![Donate](https://img.shields.io/badge/donate-paypal-green.svg?style=for-the-badge)](https://www.paypal.com/donate/?hosted_button_id=HULVHBSWXDU9S)
+
 ## Intro
 
 This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/tonesto7), which is in turn based on the earlier work of 
