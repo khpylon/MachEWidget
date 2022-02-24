@@ -23,7 +23,16 @@ public class OTAStatus {
             return null;
         }
     }
-    
+
+    public String getOTAAggregateStatus() {
+        try {
+            return getFuseResponse().getFuseResponseList().get(0).getLatestStatus().getAggregateStatus();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+
     public String getDescription() {
         try {
             return getFuseResponse().getLanguageText().getText();

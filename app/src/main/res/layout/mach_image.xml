@@ -1,0 +1,178 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/topfiller"
+        android:layout_width="171.6dp"
+        android:layout_height="8dp"
+        android:layout_below="@id/right_top_icons"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/filler" />
+
+    <ImageView
+        android:id="@+id/rightfiller"
+        android:layout_width="wrap_content"
+        android:layout_height="216dp"
+        android:layout_below="@id/topfiller"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/filler" />
+
+    <ImageView
+        android:id="@+id/leftfiller"
+        android:layout_width="wrap_content"
+        android:layout_height="216dp"
+        android:layout_below="@id/topfiller"
+        android:layout_toStartOf="@id/frunk"
+        android:background="@drawable/filler" />
+
+    <ImageView
+        android:id="@+id/frunk"
+        android:layout_width="99dp"
+        android:layout_height="72dp"
+        android:layout_below="@id/topfiller"
+        android:layout_toStartOf="@id/rightfiller"
+        android:src="@drawable/frunk_closed" />
+
+    <ImageView
+        android:id="@+id/front_doors"
+        android:layout_width="99dp"
+        android:layout_height="43.2dp"
+        android:layout_below="@id/frunk"
+        android:layout_toStartOf="@id/rightfiller"
+        android:src="@drawable/left_fr_cl_right_fr_cl" />
+
+    <ImageView
+        android:id="@+id/left_doors"
+        android:layout_width="49.5dp"
+        android:layout_height="14.4dp"
+        android:layout_below="@id/front_doors"
+        android:layout_alignStart="@id/front_doors"
+        android:src="@drawable/left_none" />
+
+    <ImageView
+        android:id="@+id/right_doors"
+        android:layout_width="49.5dp"
+        android:layout_height="14.4dp"
+        android:layout_below="@id/front_doors"
+        android:layout_toEndOf="@id/left_doors"
+        android:src="@drawable/right_none" />
+
+    <ImageView
+        android:id="@+id/rear_doors"
+        android:layout_width="99dp"
+        android:layout_height="43.2dp"
+        android:layout_below="@id/left_doors"
+        android:layout_toStartOf="@id/rightfiller"
+        android:src="@drawable/left_rr_cl_right_rr_cl" />
+
+    <ImageView
+        android:id="@+id/trunk"
+        android:layout_width="99dp"
+        android:layout_height="43.2dp"
+        android:layout_below="@id/rear_doors"
+        android:layout_toStartOf="@id/rightfiller"
+        android:src="@drawable/trunk_closed" />
+
+    <ImageView
+        android:id="@+id/lock"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_below="@id/topfiller"
+        android:layout_alignStart="@id/frunk"
+        android:layout_alignTop="@id/frunk"
+        android:layout_marginStart="33.3dp"
+        android:layout_marginTop="110dp"
+        android:background="@drawable/locked_icon_gray" />
+
+    <ImageView
+        android:id="@+id/lfwindow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@id/leftfiller"
+        android:layout_alignEnd="@id/leftfiller"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/filler" />
+
+    <ImageView
+        android:id="@+id/lrwindow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@id/leftfiller"
+        android:layout_alignEnd="@id/leftfiller"
+        android:layout_marginTop="132dp"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/filler" />
+
+    <ImageView
+        android:id="@+id/rfwindow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@id/rightfiller"
+        android:layout_alignStart="@id/rightfiller"
+        android:layout_marginTop="80dp"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/filler"/>
+
+    <ImageView
+        android:id="@+id/rrwindow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignStart="@id/rightfiller"
+        android:layout_alignTop="@id/rightfiller"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="132dp"
+        android:src="@drawable/filler" />
+
+    <TextView
+        android:id="@+id/lftire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topfiller"
+        android:layout_marginTop="40dp"
+        android:layout_toStartOf="@id/frunk"
+        android:background="@drawable/pressure_oval"
+        android:gravity="center"
+        android:text="N/A"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/rftire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topfiller"
+        android:layout_marginTop="40dp"
+        android:layout_toEndOf="@id/frunk"
+        android:background="@drawable/pressure_oval"
+        android:gravity="center"
+        android:text="N/A"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/lrtire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topfiller"
+        android:layout_marginTop="165dp"
+        android:layout_toStartOf="@id/frunk"
+        android:background="@drawable/pressure_oval"
+        android:gravity="center"
+        android:text="N/A"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/rrtire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topfiller"
+        android:layout_marginTop="165dp"
+        android:layout_toEndOf="@id/frunk"
+        android:background="@drawable/pressure_oval"
+        android:gravity="center"
+        android:text="N/A"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+
+</merge>

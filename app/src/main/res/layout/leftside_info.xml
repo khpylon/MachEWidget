@@ -1,0 +1,156 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/lastRefresh"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/leftanchor"
+        android:layout_marginTop="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Last refresh:\n   N/A"
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/odometer"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lastRefresh"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Odo: N/A"
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+
+    <!-- not used for now -->
+
+    <TextView
+        android:id="@+id/sleep"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/odometer"
+        android:layout_marginTop="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Deep sleep: N/A"
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/LVBVoltage"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sleep"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="LVB Volts: N/A"
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/DataLine1"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/LVBVoltage"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="OTA Status:"
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/DataLine2"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/DataLine1"
+        android:layout_alignParentLeft="true"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:gravity="left"
+        android:maxLines="1"
+        android:text="   N/A"
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/DataLine3"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/DataLine2"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Location:"
+        android:textColor="@color/white"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/DataLine4"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/DataLine3"
+        android:layout_alignParentLeft="true"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        android:text="   N/A" />
+
+    <TextView
+        android:id="@+id/DataLine5"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/DataLine4"
+        android:layout_alignParentLeft="true"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        android:text="" />
+
+
+    <ImageView
+        android:id="@+id/filler2"
+        android:layout_width="225dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="153dp"
+        android:layout_toLeftOf="@id/box1"
+        android:background="@drawable/filler"
+        android:gravity="bottom" />
+
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="32dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/filler2"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="4dp"
+        android:layout_weight="1"
+        android:src="@drawable/settings" />
+
+    <ImageView
+        android:id="@+id/leftappbutton"
+        android:layout_width="32dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/filler2"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/settings"
+        android:layout_weight="1"
+        android:src="@drawable/x_gray" />
+
+    <ImageView
+        android:id="@+id/rightappbutton"
+        android:layout_width="32dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/filler2"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/leftappbutton"
+        android:layout_weight="1"
+        android:src="@drawable/x_gray" />
+
+</merge>

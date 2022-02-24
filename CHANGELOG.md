@@ -5,9 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.02.xx
+### Changes
+- Automatically determine which widget and icon to display (Mach-E or F-150) on the current VIN.
+- After issuing a command (lock, unlock, or remote start), attempt to update the car's status after a few seconds.
+
 ## 2022.02.22
 ### Added
-- Initial sopport for Ford F-150 trucks.  To use this, toggle "F-150 Mode" under "Settings".  Note that this
+- Initial support for Ford F-150 trucks.  To use this, toggle "F-150 Mode" under "Settings".  Note that this
   will also change the name of the app to "F-150 Info", although the widget will still appear as "Mach-E Info"
   when selecting widgets for your phone's home screen. 
 - Add a developer's option for generating verbose HTTP information to log files.  This should only be used when

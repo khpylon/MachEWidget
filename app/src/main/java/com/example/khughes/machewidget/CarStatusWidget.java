@@ -146,80 +146,8 @@ public class CarStatusWidget extends AppWidgetProvider {
             // Other locality info (state, province, etc)
             if (address.getLocality() != null && address.getAdminArea() != null) {
                 String adminArea = address.getAdminArea();
-                Map<String, String> states = new HashMap<String, String>();
-                states.put("Alabama", "AL");
-                states.put("Alaska", "AK");
-                states.put("Alberta", "AB");
-                states.put("American Samoa", "AS");
-                states.put("Arizona", "AZ");
-                states.put("Arkansas", "AR");
-                states.put("Armed Forces (AE)", "AE");
-                states.put("Armed Forces Americas", "AA");
-                states.put("Armed Forces Pacific", "AP");
-                states.put("British Columbia", "BC");
-                states.put("California", "CA");
-                states.put("Colorado", "CO");
-                states.put("Connecticut", "CT");
-                states.put("Delaware", "DE");
-                states.put("District Of Columbia", "DC");
-                states.put("Florida", "FL");
-                states.put("Georgia", "GA");
-                states.put("Guam", "GU");
-                states.put("Hawaii", "HI");
-                states.put("Idaho", "ID");
-                states.put("Illinois", "IL");
-                states.put("Indiana", "IN");
-                states.put("Iowa", "IA");
-                states.put("Kansas", "KS");
-                states.put("Kentucky", "KY");
-                states.put("Louisiana", "LA");
-                states.put("Maine", "ME");
-                states.put("Manitoba", "MB");
-                states.put("Maryland", "MD");
-                states.put("Massachusetts", "MA");
-                states.put("Michigan", "MI");
-                states.put("Minnesota", "MN");
-                states.put("Mississippi", "MS");
-                states.put("Missouri", "MO");
-                states.put("Montana", "MT");
-                states.put("Nebraska", "NE");
-                states.put("Nevada", "NV");
-                states.put("New Brunswick", "NB");
-                states.put("New Hampshire", "NH");
-                states.put("New Jersey", "NJ");
-                states.put("New Mexico", "NM");
-                states.put("New York", "NY");
-                states.put("Newfoundland", "NF");
-                states.put("North Carolina", "NC");
-                states.put("North Dakota", "ND");
-                states.put("Northwest Territories", "NT");
-                states.put("Nova Scotia", "NS");
-                states.put("Nunavut", "NU");
-                states.put("Ohio", "OH");
-                states.put("Oklahoma", "OK");
-                states.put("Ontario", "ON");
-                states.put("Oregon", "OR");
-                states.put("Pennsylvania", "PA");
-                states.put("Prince Edward Island", "PE");
-                states.put("Puerto Rico", "PR");
-                states.put("Quebec", "QC");
-                states.put("Rhode Island", "RI");
-                states.put("Saskatchewan", "SK");
-                states.put("South Carolina", "SC");
-                states.put("South Dakota", "SD");
-                states.put("Tennessee", "TN");
-                states.put("Texas", "TX");
-                states.put("Utah", "UT");
-                states.put("Vermont", "VT");
-                states.put("Virgin Islands", "VI");
-                states.put("Virginia", "VA");
-                states.put("Washington", "WA");
-                states.put("West Virginia", "WV");
-                states.put("Wisconsin", "WI");
-                states.put("Wyoming", "WY");
-                states.put("Yukon Territory", "YT");
-                if (states.containsKey(adminArea)) {
-                    adminArea = states.get(adminArea);
+                if (Utils.states.containsKey(adminArea)) {
+                    adminArea = Utils.states.get(adminArea);
                 }
                 cityState = PADDING + address.getLocality() + ", " + adminArea;
             }
@@ -292,9 +220,9 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         RemoteViews views;
         if (MachE) {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.profile_car_status_widget : R.layout.car_status_widget);
+            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.mache_profile_widget : R.layout.mache_widget);
         } else {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.f150_profile_status_widget : R.layout.f150_status_widget);
+            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.f150_profile_widget : R.layout.f150_widget);
         }
 
         // Setup actions for specific widgets
@@ -593,14 +521,14 @@ public class CarStatusWidget extends AppWidgetProvider {
         } else {
             // Frunk and trunk statuses
             if (frunk == null || frunk.equals("Closed")) {
-                views.setImageViewResource(R.id.frunk, R.drawable.f150_frunk_closed);
+                views.setImageViewResource(R.id.frunk, R.drawable.regcab_frunk_closed);
             } else {
-                views.setImageViewResource(R.id.frunk, R.drawable.f150_frunk_open);
+                views.setImageViewResource(R.id.frunk, R.drawable.regcab_frunk_open);
             }
             if (trunk == null || trunk.equals("Closed")) {
-                views.setImageViewResource(R.id.trunk, R.drawable.f150_trunk_closed);
+                views.setImageViewResource(R.id.trunk, R.drawable.regcab_gate_closed);
             } else {
-                views.setImageViewResource(R.id.trunk, R.drawable.f150_trunk_open);
+                views.setImageViewResource(R.id.trunk, R.drawable.regcab_gate_open);
             }
         }
 
@@ -615,8 +543,8 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setImageViewResource(R.id.right_doors, right[r_front_door][r_rear_door]);
             views.setImageViewResource(R.id.rear_doors, rear[l_rear_door][r_rear_door]);
         } else {
-            views.setImageViewResource(R.id.lt_ft_door, l_front_door == 0 ? R.drawable.f150_lf_ft_door_closed : R.drawable.f150_lf_ft_door_open);
-            views.setImageViewResource(R.id.rt_ft_door, l_front_door == 0 ? R.drawable.f150_rt_ft_door_closed : R.drawable.f150_rt_ft_door_open);
+            views.setImageViewResource(R.id.lt_ft_door, l_front_door == 0 ? R.drawable.regcab_lf_door_closed : R.drawable.regcab_lf_door_open);
+            views.setImageViewResource(R.id.rt_ft_door, l_front_door == 0 ? R.drawable.regcab_rf_door_closed : R.drawable.regcab_rf_door_open);
             // TODO: rear doors
         }
 
@@ -636,11 +564,17 @@ public class CarStatusWidget extends AppWidgetProvider {
             } else {
                 Long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
 
-                // If there's new information, display that data/time in green
+                // If there's new information, display that data/time in a different color
                 if (currentOTATime > lastOTATime) {
-                    Notifications.newOTA(context);
-                    views.setTextColor(R.id.DataLine2, context.getColor(R.color.green));
+                    // if OTA failed, show it in red (that means something bad)
+                    String OTAResult = otaStatus.getOTAAggregateStatus();
+                    if (OTAResult != null && OTAResult.equals("failure")) {
+                        views.setTextColor(R.id.DataLine2, context.getColor(R.color.red));
+                    } else {
+                        views.setTextColor(R.id.DataLine2, context.getColor(R.color.green));
+                    }
                     OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
+                    Notifications.newOTA(context);
                 } else {
                     OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
                 }
@@ -674,9 +608,9 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         RemoteViews views;
         if (MachE) {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.profile_car_status_widget : R.layout.car_status_widget);
+            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.mache_profile_widget : R.layout.mache_widget);
         } else {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.f150_profile_status_widget : R.layout.f150_status_widget);
+            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.f150_profile_widget : R.layout.f150_widget);
         }
 
         setCallbacks(context, views);
@@ -716,7 +650,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         updateTire(views, null, null, "", 1.0, R.id.lrtire);
         updateTire(views, null, null, "", 1.0, R.id.rrtire);
 
-        if(MachE) {
+        if (MachE) {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
             views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
             views.setImageViewResource(R.id.plug, R.drawable.plug_icon_gray);
@@ -728,10 +662,10 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setImageViewResource(R.id.front_doors, R.drawable.left_fr_cl_right_fr_cl);
             views.setImageViewResource(R.id.rear_doors, R.drawable.left_rr_cl_right_rr_cl);
         } else {
-            views.setImageViewResource(R.id.frunk, R.drawable.f150_frunk_closed);
-            views.setImageViewResource(R.id.trunk, R.drawable.f150_trunk_closed);
-            views.setImageViewResource(R.id.lt_ft_door, R.drawable.f150_lf_ft_door_closed );
-            views.setImageViewResource(R.id.rt_ft_door, R.drawable.f150_rt_ft_door_closed );
+            views.setImageViewResource(R.id.frunk, R.drawable.regcab_frunk_closed);
+            views.setImageViewResource(R.id.trunk, R.drawable.regcab_gate_closed);
+            views.setImageViewResource(R.id.lt_ft_door, R.drawable.regcab_lf_door_closed);
+            views.setImageViewResource(R.id.rt_ft_door, R.drawable.regcab_rf_door_closed);
         }
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -762,11 +696,16 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void updateLinkedApps(Context context, AppWidgetManager appWidgetManager, int appWidgetId, String VIN) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_status_widget);
+        Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+        Boolean MachE = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false) == false;
+        RemoteViews views;
+        if (MachE) {
+            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.mache_profile_widget : R.layout.mache_widget);
+        } else {
+            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.f150_profile_widget : R.layout.f150_widget);
+        }
 
-        Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
-
+        Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {
             setAppBitmap(context, views, new StoredData(context).getLeftAppPackage(VIN), R.id.leftappbutton);
             setAppBitmap(context, views, new StoredData(context).getRightAppPackage(VIN), R.id.rightappbutton);
@@ -808,13 +747,48 @@ public class CarStatusWidget extends AppWidgetProvider {
         NetworkCalls.unlockDoors(getHandler(context), context, new StoredData(context).getAccessToken(VIN));
     }
 
+    // Make the app widget and icon match the VIN
+    private void matchWidgetWithVin(Context context, String VIN) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String f150ModeKey = context.getResources().getString(R.string.f150_mode_key);
+        // Get the current widget mode
+        Boolean macheMode = preferences.getBoolean(f150ModeKey, false) == false;
+        // See if the VIN is for a Mach-E
+        Boolean machEVIN = VIN.startsWith(Constants.MACHEVINSTART);
+
+        // If the widget doesn't match the VIN, make it
+        if (macheMode != machEVIN) {
+            macheMode = machEVIN;
+            preferences.edit().putBoolean(f150ModeKey, macheMode);
+            for (int i = 0; i < 10; ++i) {
+                if (preferences.edit().commit()) {
+                    PackageManager manager = context.getPackageManager();
+                    String packageName = context.getPackageName();
+                    String firstActivity = packageName + ".MainActivity";
+                    String secondActivity = firstActivity + "Alias";
+                    manager.setComponentEnabledSetting(new ComponentName(packageName,
+                                    macheMode ? firstActivity : secondActivity),
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                    manager.setComponentEnabledSetting(new ComponentName(packageName,
+                                    macheMode ? secondActivity : firstActivity),
+                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+                    return;
+                }
+            }
+
+        }
+    }
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         StoredData appInfo = new StoredData(context);
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
-        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
+        if (!VIN.equals("")) {
+            matchWidgetWithVin(context, VIN);
+        }
 
+        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             if (!state.equals(ProgramStateMachine.States.INITIAL_STATE)) {
