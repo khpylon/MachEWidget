@@ -4,8 +4,8 @@
         android:id="@+id/lastRefresh"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/leftanchor"
-        android:layout_marginTop="15dp"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:gravity="left"
         android:text="Last refresh:\n   N/A"
@@ -22,8 +22,6 @@
         android:text="Odo: N/A"
         android:textColor="@color/white"
         android:textSize="12dp" />
-
-    <!-- not used for now -->
 
     <TextView
         android:id="@+id/sleep"
@@ -112,6 +110,15 @@
         android:textSize="12dp"
         android:text="" />
 
+    <TextView
+        android:id="@+id/profile"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/DataLine5"
+        android:gravity="start"
+        android:text="Profile: "
+        android:textColor="@color/white"
+        android:textSize="12sp" />
 
     <ImageView
         android:id="@+id/filler2"
@@ -152,5 +159,6 @@
         android:layout_toRightOf="@id/leftappbutton"
         android:layout_weight="1"
         android:src="@drawable/x_gray" />
+
 
 </merge>

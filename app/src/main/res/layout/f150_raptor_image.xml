@@ -27,7 +27,7 @@
     <ImageView
         android:id="@+id/frunk"
         android:layout_width="99dp"
-        android:layout_height="64.8dp"
+        android:layout_height="60.48dp"
         android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
         android:src="@drawable/raptor_hood_closed" />
@@ -35,36 +35,32 @@
     <ImageView
         android:id="@+id/lt_ft_door"
         android:layout_width="49.5dp"
-        android:layout_height="43.2dp"
+        android:layout_height="49.68dp"
         android:layout_below="@id/frunk"
-        android:layout_marginTop="-1dp"
         android:layout_toEndOf="@id/leftfiller"
         android:src="@drawable/raptor_lf_door_closed" />
 
     <ImageView
         android:id="@+id/rt_ft_door"
         android:layout_width="49.5dp"
-        android:layout_height="43.2dp"
+        android:layout_height="49.68dp"
         android:layout_below="@id/frunk"
-        android:layout_marginTop="-1dp"
         android:layout_toEndOf="@id/lt_ft_door"
         android:src="@drawable/raptor_rf_door_closed" />
 
     <ImageView
         android:id="@+id/lt_rr_door"
         android:layout_width="49.5dp"
-        android:layout_height="43.2dp"
+        android:layout_height="41.04dp"
         android:layout_below="@id/lt_ft_door"
-        android:layout_marginTop="-1dp"
         android:layout_toEndOf="@id/leftfiller"
         android:src="@drawable/raptor_lr_door_closed" />
 
     <ImageView
         android:id="@+id/rt_rr_door"
         android:layout_width="49.5dp"
-        android:layout_height="43.2dp"
+        android:layout_height="41.04dp"
         android:layout_below="@id/rt_ft_door"
-        android:layout_marginTop="-1dp"
         android:layout_toEndOf="@id/lt_ft_door"
         android:src="@drawable/raptor_rr_door_closed" />
 
@@ -73,7 +69,6 @@
         android:layout_width="99dp"
         android:layout_height="64.8dp"
         android:layout_below="@id/lt_rr_door"
-        android:layout_marginTop="-1dp"
         android:layout_toStartOf="@id/rightfiller"
         android:src="@drawable/raptor_gate_closed" />
 

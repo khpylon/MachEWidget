@@ -39,6 +39,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.crypto.Mac;
+
+import okhttp3.internal.Util;
+
 /**
  * Implementation of App Widget functionality.
  */
@@ -210,20 +214,19 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.lastRefresh, getPendingSelfIntent(context, REFRESH_CLICK));
     }
 
+    // Based on the VIN, find the right widget layout
+    private RemoteViews getWidgetView(Context context) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        return new RemoteViews(context.getPackageName(), Utils.getLayoutByVIN(VIN));
+    }
+
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        Boolean MachE = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false) == false;
         Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
 
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
-        Boolean MachE = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false) == false;
-
-        RemoteViews views;
-        if (MachE) {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.mache_profile_widget : R.layout.mache_widget);
-        } else {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.f150_profile_widget : R.layout.f150_widget);
-        }
+        RemoteViews views = getWidgetView(context);
 
         // Setup actions for specific widgets
         setCallbacks(context, views);
@@ -231,7 +234,12 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Set background transparency
         setBackground(context, views);
 
-        views.setTextViewText(R.id.profile, new StoredData(context).getProfileName(VIN));
+        // Display profile name if active
+        if(profilesActive) {
+            views.setTextViewText(R.id.profile, "Profile: "+new StoredData(context).getProfileName(VIN));
+        } else {
+            views.setTextViewText(R.id.profile, "");
+        }
 
         // If no status information, print something generic and return
         // TODO: also refresh the icons as if we're logged out?
@@ -504,6 +512,9 @@ public class CarStatusWidget extends AppWidgetProvider {
         updateWindow(views, carStatus.getLeftRearWindow(), R.id.lrwindow, R.drawable.icons8_left_rear_window_down_red);
         updateWindow(views, carStatus.getRightRearWindow(), R.id.rrwindow, R.drawable.icons8_right_rear_window_down_red);
 
+        // Get the right images to use for this line of truck
+        Map<String,Integer> f150Images = Utils.getF150Drawables(VIN);
+
         String frunk = carStatus.getFrunk();
         String trunk = carStatus.getTailgate();
         if (MachE) {
@@ -521,14 +532,14 @@ public class CarStatusWidget extends AppWidgetProvider {
         } else {
             // Frunk and trunk statuses
             if (frunk == null || frunk.equals("Closed")) {
-                views.setImageViewResource(R.id.frunk, R.drawable.regcab_frunk_closed);
+                views.setImageViewResource(R.id.frunk, f150Images.get(Utils.HOOD_CLOSED));
             } else {
-                views.setImageViewResource(R.id.frunk, R.drawable.regcab_frunk_open);
+                views.setImageViewResource(R.id.frunk, f150Images.get(Utils.HOOD_OPEN));
             }
             if (trunk == null || trunk.equals("Closed")) {
-                views.setImageViewResource(R.id.trunk, R.drawable.regcab_gate_closed);
+                views.setImageViewResource(R.id.trunk, f150Images.get(Utils.TAILGATE_CLOSED));
             } else {
-                views.setImageViewResource(R.id.trunk, R.drawable.regcab_gate_open);
+                views.setImageViewResource(R.id.trunk, f150Images.get(Utils.TAILGATE_OPEN));
             }
         }
 
@@ -543,9 +554,18 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setImageViewResource(R.id.right_doors, right[r_front_door][r_rear_door]);
             views.setImageViewResource(R.id.rear_doors, rear[l_rear_door][r_rear_door]);
         } else {
-            views.setImageViewResource(R.id.lt_ft_door, l_front_door == 0 ? R.drawable.regcab_lf_door_closed : R.drawable.regcab_lf_door_open);
-            views.setImageViewResource(R.id.rt_ft_door, l_front_door == 0 ? R.drawable.regcab_rf_door_closed : R.drawable.regcab_rf_door_open);
-            // TODO: rear doors
+            views.setImageViewResource(R.id.lt_ft_door,
+                    f150Images.get(l_front_door == 0 ?
+                    Utils.LEFT_FRONT_DOOR_CLOSED : Utils.LEFT_FRONT_DOOR_OPEN) );
+            views.setImageViewResource(R.id.rt_ft_door,
+                    f150Images.get(r_front_door == 0 ?
+                            Utils.RIGHT_FRONT_DOOR_CLOSED : Utils.RIGHT_FRONT_DOOR_OPEN) );
+            views.setImageViewResource(R.id.lt_rr_door,
+                    f150Images.get(l_rear_door == 0 ?
+                            Utils.LEFT_REAR_DOOR_CLOSED : Utils.LEFT_REAR_DOOR_OPEN) );
+            views.setImageViewResource(R.id.rt_rr_door,
+                    f150Images.get(r_rear_door == 0 ?
+                            Utils.RIGHT_REAR_DOOR_CLOSED : Utils.RIGHT_REAR_DOOR_OPEN) );
         }
 
         views.setTextColor(R.id.DataLine2, context.getColor(R.color.white));
@@ -600,18 +620,10 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
-
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
         Boolean MachE = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false) == false;
 
-        RemoteViews views;
-        if (MachE) {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.mache_profile_widget : R.layout.mache_widget);
-        } else {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.f150_profile_widget : R.layout.f150_widget);
-        }
+        RemoteViews views = getWidgetView(context);
 
         setCallbacks(context, views);
 
@@ -662,10 +674,14 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setImageViewResource(R.id.front_doors, R.drawable.left_fr_cl_right_fr_cl);
             views.setImageViewResource(R.id.rear_doors, R.drawable.left_rr_cl_right_rr_cl);
         } else {
-            views.setImageViewResource(R.id.frunk, R.drawable.regcab_frunk_closed);
-            views.setImageViewResource(R.id.trunk, R.drawable.regcab_gate_closed);
-            views.setImageViewResource(R.id.lt_ft_door, R.drawable.regcab_lf_door_closed);
-            views.setImageViewResource(R.id.rt_ft_door, R.drawable.regcab_rf_door_closed);
+            // Get the right images to use for this line of truck
+            Map<String,Integer> f150Images = Utils.getF150Drawables(VIN);
+            views.setImageViewResource(R.id.frunk, f150Images.get(Utils.HOOD_CLOSED));
+            views.setImageViewResource(R.id.trunk, f150Images.get(Utils.TAILGATE_CLOSED));
+            views.setImageViewResource(R.id.lt_ft_door, f150Images.get(Utils.LEFT_FRONT_DOOR_CLOSED));
+            views.setImageViewResource(R.id.rt_ft_door, f150Images.get(Utils.RIGHT_FRONT_DOOR_CLOSED));
+            views.setImageViewResource(R.id.lt_rr_door, f150Images.get(Utils.LEFT_REAR_DOOR_CLOSED));
+            views.setImageViewResource(R.id.rt_rr_door, f150Images.get(Utils.RIGHT_REAR_DOOR_CLOSED));
         }
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -696,14 +712,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void updateLinkedApps(Context context, AppWidgetManager appWidgetManager, int appWidgetId, String VIN) {
-        Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
-        Boolean MachE = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false) == false;
-        RemoteViews views;
-        if (MachE) {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.mache_profile_widget : R.layout.mache_widget);
-        } else {
-            views = new RemoteViews(context.getPackageName(), profilesActive ? R.layout.f150_profile_widget : R.layout.f150_widget);
-        }
+        RemoteViews views = getWidgetView(context);
 
         Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {

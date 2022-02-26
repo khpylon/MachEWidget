@@ -7,18 +7,18 @@ import java.util.Set;
 
 public class Utils {
     public static final int WORLD_MANUFACTURING_IDENTIFIER_START_INDEX = 1 - 1;
-    public static final int WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3 - 1;
+    public static final int WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3;
     public static final String WORLD_MANUFACTURING_IDENTIFIER_MACHE = "3FM";
     public static final String WORLD_MANUFACTURING_IDENTIFIER_F150 = "1FT";
 
     public static final int LINE_SERIES_START_INDEX = 5 - 1;
-    public static final int LINE_SERIES_END_INDEX = 7 - 1;
-    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
-    public static final String LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
-    public static final String LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
-    public static final String LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
-    public static final String LINE_SERIES_MACHE_PREMIUM_AWD = "K3S"; // Premium AWD?
-    public static final String LINE_SERIES_MACHE_GT_RWD = "K4S"; // GT AWD
+    public static final int LINE_SERIES_END_INDEX = 7;
+//    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
+//    public static final String LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
+//    public static final String LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
+//    public static final String LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
+//    public static final String LINE_SERIES_MACHE_PREMIUM_AWD = "K3S"; // Premium AWD?
+//    public static final String LINE_SERIES_MACHE_GT_RWD = "K4S"; // GT AWD
     public static final String LINE_SERIES_F150_REGULAR_4X2 = "F1C"; // 4x2 chassis, regular cab
     public static final String LINE_SERIES_F150_REGULAR_4X4 = "F1E"; // 4x4 chassis, regular cab
     public static final String LINE_SERIES_F150_SUPERCREW_4X2 = "W1C"; // 4x2, SuperCrew
@@ -30,11 +30,10 @@ public class Utils {
     public static final String LINE_SERIES_F150_SUPERCAB_4X2 = "X1C"; // 4x2, SuperCab
     public static final String LINE_SERIES_F150_SUPERCAB_4X4 = "X1E"; // 4x4, SuperCab
 
-    public static final String F150_REGULAR_CAB = "F150 Regular Cab";
-    public static final String F150_SUPER_CAB = "F150 SuperCab";
-    public static final String F150_SUPER_CREW = "F150 SuperCrew";
-    public static final String F150_RAPTOR = "F150 Raptor";
-
+    public static final String F150_REGULAR_CAB = "F-150 Regular Cab";
+    public static final String F150_SUPER_CAB = "F-150 SuperCab";
+    public static final String F150_SUPER_CREW = "F-150 SuperCrew";
+    public static final String F150_RAPTOR = "F-150 Raptor";
 
     public static boolean isMachE(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
@@ -49,7 +48,7 @@ public class Utils {
     private static final Set<String> regularCabs;
 
     static {
-        Set<String> tmpSet = new HashSet<String>();
+        Set<String> tmpSet = new HashSet<>();
         tmpSet.add(LINE_SERIES_F150_REGULAR_4X2);
         tmpSet.add(LINE_SERIES_F150_REGULAR_4X4);
         regularCabs = tmpSet;
@@ -63,7 +62,7 @@ public class Utils {
     private static final Set<String> superCabs;
 
     static {
-        Set<String> tmpSet = new HashSet<String>();
+        Set<String> tmpSet = new HashSet<>();
         tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X2);
         tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X4);
         superCabs = tmpSet;
@@ -77,7 +76,7 @@ public class Utils {
     private static final Set<String> superCrews;
 
     static {
-        Set<String> tmpSet = new HashSet<String>();
+        Set<String> tmpSet = new HashSet<>();
         tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X2);
         tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4);
         tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_POLICE);
@@ -110,9 +109,133 @@ public class Utils {
         }
     }
 
+    public static final String HOOD_OPEN = "hood_open";
+    public static final String HOOD_CLOSED = "hood_closed";
+    public static final String TAILGATE_OPEN = "tailgate_open";
+    public static final String TAILGATE_CLOSED = "tailgate_closed";
+    public static final String LEFT_FRONT_DOOR_OPEN = "lfdoor_open";
+    public static final String LEFT_FRONT_DOOR_CLOSED = "lfdoor_closed";
+    public static final String RIGHT_FRONT_DOOR_OPEN = "rfdoor_open";
+    public static final String RIGHT_FRONT_DOOR_CLOSED = "rfdoor_closed";
+    public static final String LEFT_REAR_DOOR_OPEN = "lrdoor_open";
+    public static final String LEFT_REAR_DOOR_CLOSED = "lrdoor_closed";
+    public static final String RIGHT_REAR_DOOR_OPEN = "rrdoor_open";
+    public static final String RIGHT_REAR_DOOR_CLOSED = "rrdoor_closed";
+
+    // Drawables for Regular Cab (two door) F-150
+    private static final Map<String, Integer> regcabDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(HOOD_OPEN, R.drawable.regcab_frunk_open);
+        tmpMap.put(HOOD_CLOSED, R.drawable.regcab_frunk_closed);
+        tmpMap.put(TAILGATE_OPEN, R.drawable.regcab_gate_open);
+        tmpMap.put(TAILGATE_CLOSED, R.drawable.regcab_gate_closed);
+        tmpMap.put(LEFT_FRONT_DOOR_OPEN, R.drawable.regcab_lf_door_open);
+        tmpMap.put(LEFT_FRONT_DOOR_CLOSED, R.drawable.regcab_lf_door_closed);
+        tmpMap.put(RIGHT_FRONT_DOOR_OPEN, R.drawable.regcab_rf_door_open);
+        tmpMap.put(RIGHT_FRONT_DOOR_CLOSED, R.drawable.regcab_rf_door_closed);
+        tmpMap.put(LEFT_REAR_DOOR_OPEN, R.drawable.regcab_lr_door_open);
+        tmpMap.put(LEFT_REAR_DOOR_CLOSED, R.drawable.regcab_lr_door_closed);
+        tmpMap.put(RIGHT_REAR_DOOR_OPEN, R.drawable.regcab_rr_door_open);
+        tmpMap.put(RIGHT_REAR_DOOR_CLOSED, R.drawable.regcab_rr_door_closed);
+        regcabDrawables = tmpMap;
+    }
+
+    // Drawables for SuperCab F-150
+    private static final Map<String, Integer> supercabDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(HOOD_OPEN, R.drawable.sprcab_hood_open);
+        tmpMap.put(HOOD_CLOSED, R.drawable.sprcab_hood_closed);
+        tmpMap.put(TAILGATE_OPEN, R.drawable.sprcab_gate_open);
+        tmpMap.put(TAILGATE_CLOSED, R.drawable.sprcab_gate_closed);
+        tmpMap.put(LEFT_FRONT_DOOR_OPEN, R.drawable.sprcab_lf_door_open);
+        tmpMap.put(LEFT_FRONT_DOOR_CLOSED, R.drawable.sprcab_lf_door_closed);
+        tmpMap.put(RIGHT_FRONT_DOOR_OPEN, R.drawable.sprcab_rf_door_open);
+        tmpMap.put(RIGHT_FRONT_DOOR_CLOSED, R.drawable.sprcab_rf_door_closed);
+        tmpMap.put(LEFT_REAR_DOOR_OPEN, R.drawable.sprcab_lr_door_open);
+        tmpMap.put(LEFT_REAR_DOOR_CLOSED, R.drawable.sprcab_lr_door_closed);
+        tmpMap.put(RIGHT_REAR_DOOR_OPEN, R.drawable.sprcab_rr_door_open);
+        tmpMap.put(RIGHT_REAR_DOOR_CLOSED, R.drawable.sprcab_rr_door_closed);
+        supercabDrawables = tmpMap;
+    }
+
+    // Drawables for SuperCrew F-150
+    private static final Map<String, Integer> supercrewDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(HOOD_OPEN, R.drawable.sprcrew_hood_open);
+        tmpMap.put(HOOD_CLOSED, R.drawable.sprcrew_hood_closed);
+        tmpMap.put(TAILGATE_OPEN, R.drawable.sprcrew_gate_open);
+        tmpMap.put(TAILGATE_CLOSED, R.drawable.sprcrew_gate_closed);
+        tmpMap.put(LEFT_FRONT_DOOR_OPEN, R.drawable.sprcrew_lf_door_open);
+        tmpMap.put(LEFT_FRONT_DOOR_CLOSED, R.drawable.sprcrew_lf_door_closed);
+        tmpMap.put(RIGHT_FRONT_DOOR_OPEN, R.drawable.sprcrew_rf_door_open);
+        tmpMap.put(RIGHT_FRONT_DOOR_CLOSED, R.drawable.sprcrew_rf_door_closed);
+        tmpMap.put(LEFT_REAR_DOOR_OPEN, R.drawable.sprcrew_lr_door_open);
+        tmpMap.put(LEFT_REAR_DOOR_CLOSED, R.drawable.sprcrew_lr_door_closed);
+        tmpMap.put(RIGHT_REAR_DOOR_OPEN, R.drawable.sprcrew_rr_door_open);
+        tmpMap.put(RIGHT_REAR_DOOR_CLOSED, R.drawable.sprcrew_rr_door_closed);
+        supercrewDrawables = tmpMap;
+    }
+
+    // Drawables for F-150 Raptor
+    private static final Map<String, Integer> raptorDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(HOOD_OPEN, R.drawable.raptor_hood_open);
+        tmpMap.put(HOOD_CLOSED, R.drawable.raptor_hood_closed);
+        tmpMap.put(TAILGATE_OPEN, R.drawable.raptor_gate_open);
+        tmpMap.put(TAILGATE_CLOSED, R.drawable.raptor_gate_closed);
+        tmpMap.put(LEFT_FRONT_DOOR_OPEN, R.drawable.raptor_lf_door_open);
+        tmpMap.put(LEFT_FRONT_DOOR_CLOSED, R.drawable.raptor_lf_door_closed);
+        tmpMap.put(RIGHT_FRONT_DOOR_OPEN, R.drawable.raptor_rf_door_open);
+        tmpMap.put(RIGHT_FRONT_DOOR_CLOSED, R.drawable.raptor_rf_door_closed);
+        tmpMap.put(LEFT_REAR_DOOR_OPEN, R.drawable.raptor_lr_door_open);
+        tmpMap.put(LEFT_REAR_DOOR_CLOSED, R.drawable.raptor_lr_door_closed);
+        tmpMap.put(RIGHT_REAR_DOOR_OPEN, R.drawable.raptor_rr_door_open);
+        tmpMap.put(RIGHT_REAR_DOOR_CLOSED, R.drawable.raptor_rr_door_closed);
+        raptorDrawables = tmpMap;
+    }
+
+    // Get the set of drawables for a particular style of F-150
+    public static Map<String,Integer> getF150Drawables(String VIN) {
+        if (isF150RegularCab(VIN)) {
+            return regcabDrawables;
+        } else if (isF150SuperCab(VIN)) {
+            return supercabDrawables;
+        } else if (isF150SuperCrew(VIN)) {
+            return supercrewDrawables;
+        } else if (isF150Raptor(VIN)) {
+            return raptorDrawables;
+        } else { // fall back to regular cab
+            return regcabDrawables;
+        }
+    }
+
+    public static Integer getLayoutByVIN(String VIN) {
+        if (isF150RegularCab(VIN)) {
+            return R.layout.f150_regularcab_widget;
+        } else if (isF150SuperCab(VIN)) {
+            return R.layout.f150_supercab_widget;
+        } else if (isF150SuperCrew(VIN)) {
+            return R.layout.f150_supecrew_widget;
+        } else if (isF150Raptor(VIN)) {
+            return R.layout.f150_raptor_widget;
+        } else { // fall back to Mach-E
+            return R.layout.mache_widget;
+        }
+    }
+
+
+    // Mapping from long state/territory names to abbreviations
     public static final Map<String, String> states;
     static {
-        Map<String, String> tmpStates = new HashMap<String, String>();
+        Map<String, String> tmpStates = new HashMap<>();
         tmpStates.put("Alabama", "AL");
         tmpStates.put("Alaska", "AK");
         tmpStates.put("Alberta", "AB");

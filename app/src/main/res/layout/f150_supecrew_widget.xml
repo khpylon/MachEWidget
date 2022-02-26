@@ -15,35 +15,11 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/ford_f150_logo" />
 
-    <TextView
-        android:id="@+id/profile"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/logo"
-        android:layout_marginTop="15dp"
-        android:gravity="start"
-        android:text="Profile: "
-        android:textColor="@color/white"
-        android:textSize="12sp" />
-
-    <ImageView
-        android:id="@+id/leftanchor"
-        android:layout_width="wrap_content"
-        android:layout_height="15dp"
-        android:layout_below="@id/logo"
-        android:background="@drawable/filler" />
-
     <include layout="@layout/leftside_info"/>
 
     <include layout="@layout/f150_top"/>
 
-    <include layout="@layout/f150_regular_image"/>
-
-    <!--
     <include layout="@layout/f150_supercrew_image"/>
-    <include layout="@layout/f150_supercab_image"/>
-    <include layout="@layout/f150_raptor_image"/>
-    -->
 
     <include layout="@layout/f150_bottom"/>
 

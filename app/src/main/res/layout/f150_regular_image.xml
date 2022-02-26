@@ -27,7 +27,7 @@
     <ImageView
         android:id="@+id/frunk"
         android:layout_width="99dp"
-        android:layout_height="64.8dp"
+        android:layout_height="57.6dp"
         android:layout_below="@id/topfiller"
         android:layout_toLeftOf="@id/rightfiller"
         android:src="@drawable/regcab_frunk_closed" />
@@ -35,7 +35,7 @@
     <ImageView
         android:id="@+id/lt_ft_door"
         android:layout_width="49.5dp"
-        android:layout_height="43.2dp"
+        android:layout_height="50.4dp"
         android:layout_below="@id/frunk"
         android:layout_marginTop="-1dp"
         android:layout_toRightOf="@id/leftfiller"
@@ -44,7 +44,7 @@
     <ImageView
         android:id="@+id/rt_ft_door"
         android:layout_width="49.5dp"
-        android:layout_height="43.2dp"
+        android:layout_height="50.4dp"
         android:layout_below="@id/frunk"
         android:layout_marginTop="-1dp"
         android:layout_toRightOf="@id/lt_ft_door"
