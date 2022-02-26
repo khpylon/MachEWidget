@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2022.02.xx
+## 2022.02.26
 ### Changes
 - Automatically determine which widget and icon to display (Mach-E or F-150) on the current VIN.
 - After issuing a command (lock, unlock, or remote start), attempt to update the car's status after a few seconds.
+- Include specific drawables for F-150 SuperCab, SuperCrew, and Raptor.
 
 ## 2022.02.22
 ### Added
