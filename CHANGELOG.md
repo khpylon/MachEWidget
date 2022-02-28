@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.02.28
+### Changes
+- Added support for Android 9 devices.  This has not been thoroughly tested.
+
+### Fixed
+- Crash on fresh install when checking VIN.
+
 ## 2022.02.26
 ### Changes
 - Automatically determine which widget and icon to display (Mach-E or F-150) on the current VIN.
