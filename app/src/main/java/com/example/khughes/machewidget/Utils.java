@@ -13,7 +13,7 @@ public class Utils {
 
     public static final int LINE_SERIES_START_INDEX = 5 - 1;
     public static final int LINE_SERIES_END_INDEX = 7;
-//    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
+    //    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
 //    public static final String LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
 //    public static final String LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
 //    public static final String LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
@@ -203,37 +203,41 @@ public class Utils {
     }
 
     // Get the set of drawables for a particular style of F-150
-    public static Map<String,Integer> getF150Drawables(String VIN) {
-        if (isF150RegularCab(VIN)) {
-            return regcabDrawables;
-        } else if (isF150SuperCab(VIN)) {
-            return supercabDrawables;
-        } else if (isF150SuperCrew(VIN)) {
-            return supercrewDrawables;
-        } else if (isF150Raptor(VIN)) {
-            return raptorDrawables;
-        } else { // fall back to regular cab
-            return regcabDrawables;
+    public static Map<String, Integer> getF150Drawables(String VIN) {
+        if (VIN != null && !VIN.equals("")) {
+            if (isF150RegularCab(VIN)) {
+                return regcabDrawables;
+            } else if (isF150SuperCab(VIN)) {
+                return supercabDrawables;
+            } else if (isF150SuperCrew(VIN)) {
+                return supercrewDrawables;
+            } else if (isF150Raptor(VIN)) {
+                return raptorDrawables;
+            }
         }
+        return regcabDrawables;
+        
     }
 
     public static Integer getLayoutByVIN(String VIN) {
-        if (isF150RegularCab(VIN)) {
-            return R.layout.f150_regularcab_widget;
-        } else if (isF150SuperCab(VIN)) {
-            return R.layout.f150_supercab_widget;
-        } else if (isF150SuperCrew(VIN)) {
-            return R.layout.f150_supecrew_widget;
-        } else if (isF150Raptor(VIN)) {
-            return R.layout.f150_raptor_widget;
-        } else { // fall back to Mach-E
-            return R.layout.mache_widget;
+        if (VIN != null && !VIN.equals("")) {
+            if (isF150RegularCab(VIN)) {
+                return R.layout.f150_regularcab_widget;
+            } else if (isF150SuperCab(VIN)) {
+                return R.layout.f150_supercab_widget;
+            } else if (isF150SuperCrew(VIN)) {
+                return R.layout.f150_supecrew_widget;
+            } else if (isF150Raptor(VIN)) {
+                return R.layout.f150_raptor_widget;
+            }
         }
+        return R.layout.mache_widget;
     }
 
 
     // Mapping from long state/territory names to abbreviations
     public static final Map<String, String> states;
+
     static {
         Map<String, String> tmpStates = new HashMap<>();
         tmpStates.put("Alabama", "AL");
