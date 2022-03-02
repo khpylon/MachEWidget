@@ -77,7 +77,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/car_status_widget_info" />
+                android:resource="@xml/mache_widget_info" />
         </receiver>
         <receiver android:name=".StatusReceiver" />
         <receiver android:name=".UpdateReceiver" />

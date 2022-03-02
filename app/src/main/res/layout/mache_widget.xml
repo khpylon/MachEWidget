@@ -26,7 +26,7 @@
 
     <include layout="@layout/mache_top"/>
 
-    <include layout="@layout/mach_image"/>
+    <include layout="@layout/mache_image"/>
 
     <include layout="@layout/mache_bottom"/>
 

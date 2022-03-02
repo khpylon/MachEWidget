@@ -34,14 +34,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.crypto.Mac;
-
-import okhttp3.internal.Util;
 
 /**
  * Implementation of App Widget functionality.
@@ -65,26 +60,6 @@ public class CarStatusWidget extends AppWidgetProvider {
     private static final String CHARGING_STATUS_TARGET_REACHED = "ChargeTargetReached";
     private static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
     private static final String CHARGING_STATUS_PAUSED = "EvsePaused";
-
-    private static final int[][] front = {
-            {R.drawable.left_fr_cl_right_fr_cl, R.drawable.left_fr_cl_right_fr_op},
-            {R.drawable.left_fr_op_right_fr_cl, R.drawable.left_fr_op_right_fr_op},
-    };
-
-    private static final int[][] rear = {
-            {R.drawable.left_rr_cl_right_rr_cl, R.drawable.left_rr_cl_right_rr_op},
-            {R.drawable.left_rr_op_right_rr_cl, R.drawable.left_rr_op_right_rr_op},
-    };
-
-    private static final int[][] left = {
-            {R.drawable.left_none, R.drawable.left_rear},
-            {R.drawable.left_front, R.drawable.left_both},
-    };
-
-    private static final int[][] right = {
-            {R.drawable.right_none, R.drawable.right_rear},
-            {R.drawable.right_front, R.drawable.right_both},
-    };
 
     private void updateWindow(RemoteViews views, String window, int id, int drawable) {
         // If we can't confirm the window is open, draw nothing.
@@ -509,42 +484,25 @@ public class CarStatusWidget extends AppWidgetProvider {
         updateWindow(views, carStatus.getLeftRearWindow(), R.id.lrwindow, R.drawable.icons8_left_rear_window_down_red);
         updateWindow(views, carStatus.getRightRearWindow(), R.id.rrwindow, R.drawable.icons8_right_rear_window_down_red);
 
-        // Get the right images to use for this line of truck
-        Map<String, Integer> f150Images = Utils.getF150Drawables(VIN);
+        // Get the right images to use for this vehicle
+        Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(VIN);
 
-        String frunk = carStatus.getFrunk();
-        String trunk = carStatus.getTailgate();
-        int l_front_door = isDoorClosed(carStatus.getDriverDoor()) ? 0 : 1;
-        int r_front_door = isDoorClosed(carStatus.getPassengerDoor()) ? 0 : 1;
-        int l_rear_door = isDoorClosed(carStatus.getLeftRearDoor()) ? 0 : 1;
-        int r_rear_door = isDoorClosed(carStatus.getRightRearDoor()) ? 0 : 1;
-        if (MachE) {
-            // Frunk and trunk statuses
-            views.setImageViewResource(R.id.frunk, (frunk == null || frunk.equals("Closed")) ? R.drawable.frunk_closed: R.drawable.frunk_open);
-            views.setImageViewResource(R.id.trunk, (trunk == null || trunk.equals("Closed")) ? R.drawable.trunk_closed: R.drawable.trunk_open);
-            // Door statuses are trickier since there are mixed images that need to be used....
-            views.setImageViewResource(R.id.front_doors, front[l_front_door][r_front_door]);
-            views.setImageViewResource(R.id.left_doors, left[l_front_door][l_rear_door]);
-            views.setImageViewResource(R.id.right_doors, right[r_front_door][r_rear_door]);
-            views.setImageViewResource(R.id.rear_doors, rear[l_rear_door][r_rear_door]);
-        } else {
-            // Hood, tailgate, and door statuses
-            views.setImageViewResource(R.id.hood,
-                    (frunk == null || frunk.equals("Closed")) ?
-                            R.drawable.filler: f150Images.get(Utils.HOOD));
-            views.setImageViewResource(R.id.tailgate,
-                    (trunk == null || trunk.equals("Closed")) ?
-                            R.drawable.filler: f150Images.get(Utils.TAILGATE));
-            views.setImageViewResource(R.id.lt_ft_door,
-                    l_front_door == 0 ? R.drawable.filler : f150Images.get(Utils.LEFT_FRONT_DOOR));
-            views.setImageViewResource(R.id.rt_ft_door,
-                    r_front_door == 0 ? R.drawable.filler : f150Images.get(Utils.RIGHT_FRONT_DOOR));
-            views.setImageViewResource(R.id.lt_rr_door,
-                    l_rear_door == 0 ? R.drawable.filler : f150Images.get(Utils.LEFT_REAR_DOOR));
-            views.setImageViewResource(R.id.rt_rr_door,
-                    r_rear_door == 0 ? R.drawable.filler : f150Images.get(Utils.RIGHT_REAR_DOOR));
-            views.setImageViewResource(R.id.wireframe, f150Images.get(Utils.WIREFRAME));
-        }
+        // Hood, tailgate, and door statuses
+        views.setImageViewResource(R.id.hood,
+                isDoorClosed(carStatus.getFrunk()) ?
+                        R.drawable.filler: vehicleImages.get(Utils.HOOD));
+        views.setImageViewResource(R.id.tailgate,
+                isDoorClosed(carStatus.getTailgate()) ?
+                        R.drawable.filler: vehicleImages.get(Utils.TAILGATE));
+        views.setImageViewResource(R.id.lt_ft_door,
+                isDoorClosed(carStatus.getDriverDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
+        views.setImageViewResource(R.id.rt_ft_door,
+                isDoorClosed(carStatus.getPassengerDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_FRONT_DOOR));
+        views.setImageViewResource(R.id.lt_rr_door,
+                isDoorClosed(carStatus.getLeftRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_REAR_DOOR));
+        views.setImageViewResource(R.id.rt_rr_door,
+                isDoorClosed(carStatus.getRightRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
+        views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
 
         views.setTextColor(R.id.DataLine2, context.getColor(R.color.white));
         // OTA status
@@ -644,24 +602,18 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
             views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
             views.setImageViewResource(R.id.plug, R.drawable.plug_icon_gray);
-
-            views.setImageViewResource(R.id.frunk, R.drawable.frunk_closed);
-            views.setImageViewResource(R.id.trunk, R.drawable.trunk_closed);
-            views.setImageViewResource(R.id.left_doors, R.drawable.left_none);
-            views.setImageViewResource(R.id.right_doors, R.drawable.right_none);
-            views.setImageViewResource(R.id.front_doors, R.drawable.left_fr_cl_right_fr_cl);
-            views.setImageViewResource(R.id.rear_doors, R.drawable.left_rr_cl_right_rr_cl);
-        } else {
-            // Get the right images to use for this line of truck
-            Map<String, Integer> f150Images = Utils.getF150Drawables(VIN);
-            views.setImageViewResource(R.id.wireframe, f150Images.get(Utils.WIREFRAME));
-            views.setImageViewResource(R.id.frunk, R.drawable.filler);
-            views.setImageViewResource(R.id.trunk, R.drawable.filler);
-            views.setImageViewResource(R.id.lt_ft_door, R.drawable.filler);
-            views.setImageViewResource(R.id.rt_ft_door, R.drawable.filler);
-            views.setImageViewResource(R.id.lt_rr_door, R.drawable.filler);
-            views.setImageViewResource(R.id.rt_rr_door, R.drawable.filler);
         }
+
+        // Get the wireframe for the vehicle
+        Map<String, Integer> f150Images = Utils.getVehicleDrawables(VIN);
+        views.setImageViewResource(R.id.wireframe, f150Images.get(Utils.WIREFRAME));
+
+        views.setImageViewResource(R.id.hood, R.drawable.filler);
+        views.setImageViewResource(R.id.tailgate, R.drawable.filler);
+        views.setImageViewResource(R.id.lt_ft_door, R.drawable.filler);
+        views.setImageViewResource(R.id.rt_ft_door, R.drawable.filler);
+        views.setImageViewResource(R.id.lt_rr_door, R.drawable.filler);
+        views.setImageViewResource(R.id.rt_rr_door, R.drawable.filler);
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }

@@ -33,10 +33,10 @@ Download the [app-release.apk](https://github.com/khpylon/MachEWidget/blob/maste
 ## Known Issues & Limitations
 
 As listed above, this app
-- is only intended for the Ford Mustang Mach-E, as that's the only FOrd I own
+- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own
 - does not include all the function of tonesto7's Apple/iOS widget
 - is not guaranteed to support accounts outside of the United States
-- if you are using the app with a F-150, it may be necessary to uninstall when upgrading to newer versions.  This is because the 
+- if you are using the app with an F-150, it may be necessary to uninstall when upgrading to newer versions.  This is because the 
   app is registered by the name "Mach-E Info", and using with an F-150 aliases it under the name "F-150 Info" which can confuse
   your Android OS when it comes time to upgrade
  
@@ -49,8 +49,8 @@ As listed above, this app
 Thanks to [tonesto7](https://github.com/tonesto7/fordpass-scriptable) for his work on the new widget, and to
 [dschablowsky](https://github.com/dschablowsky/FordPassWidget) for his work on the original widget, 
 [d4v3y0rk](https://github.com/d4v3y0rk) for finding out the information about the ford api.
-Thanks to [@DevSecOps](https://www.macheforum.com/site/members/devsecops.7076/) for on the [Mach-E Forums](https://www.macheforum.com/site/) 
-for his valuable input and help with updating the appearace of the widget and the premitting the use of the assets from his app.
+Thanks to [@DevSecOps](https://www.macheforum.com/site/members/devsecops.7076/) on the [Mach-E Forums](https://www.macheforum.com/site/) 
+for his valuable input and help with updating the appearance of the widget and permitting the use of the assets from his app.
 Additional thanks to [marco79cgn](https://github.com/marco79cgn) and [Tobias Battenberg](https://github.com/mountbatt) for your widgets.  Also, thanks to those
 who have funded the project via PayPal so that I have funds to purchase additional resources to further enhance the app.
 

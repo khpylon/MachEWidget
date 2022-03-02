@@ -117,6 +117,21 @@ public class Utils {
     public static final String LEFT_REAR_DOOR = "lrdoor_open";
     public static final String RIGHT_REAR_DOOR = "rrdoor_open";
 
+    // Drawables for Mach-E
+    private static final Map<String, Integer> macheDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe);
+        tmpMap.put(HOOD, R.drawable.mache_frunk);
+        tmpMap.put(TAILGATE, R.drawable.mache_trunk);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor);
+        macheDrawables = tmpMap;
+    }
+
     // Drawables for Regular Cab (two door) F-150
     private static final Map<String, Integer> regcabDrawables;
 
@@ -178,7 +193,7 @@ public class Utils {
     }
 
     // Get the set of drawables for a particular style of F-150
-    public static Map<String, Integer> getF150Drawables(String VIN) {
+    public static Map<String, Integer> getVehicleDrawables(String VIN) {
         if (VIN != null && !VIN.equals("")) {
             if (isF150RegularCab(VIN)) {
                 return regcabDrawables;
@@ -190,7 +205,7 @@ public class Utils {
                 return raptorDrawables;
             }
         }
-        return regcabDrawables;
+        return macheDrawables;
     }
 
     public static Integer getLayoutByVIN(String VIN) {

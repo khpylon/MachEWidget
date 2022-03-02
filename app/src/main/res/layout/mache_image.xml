@@ -1,5 +1,6 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <ImageView
         android:id="@+id/topfiller"
         android:layout_width="171.6dp"
@@ -21,64 +22,72 @@
         android:layout_width="wrap_content"
         android:layout_height="216dp"
         android:layout_below="@id/topfiller"
-        android:layout_toStartOf="@id/frunk"
+        android:layout_toStartOf="@id/wireframe"
         android:background="@drawable/filler" />
 
     <ImageView
-        android:id="@+id/frunk"
+        android:id="@+id/hood"
         android:layout_width="99dp"
-        android:layout_height="72dp"
+        android:layout_height="216dp"
         android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/frunk_closed" />
+        android:src="@drawable/filler" />
 
     <ImageView
-        android:id="@+id/front_doors"
+        android:id="@+id/lt_ft_door"
         android:layout_width="99dp"
-        android:layout_height="43.2dp"
-        android:layout_below="@id/frunk"
+        android:layout_height="216dp"
+        android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/left_fr_cl_right_fr_cl" />
+        android:src="@drawable/filler" />
 
     <ImageView
-        android:id="@+id/left_doors"
-        android:layout_width="49.5dp"
-        android:layout_height="14.4dp"
-        android:layout_below="@id/front_doors"
-        android:layout_alignStart="@id/front_doors"
-        android:src="@drawable/left_none" />
-
-    <ImageView
-        android:id="@+id/right_doors"
-        android:layout_width="49.5dp"
-        android:layout_height="14.4dp"
-        android:layout_below="@id/front_doors"
-        android:layout_toEndOf="@id/left_doors"
-        android:src="@drawable/right_none" />
-
-    <ImageView
-        android:id="@+id/rear_doors"
+        android:id="@+id/rt_ft_door"
         android:layout_width="99dp"
-        android:layout_height="43.2dp"
-        android:layout_below="@id/left_doors"
+        android:layout_height="216dp"
+        android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/left_rr_cl_right_rr_cl" />
+        android:src="@drawable/filler" />
 
     <ImageView
-        android:id="@+id/trunk"
+        android:id="@+id/lt_rr_door"
         android:layout_width="99dp"
-        android:layout_height="43.2dp"
-        android:layout_below="@id/rear_doors"
+        android:layout_height="216dp"
+        android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/trunk_closed" />
+        android:src="@drawable/filler" />
+
+    <ImageView
+        android:id="@+id/rt_rr_door"
+        android:layout_width="99dp"
+        android:layout_height="216dp"
+        android:layout_below="@id/topfiller"
+        android:layout_toStartOf="@id/rightfiller"
+        android:src="@drawable/filler" />
+
+    <ImageView
+        android:id="@+id/tailgate"
+        android:layout_width="99dp"
+        android:layout_height="216dp"
+        android:layout_below="@id/topfiller"
+        android:layout_toStartOf="@id/rightfiller"
+        android:src="@drawable/filler" />
+
+    <ImageView
+        android:id="@+id/wireframe"
+        android:layout_width="99dp"
+        android:layout_height="216dp"
+        android:layout_below="@id/topfiller"
+        android:layout_toStartOf="@id/rightfiller"
+        android:src="@drawable/mache_wireframe" />
 
     <ImageView
         android:id="@+id/lock"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_below="@id/topfiller"
-        android:layout_alignStart="@id/frunk"
-        android:layout_alignTop="@id/frunk"
+        android:layout_alignStart="@id/wireframe"
+        android:layout_alignTop="@id/wireframe"
         android:layout_marginStart="33.3dp"
         android:layout_marginTop="110dp"
         android:background="@drawable/locked_icon_gray" />
@@ -129,7 +138,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/topfiller"
         android:layout_marginTop="40dp"
-        android:layout_toStartOf="@id/frunk"
+        android:layout_toStartOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
         android:text="N/A"
@@ -142,7 +151,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/topfiller"
         android:layout_marginTop="40dp"
-        android:layout_toEndOf="@id/frunk"
+        android:layout_toEndOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
         android:text="N/A"
@@ -155,7 +164,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/topfiller"
         android:layout_marginTop="165dp"
-        android:layout_toStartOf="@id/frunk"
+        android:layout_toStartOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
         android:text="N/A"
@@ -168,7 +177,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/topfiller"
         android:layout_marginTop="165dp"
-        android:layout_toEndOf="@id/frunk"
+        android:layout_toEndOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
         android:text="N/A"
