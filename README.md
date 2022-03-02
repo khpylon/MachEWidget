@@ -22,13 +22,15 @@ Download the [app-release.apk](https://github.com/khpylon/MachEWidget/blob/maste
 
 ## Requirements
 
-- Android 10, 11, or 12 (may work on earlier Android versions, but not tested)
+- Android 9, 10, 11, or 12 (may work on earlier Android versions, but not tested)
 - [FordPass account](https://sso.ci.ford.com/authsvc/mtfim/sps/authsvc?PolicyId=urn:ibm:security:authentication:asf:basicldapuser&Target=https%3A%2F%2Fsso.ci.ford.com%2Foidc%2Fendpoint%2Fdefault%2Fauthorize%3FqsId%3D1f0281db-c684-454a-8d31-0c0f297cc9ed%26client_id%3D880cf418-6345-4e3b-81cd-7b623309b571&identity_source_id=75d08ad1-510f-468a-b69b-5ebc34f773e3#appID=CCCA9FB8-B941-46AD-A89F-F9D9D699DD68&propertySpecificContentKey=brand_ford&originURL=https%3A%2F%2Fwww.ford.com%2F&lang=en_us&fsURL=https%3A%2F%2Fapi.mps.ford.com) (has to be working with FordPass app, and NOT MyFord Mobile)
 
 ## Features
 
 - Will automatically fetch data from servers (default is every 10 minutes, but configurable)
 - Shows recent OTA information
+- Send commands to car to lock or unlock doors, and perform remote start
+- Assign "short cuts" to other related apps such as FordPass, Waze, etc
 
 ## Known Issues & Limitations
 
@@ -39,7 +41,19 @@ As listed above, this app
 - if you are using the app with an F-150, it may be necessary to uninstall when upgrading to newer versions.  This is because the 
   app is registered by the name "Mach-E Info", and using with an F-150 aliases it under the name "F-150 Info" which can confuse
   your Android OS when it comes time to upgrade
- 
+  
+## Bug Reports
+
+If you discover something which doesn't work the way you expect, check first on the forums to see whether someone else has
+reported a similar problem (or whether the app is actual working properly).  Also search under
+["Issues"](https://github.com/khpylon/MachEWidget/issues) on GitHub to see if it's been reported.
+If not, you may need create a new issue and submit the app's logcat output.  A good summary of ways to get logcat output is
+[described here](https://www.xda-developers.com/how-to-take-logs-android/).  If your issue seems related to network access
+with the Ford servers, you should go to Settings and set "Enable verbose HTTP logging".  Note that this output may expose
+your Ford account credentials (username and password), so before sending the logs be sure to remove this information.  There
+will probably be a lot of unrelated information in the log output; the only lines of interest are those which contain the string "934TXS" and, if 
+verbose HTTP logging is enabled, those which contain the string "OkHttp".
+
 ## To do
 
 - Display information using more graphics and less text where possible.
