@@ -109,36 +109,26 @@ public class Utils {
         }
     }
 
-    public static final String HOOD_OPEN = "hood_open";
-    public static final String HOOD_CLOSED = "hood_closed";
-    public static final String TAILGATE_OPEN = "tailgate_open";
-    public static final String TAILGATE_CLOSED = "tailgate_closed";
-    public static final String LEFT_FRONT_DOOR_OPEN = "lfdoor_open";
-    public static final String LEFT_FRONT_DOOR_CLOSED = "lfdoor_closed";
-    public static final String RIGHT_FRONT_DOOR_OPEN = "rfdoor_open";
-    public static final String RIGHT_FRONT_DOOR_CLOSED = "rfdoor_closed";
-    public static final String LEFT_REAR_DOOR_OPEN = "lrdoor_open";
-    public static final String LEFT_REAR_DOOR_CLOSED = "lrdoor_closed";
-    public static final String RIGHT_REAR_DOOR_OPEN = "rrdoor_open";
-    public static final String RIGHT_REAR_DOOR_CLOSED = "rrdoor_closed";
+    public static final String WIREFRAME = "wireframe";
+    public static final String HOOD = "hood";
+    public static final String TAILGATE = "tailgate_open";
+    public static final String LEFT_FRONT_DOOR = "lfdoor_open";
+    public static final String RIGHT_FRONT_DOOR = "rfdoor_open";
+    public static final String LEFT_REAR_DOOR = "lrdoor_open";
+    public static final String RIGHT_REAR_DOOR = "rrdoor_open";
 
     // Drawables for Regular Cab (two door) F-150
     private static final Map<String, Integer> regcabDrawables;
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(HOOD_OPEN, R.drawable.regcab_frunk_open);
-        tmpMap.put(HOOD_CLOSED, R.drawable.regcab_frunk_closed);
-        tmpMap.put(TAILGATE_OPEN, R.drawable.regcab_gate_open);
-        tmpMap.put(TAILGATE_CLOSED, R.drawable.regcab_gate_closed);
-        tmpMap.put(LEFT_FRONT_DOOR_OPEN, R.drawable.regcab_lf_door_open);
-        tmpMap.put(LEFT_FRONT_DOOR_CLOSED, R.drawable.regcab_lf_door_closed);
-        tmpMap.put(RIGHT_FRONT_DOOR_OPEN, R.drawable.regcab_rf_door_open);
-        tmpMap.put(RIGHT_FRONT_DOOR_CLOSED, R.drawable.regcab_rf_door_closed);
-        tmpMap.put(LEFT_REAR_DOOR_OPEN, R.drawable.regcab_lr_door_open);
-        tmpMap.put(LEFT_REAR_DOOR_CLOSED, R.drawable.regcab_lr_door_closed);
-        tmpMap.put(RIGHT_REAR_DOOR_OPEN, R.drawable.regcab_rr_door_open);
-        tmpMap.put(RIGHT_REAR_DOOR_CLOSED, R.drawable.regcab_rr_door_closed);
+        tmpMap.put(WIREFRAME, R.drawable.regularcab_wireframe);
+        tmpMap.put(HOOD, R.drawable.regularcab_hood);
+        tmpMap.put(TAILGATE, R.drawable.regularcab_tailgate);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.regularcab_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.regularcab_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.filler);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.filler);
         regcabDrawables = tmpMap;
     }
 
@@ -147,18 +137,13 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(HOOD_OPEN, R.drawable.sprcab_hood_open);
-        tmpMap.put(HOOD_CLOSED, R.drawable.sprcab_hood_closed);
-        tmpMap.put(TAILGATE_OPEN, R.drawable.sprcab_gate_open);
-        tmpMap.put(TAILGATE_CLOSED, R.drawable.sprcab_gate_closed);
-        tmpMap.put(LEFT_FRONT_DOOR_OPEN, R.drawable.sprcab_lf_door_open);
-        tmpMap.put(LEFT_FRONT_DOOR_CLOSED, R.drawable.sprcab_lf_door_closed);
-        tmpMap.put(RIGHT_FRONT_DOOR_OPEN, R.drawable.sprcab_rf_door_open);
-        tmpMap.put(RIGHT_FRONT_DOOR_CLOSED, R.drawable.sprcab_rf_door_closed);
-        tmpMap.put(LEFT_REAR_DOOR_OPEN, R.drawable.sprcab_lr_door_open);
-        tmpMap.put(LEFT_REAR_DOOR_CLOSED, R.drawable.sprcab_lr_door_closed);
-        tmpMap.put(RIGHT_REAR_DOOR_OPEN, R.drawable.sprcab_rr_door_open);
-        tmpMap.put(RIGHT_REAR_DOOR_CLOSED, R.drawable.sprcab_rr_door_closed);
+        tmpMap.put(WIREFRAME, R.drawable.supercab_wireframe);
+        tmpMap.put(HOOD, R.drawable.supercab_hood);
+        tmpMap.put(TAILGATE, R.drawable.supercab_tailgate);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercab_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercab_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercab_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercab_rrdoor);
         supercabDrawables = tmpMap;
     }
 
@@ -167,18 +152,13 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(HOOD_OPEN, R.drawable.sprcrew_hood_open);
-        tmpMap.put(HOOD_CLOSED, R.drawable.sprcrew_hood_closed);
-        tmpMap.put(TAILGATE_OPEN, R.drawable.sprcrew_gate_open);
-        tmpMap.put(TAILGATE_CLOSED, R.drawable.sprcrew_gate_closed);
-        tmpMap.put(LEFT_FRONT_DOOR_OPEN, R.drawable.sprcrew_lf_door_open);
-        tmpMap.put(LEFT_FRONT_DOOR_CLOSED, R.drawable.sprcrew_lf_door_closed);
-        tmpMap.put(RIGHT_FRONT_DOOR_OPEN, R.drawable.sprcrew_rf_door_open);
-        tmpMap.put(RIGHT_FRONT_DOOR_CLOSED, R.drawable.sprcrew_rf_door_closed);
-        tmpMap.put(LEFT_REAR_DOOR_OPEN, R.drawable.sprcrew_lr_door_open);
-        tmpMap.put(LEFT_REAR_DOOR_CLOSED, R.drawable.sprcrew_lr_door_closed);
-        tmpMap.put(RIGHT_REAR_DOOR_OPEN, R.drawable.sprcrew_rr_door_open);
-        tmpMap.put(RIGHT_REAR_DOOR_CLOSED, R.drawable.sprcrew_rr_door_closed);
+        tmpMap.put(WIREFRAME, R.drawable.supercrew_wireframe);
+        tmpMap.put(HOOD, R.drawable.supercrew_hood);
+        tmpMap.put(TAILGATE, R.drawable.supercrew_tailgate);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercrew_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercrew_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercrew_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercrew_rrdoor);
         supercrewDrawables = tmpMap;
     }
 
@@ -187,18 +167,13 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(HOOD_OPEN, R.drawable.raptor_hood_open);
-        tmpMap.put(HOOD_CLOSED, R.drawable.raptor_hood_closed);
-        tmpMap.put(TAILGATE_OPEN, R.drawable.raptor_gate_open);
-        tmpMap.put(TAILGATE_CLOSED, R.drawable.raptor_gate_closed);
-        tmpMap.put(LEFT_FRONT_DOOR_OPEN, R.drawable.raptor_lf_door_open);
-        tmpMap.put(LEFT_FRONT_DOOR_CLOSED, R.drawable.raptor_lf_door_closed);
-        tmpMap.put(RIGHT_FRONT_DOOR_OPEN, R.drawable.raptor_rf_door_open);
-        tmpMap.put(RIGHT_FRONT_DOOR_CLOSED, R.drawable.raptor_rf_door_closed);
-        tmpMap.put(LEFT_REAR_DOOR_OPEN, R.drawable.raptor_lr_door_open);
-        tmpMap.put(LEFT_REAR_DOOR_CLOSED, R.drawable.raptor_lr_door_closed);
-        tmpMap.put(RIGHT_REAR_DOOR_OPEN, R.drawable.raptor_rr_door_open);
-        tmpMap.put(RIGHT_REAR_DOOR_CLOSED, R.drawable.raptor_rr_door_closed);
+        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe);
+        tmpMap.put(HOOD, R.drawable.raptor_hood);
+        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor);
         raptorDrawables = tmpMap;
     }
 
@@ -216,20 +191,11 @@ public class Utils {
             }
         }
         return regcabDrawables;
-        
     }
 
     public static Integer getLayoutByVIN(String VIN) {
-        if (VIN != null && !VIN.equals("")) {
-            if (isF150RegularCab(VIN)) {
-                return R.layout.f150_regularcab_widget;
-            } else if (isF150SuperCab(VIN)) {
-                return R.layout.f150_supercab_widget;
-            } else if (isF150SuperCrew(VIN)) {
-                return R.layout.f150_supecrew_widget;
-            } else if (isF150Raptor(VIN)) {
-                return R.layout.f150_raptor_widget;
-            }
+        if (VIN != null && !VIN.equals("") && isF150(VIN)) {
+            return R.layout.f150_widget;
         }
         return R.layout.mache_widget;
     }

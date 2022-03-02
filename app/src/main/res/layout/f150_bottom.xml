@@ -1,7 +1,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
-        android:id="@+id/GOM"
+        android:id="@+id/distanceToEmpty"
         android:layout_width="171.6dp"
         android:layout_height="36dp"
         android:layout_below="@id/rightfiller"
@@ -17,12 +17,12 @@
         android:layout_height="20dp"
         android:layout_weight="2"
         android:layout_gravity="center"
-        android:layout_below="@id/GOM"
+        android:layout_below="@id/distanceToEmpty"
         android:layout_alignParentEnd="true"
         android:orientation="horizontal">
 
         <ProgressBar
-            android:id="@+id/HBVChargeProgress"
+            android:id="@+id/fuelLevelProgress"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleY="4"
@@ -34,7 +34,7 @@
             android:gravity="center_vertical"/>
 
         <TextView
-            android:id="@+id/HVBChargePercent"
+            android:id="@+id/fuelLevelPercent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="10sp"

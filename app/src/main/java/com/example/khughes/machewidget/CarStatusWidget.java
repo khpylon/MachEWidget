@@ -235,8 +235,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         setBackground(context, views);
 
         // Display profile name if active
-        if(profilesActive) {
-            views.setTextViewText(R.id.profile, "Profile: "+new StoredData(context).getProfileName(VIN));
+        if (profilesActive) {
+            views.setTextViewText(R.id.profile, "Profile: " + new StoredData(context).getProfileName(VIN));
         } else {
             views.setTextViewText(R.id.profile, "");
         }
@@ -249,8 +249,6 @@ public class CarStatusWidget extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(appWidgetId, views);
             return;
         }
-
-        views.setInt(R.id.lftire, "setBackgroundResource", R.drawable.pressure_oval_red);
 
         // Fill in the last update time
         Calendar lastUpdateTime = Calendar.getInstance();
@@ -368,21 +366,16 @@ public class CarStatusWidget extends AppWidgetProvider {
             }
         }
 
-        String rangeCharge = "";
-
-        // Estimated range
-        Double range;
+        String rangeCharge = "N/A";
         if (MachE) {
-            range = carStatus.getElVehDTE();
-        } else {
-            range = carStatus.getDistanceToEmpty();
-        }
-        if (range != null && range > 0) {
-            rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
-        }
 
-        // Charging port
-        if (MachE) {
+            // Estimated range
+            Double range = carStatus.getElVehDTE();
+            if (range != null && range > 0) {
+                rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
+            }
+
+            // Charging port
             Boolean pluggedIn = carStatus.getPlugStatus();
             views.setImageViewResource(R.id.plug, pluggedIn ?
                     R.drawable.plug_icon_green : R.drawable.plug_icon_gray);
@@ -437,7 +430,6 @@ public class CarStatusWidget extends AppWidgetProvider {
                                     if (min > 0) {
                                         rangeCharge += ", ";
                                     }
-                                } else {
                                 }
                                 if (min > 0) {
                                     rangeCharge += (int) min + " min";
@@ -452,10 +444,8 @@ public class CarStatusWidget extends AppWidgetProvider {
             } else {
                 views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
             }
-        }
-        views.setTextViewText(R.id.GOM, rangeCharge);
+            views.setTextViewText(R.id.GOM, rangeCharge);
 
-        if (MachE) {
             // High-voltage battery charge levels
             Double chargeLevel = carStatus.getHVBFillLevel();
             if (chargeLevel != null) {
@@ -465,11 +455,18 @@ public class CarStatusWidget extends AppWidgetProvider {
                                 DecimalFormatSymbols.getInstance(Locale.US)).format(chargeLevel)));
             }
         } else {
-            // Fuel tank level?
+            // Estimated range
+            Double range = carStatus.getDistanceToEmpty();
+            if (range != null ) {
+                rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
+            }
+            views.setTextViewText(R.id.distanceToEmpty, rangeCharge);
+
+            // Fuel tank level
             Double fuelLevel = carStatus.getFuelLevel();
             if (fuelLevel != null) {
-                views.setProgressBar(R.id.HBVChargeProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
-                views.setTextViewText(R.id.HVBChargePercent,
+                views.setProgressBar(R.id.fuelLevelProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
+                views.setTextViewText(R.id.fuelLevelPercent,
                         MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
                                 DecimalFormatSymbols.getInstance(Locale.US)).format(fuelLevel)));
             }
@@ -513,59 +510,40 @@ public class CarStatusWidget extends AppWidgetProvider {
         updateWindow(views, carStatus.getRightRearWindow(), R.id.rrwindow, R.drawable.icons8_right_rear_window_down_red);
 
         // Get the right images to use for this line of truck
-        Map<String,Integer> f150Images = Utils.getF150Drawables(VIN);
+        Map<String, Integer> f150Images = Utils.getF150Drawables(VIN);
 
         String frunk = carStatus.getFrunk();
         String trunk = carStatus.getTailgate();
-        if (MachE) {
-            // Frunk and trunk statuses
-            if (frunk == null || frunk.equals("Closed")) {
-                views.setImageViewResource(R.id.frunk, R.drawable.frunk_closed);
-            } else {
-                views.setImageViewResource(R.id.frunk, R.drawable.frunk_open);
-            }
-            if (trunk == null || trunk.equals("Closed")) {
-                views.setImageViewResource(R.id.trunk, R.drawable.trunk_closed);
-            } else {
-                views.setImageViewResource(R.id.trunk, R.drawable.trunk_open);
-            }
-        } else {
-            // Frunk and trunk statuses
-            if (frunk == null || frunk.equals("Closed")) {
-                views.setImageViewResource(R.id.frunk, f150Images.get(Utils.HOOD_CLOSED));
-            } else {
-                views.setImageViewResource(R.id.frunk, f150Images.get(Utils.HOOD_OPEN));
-            }
-            if (trunk == null || trunk.equals("Closed")) {
-                views.setImageViewResource(R.id.trunk, f150Images.get(Utils.TAILGATE_CLOSED));
-            } else {
-                views.setImageViewResource(R.id.trunk, f150Images.get(Utils.TAILGATE_OPEN));
-            }
-        }
-
         int l_front_door = isDoorClosed(carStatus.getDriverDoor()) ? 0 : 1;
         int r_front_door = isDoorClosed(carStatus.getPassengerDoor()) ? 0 : 1;
         int l_rear_door = isDoorClosed(carStatus.getLeftRearDoor()) ? 0 : 1;
         int r_rear_door = isDoorClosed(carStatus.getRightRearDoor()) ? 0 : 1;
         if (MachE) {
+            // Frunk and trunk statuses
+            views.setImageViewResource(R.id.frunk, (frunk == null || frunk.equals("Closed")) ? R.drawable.frunk_closed: R.drawable.frunk_open);
+            views.setImageViewResource(R.id.trunk, (trunk == null || trunk.equals("Closed")) ? R.drawable.trunk_closed: R.drawable.trunk_open);
             // Door statuses are trickier since there are mixed images that need to be used....
             views.setImageViewResource(R.id.front_doors, front[l_front_door][r_front_door]);
             views.setImageViewResource(R.id.left_doors, left[l_front_door][l_rear_door]);
             views.setImageViewResource(R.id.right_doors, right[r_front_door][r_rear_door]);
             views.setImageViewResource(R.id.rear_doors, rear[l_rear_door][r_rear_door]);
         } else {
+            // Hood, tailgate, and door statuses
+            views.setImageViewResource(R.id.hood,
+                    (frunk == null || frunk.equals("Closed")) ?
+                            R.drawable.filler: f150Images.get(Utils.HOOD));
+            views.setImageViewResource(R.id.tailgate,
+                    (trunk == null || trunk.equals("Closed")) ?
+                            R.drawable.filler: f150Images.get(Utils.TAILGATE));
             views.setImageViewResource(R.id.lt_ft_door,
-                    f150Images.get(l_front_door == 0 ?
-                    Utils.LEFT_FRONT_DOOR_CLOSED : Utils.LEFT_FRONT_DOOR_OPEN) );
+                    l_front_door == 0 ? R.drawable.filler : f150Images.get(Utils.LEFT_FRONT_DOOR));
             views.setImageViewResource(R.id.rt_ft_door,
-                    f150Images.get(r_front_door == 0 ?
-                            Utils.RIGHT_FRONT_DOOR_CLOSED : Utils.RIGHT_FRONT_DOOR_OPEN) );
+                    r_front_door == 0 ? R.drawable.filler : f150Images.get(Utils.RIGHT_FRONT_DOOR));
             views.setImageViewResource(R.id.lt_rr_door,
-                    f150Images.get(l_rear_door == 0 ?
-                            Utils.LEFT_REAR_DOOR_CLOSED : Utils.LEFT_REAR_DOOR_OPEN) );
+                    l_rear_door == 0 ? R.drawable.filler : f150Images.get(Utils.LEFT_REAR_DOOR));
             views.setImageViewResource(R.id.rt_rr_door,
-                    f150Images.get(r_rear_door == 0 ?
-                            Utils.RIGHT_REAR_DOOR_CLOSED : Utils.RIGHT_REAR_DOOR_OPEN) );
+                    r_rear_door == 0 ? R.drawable.filler : f150Images.get(Utils.RIGHT_REAR_DOOR));
+            views.setImageViewResource(R.id.wireframe, f150Images.get(Utils.WIREFRAME));
         }
 
         views.setTextColor(R.id.DataLine2, context.getColor(R.color.white));
@@ -675,13 +653,14 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setImageViewResource(R.id.rear_doors, R.drawable.left_rr_cl_right_rr_cl);
         } else {
             // Get the right images to use for this line of truck
-            Map<String,Integer> f150Images = Utils.getF150Drawables(VIN);
-            views.setImageViewResource(R.id.frunk, f150Images.get(Utils.HOOD_CLOSED));
-            views.setImageViewResource(R.id.trunk, f150Images.get(Utils.TAILGATE_CLOSED));
-            views.setImageViewResource(R.id.lt_ft_door, f150Images.get(Utils.LEFT_FRONT_DOOR_CLOSED));
-            views.setImageViewResource(R.id.rt_ft_door, f150Images.get(Utils.RIGHT_FRONT_DOOR_CLOSED));
-            views.setImageViewResource(R.id.lt_rr_door, f150Images.get(Utils.LEFT_REAR_DOOR_CLOSED));
-            views.setImageViewResource(R.id.rt_rr_door, f150Images.get(Utils.RIGHT_REAR_DOOR_CLOSED));
+            Map<String, Integer> f150Images = Utils.getF150Drawables(VIN);
+            views.setImageViewResource(R.id.wireframe, f150Images.get(Utils.WIREFRAME));
+            views.setImageViewResource(R.id.frunk, R.drawable.filler);
+            views.setImageViewResource(R.id.trunk, R.drawable.filler);
+            views.setImageViewResource(R.id.lt_ft_door, R.drawable.filler);
+            views.setImageViewResource(R.id.rt_ft_door, R.drawable.filler);
+            views.setImageViewResource(R.id.lt_rr_door, R.drawable.filler);
+            views.setImageViewResource(R.id.rt_rr_door, R.drawable.filler);
         }
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
