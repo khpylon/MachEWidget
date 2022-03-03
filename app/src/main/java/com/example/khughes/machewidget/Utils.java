@@ -232,7 +232,7 @@ public class Utils {
                 return R.layout.f150_widget;
             }
             if (isBronco(VIN)) {
-                return R.layout.f150_widget;
+                return R.layout.bronco_widget;
             }
         }
         return R.layout.mache_widget;
