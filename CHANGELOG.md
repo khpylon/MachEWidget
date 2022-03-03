@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2022.03.xx
+## 2022.03.03
+### Added
+- Add the ability to save logging output to a file.  To use this, enable logging in Settings, then when 
+ready to save data, choose "Save logfile" from the three-bar menu.  The file will be stored in yor Downloads
+  folder.  After saving, disable logging.  This only works on Android 10 and later.
+- Initial support for Bronco SUVs.  This is very beta; while there is an image of the vehicle, it does
+not yet update correctly.
+
 ### Changes
 - Use the technique for drawing the F-150 images with the Mach-E.
 
