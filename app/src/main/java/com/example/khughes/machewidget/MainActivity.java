@@ -159,10 +159,14 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(this, OTAViewActivity.class);
                 startActivity(intent);
             case R.id.action_copylog:
-                if (LogFile.copyLogFile(context)) {
-                    Toast.makeText(context, "Log file saved to Downloads folder.", Toast.LENGTH_SHORT).show();
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    if (LogFile.copyLogFile(context)) {
+                        Toast.makeText(context, "Log file saved to Downloads folder.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "An error occurred saving the log file.", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(context, "An error occurred saving the log file.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Logging not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_settings:

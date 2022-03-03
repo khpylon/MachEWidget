@@ -45,7 +45,7 @@ public class LogFile {
     public static void appendToLogFile(Context context, String tag, String message) {
         Boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
-        if (verbose) {
+        if (verbose && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             try {
                 File logFile = new File(context.getDataDir(), LOGFILENAME);
                 FileOutputStream outputStream = new FileOutputStream(logFile, true);
