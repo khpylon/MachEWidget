@@ -10,6 +10,7 @@ public class Utils {
     public static final int WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3;
     public static final String WORLD_MANUFACTURING_IDENTIFIER_MACHE = "3FM";
     public static final String WORLD_MANUFACTURING_IDENTIFIER_F150 = "1FT";
+    public static final String WORLD_MANUFACTURING_IDENTIFIER_BRONCO = "1FM";
 
     public static final int LINE_SERIES_START_INDEX = 5 - 1;
     public static final int LINE_SERIES_END_INDEX = 7;
@@ -29,6 +30,11 @@ public class Utils {
     public static final String LINE_SERIES_F150_SUPERCREW_4X4_SSV = "W1T"; // 4x4, superCrew, SSV (Special Service Vehicle), government
     public static final String LINE_SERIES_F150_SUPERCAB_4X2 = "X1C"; // 4x2, SuperCab
     public static final String LINE_SERIES_F150_SUPERCAB_4X4 = "X1E"; // 4x4, SuperCab
+    public static final String LINE_SERIES_BRONCO_BASE_2DOOR_4X4 = "E5A"; //
+    public static final String LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B"; //
+    public static final String LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C"; //
+    public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD = "E5D"; //
+    public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
 
     public static final String F150_REGULAR_CAB = "F-150 Regular Cab";
     public static final String F150_SUPER_CAB = "F-150 SuperCab";
@@ -43,6 +49,11 @@ public class Utils {
     public static boolean isF150(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_F150);
+    }
+
+    public static boolean isBronco(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_BRONCO);
     }
 
     private static final Set<String> regularCabs;
@@ -195,22 +206,32 @@ public class Utils {
     // Get the set of drawables for a particular style of F-150
     public static Map<String, Integer> getVehicleDrawables(String VIN) {
         if (VIN != null && !VIN.equals("")) {
-            if (isF150RegularCab(VIN)) {
+            if (isF150(VIN)) {
+                if (isF150RegularCab(VIN)) {
+                    return regcabDrawables;
+                } else if (isF150SuperCab(VIN)) {
+                    return supercabDrawables;
+                } else if (isF150SuperCrew(VIN)) {
+                    return supercrewDrawables;
+                } else if (isF150Raptor(VIN)) {
+                    return raptorDrawables;
+                }
+            }
+            if (isBronco(VIN)) {
                 return regcabDrawables;
-            } else if (isF150SuperCab(VIN)) {
-                return supercabDrawables;
-            } else if (isF150SuperCrew(VIN)) {
-                return supercrewDrawables;
-            } else if (isF150Raptor(VIN)) {
-                return raptorDrawables;
             }
         }
         return macheDrawables;
     }
 
     public static Integer getLayoutByVIN(String VIN) {
-        if (VIN != null && !VIN.equals("") && isF150(VIN)) {
-            return R.layout.f150_widget;
+        if (VIN != null && !VIN.equals("")) {
+            if (isF150(VIN)) {
+                return R.layout.f150_widget;
+            }
+            if (isBronco(VIN)) {
+                return R.layout.f150_widget;
+            }
         }
         return R.layout.mache_widget;
     }
