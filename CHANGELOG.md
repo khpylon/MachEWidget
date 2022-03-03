@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.03.xx
+### Changes
+- Use the technique for drawing the F-150 images with the Mach-E.
+
 ## 2022.03.02
 ### Changes
 - Change the way F-150 images are drawn, and use SVG drawables instead PNG images.

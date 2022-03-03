@@ -94,7 +94,8 @@
             app:defaultValue="false"
             app:key="@string/okhttp3_key"
             app:singleLineTitle="false"
-            app:title="@string/okhttp3" />
+            app:title="@string/okhttp3"
+            app:summary="@string/okhttp3_summary"/>
     </PreferenceCategory>
 
     <PreferenceCategory

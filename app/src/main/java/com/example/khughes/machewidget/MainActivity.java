@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         mWebView.loadUrl(MachE ?
                 "https://appassets.androidplatform.net/assets/index_mache.html" :
                 "https://appassets.androidplatform.net/assets/index_f150.html");
-        
+
 
         // Update the widget
         updateWidget(context);
@@ -158,6 +158,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_ota_view:
                 intent = new Intent(this, OTAViewActivity.class);
                 startActivity(intent);
+            case R.id.action_copylog:
+                if (LogFile.copyLogFile(context)) {
+                    Toast.makeText(context, "Log file saved to Downloads folder.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "An error occurred saving the log file.", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             case R.id.action_settings:
                 intent = new Intent(this, SettingsActivity.class);

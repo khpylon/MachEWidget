@@ -44,7 +44,7 @@ public class UpdateReceiver extends BroadcastReceiver {
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.connect();
                     InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                    byte data[] = new byte[2048];
+                    byte[] data = new byte[2048];
                     int count = 0;
                     while ((count = input.read(data)) != -1) {
                         current += new String(data, 0, count, StandardCharsets.UTF_8);
@@ -52,7 +52,7 @@ public class UpdateReceiver extends BroadcastReceiver {
                     input.close();
                     return current;
                 } catch (Exception e) {
-                    Log.e(MainActivity.CHANNEL_ID, "exception in " + this.getClass().getName() + "." +
+                    LogFile.e(mContext, MainActivity.CHANNEL_ID, "exception in " + this.getClass().getName() + "." +
                             this.getClass().getEnclosingMethod().getName() + ": " + e);
                 } finally {
                     if (urlConnection != null) {
@@ -61,7 +61,7 @@ public class UpdateReceiver extends BroadcastReceiver {
                 }
 
             } catch (Exception e) {
-                Log.e(MainActivity.CHANNEL_ID, "exception in " + this.getClass().getName() + "." +
+                LogFile.e(mContext, MainActivity.CHANNEL_ID, "exception in " + this.getClass().getName() + "." +
                         this.getClass().getEnclosingMethod().getName() + ": " + e);
             }
             return current;
@@ -71,7 +71,7 @@ public class UpdateReceiver extends BroadcastReceiver {
             final String Version = "Version: ";
             StoredData appInfo = new StoredData(mContext);
             final String latestVersion = appInfo.getLatestVersion();
-            for (String item : Arrays.asList(result.split("\n"))) {
+            for (String item : result.split("\n")) {
                 if (item.contains(Version)) {
                     String newVersion = item.replace(Version, "");
                     if (newVersion.compareTo(BuildConfig.VERSION_NAME) > 0 &&

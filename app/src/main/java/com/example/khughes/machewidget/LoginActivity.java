@@ -174,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                 bb = msg.getData();
                 String xx = bb.getString("action");
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                Log.i(MainActivity.CHANNEL_ID, "Access: " + action);
+                LogFile.i(context, MainActivity.CHANNEL_ID, "Access: " + action);
                 appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) ||
                         action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN) ||
@@ -216,7 +216,7 @@ public class LoginActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                Log.i(MainActivity.CHANNEL_ID, "Status: " + action);
+                LogFile.i(context, MainActivity.CHANNEL_ID, "Status: " + action);
                 appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(getApplicationContext());

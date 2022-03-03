@@ -102,10 +102,10 @@ public class NetworkCalls {
                     nextState = state.FSM(true, false, false, false, false);
 //                     nextState = state.networkUpLoginBad();
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 nextState = state.FSM(true, false, false, false, false);
 //                 nextState = state.networkUpLoginBad();
-                Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
+                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
             }
         }
         appInfo.setProgramState(VIN, nextState);
@@ -146,9 +146,9 @@ public class NetworkCalls {
             Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
             try {
                 Response<AccessToken> response = call.execute();
-                Log.i(MainActivity.CHANNEL_ID, "refresh here....");
+                LogFile.i(context,MainActivity.CHANNEL_ID, "refresh here....");
                 if (response.isSuccessful()) {
-                    Log.i(MainActivity.CHANNEL_ID, "refresh successful");
+                    LogFile.i(context,MainActivity.CHANNEL_ID, "refresh successful");
                     AccessToken accessToken = response.body();
                     data.putExtra("access_token", accessToken.getAccessToken());
                     data.putExtra("refresh_token", accessToken.getRefreshToken());
@@ -156,17 +156,17 @@ public class NetworkCalls {
                     nextState = state.FSM(true, true, true, false, false);
 //                     nextState = state.goodVIN();
                 } else {
-                    Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
-                    Log.i(MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
+                    LogFile.i(context,MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context,MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
                     getAccessToken(context, appInfo.getUsername(VIN), appInfo.getPassword(VIN));
                     nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
 //                    nextState = state.FSM(true, false, true, false, false);
 //                     nextState = state.loginBad();
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 nextState = state.FSM(true, false, false, false, false);
 //                 nextState = state.loginBad();
-                Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.refreshAccessToken: ", e);
+                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.refreshAccessToken: ", e);
             }
         }
         appInfo.setProgramState(VIN, nextState);
@@ -206,39 +206,39 @@ public class NetworkCalls {
             try {
                 Response<CarStatus> response = call.execute();
                 if (response.isSuccessful()) {
-                    Log.i(MainActivity.CHANNEL_ID, "status successful....");
+                    LogFile.i(context,MainActivity.CHANNEL_ID, "status successful....");
 //                    String tmp =response.toString();
                     CarStatus car = response.body();
                     if (car.getStatus() == Constants.HTTP_SERVER_ERROR) {
                         nextState = state.FSM(true, true, false, false, true);
 //                         nextState = state.serverDown();
-                        Log.i(MainActivity.CHANNEL_ID, "server is broken");
+                        LogFile.i(context,MainActivity.CHANNEL_ID, "server is broken");
                     } else if (car.getVehiclestatus() != null) {
                         appInfo.setCarStatus(VIN, car);
                         Notifications.checkLVBStatus(context, car, VIN);
                         Notifications.checkTPMSStatus(context, car, VIN);
                         nextState = state.FSM(true, true, true, false, false);
 //                        nextState = state.goodVIN();
-                        Log.i(MainActivity.CHANNEL_ID, "got status");
+                        LogFile.i(context,MainActivity.CHANNEL_ID, "got status");
                     } else {
                         nextState = state.FSM(true, true, false, false, false);
 //                         nextState = state.badVIN();
-                        Log.i(MainActivity.CHANNEL_ID, "vehicle status is null");
+                        LogFile.i(context,MainActivity.CHANNEL_ID, "vehicle status is null");
                     }
                 } else {
                     nextState = state.FSM(true, true, false, false, false);
 //                    nextState = state.loginBad();
-                    Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
-                    Log.i(MainActivity.CHANNEL_ID, "status UNSUCCESSFUL....");
+                    LogFile.i(context,MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context,MainActivity.CHANNEL_ID, "status UNSUCCESSFUL....");
                     // For either of these client errors, we probably need to refresh the access token
                     if (response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED) {
                         nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 nextState = state.FSM(true, true, false, false, false);
 //                 nextState = state.loginBad();
-                Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
+                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
             }
         }
         appInfo.setProgramState(VIN, nextState);
@@ -280,7 +280,7 @@ public class NetworkCalls {
             try {
                 Response<OTAStatus> response = call.execute();
                 if (response.isSuccessful()) {
-                    Log.i(MainActivity.CHANNEL_ID, "OTA status successful....");
+                    LogFile.i(context,MainActivity.CHANNEL_ID, "OTA status successful....");
                     appInfo.setOTAStatus(VIN, response.body());
                     nextState = state.getCurrentState();
                 } else {
@@ -290,20 +290,20 @@ public class NetworkCalls {
                             OTAStatus status = new OTAStatus();
                             status.setError("UpstreamException");
                         }
-                    } catch (IOException e) {
-                        Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
+                    } catch (Exception e) {
+                        LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
                     }
-                    Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
-                    Log.i(MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL....");
+                    LogFile.i(context,MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context,MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL....");
                     // For either of these client errors, we probably need to refresh the access token
                     if (response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED) {
                         nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 nextState = state.FSM(true, true, false, false, false);
 //                 nextState = state.loginBad();
-                Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
+                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
             }
         }
         appInfo.setProgramState(VIN, nextState);
@@ -374,7 +374,7 @@ public class NetworkCalls {
             data.putExtra("action", COMMAND_NO_NETWORK);
         } else {
 //            CommandService commandServiceClient = CommandServiceGenerator.createService(CommandService.class);
-            CommandService commandServiceClient = NetworkServiceGenerators.createCommandService(CommandService.class);
+            CommandService commandServiceClient = NetworkServiceGenerators.createCommandService(CommandService.class, context);
             Call<CommandStatus> call = null;
             if (request.equals("put")) {
                 call = commandServiceClient.putCommand(token, language,
@@ -387,15 +387,15 @@ public class NetworkCalls {
                 Response<CommandStatus> response = call.execute();
                 if (response.isSuccessful()) {
                     data.putExtra("action", COMMAND_SUCCESSFUL);
-                    Log.i(MainActivity.CHANNEL_ID, "CMD successful....");
+                    LogFile.i(context,MainActivity.CHANNEL_ID, "CMD successful....");
                 } else {
                     data.putExtra("action", COMMAND_FAILED);
-                    Log.i(MainActivity.CHANNEL_ID, response.raw().toString());
-                    Log.i(MainActivity.CHANNEL_ID, "CMD UNSUCCESSFUL....");
+                    LogFile.i(context,MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context,MainActivity.CHANNEL_ID, "CMD UNSUCCESSFUL....");
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 data.putExtra("action", COMMAND_EXCEPTION);
-                Log.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.putCommand: ", e);
+                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.putCommand: ", e);
             }
         }
         return data;

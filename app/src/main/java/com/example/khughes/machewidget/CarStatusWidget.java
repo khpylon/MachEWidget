@@ -109,7 +109,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             addresses = mGeocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
-            Log.e(MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget (normal)");
+            LogFile.e(context,MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget (normal)");
         }
 
         // If an address was found, go with the first entry
@@ -232,11 +232,11 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             lastUpdateTime.setTime(sdf.parse(carStatus.getLastRefresh()));// all done
         } catch (ParseException e) {
-            Log.e(MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+            LogFile.e(context,MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
         }
         Calendar currentTime = Calendar.getInstance();
         long minutes = (Duration.between(lastUpdateTime.toInstant(), currentTime.toInstant()).getSeconds() + 30) / 60;
-        Log.i(MainActivity.CHANNEL_ID, "Last vehicle update was " + minutes + " minutes ago.");
+        LogFile.i(context,MainActivity.CHANNEL_ID, "Last vehicle update was " + minutes + " minutes ago.");
 
         String refresh = "Last refresh:\n  ";
         Boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
@@ -412,7 +412,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                                 rangeCharge += " left";
                             }
                         } catch (ParseException e) {
-                            Log.e(MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+                            LogFile.e(context,MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
                         }
                     }
                 }
@@ -432,7 +432,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         } else {
             // Estimated range
             Double range = carStatus.getDistanceToEmpty();
-            if (range != null ) {
+            if (range != null) {
                 rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
             }
             views.setTextViewText(R.id.distanceToEmpty, rangeCharge);
@@ -444,6 +444,19 @@ public class CarStatusWidget extends AppWidgetProvider {
                 views.setTextViewText(R.id.fuelLevelPercent,
                         MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
                                 DecimalFormatSymbols.getInstance(Locale.US)).format(fuelLevel)));
+            }
+
+            if (carStatus.getVehiclestatus() == null) {
+                Toast.makeText(context, "carStatus.getVehiclestatus() is null", Toast.LENGTH_SHORT).show();
+            } else if (carStatus.getVehiclestatus().getFuel() == null) {
+                Toast.makeText(context, "carStatus.getVehiclestatus().getFuel() is null", Toast.LENGTH_SHORT).show();
+            } else {
+                if (carStatus.getVehiclestatus().getFuel().getDistanceToEmpty() == null) {
+                    Toast.makeText(context, "carStatus.getVehiclestatus().getFuel().getDistanceToEmpty() is null", Toast.LENGTH_SHORT).show();
+                }
+                if (carStatus.getVehiclestatus().getFuel().getFuelLevel() == null) {
+                    Toast.makeText(context, "carStatus.getVehiclestatus().getFuel().getFuelLevel() is null", Toast.LENGTH_SHORT).show();
+                }
             }
         }
 
@@ -490,10 +503,10 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Hood, tailgate, and door statuses
         views.setImageViewResource(R.id.hood,
                 isDoorClosed(carStatus.getFrunk()) ?
-                        R.drawable.filler: vehicleImages.get(Utils.HOOD));
+                        R.drawable.filler : vehicleImages.get(Utils.HOOD));
         views.setImageViewResource(R.id.tailgate,
                 isDoorClosed(carStatus.getTailgate()) ?
-                        R.drawable.filler: vehicleImages.get(Utils.TAILGATE));
+                        R.drawable.filler : vehicleImages.get(Utils.TAILGATE));
         views.setImageViewResource(R.id.lt_ft_door,
                 isDoorClosed(carStatus.getDriverDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
         views.setImageViewResource(R.id.rt_ft_door,

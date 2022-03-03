@@ -82,6 +82,17 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
+            // No matter the choice, erase the log file
+            Preference verbose = findPreference(this.getResources().getString(R.string.okhttp3_key));
+            verbose.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    LogFile.clearLogFile(mContext);
+                    return true;
+                }
+            });
+
+
             // Decide on the app appearance
 //            Preference f150mode = findPreference(this.getResources().getString(R.string.f150_mode_key));
 //            f150mode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {

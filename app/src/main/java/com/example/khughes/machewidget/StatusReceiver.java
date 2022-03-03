@@ -43,7 +43,7 @@ public class StatusReceiver extends BroadcastReceiver {
 
         ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
 
-        Log.d(MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name());
+        LogFile.d(mContext,MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name());
 
         // Check whether credentials are being saved
         Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
@@ -51,11 +51,11 @@ public class StatusReceiver extends BroadcastReceiver {
 
         if (state.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN)) {
             if (savingCredentials) {
-                Log.d(MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
+                LogFile.d(mContext,MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
                 getAccess();
                 appInfo.incCounter(StoredData.UGLY);
             } else {
-                Log.e(MainActivity.CHANNEL_ID, "Log-in required but credentials are not being saved.");
+                LogFile.d(mContext,MainActivity.CHANNEL_ID, "Log-in required but credentials are not being saved.");
             }
         } else if (state.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -64,12 +64,12 @@ public class StatusReceiver extends BroadcastReceiver {
             // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
             // the next update.
             long calculation = (timeout - delayInMillis - 5 * Millis) - nowtime;
-            Log.d(MainActivity.CHANNEL_ID, "Calculating time as " + calculation);
+            LogFile.d(mContext,MainActivity.CHANNEL_ID, "Calculating time as " + calculation);
             if (timeout - delayInMillis - 5 * Millis < nowtime) {
-                Log.d(MainActivity.CHANNEL_ID, "Need to refresh token");
+                LogFile.d(mContext,MainActivity.CHANNEL_ID, "Need to refresh token");
                 getRefresh(appInfo.getRefreshToken(VIN));
             } else {
-                Log.d(MainActivity.CHANNEL_ID, "Token good? Just grab info");
+                LogFile.d(mContext,MainActivity.CHANNEL_ID, "Token good? Just grab info");
                 getStatus(appInfo.getAccessToken(VIN));
                 getOTAStatus(appInfo.getAccessToken(VIN));
             }
@@ -80,10 +80,10 @@ public class StatusReceiver extends BroadcastReceiver {
             appInfo.incCounter(StoredData.BAD);
         } else {
             if (savingCredentials) {
-                Log.d(MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Trying to login");
+                LogFile.d(mContext,MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Trying to login");
                 getAccess();
             } else {
-                Log.d(MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
+                LogFile.d(mContext,MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
             }
             appInfo.incCounter(StoredData.UGLY);
         }
@@ -91,7 +91,7 @@ public class StatusReceiver extends BroadcastReceiver {
         int bad = appInfo.getCounter(StoredData.BAD);
         int ugly = appInfo.getCounter(StoredData.UGLY);
 
-        Log.d(MainActivity.CHANNEL_ID, "good = " + good + ", bad = " + bad + ", ugly = " + ugly);
+        LogFile.d(mContext,MainActivity.CHANNEL_ID, "good = " + good + ", bad = " + bad + ", ugly = " + ugly);
     }
 
     private Bundle bb = new Bundle();
@@ -104,7 +104,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 bb = msg.getData();
                 String xx = bb.getString("action");
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                Log.i(MainActivity.CHANNEL_ID, "Access: " + action);
+                LogFile.i(mContext,MainActivity.CHANNEL_ID, "Access: " + action);
                 appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) ||
                         action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN) ||
@@ -129,7 +129,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                Log.i(MainActivity.CHANNEL_ID, "Refresh: " + action);
+                LogFile.i(mContext,MainActivity.CHANNEL_ID, "Refresh: " + action);
                 appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) || action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     String accessToken = bb.getString("access_token");
@@ -153,7 +153,7 @@ public class StatusReceiver extends BroadcastReceiver {
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
-                Log.i(MainActivity.CHANNEL_ID, "Status: " + action);
+                LogFile.i(mContext,MainActivity.CHANNEL_ID, "Status: " + action);
                 appInfo.setProgramState(VIN, action);
                 if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(mContext);
@@ -185,7 +185,7 @@ public class StatusReceiver extends BroadcastReceiver {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(delay);
         String timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US));
-        Log.i(MainActivity.CHANNEL_ID, "Next AlarmReceiver at " + timeText);
+        LogFile.i(context,MainActivity.CHANNEL_ID, "Next AlarmReceiver at " + timeText);
         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         Intent intent = new Intent(context, StatusReceiver.class);

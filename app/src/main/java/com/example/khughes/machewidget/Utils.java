@@ -34,6 +34,8 @@ public class Utils {
     public static final String LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B"; //
     public static final String LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C"; //
     public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD = "E5D"; //
+    public static final String LINE_SERIES_BRONCO_FE_4DOOR_AWD = "E5E"; //
+    public static final String LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
     public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
 
     public static final String F150_REGULAR_CAB = "F-150 Regular Cab";

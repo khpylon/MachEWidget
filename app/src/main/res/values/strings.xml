@@ -8,6 +8,7 @@
     <string name="action_chooseapp">Choose Linked Apps</string>
     <string name="action_profile">Manage Profiles</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_copylog">Save logfile</string>
 
     <!-- Widget things -->
     <string name="add_widget">Add widget</string>
@@ -32,7 +33,8 @@
     <string name="show_OTA">Display OTA info on widget</string>
     <string name="show_profiles">Enable multiple user profiles</string>
     <string name="save_credentials">Save log-in credentials</string>
-    <string name="okhttp3">Enable verbose HTTP logging</string>
+    <string name="okhttp3">Enable logging</string>
+    <string name="okhttp3_summary">Store logging info in a local file, separate from system logs</string>
     <string name="f150_mode">F-150 mode</string>
     <string name="github_title">GitHub repo</string>
     <string name="github_summary">Link to the code repository</string>
