@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Mach-E Info</string>
     <string name="f150_app_name">F-150 Info</string>
+    <string name="bronco_app_name">Bronco Info</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_login">Ford Log-in</string>
@@ -57,6 +58,8 @@
     <string name="save_credentials_key">saveCredentials</string>
     <string name="github_repo_key">githubRepo</string>
     <string name="version_key">appVersion</string>
+    <string name="widget_mode_key">widget_mode</string>
+
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>

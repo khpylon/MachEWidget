@@ -53,6 +53,7 @@ public class StoredData {
     private static final String RIGHTAPPPACKAGE = "RightAppPackage";
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
+    private static final String WIDGETMODE = "widgetmode";
 
     private static final String LATESTVERSION = "LatestVersion";
     public static final String GOOD = "Good";
@@ -473,6 +474,17 @@ public class StoredData {
     public void setLatestVersion(String name) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
         edit.putString(LATESTVERSION, name);
+        commitWait(edit);
+    }
+
+    public String getWidgetMode() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
+        return pref.getString(WIDGETMODE, "");
+    }
+
+    public void setWidgetMode(String mode) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
+        edit.putString(WIDGETMODE, mode);
         commitWait(edit);
     }
 

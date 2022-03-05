@@ -20,10 +20,24 @@
         </activity>
 
         <activity-alias
-            android:name=".MainActivityAlias"
+            android:name=".F150MainActivity"
             android:roundIcon="@mipmap/f150_icon_round"
             android:label="@string/f150_app_name"
             android:icon="@mipmap/f150_icon"
+            android:enabled="false"
+            android:exported="true"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".BroncoMainActivity"
+            android:roundIcon="@mipmap/bronco_icon_round"
+            android:label="@string/bronco_app_name"
+            android:icon="@mipmap/bronco_icon"
             android:enabled="false"
             android:exported="true"
             android:targetActivity=".MainActivity">

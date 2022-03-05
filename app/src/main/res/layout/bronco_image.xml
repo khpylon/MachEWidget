@@ -78,7 +78,7 @@
         android:layout_height="216dp"
         android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/bronco_base_4x4" />
+        android:src="@drawable/bronco_base_4x4_wireframe" />
 
     <ImageView
         android:id="@+id/lfwindow"
@@ -106,7 +106,7 @@
         android:layout_height="24dp"
         android:layout_alignTop="@id/leftfiller"
         android:layout_alignEnd="@id/leftfiller"
-        android:layout_marginTop="110dp"
+        android:layout_marginTop="115dp"
         android:layout_marginEnd="4dp"
         android:src="@drawable/filler" />
 
@@ -114,18 +114,18 @@
         android:id="@+id/rrwindow"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_alignTop="@id/rightfiller"
         android:layout_alignStart="@id/rightfiller"
-        android:layout_marginTop="110dp"
+        android:layout_alignTop="@id/rightfiller"
         android:layout_marginStart="4dp"
-        android:src="@drawable/filler"/>
+        android:layout_marginTop="115dp"
+        android:src="@drawable/filler" />
 
     <TextView
         android:id="@+id/lftire"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/topfiller"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="35dp"
         android:layout_toStartOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
@@ -138,7 +138,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/topfiller"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="35dp"
         android:layout_toEndOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
@@ -151,7 +151,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/topfiller"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="155dp"
         android:layout_toStartOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
@@ -164,7 +164,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/topfiller"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="155dp"
         android:layout_toEndOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"

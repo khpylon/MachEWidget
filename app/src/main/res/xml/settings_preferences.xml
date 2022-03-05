@@ -5,6 +5,18 @@
         app:title="@string/VIN"
         app:useSimpleSummaryProvider="true" />
 
+    <!--
+    <ListPreference
+        app:key="vintest"
+        app:defaultValue="3FMTK3R75MMA0MACH"
+        app:entries="@array/pref_vintest"
+        app:entryValues="@array/pref_vintest"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="VIN test"
+        app:useSimpleSummaryProvider="true" />
+    -->
+
     <ListPreference
         app:key="@string/update_frequency_key"
         app:defaultValue="30"

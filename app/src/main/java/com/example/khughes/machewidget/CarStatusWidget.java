@@ -109,7 +109,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             addresses = mGeocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
-            LogFile.e(context,MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget (normal)");
+            LogFile.e(context, MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget (normal)");
         }
 
         // If an address was found, go with the first entry
@@ -133,6 +133,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         } else {
             streetName = PADDING + "N/A";
         }
+//        streetName = PADDING + "45500 Fremont Blvd";
+//        cityState = PADDING + "Fremont, CA";
         views.setTextViewText(ids[dataLine + 1], streetName);
         views.setTextViewText(ids[dataLine + 2], cityState);
     }
@@ -198,7 +200,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        Boolean MachE = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false) == false;
+        Boolean MachE = VIN.startsWith(new StoredData(context).getWidgetMode());
         Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
 
         RemoteViews views = getWidgetView(context);
@@ -232,11 +234,11 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             lastUpdateTime.setTime(sdf.parse(carStatus.getLastRefresh()));// all done
         } catch (ParseException e) {
-            LogFile.e(context,MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
         }
         Calendar currentTime = Calendar.getInstance();
         long minutes = (Duration.between(lastUpdateTime.toInstant(), currentTime.toInstant()).getSeconds() + 30) / 60;
-        LogFile.i(context,MainActivity.CHANNEL_ID, "Last vehicle update was " + minutes + " minutes ago.");
+        LogFile.i(context, MainActivity.CHANNEL_ID, "Last vehicle update was " + minutes + " minutes ago.");
 
         String refresh = "Last refresh:\n  ";
         Boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
@@ -412,7 +414,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                                 rangeCharge += " left";
                             }
                         } catch (ParseException e) {
-                            LogFile.e(context,MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
                         }
                     }
                 }
@@ -570,7 +572,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        Boolean MachE = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false) == false;
+        Boolean MachE = VIN.startsWith(new StoredData(context).getWidgetMode());
 
         RemoteViews views = getWidgetView(context);
 
@@ -669,8 +671,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
 
-    private final Bundle bundle = new Bundle();
-
     private Handler getHandler(Context context) {
         return new Handler(Looper.getMainLooper()) {
             @Override
@@ -702,33 +702,34 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     // Make the app widget and icon match the VIN
     private void matchWidgetWithVin(Context context, String VIN) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String f150ModeKey = context.getResources().getString(R.string.f150_mode_key);
+        StoredData appInfo = new StoredData(context);
+
         // Get the current widget mode
-        Boolean macheMode = preferences.getBoolean(f150ModeKey, false) == false;
-        // See if the VIN is for a Mach-E
-        Boolean machEVIN = VIN.startsWith(Constants.MACHEVINSTART);
+        String mode = appInfo.getWidgetMode();
 
-        // If the widget doesn't match the VIN, make it
-        if (macheMode != machEVIN) {
-            macheMode = machEVIN;
-            preferences.edit().putBoolean(f150ModeKey, macheMode);
-            for (int i = 0; i < 10; ++i) {
-                if (preferences.edit().commit()) {
-                    PackageManager manager = context.getPackageManager();
-                    String packageName = context.getPackageName();
-                    String firstActivity = packageName + ".MainActivity";
-                    String secondActivity = firstActivity + "Alias";
-                    manager.setComponentEnabledSetting(new ComponentName(packageName,
-                                    macheMode ? firstActivity : secondActivity),
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                    manager.setComponentEnabledSetting(new ComponentName(packageName,
-                                    macheMode ? secondActivity : firstActivity),
-                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-                    return;
-                }
-            }
+        // Get the mode for this VIN
+        String newMode = Utils.getWMI(VIN);
 
+        // If the widget doesn't match the VIN, switch modes
+        if (!mode.equals(newMode)) {
+            appInfo.setWidgetMode(newMode);
+            PackageManager manager = context.getPackageManager();
+            String packageName = context.getPackageName();
+            String f150Activity = packageName + ".F150MainActivity";
+            manager.setComponentEnabledSetting(new ComponentName(packageName, f150Activity),
+                    Utils.isF150(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+            String macheActivity = packageName + ".MainActivity";
+            manager.setComponentEnabledSetting(new ComponentName(packageName, macheActivity),
+                    Utils.isMachE(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+            String broncoActivity = packageName + ".BroncoMainActivity";
+            manager.setComponentEnabledSetting(new ComponentName(packageName, broncoActivity),
+                    Utils.isBronco(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
         }
     }
 
@@ -787,10 +788,20 @@ public class CarStatusWidget extends AppWidgetProvider {
             String alias = ProfileManager.changeProfile(context);
             MainActivity.updateWidget(context);
         } else if (action.equals(WIDGET_CLICK)) {
-            Boolean f150mode = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.f150_mode_key), false);
+            String activity = null;
+            switch (new StoredData(context).getWidgetMode()) {
+                case Utils.WORLD_MANUFACTURING_IDENTIFIER_BRONCO:
+                    activity = ".BroncoMainActivity";
+                    break;
+                case Utils.WORLD_MANUFACTURING_IDENTIFIER_F150:
+                    activity = ".F150MainActivity";
+                    break;
+                default:
+                    activity = ".MainActivity";
+                    break;
+            }
             intent = new Intent();
-            intent.setComponent(new ComponentName(context.getPackageName(), context.getPackageName() +
-                    (f150mode ? ".MainActivityAlias" : ".MainActivity")));
+            intent.setComponent(new ComponentName(context.getPackageName(), context.getPackageName() + activity));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } else if (action.equals(SETTINGS_CLICK)) {

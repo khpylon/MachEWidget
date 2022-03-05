@@ -1,4 +1,16 @@
 <resources>
+
+    <!--
+    <string-array name="pref_vintest">
+        <item>3FMTK3R75MMA0MACH</item>
+        <item>1FMTK3R75MAM0BRON</item>
+        <item>1FTTF1C75MAM00REG</item>
+        <item>1FTTW1C75MAM0CREW</item>
+        <item>1FTTX1C75MAM00CAB</item>
+        <item>1FTTW1R75MAM0RAPT</item>
+    </string-array>
+    -->
+
     <string-array name="pref_update_titles">
         <item>5 min</item>
         <item>10 min</item>

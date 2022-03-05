@@ -58,6 +58,16 @@ public class Utils {
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_BRONCO);
     }
 
+    public static String getWMI(String VIN) {
+        if (isF150(VIN)) {
+            return WORLD_MANUFACTURING_IDENTIFIER_F150;
+        } else if (isBronco(VIN)) {
+            return WORLD_MANUFACTURING_IDENTIFIER_BRONCO;
+        } else {
+            return WORLD_MANUFACTURING_IDENTIFIER_MACHE;
+        }
+    }
+
     private static final Set<String> regularCabs;
 
     static {
@@ -205,6 +215,22 @@ public class Utils {
         raptorDrawables = tmpMap;
     }
 
+    // Drawables for Bronco Base 4x4
+    private static final Map<String, Integer> broncobase4x4Drawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.bronco_base_4x4_wireframe);
+        tmpMap.put(HOOD, R.drawable.bronco_base_4x4_hood);
+        tmpMap.put(TAILGATE, R.drawable.bronco_base_4x4_tailgate);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.bronco_base_4x4_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.bronco_base_4x4_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.bronco_base_4x4_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor);
+        broncobase4x4Drawables = tmpMap;
+    }
+
+
     // Get the set of drawables for a particular style of F-150
     public static Map<String, Integer> getVehicleDrawables(String VIN) {
         if (VIN != null && !VIN.equals("")) {
@@ -220,7 +246,7 @@ public class Utils {
                 }
             }
             if (isBronco(VIN)) {
-                return regcabDrawables;
+                return broncobase4x4Drawables;
             }
         }
         return macheDrawables;
