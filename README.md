@@ -7,12 +7,13 @@
 This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/tonesto7), which is in turn based on the earlier work of 
 [David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps](https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
 .  It is not a complete implementation of the functionality of their widgets, as it:
-- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own.  As of Feb 2022 I'm extending capabilities to support F-150 owners as well (feedback needed) 
+- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own.  As of Feb 2022 I'm extending capabilities to support F-150 and Bronco owners as well (feedback needed) 
 - does not include all the function of tonesto7's Apple/iOS widget
 - does not currently support accounts outside of the United States, although it may still work
 
 <img src="app/src/main/assets/appwidget_sample.png" alt="Mach-E widget example" width="300" />
 <img src="app/src/main/assets/appwidget_sample_f150.png" alt="F-150 widget example" width="300" />
+<img src="app/src/main/assets/appwidget_sample_bronco.png" alt="Bronco widget example" width="300" />
 
 My purpose for hosting this code on GitHub under the GPL v3 license is to provide a starting point for anyone who wants to extend its functionality.
 
