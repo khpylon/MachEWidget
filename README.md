@@ -47,8 +47,16 @@ As listed above, this app
 
 If you discover something which doesn't work the way you expect, check first on the forums to see whether someone else has
 reported a similar problem (or whether the app is actual working properly).  Also search under
-["Issues"](https://github.com/khpylon/MachEWidget/issues) on GitHub to see if it's been reported.
-If not, you may need create a new issue and submit the app's logcat output.  A good summary of ways to get logcat output is
+["Issues"](https://github.com/khpylon/MachEWidget/issues) on GitHub to see if it's been reported.  If not, you will need to gather
+some data to create a new bug report.  As of Version 2022.03.02 the app has some built-in support for gathering log information:
+1. Under "Settings", activate "Enable logging"
+2. Perform any actions you think will demonstrate the issue
+3. Under the three-dot menu, select "Save logfile"; this will save a file named *mache_logfile.txt* or something similar in the *Downloads* folder of your
+external storage
+4. Deactive "Enable logging"
+5. Create/append to an Issue and upload the file as an attachment
+If the bug is something more serious that it isn't captured in these logs, you may need to capture some logcat output. 
+A good summary of ways to get logcat output is
 [described here](https://www.xda-developers.com/how-to-take-logs-android/).  If your issue seems related to network access
 with the Ford servers, you should go to Settings and set "Enable verbose HTTP logging".  Note that this output may expose
 your Ford account credentials (username and password), so before sending the logs be sure to remove this information.  There
