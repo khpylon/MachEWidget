@@ -82,12 +82,14 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
-            // No matter the choice, erase the log file
+            // Erase the old log file on enable.
             Preference verbose = findPreference(this.getResources().getString(R.string.okhttp3_key));
             verbose.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    LogFile.clearLogFile(mContext);
+                    if((Boolean)newValue == true) {
+                        LogFile.clearLogFile(mContext);
+                    }
                     return true;
                 }
             });

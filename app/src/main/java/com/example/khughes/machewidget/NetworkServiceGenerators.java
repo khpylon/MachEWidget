@@ -49,7 +49,6 @@ public class NetworkServiceGenerators {
                 .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
         if (!fordHttpClient.interceptors().contains(logging)) {
             mContext = context;
-            LogFile.clearLogFile(context);
             fordHttpClient.addInterceptor(logging);
             fordBuilder.client(fordHttpClient.build());
             fordRetrofit = fordBuilder.build();
@@ -79,7 +78,6 @@ public class NetworkServiceGenerators {
                 .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
         if (verbose && !OAuth2HttpClient.interceptors().contains(logging)) {
             mContext = context;
-            LogFile.clearLogFile(context);
             OAuth2HttpClient.addInterceptor(logging);
             OAuth2Builder.client(OAuth2HttpClient.build());
             OAuth2Retrofit = OAuth2Builder.build();
@@ -110,7 +108,6 @@ public class NetworkServiceGenerators {
             Class<S> serviceClass, Context context) {
         if (!carStatusHttpClient.interceptors().contains(logging)) {
             mContext = context;
-            LogFile.clearLogFile(context);
             carStatusHttpClient.addInterceptor(logging);
             carStatusBuilder.client(carStatusHttpClient.build());
             carStatusRetrofit = carStatusBuilder.build();
@@ -138,7 +135,6 @@ public class NetworkServiceGenerators {
                 .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
         if (verbose && !OTAStatusHttpClient.interceptors().contains(logging)) {
             mContext = context;
-            LogFile.clearLogFile(context);
             OTAStatusHttpClient.addInterceptor(logging);
             OTAStatusBuilder.client(OTAStatusHttpClient.build());
             OTAStatusRetrofit = OTAStatusBuilder.build();
@@ -170,7 +166,6 @@ public class NetworkServiceGenerators {
                 .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
         if (verbose && !commandHttpClient.interceptors().contains(logging)) {
             mContext = context;
-            LogFile.clearLogFile(context);
             commandHttpClient.addInterceptor(logging);
             commandBuilder.client(commandHttpClient.build());
             commandRetrofit = commandBuilder.build();
