@@ -1,7 +1,10 @@
 package com.example.khughes.machewidget;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.webkit.WebSettingsCompat;
@@ -9,21 +12,21 @@ import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
 import androidx.webkit.WebViewFeature;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
@@ -31,14 +34,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.apache.commons.compress.utils.Charsets;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
@@ -98,8 +94,17 @@ public class MainActivity extends AppCompatActivity {
 
     // This method is intended to bundle various changes from older versions to the most recent.
     private void performUpdates(Context context) {
-        // Convert over to profiles (Version 2022.02.06)
-        ProfileManager.upgradeToProfiles(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String lastVersion = prefs.getString(context.getResources().getString(R.string.last_version_key), "");
+
+        // See if we need to upgrade anything since the last version
+        if(BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
+
+            // Add operations here
+
+            // Update internally
+            prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
+        }
     }
 
     private static class LocalContentWebViewClient extends WebViewClientCompat {
@@ -136,6 +141,33 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
+    // Callback for choosing setting file to restore
+    ActivityResultLauncher<Intent> restoreSettingsLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Uri uri = data.getData();
+                            if (uri != null) {
+                                try {
+                                    ZipManager.unzip(context, uri);
+                                    Toast.makeText(context, "Settings restored.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(context, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                } catch (IOException e) {
+                                    Log.e(MainActivity.CHANNEL_ID, "exception in MainActivity.restoreSettingsLauncher: ", e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+    );
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -174,6 +206,27 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context, "Logging not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
                 }
                 return true;
+            case R.id.action_backup:
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    ZipManager.zipStuff(context);
+                    Toast.makeText(context, "Settings saved.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            case R.id.action_restore:
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("application/*");
+                    String[] mimeTypes = new String[]{"application/zip"};
+                    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                    restoreSettingsLauncher.launch(intent);
+                } else {
+                    Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
             case R.id.action_settings:
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);

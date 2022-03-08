@@ -104,14 +104,15 @@
         app:title="Developer options">
         <SwitchPreferenceCompat
             app:defaultValue="false"
-            app:key="@string/okhttp3_key"
+            app:key="@string/logging_key"
             app:singleLineTitle="false"
-            app:title="@string/okhttp3"
-            app:summary="@string/okhttp3_summary"/>
+            app:title="@string/logging"
+            app:summary="@string/logging_summary"/>
     </PreferenceCategory>
 
     <PreferenceCategory
         app:title="About the app">
+        app:key="about_app">
         <Preference
             app:key="@string/github_repo_key"
             app:selectable="true"
@@ -120,5 +121,9 @@
         <Preference
             app:key="@string/version_key"
             app:title="@string/version" />
+        <EditTextPreference
+            app:key="@string/last_version_key"
+            app:defaultValue="" />
+
     </PreferenceCategory>
 </PreferenceScreen>

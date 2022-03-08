@@ -1,10 +1,8 @@
 package com.example.khughes.machewidget;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -13,11 +11,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceFragment;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
@@ -83,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
             });
 
             // Erase the old log file on enable.
-            Preference verbose = findPreference(this.getResources().getString(R.string.okhttp3_key));
+            Preference verbose = findPreference(this.getResources().getString(R.string.logging_key));
             verbose.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -150,6 +147,9 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
+            // Hide the old version number
+            EditTextPreference oldVersion = findPreference(this.getResources().getString(R.string.last_version_key));
+            oldVersion.getParent().removePreference(oldVersion);
         }
 
         @Override

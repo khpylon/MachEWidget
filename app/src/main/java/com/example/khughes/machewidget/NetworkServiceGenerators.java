@@ -40,20 +40,14 @@ public class NetworkServiceGenerators {
 
     private static Retrofit fordRetrofit = fordBuilder.build();
 
-    private static OkHttpClient.Builder fordHttpClient =
+    private static final OkHttpClient.Builder fordHttpClient =
             new OkHttpClient.Builder();
 
     public static <S> S createFordService(
             Class<S> serviceClass, Context context) {
-        Boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
+        mContext = context;
         if (!fordHttpClient.interceptors().contains(logging)) {
-            mContext = context;
             fordHttpClient.addInterceptor(logging);
-            fordBuilder.client(fordHttpClient.build());
-            fordRetrofit = fordBuilder.build();
-        } else if (!verbose && fordHttpClient.interceptors().contains(logging)) {
-            fordHttpClient = new OkHttpClient.Builder();
             fordBuilder.client(fordHttpClient.build());
             fordRetrofit = fordBuilder.build();
         }
@@ -69,21 +63,14 @@ public class NetworkServiceGenerators {
 
     private static Retrofit OAuth2Retrofit = OAuth2Builder.build();
 
-    private static OkHttpClient.Builder OAuth2HttpClient =
+    private static final OkHttpClient.Builder OAuth2HttpClient =
             new OkHttpClient.Builder();
 
     public static <S> S createOAuth2Service(
             Class<S> serviceClass, Context context) {
-        Boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
-        if (verbose && !OAuth2HttpClient.interceptors().contains(logging)) {
-            mContext = context;
+        mContext = context;
+        if (!OAuth2HttpClient.interceptors().contains(logging)) {
             OAuth2HttpClient.addInterceptor(logging);
-            OAuth2Builder.client(OAuth2HttpClient.build());
-            OAuth2Retrofit = OAuth2Builder.build();
-        }
-        if (!verbose && OAuth2HttpClient.interceptors().contains(logging)) {
-            OAuth2HttpClient = new OkHttpClient.Builder();
             OAuth2Builder.client(OAuth2HttpClient.build());
             OAuth2Retrofit = OAuth2Builder.build();
         }
@@ -106,8 +93,8 @@ public class NetworkServiceGenerators {
 
     public static <S> S createCarStatusService(
             Class<S> serviceClass, Context context) {
+        mContext = context;
         if (!carStatusHttpClient.interceptors().contains(logging)) {
-            mContext = context;
             carStatusHttpClient.addInterceptor(logging);
             carStatusBuilder.client(carStatusHttpClient.build());
             carStatusRetrofit = carStatusBuilder.build();
@@ -126,20 +113,14 @@ public class NetworkServiceGenerators {
 
     private static Retrofit OTAStatusRetrofit = OTAStatusBuilder.build();
 
-    private static OkHttpClient.Builder OTAStatusHttpClient =
+    private static final OkHttpClient.Builder OTAStatusHttpClient =
             new OkHttpClient.Builder();
 
     public static <S> S createOTAStatusService(
             Class<S> serviceClass, Context context) {
-        Boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
-        if (verbose && !OTAStatusHttpClient.interceptors().contains(logging)) {
-            mContext = context;
+        mContext = context;
+        if (!OTAStatusHttpClient.interceptors().contains(logging)) {
             OTAStatusHttpClient.addInterceptor(logging);
-            OTAStatusBuilder.client(OTAStatusHttpClient.build());
-            OTAStatusRetrofit = OTAStatusBuilder.build();
-        } else if (!verbose && OTAStatusHttpClient.interceptors().contains(logging)) {
-            OTAStatusHttpClient = new OkHttpClient.Builder();
             OTAStatusBuilder.client(OTAStatusHttpClient.build());
             OTAStatusRetrofit = OTAStatusBuilder.build();
         }
@@ -157,24 +138,17 @@ public class NetworkServiceGenerators {
 
     private static Retrofit commandRetrofit = commandBuilder.build();
 
-    private static OkHttpClient.Builder commandHttpClient =
+    private static final OkHttpClient.Builder commandHttpClient =
             new OkHttpClient.Builder();
 
     public static <S> S createCommandService(
             Class<S> serviceClass, Context context) {
-        Boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
-        if (verbose && !commandHttpClient.interceptors().contains(logging)) {
-            mContext = context;
+        mContext = context;
+        if (!commandHttpClient.interceptors().contains(logging)) {
             commandHttpClient.addInterceptor(logging);
             commandBuilder.client(commandHttpClient.build());
             commandRetrofit = commandBuilder.build();
-        } else if (verbose && !commandHttpClient.interceptors().contains(logging)) {
-            commandHttpClient = new OkHttpClient.Builder();
-            commandBuilder.client(commandHttpClient.build());
-            commandRetrofit = commandBuilder.build();
         }
-
         return commandRetrofit.create(serviceClass);
     }
 }

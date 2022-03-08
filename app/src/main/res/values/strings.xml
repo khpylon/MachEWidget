@@ -9,7 +9,9 @@
     <string name="action_chooseapp">Choose Linked Apps</string>
     <string name="action_profile">Manage Profiles</string>
     <string name="action_refresh">Refresh</string>
-    <string name="action_copylog">Save logfile</string>
+    <string name="action_backup">Save Settings</string>
+    <string name="action_restore">Restore Settings</string>
+    <string name="action_copylog">Save Logfile</string>
 
     <!-- Widget things -->
     <string name="add_widget">Add widget</string>
@@ -34,9 +36,9 @@
     <string name="show_OTA">Display OTA info on widget</string>
     <string name="show_profiles">Enable multiple user profiles</string>
     <string name="save_credentials">Save log-in credentials</string>
-    <string name="okhttp3">Enable logging</string>
-    <string name="okhttp3_summary">Store logging info in a local file, separate from system logs</string>
-    <string name="f150_mode">F-150 mode</string>
+    <string name="use_credentials">Use stored credentials</string>
+    <string name="logging">Enable logging</string>
+    <string name="logging_summary">Store logging info in a local file, separate from system logs</string>
     <string name="github_title">GitHub repo</string>
     <string name="github_summary">Link to the code repository</string>
     <string name="version">App version</string>
@@ -53,11 +55,11 @@
     <string name="show_location_key">showLocation</string>
     <string name="show_OTA_key">showOTA</string>
     <string name="show_profiles_key">showProfiles</string>
-    <string name="okhttp3_key">OkHttp3_key</string>
-    <string name="f150_mode_key">f150_mode</string>
+    <string name="logging_key">logging</string>
     <string name="save_credentials_key">saveCredentials</string>
     <string name="github_repo_key">githubRepo</string>
     <string name="version_key">appVersion</string>
+    <string name="last_version_key">lastVersion</string>
     <string name="widget_mode_key">widget_mode</string>
 
 

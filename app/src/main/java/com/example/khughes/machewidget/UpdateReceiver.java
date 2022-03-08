@@ -52,8 +52,7 @@ public class UpdateReceiver extends BroadcastReceiver {
                     input.close();
                     return current;
                 } catch (Exception e) {
-                    LogFile.e(mContext, MainActivity.CHANNEL_ID, "exception in " + this.getClass().getName() + "." +
-                            this.getClass().getEnclosingMethod().getName() + ": " + e);
+                    LogFile.e(mContext, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.doInBackground()" + e);
                 } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
@@ -61,8 +60,7 @@ public class UpdateReceiver extends BroadcastReceiver {
                 }
 
             } catch (Exception e) {
-                LogFile.e(mContext, MainActivity.CHANNEL_ID, "exception in " + this.getClass().getName() + "." +
-                        this.getClass().getEnclosingMethod().getName() + ": " + e);
+                LogFile.e(mContext, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.doInBackground()" + e);
             }
             return current;
         }

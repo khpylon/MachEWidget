@@ -17,7 +17,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -25,6 +29,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -64,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
 
         TextView disclaimerView = findViewById(R.id.credentials);
+        Button fingerprint = findViewById(R.id.fingerprint);
 
         Switch credentials = findViewById(R.id.storeCredentials);
         credentials.setChecked(savingCredentials);
@@ -75,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (savingCredentials == false) {
                     new StoredData(context).clearUsernameAndPassword();
                 }
+                fingerprint.setVisibility(View.GONE);
                 updateDisclamer(disclaimerView, savingCredentials);
             }
         });
@@ -115,6 +122,76 @@ public class LoginActivity extends AppCompatActivity {
 
         if (VIN != null && !VIN.equals("")) {
             VINWidget.getEditText().setText(VIN);
+        }
+
+        // If the user has stored credentials, allow to reuse if they have registered a fingerprint
+        if (savingCredentials) {
+            final Boolean fingerprintHardware;
+            final Boolean fingerprintSaved;
+            BiometricManager biometricManager = androidx.biometric.BiometricManager.from(context);
+            switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
+                // We have everything we need
+                case BiometricManager.BIOMETRIC_SUCCESS:
+                    fingerprintHardware = true;
+                    fingerprintSaved = true;
+                    break;
+                // There is the hardware, but not any fingerprints
+                case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                    fingerprintHardware = true;
+                    fingerprintSaved = false;
+                    break;
+                // No fingerprint scanner
+                case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                default:
+                    fingerprintHardware = false;
+                    fingerprintSaved = false;
+                    break;
+            }
+
+            // If there's hardware, at least put up the button
+            if (fingerprintHardware) {
+                fingerprint.setVisibility(View.VISIBLE);
+
+                Executor executor = ContextCompat.getMainExecutor(this);
+                final BiometricPrompt biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                        super.onAuthenticationError(errorCode, errString);
+                    }
+
+                    @Override
+                    public void onAuthenticationFailed() {
+                        super.onAuthenticationFailed();
+                    }
+
+                    @Override
+                    public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                        super.onAuthenticationSucceeded(result);
+                        String username = appInfo.getUsername(VIN);
+                        String password = appInfo.getPassword(VIN);
+                        appInfo.setProgramState(VIN, ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
+                        getAccess(username, password);
+                    }
+                });
+
+                fingerprint.setOnClickListener(v -> {
+                    // There is a fingerprint registered
+                    if (fingerprintSaved) {
+                        // As long as the user didn't enter a new VIN, then look for a fingerprint match
+                        if (VIN.equals(VINWidget.getEditText().getText().toString())) {
+                            biometricPrompt.authenticate(new BiometricPrompt.PromptInfo.Builder().setTitle("Fingerprint required.")
+                                    .setDescription("Use your fingerprint to authenticate.").setNegativeButtonText("Cancel").build());
+                        } else {
+                            Toast.makeText(context, "Can't use old credentials; VIN has been changed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    // Uh, no there isn't.  Explain why they can't use this
+                    else {
+                        Toast.makeText(context, "Please register a fingerprint first.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
 
         login = findViewById(R.id.login);

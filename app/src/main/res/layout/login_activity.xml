@@ -69,7 +69,15 @@
             android:checked="false"
             android:text="@string/save_credentials" />
 
-    </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/use_credentials"
+            android:visibility="gone"
+            android:background="#3f76ff"
+            android:textColor="#fff"
+            android:id="@+id/fingerprint"/>
 
+    </LinearLayout>
 
 </RelativeLayout>

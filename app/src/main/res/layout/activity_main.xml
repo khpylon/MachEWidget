@@ -24,8 +24,6 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-<!--        <include layout="@layout/content_main" /> -->
-
         <WebView
             android:id="@+id/main_description"
             android:layout_width="match_parent"

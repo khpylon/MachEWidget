@@ -10,12 +10,9 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,7 +41,7 @@ public class LogFile {
 
     public static void appendToLogFile(Context context, String tag, String message) {
         Boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.okhttp3_key), false);
+                .getBoolean(context.getResources().getString(R.string.logging_key), false);
         if (verbose && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             try {
                 File logFile = new File(context.getDataDir(), LOGFILENAME);

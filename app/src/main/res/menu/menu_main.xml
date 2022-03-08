@@ -23,6 +23,16 @@
         android:title="@string/action_chooseapp"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_backup"
+        android:orderInCategory="30"
+        android:title="@string/action_backup"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_restore"
+        android:orderInCategory="30"
+        android:title="@string/action_restore"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_copylog"
         android:orderInCategory="30"
         android:title="@string/action_copylog"
