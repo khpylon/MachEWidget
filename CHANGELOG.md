@@ -5,13 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.03.10
+### Added
+- Add the ability to save and restore user data (Android 10 or higher).  Data is stored in a ZIP file in the Download folder and 
+  can later be loaded back.
+- When using stored credentials, the Log-in page now allows you to re-use your username/password/VIN with
+  fingerprint biometrics.
+- Additional support for Bronco SUVs.
+
+### Changes
+- Reorganized the content of the OTA Info page.
+- Try storing/reusing distance-to-empty and fuel level values on F-150s and Broncos when the status reports invalid numbers (experimental).
+
+### Fixed
+- Some inconsistencies within the logging output code.
+
 ## 2022.03.03
 ### Added
-- Add the ability to save logging output to a file.  To use this, enable logging in Settings, then when 
-ready to save data, choose "Save logfile" from the three-bar menu.  The file will be stored in yor Downloads
-  folder.  After saving, disable logging.  This only works on Android 10 and later.
+- Add the ability to save logging output to a file (Android 10 or higher).  To use this, enable logging in Settings, then when
+  ready to save data, choose "Save logfile" from the three-dot menu.  The file will be stored in yor Downloads
+  folder.  After saving, disable logging.
 - Initial support for Bronco SUVs.  This is very beta; while there is an image of the vehicle, it does
-not yet update correctly.
+  not yet update correctly.
 
 ### Changes
 - Use the technique for drawing the F-150 images with the Mach-E.
@@ -37,7 +52,7 @@ not yet update correctly.
 ### Added
 - Initial support for Ford F-150 trucks.  To use this, toggle "F-150 Mode" under "Settings".  Note that this
   will also change the name of the app to "F-150 Info", although the widget will still appear as "Mach-E Info"
-  when selecting widgets for your phone's home screen. 
+  when selecting widgets for your phone's home screen.
 - Add a developer's option for generating verbose HTTP information to log files.  This should only be used when
   gathering debugging info to the developers; this output may contains usernames and password for your FordPass account.
 
@@ -84,7 +99,7 @@ not yet update correctly.
 - Allow display of OTA status and location to be disabled on the widget
 
 ### Fixed
-- Incorrect display of last OTA status in the OTA Update Info activity. 
+- Incorrect display of last OTA status in the OTA Update Info activity.
 
 ## 2022.01.30
 ### Added
