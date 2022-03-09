@@ -181,6 +181,10 @@ public class StatusReceiver extends BroadcastReceiver {
         }
     }
 
+    private static Intent getIntent(Context context) {
+        return new Intent(context, StatusReceiver.class).setAction("StatusReceiver");
+    }
+
     public static void nextAlarm(Context context, int delay) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(delay);
@@ -188,17 +192,27 @@ public class StatusReceiver extends BroadcastReceiver {
         LogFile.i(context,MainActivity.CHANNEL_ID, "Next AlarmReceiver at " + timeText);
         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        Intent intent = new Intent(context, StatusReceiver.class);
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+                getIntent(context), PendingIntent.FLAG_IMMUTABLE);
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent);
         alarmManager.setWindow(AlarmManager.RTC_WAKEUP, nextTime, DateUtils.SECOND_IN_MILLIS, pendingIntent);
     }
 
     public static void cancelAlarm(Context context) {
-        Intent intent = new Intent(context, StatusReceiver.class);
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+                getIntent(context), PendingIntent.FLAG_IMMUTABLE);
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
+
+    // If no alarm is pending, start one
+    public static void initateAlarm(Context context) {
+        if( PendingIntent.getBroadcast(context, 0,
+                getIntent(context), PendingIntent.FLAG_NO_CREATE |PendingIntent.FLAG_IMMUTABLE) == null ) {
+            nextAlarm(context);
+        }
+    }
+
 }

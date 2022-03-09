@@ -83,15 +83,27 @@ public class UpdateReceiver extends BroadcastReceiver {
         }
     }
 
+    private static Intent getIntent(Context context) {
+        return new Intent(context, UpdateReceiver.class).setAction("UpdateReceiver");
+    }
+
     public static void nextAlarm(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(4);
         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        Intent intent = new Intent(context, UpdateReceiver.class);
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+                getIntent(context), PendingIntent.FLAG_IMMUTABLE);
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent);
         alarmManager.setWindow(AlarmManager.RTC_WAKEUP, nextTime, DateUtils.MINUTE_IN_MILLIS, pendingIntent);
+    }
+
+    // If no alarm is pending, start one
+    public static void initateAlarm(Context context) {
+        if (PendingIntent.getBroadcast(context, 0,
+                getIntent(context), PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
+            nextAlarm(context);
+        }
     }
 }

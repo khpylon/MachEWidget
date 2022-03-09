@@ -12,6 +12,7 @@ import androidx.preference.PreferenceManager;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,7 +77,7 @@ public class LogFile {
         appendToLogFile(context, "I " + tag, message);
     }
 
-    public static boolean copyLogFile(Context context) {
+    public static String copyLogFile(Context context) {
         try {
             File logFile = new File(context.getDataDir(), LOGFILENAME);
             InputStream inputStream = new FileInputStream(logFile);
@@ -103,10 +104,13 @@ public class LogFile {
             inputStream.close();
             outStream.close();
             clearLogFile(context);
-            return true;
+            return null;
+        } catch (FileNotFoundException e) {
+            Log.e(MainActivity.CHANNEL_ID, "exception in LogFile.copyLogFile()", e);
+            return "The log file doesn't exist.";
         } catch (Exception e) {
             Log.e(MainActivity.CHANNEL_ID, "exception in LogFile.copyLogFile()", e);
-            return false;
+            return "An error occurred saving the log file.";
         }
     }
 }

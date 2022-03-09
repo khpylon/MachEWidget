@@ -65,6 +65,11 @@ your Ford account credentials (username and password), so before sending the log
 will probably be a lot of unrelated information in the log output; the only lines of interest are those which contain the string "934TXS" and, if 
 verbose HTTP logging is enabled, those which contain the string "OkHttp".
 
+## Frequenly Asked Questions
+
+Refer to the [FAQ](https://github.com/khpylon/MachEWidget/FAQ.md) file.  It's a work in progress.  If your questions isn't there, ask on the forums or 
+send a message to suggest adding it.
+
 ## To do
 
 - Display information using more graphics and less text where possible.

@@ -99,22 +99,22 @@ public class OTAViewActivity extends AppCompatActivity {
         String dateFormat = new StoredData(context).getTimeFormatByCountry(VIN);
         if (ota != null && ota.getFuseResponse() != null) {
             String tmp;
-            unencodedHtml += "<b>Alert status:</b> " + ((tmp = ota.getOtaAlertStatus()) != null ? tmp : "") + "<p>";
             for (OTAStatus.FuseResponse__1 fuse : ota.getFuseResponse().getFuseResponseList()) {
-                unencodedHtml += "<ul>";
-                unencodedHtml += "<li><b>CorrelationID:</b> " + ((tmp = fuse.getOemCorrelationId()) != null ? tmp : "");
-                unencodedHtml += "<li><b>Created:</b> " + convertDate(fuse.getDeploymentCreationDate(), dateFormat);
-                unencodedHtml += "<li><b>Expiration:</b> " + convertDate(fuse.getDeploymentExpirationTime(), dateFormat);
-                unencodedHtml += "<li><b>Priority:</b> " + ((tmp = fuse.getCommunicationPriority()) != null ? tmp : "");
-                unencodedHtml += "<li><b>Type:</b> " + ((tmp = fuse.getType()) != null ? tmp : "");
-                unencodedHtml += "<li><b>Final Action:</b> \"" + ((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : "") + "\"";
                 if (fuse.getLatestStatus() != null) {
                     currentOTATime = convertDateToMillis(fuse.getLatestStatus().getDateTimestamp());
-                    unencodedHtml += "<li><b>Latest status: </b>" + ((tmp = fuse.getLatestStatus().getAggregateStatus()) != null ? tmp : "") + "<ul>";
-                    unencodedHtml += "<li><b>Details:</b> " + ((tmp = fuse.getLatestStatus().getDetailedStatus()) != null ? tmp : "");
-                    unencodedHtml += "<li><b>Time Stamp:</b> " + convertMillisToDate(currentOTATime, dateFormat);
-                    unencodedHtml += "</ul></li>";
+                    unencodedHtml += "<b>Latest status</b><ul>";
+                    unencodedHtml += "<li><b>Aggregate:</b> " + ((tmp = fuse.getLatestStatus().getAggregateStatus()) != null ? tmp : "");
+                    unencodedHtml += "<li><b>Detailed:</b> " + ((tmp = fuse.getLatestStatus().getDetailedStatus()) != null ? tmp : "");
+                    unencodedHtml += "<li><b>Time stamp:</b> " + convertMillisToDate(currentOTATime, dateFormat) + "</ul><p>";
                 }
+                unencodedHtml += "<b>Other info</b><ul>";
+                unencodedHtml += "<li><b>CorrelationID:</b> " + ((tmp = fuse.getOemCorrelationId()) != null ? tmp : "");
+                unencodedHtml += "<li><b>Deployment</b>";
+                unencodedHtml += "    <ul><li><b>Created:</b> " + convertDate(fuse.getDeploymentCreationDate(), dateFormat);
+                unencodedHtml += "    <li><b>Expires:</b> " + convertDate(fuse.getDeploymentExpirationTime(), dateFormat) + "</ul>";
+                unencodedHtml += "<li><b>Communication priority:</b> " + ((tmp = fuse.getCommunicationPriority()) != null ? tmp : "");
+                unencodedHtml += "<li><b>Type:</b> " + ((tmp = fuse.getType()) != null ? tmp : "");
+                unencodedHtml += "<li><b>Final action:</b> \"" + ((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : "") + "\"";
                 unencodedHtml += "</ul><hr>";
             }
             String description = ota.getDescription();

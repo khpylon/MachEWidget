@@ -54,13 +54,22 @@ public class MainActivity extends AppCompatActivity {
         performUpdates(context);
 
         // Initiate check for a new app version
-        Intent updateIntent = new Intent(context, UpdateReceiver.class);
-        context.sendBroadcast(updateIntent);
+        UpdateReceiver.initateAlarm(context);
 
         // Initiate update of the widget
-        updateIntent = new Intent();
+        Intent updateIntent = new Intent();
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         context.sendBroadcast(updateIntent);
+
+        // If app has been running OK, tty to initiate status updates
+        StoredData appInfo = new StoredData(context);
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        if (!VIN.equals("")) {
+            ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
+            if (state.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+                StatusReceiver.initateAlarm(context);
+            }
+        }
 
         // Create the webview containing instruction for use.
         WebView mWebView = findViewById(R.id.main_description);
@@ -74,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
 
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         String indexPage = "https://appassets.androidplatform.net/assets/index_mache.html";
         if (!VIN.equals("")) {
             if (Utils.isBronco(VIN)) {
@@ -98,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         String lastVersion = prefs.getString(context.getResources().getString(R.string.last_version_key), "");
 
         // See if we need to upgrade anything since the last version
-        if(BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
+        if (BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
 
             // Add operations here
 
@@ -195,12 +203,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_ota_view:
                 intent = new Intent(this, OTAViewActivity.class);
                 startActivity(intent);
+                return true;
             case R.id.action_copylog:
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    if (LogFile.copyLogFile(context)) {
-                        Toast.makeText(context, "Log file saved to Downloads folder.", Toast.LENGTH_SHORT).show();
+                    String result = LogFile.copyLogFile(context);
+                    if (result == null) {
+                        Toast.makeText(context, "Log file copied to Download folder.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(context, "An error occurred saving the log file.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(context, "Logging not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
