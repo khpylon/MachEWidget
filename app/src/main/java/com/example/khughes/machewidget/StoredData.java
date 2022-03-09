@@ -47,6 +47,8 @@ public class StoredData {
     private static final String SPEEDUNITS = "SpeedUnits";
     private static final String DISTANCEUNITS = "DistanceUnits";
     private static final String PRESSUREUNITS = "PressureUnits";
+    private static final String LASTFUELLEVEL = "LastFuelLevel";
+    private static final String LASTDTE = "LastDTE";
     private static final String LASTUPDATETIME = "LastUpdateTime";
     private static final String LASTALARMTIME = "LastAlarmTime";
     private static final String LEFTAPPPACKAGE = "LeftAppPackage";
@@ -358,6 +360,28 @@ public class StoredData {
     public void setPressureUnits(String VIN, String units) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
         edit.putString(PRESSUREUNITS, units);
+        commitWait(edit);
+    }
+
+    public Double getLastFuelLevel(String VIN) {
+        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+        return new Float(pref.getFloat(LASTFUELLEVEL,0)).doubleValue();
+    }
+
+    public void setLastFuelLevel(String VIN, Double level) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+        edit.putFloat(LASTFUELLEVEL, level.floatValue());
+        commitWait(edit);
+    }
+
+    public Double getLastDTE(String VIN) {
+        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+        return new Float(pref.getFloat(LASTDTE, 0)).doubleValue();
+    }
+
+    public void setLastDTE(String VIN, Double distance) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+        edit.putFloat(LASTDTE, distance.floatValue());
         commitWait(edit);
     }
 

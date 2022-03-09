@@ -434,19 +434,25 @@ public class CarStatusWidget extends AppWidgetProvider {
         } else {
             // Estimated range
             Double range = carStatus.getDistanceToEmpty();
-            if (range != null) {
-                rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
+            if (range != null & range >= 0) {
+                appInfo.setLastDTE(VIN, range);
+            } else {
+                range = appInfo.getLastDTE(VIN);
             }
+            rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
             views.setTextViewText(R.id.distanceToEmpty, rangeCharge);
 
             // Fuel tank level
             Double fuelLevel = carStatus.getFuelLevel();
-            if (fuelLevel != null) {
-                views.setProgressBar(R.id.fuelLevelProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
-                views.setTextViewText(R.id.fuelLevelPercent,
-                        MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
-                                DecimalFormatSymbols.getInstance(Locale.US)).format(fuelLevel)));
+            if (fuelLevel != null && fuelLevel >= 0) {
+                appInfo.setLastFuelLevel(VIN, fuelLevel);
+            } else {
+                fuelLevel = appInfo.getLastFuelLevel(VIN);
             }
+            views.setProgressBar(R.id.fuelLevelProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
+            views.setTextViewText(R.id.fuelLevelPercent,
+                    MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
+                            DecimalFormatSymbols.getInstance(Locale.US)).format(fuelLevel)));
 
             if (carStatus.getVehiclestatus() == null) {
                 Toast.makeText(context, "carStatus.getVehiclestatus() is null", Toast.LENGTH_SHORT).show();
@@ -620,8 +626,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         // Get the wireframe for the vehicle
-        Map<String, Integer> f150Images = Utils.getVehicleDrawables(VIN);
-        views.setImageViewResource(R.id.wireframe, f150Images.get(Utils.WIREFRAME));
+        Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(VIN);
+        views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
 
         views.setImageViewResource(R.id.hood, R.drawable.filler);
         views.setImageViewResource(R.id.tailgate, R.drawable.filler);
