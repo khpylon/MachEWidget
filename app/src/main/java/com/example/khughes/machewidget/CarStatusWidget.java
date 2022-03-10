@@ -200,7 +200,8 @@ public class CarStatusWidget extends AppWidgetProvider {
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        Boolean MachE = VIN.startsWith(new StoredData(context).getWidgetMode());
+        // Assume the default of a Mach-E if there is no VIN or the VIN matches a Mach-E
+        Boolean MachE = VIN.equals("") || Utils.isMachE(VIN);
         Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
 
         RemoteViews views = getWidgetView(context);
@@ -438,6 +439,10 @@ public class CarStatusWidget extends AppWidgetProvider {
                 appInfo.setLastDTE(VIN, range);
             } else {
                 range = appInfo.getLastDTE(VIN);
+                if( range == null ) {
+                    range = -1.0;
+                    distanceConversion = 1.0;
+                }
             }
             rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
             views.setTextViewText(R.id.distanceToEmpty, rangeCharge);
@@ -448,6 +453,9 @@ public class CarStatusWidget extends AppWidgetProvider {
                 appInfo.setLastFuelLevel(VIN, fuelLevel);
             } else {
                 fuelLevel = appInfo.getLastFuelLevel(VIN);
+                if( fuelLevel == null ) {
+                    fuelLevel = -1.0;
+                }
             }
             views.setProgressBar(R.id.fuelLevelProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
             views.setTextViewText(R.id.fuelLevelPercent,
@@ -483,8 +491,9 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Current Odometer reading
         Double odometer = carStatus.getOdometer();
         if (odometer != null && odometer > 0) {
+            // FordPass truncates; go figure.
             views.setTextViewText(R.id.odometer,
-                    MessageFormat.format("Odo: {0} {1}", Math.round(odometer * distanceConversion), distanceUnits));
+                    MessageFormat.format("Odo: {0} {1}", new Double(odometer * distanceConversion).intValue(), distanceUnits));
         } else {
             views.setTextViewText(R.id.odometer, "Odo: ---");
         }
