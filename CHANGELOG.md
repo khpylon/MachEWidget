@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 2022.03.10
+### Changes
+- Make the odometer output match the value reported by FordPass.
+
+### Fixed
+- Correct an issue with determining the vehicle type (only effects F-150 and Bronco owners).
+
+## 2022.03.09
 ### Added
 - Add the ability to save and restore user data (Android 10 or higher).  Data is stored in a ZIP file in the Download folder and 
   can later be loaded back.
