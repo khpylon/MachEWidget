@@ -10,7 +10,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 - Make the odometer output match the value reported by FordPass.
 
 ### Fixed
-- Correct an issue with determining the vehicle type (only effects F-150 and Bronco owners).
+- Correct an issue with determining the vehicle type (only affects F-150 and Bronco owners).
 
 ## 2022.03.09
 ### Added

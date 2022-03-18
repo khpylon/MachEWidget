@@ -53,7 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
             showApps.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    StatusReceiver.cancelAlarm(getContext());
+//                    StatusReceiver.cancelAlarm(getContext());
                     StatusReceiver.nextAlarm(getContext(), Integer.valueOf((String) newValue));
                     return true;
                 }
@@ -110,7 +110,7 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
                         if (preference.getKey().equals(getResources().getString(R.string.update_frequency_key))) {
-                            StatusReceiver.cancelAlarm(getContext());
+//                            StatusReceiver.cancelAlarm(getContext());
                             StatusReceiver.nextAlarm(getContext());
                         } else {
                             MainActivity.updateWidget(mContext);

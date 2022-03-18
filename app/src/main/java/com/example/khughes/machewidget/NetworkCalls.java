@@ -2,6 +2,8 @@ package com.example.khughes.machewidget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
 import android.os.Handler;
 import android.os.Message;
 import android.security.keystore.KeyGenParameterSpec;
@@ -19,7 +21,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.SecureRandom;
+import java.text.ParseException;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.crypto.Cipher;
@@ -179,7 +184,18 @@ public class NetworkCalls {
                     if (car.getStatus() == Constants.HTTP_SERVER_ERROR) {
                         LogFile.i(context,MainActivity.CHANNEL_ID, "server is broken");
                     } else if (car.getVehiclestatus() != null) {
-                        appInfo.setCarStatus(VIN, car);
+                        Calendar lastRefreshTime = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH);
+                        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        try {
+                            lastRefreshTime.setTime(sdf.parse(car.getLastRefresh()));
+                        } catch (ParseException e) {
+                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in exception in NetworkCalls.getStatus: ", e);
+                        }
+                        long priorRefreshTime = appInfo.getLastRefreshTime(VIN);
+                        if( priorRefreshTime < lastRefreshTime.toInstant().toEpochMilli()) {
+                            appInfo.setCarStatus(VIN, car);
+                        }
                         Notifications.checkLVBStatus(context, car, VIN);
                         Notifications.checkTPMSStatus(context, car, VIN);
                         nextState = ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS;

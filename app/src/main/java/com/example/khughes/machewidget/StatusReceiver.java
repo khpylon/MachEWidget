@@ -1,5 +1,6 @@
 package com.example.khughes.machewidget;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -12,7 +13,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -39,11 +39,12 @@ public class StatusReceiver extends BroadcastReceiver {
         long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         // Store time when we run the update;
-        appInfo.SetLastAlarmTime(VIN);
+        appInfo.setLastAlarmTime(VIN);
 
         ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
 
-        LogFile.d(mContext, MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name());
+        LogFile.d(mContext, MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name() +
+                ", battery optimization is " + MainActivity.checkBatteryOptimizations(context));
 
         // Check whether credentials are being saved
         Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
@@ -196,7 +197,7 @@ public class StatusReceiver extends BroadcastReceiver {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(delay);
         String timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US));
-        LogFile.i(context, MainActivity.CHANNEL_ID, "Next AlarmReceiver at " + timeText);
+        LogFile.i(context, MainActivity.CHANNEL_ID, "next status alarm at " + timeText);
         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
@@ -212,14 +213,18 @@ public class StatusReceiver extends BroadcastReceiver {
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
         pendingIntent.cancel();
+        Log.d(MainActivity.CHANNEL_ID, "cancelling status alarm");
     }
 
     // If no alarm is pending, start one
+    @SuppressLint("NewApi")
     public static void initateAlarm(Context context) {
+        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (PendingIntent.getBroadcast(context, 0,
                 getIntent(context), PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
             nextAlarm(context);
+        } else {
+            Log.d(MainActivity.CHANNEL_ID, "no pending status alarm");
         }
     }
-
 }

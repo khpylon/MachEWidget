@@ -15,11 +15,9 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -38,9 +36,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Implementation of App Widget functionality.
- */
 public class CarStatusWidget extends AppWidgetProvider {
     public static final String WIDGET_IDS_KEY = "com.example.khughes.machewidget.CARSTATUSWIDGET";
 
@@ -120,7 +115,9 @@ public class CarStatusWidget extends AppWidgetProvider {
             if (address.getSubThoroughfare() != null) {
                 streetName += address.getSubThoroughfare() + " ";
             }
-            streetName += address.getThoroughfare();
+            if( address.getThoroughfare() != null ) {
+                streetName += address.getThoroughfare();
+            }
 
             // Other locality info (state, province, etc)
             if (address.getLocality() != null && address.getAdminArea() != null) {
@@ -129,6 +126,12 @@ public class CarStatusWidget extends AppWidgetProvider {
                     adminArea = Utils.states.get(adminArea);
                 }
                 cityState = PADDING + address.getLocality() + ", " + adminArea;
+            }
+
+            // If no street, move city/state up
+            if(streetName.equals(PADDING)) {
+                streetName = cityState;
+                cityState = "";
             }
         } else {
             streetName = PADDING + "N/A";
@@ -455,6 +458,8 @@ public class CarStatusWidget extends AppWidgetProvider {
                 fuelLevel = appInfo.getLastFuelLevel(VIN);
                 if( fuelLevel == null ) {
                     fuelLevel = -1.0;
+                } else if (fuelLevel > 100.0) {
+                    fuelLevel = 100.0;
                 }
             }
             views.setProgressBar(R.id.fuelLevelProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
@@ -692,7 +697,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             public void handleMessage(Message msg) {
                 String result = msg.getData().getString("action");
                 if (result != null && result.equals(NetworkCalls.COMMAND_SUCCESSFUL)) {
-                    StatusReceiver.cancelAlarm(context);
+//                    StatusReceiver.cancelAlarm(context);
                     StatusReceiver.nextAlarm(context, 5);
                 }
                 Toast.makeText(context, result, Toast.LENGTH_SHORT).show();

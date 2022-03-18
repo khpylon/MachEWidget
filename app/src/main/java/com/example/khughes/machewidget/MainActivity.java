@@ -26,6 +26,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_refresh:
                 String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
                 if (new StoredData(context).getLastUpdateElapsedTime() > 5 * 60 * 1000) {
-                    StatusReceiver.cancelAlarm(context);
+//                    StatusReceiver.cancelAlarm(context);
                     StatusReceiver.nextAlarm(context, 5);
                     Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
                 } else {
@@ -263,6 +264,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static Boolean checkBatteryOptimizations(Context context) {
+        String packageName = context.getPackageName();
+        PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
+        return pm.isIgnoringBatteryOptimizations(packageName);
+    }
+
     public static boolean checkInternetConnection() {
         // Get Connectivity Manager
         return checkInternetConnection(context);
@@ -295,5 +302,4 @@ public class MainActivity extends AppCompatActivity {
         updateIntent.putExtra(CarStatusWidget.WIDGET_IDS_KEY, ids);
         context.sendBroadcast(updateIntent);
     }
-
 }

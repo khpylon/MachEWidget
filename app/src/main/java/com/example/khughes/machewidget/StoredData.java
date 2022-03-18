@@ -50,6 +50,7 @@ public class StoredData {
     private static final String LASTFUELLEVEL = "LastFuelLevel";
     private static final String LASTDTE = "LastDTE";
     private static final String LASTUPDATETIME = "LastUpdateTime";
+    private static final String LASTREFRESHTIME = "LastRefreshTime";
     private static final String LASTALARMTIME = "LastAlarmTime";
     private static final String LEFTAPPPACKAGE = "LeftAppPackage";
     private static final String RIGHTAPPPACKAGE = "RightAppPackage";
@@ -202,7 +203,16 @@ public class StoredData {
         return nowtime - lastUpdate;
     }
 
-    public void SetLastAlarmTime(String VIN) {
+    public void setLastRefreshTime(String VIN, long time) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+        commitWait(edit.putLong(LASTREFRESHTIME, time));
+    }
+
+    public long getLastRefreshTime(String VIN) {
+        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTREFRESHTIME, 0);
+    }
+
+    public void setLastAlarmTime(String VIN) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
         long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         commitWait(edit.putLong(LASTALARMTIME, nowtime));
