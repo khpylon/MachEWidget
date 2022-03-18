@@ -115,7 +115,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             if (address.getSubThoroughfare() != null) {
                 streetName += address.getSubThoroughfare() + " ";
             }
-            if( address.getThoroughfare() != null ) {
+            if (address.getThoroughfare() != null) {
                 streetName += address.getThoroughfare();
             }
 
@@ -129,7 +129,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             }
 
             // If no street, move city/state up
-            if(streetName.equals(PADDING)) {
+            if (streetName.equals(PADDING)) {
                 streetName = cityState;
                 cityState = "";
             }
@@ -324,9 +324,12 @@ public class CarStatusWidget extends AppWidgetProvider {
                     R.drawable.locked_icon_green : R.drawable.unlocked_icon_red);
         }
 
-        // Ignition
+        // Ignition and remote start
         String ignition = carStatus.getIgnition();
-        if (ignition != null) {
+        Boolean remote = carStatus.getRemoteStartStatus();
+        if (remote != null && remote == true) {
+            views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow);
+        } else if (ignition != null) {
             views.setImageViewResource(R.id.ignition, ignition.equals("Off") ?
                     R.drawable.ignition_icon_gray : R.drawable.ignition_icon_green);
         }
@@ -442,7 +445,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 appInfo.setLastDTE(VIN, range);
             } else {
                 range = appInfo.getLastDTE(VIN);
-                if( range == null ) {
+                if (range == null) {
                     range = -1.0;
                     distanceConversion = 1.0;
                 }
@@ -456,7 +459,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 appInfo.setLastFuelLevel(VIN, fuelLevel);
             } else {
                 fuelLevel = appInfo.getLastFuelLevel(VIN);
-                if( fuelLevel == null ) {
+                if (fuelLevel == null) {
                     fuelLevel = -1.0;
                 } else if (fuelLevel > 100.0) {
                     fuelLevel = 100.0;
@@ -697,17 +700,24 @@ public class CarStatusWidget extends AppWidgetProvider {
             public void handleMessage(Message msg) {
                 String result = msg.getData().getString("action");
                 if (result != null && result.equals(NetworkCalls.COMMAND_SUCCESSFUL)) {
-//                    StatusReceiver.cancelAlarm(context);
-                    StatusReceiver.nextAlarm(context, 5);
+                    awaitingUpdate = true;
+                    StatusReceiver.nextAlarm(context, 2);
+                } else {
+                    awaitingUpdate = false;
                 }
                 Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
             }
         };
     }
 
-    private void start(Context context) {
+    private void remoteStart(Context context) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         NetworkCalls.remoteStart(getHandler(context), context, new StoredData(context).getAccessToken(VIN));
+    }
+
+    private void remoteStop(Context context) {
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        NetworkCalls.remoteStop(getHandler(context), context, new StoredData(context).getAccessToken(VIN));
     }
 
     private void lock(Context context) {
@@ -869,8 +879,6 @@ public class CarStatusWidget extends AppWidgetProvider {
                     } else {
                         lock(context);
                     }
-                    StatusReceiver.nextAlarm(context, 15);
-                    awaitingUpdate = true;
                 }
             }
             lastLockClicktime = nowtime;
@@ -879,11 +887,12 @@ public class CarStatusWidget extends AppWidgetProvider {
             long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             if (nowtime - lastIgnitionClicktime < 500) {
                 CarStatus carStatus = new StoredData(context).getCarStatus(VIN);
-                if (!awaitingUpdate && carStatus != null && carStatus.getIgnition() != null) {
-                    if (carStatus.getIgnition().equals("Off")) {
-                        start(context);
-                        StatusReceiver.nextAlarm(context, 15);
-                        awaitingUpdate = true;
+                if (!awaitingUpdate && carStatus != null && carStatus.getRemoteStartStatus() != null
+                        && carStatus.getIgnition() != null && carStatus.getIgnition().equals("Off")) {
+                    if (carStatus.getRemoteStartStatus() == false) {
+                        remoteStart(context);
+                    } else {
+                        remoteStop(context);
                     }
                 }
             }

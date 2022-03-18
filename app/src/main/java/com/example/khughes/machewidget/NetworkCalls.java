@@ -9,7 +9,6 @@ import android.os.Message;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.ArrayMap;
-import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
@@ -40,6 +39,12 @@ public class NetworkCalls {
     public static final String COMMAND_FAILED = "Command failed.";
     public static final String COMMAND_NO_NETWORK = "Network error.";
     public static final String COMMAND_EXCEPTION = "Exception occurred.";
+    public static final String COMMAND_REMOTE_START_LIMIT = "Cannot extend remote start time without driving.";
+
+    private static final int CMD_STATUS_SUCCESS = 200;
+    private static final int CMD_STATUS_INPROGRESS = 552;
+    private static final int CMD_STATUS_FAILED = 411;
+    private static final int CMD_REMOTE_START_LIMIT = 590;
 
     public static void getAccessToken(Handler handler, Context context, String username, String password) {
         Thread t = new Thread(new Runnable() {
@@ -91,11 +96,11 @@ public class NetworkCalls {
                             nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS;
                         }
                     } catch (IOException e) {
-                        LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
                     }
                 }
             } catch (Exception e) {
-                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
             }
         }
         data.putExtra("action", nextState.name());
@@ -130,21 +135,21 @@ public class NetworkCalls {
             Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
             try {
                 Response<AccessToken> response = call.execute();
-                LogFile.i(context,MainActivity.CHANNEL_ID, "refresh here....");
+                LogFile.i(context, MainActivity.CHANNEL_ID, "refresh here.");
                 if (response.isSuccessful()) {
-                    LogFile.i(context,MainActivity.CHANNEL_ID, "refresh successful");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "refresh successful");
                     AccessToken accessToken = response.body();
                     data.putExtra("access_token", accessToken.getAccessToken());
                     data.putExtra("refresh_token", accessToken.getRefreshToken());
                     data.putExtra("expires", accessToken.getExpiresIn());
                     nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS;
                 } else {
-                    LogFile.i(context,MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context,MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
                     nextState = ProgramStateMachine.States.INITIAL_STATE;
                 }
             } catch (Exception e) {
-                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.refreshAccessToken: ", e);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.refreshAccessToken: ", e);
             }
         }
         data.putExtra("action", nextState.name());
@@ -178,42 +183,45 @@ public class NetworkCalls {
             try {
                 Response<CarStatus> response = call.execute();
                 if (response.isSuccessful()) {
-                    LogFile.i(context,MainActivity.CHANNEL_ID, "status successful....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "status successful....");
 //                    String tmp =response.toString();
                     CarStatus car = response.body();
                     if (car.getStatus() == Constants.HTTP_SERVER_ERROR) {
-                        LogFile.i(context,MainActivity.CHANNEL_ID, "server is broken");
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "server is broken");
                     } else if (car.getVehiclestatus() != null) {
                         Calendar lastRefreshTime = Calendar.getInstance();
                         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH);
                         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        long currentRefreshTime = 0;
                         try {
                             lastRefreshTime.setTime(sdf.parse(car.getLastRefresh()));
+                            currentRefreshTime = lastRefreshTime.toInstant().toEpochMilli();
                         } catch (ParseException e) {
                             LogFile.e(context, MainActivity.CHANNEL_ID, "exception in exception in NetworkCalls.getStatus: ", e);
                         }
                         long priorRefreshTime = appInfo.getLastRefreshTime(VIN);
-                        if( priorRefreshTime < lastRefreshTime.toInstant().toEpochMilli()) {
+                        if (priorRefreshTime < currentRefreshTime) {
                             appInfo.setCarStatus(VIN, car);
+                            appInfo.setLastRefreshTime(VIN, currentRefreshTime);
                         }
                         Notifications.checkLVBStatus(context, car, VIN);
                         Notifications.checkTPMSStatus(context, car, VIN);
                         nextState = ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS;
-                        LogFile.i(context,MainActivity.CHANNEL_ID, "got status");
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
                     } else {
                         nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN;
-                        LogFile.i(context,MainActivity.CHANNEL_ID, "vehicle status is null");
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle status is null");
                     }
                 } else {
-                    LogFile.i(context,MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context,MainActivity.CHANNEL_ID, "status UNSUCCESSFUL....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL....");
                     // For either of these client errors, we probably need to refresh the access token
                     if (response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED) {
                         nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
                     }
                 }
             } catch (Exception e) {
-                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
             }
         }
         data.putExtra("action", nextState.name());
@@ -248,7 +256,7 @@ public class NetworkCalls {
             try {
                 Response<OTAStatus> response = call.execute();
                 if (response.isSuccessful()) {
-                    LogFile.i(context,MainActivity.CHANNEL_ID, "OTA status successful....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful....");
                     appInfo.setOTAStatus(VIN, response.body());
                 } else {
                     try {
@@ -257,13 +265,13 @@ public class NetworkCalls {
                             status.setError("UpstreamException");
                         }
                     } catch (Exception e) {
-                        LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
                     }
-                    LogFile.i(context,MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context,MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL....");
                 }
             } catch (Exception e) {
-                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
             }
         }
         return data;
@@ -273,7 +281,7 @@ public class NetworkCalls {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "engine", "start", "put");
+                Intent intent = NetworkCalls.execCommand(context, token, "v5", "engine", "start", "put");
                 Message m = Message.obtain();
                 m.setData(intent.getExtras());
                 handler.sendMessage(m);
@@ -286,7 +294,7 @@ public class NetworkCalls {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "engine", "start", "delete");
+                Intent intent = NetworkCalls.execCommand(context, token, "v5", "engine", "start", "delete");
                 Message m = Message.obtain();
                 m.setData(intent.getExtras());
                 handler.sendMessage(m);
@@ -299,7 +307,7 @@ public class NetworkCalls {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "doors", "lock", "put");
+                Intent intent = NetworkCalls.execCommand(context, token, "v2", "doors", "lock", "put");
                 Message m = Message.obtain();
                 m.setData(intent.getExtras());
                 handler.sendMessage(m);
@@ -312,7 +320,7 @@ public class NetworkCalls {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "doors", "lock", "delete");
+                Intent intent = NetworkCalls.execCommand(context, token, "v2", "doors", "lock", "delete");
                 Message m = Message.obtain();
                 m.setData(intent.getExtras());
                 handler.sendMessage(m);
@@ -321,7 +329,7 @@ public class NetworkCalls {
         t.start();
     }
 
-    private static Intent execCommand(Context context, String token, String component, String operation, String request) {
+    private static Intent execCommand(Context context, String token, String version, String component, String operation, String request) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
         Intent data = new Intent();
@@ -331,32 +339,88 @@ public class NetworkCalls {
         if (!MainActivity.checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
         } else {
-//            CommandService commandServiceClient = CommandServiceGenerator.createService(CommandService.class);
             CommandService commandServiceClient = NetworkServiceGenerators.createCommandService(CommandService.class, context);
             Call<CommandStatus> call = null;
             if (request.equals("put")) {
-                call = commandServiceClient.putCommand(token, language,
-                        Constants.APID, VIN, component, operation);
+                call = commandServiceClient.putCommand(token, Constants.APID,
+                        version, VIN, component, operation);
             } else {
-                call = commandServiceClient.deleteCommand(token, language,
-                        Constants.APID, VIN, component, operation);
+                call = commandServiceClient.deleteCommand(token, Constants.APID,
+                        version, VIN, component, operation);
             }
             try {
                 Response<CommandStatus> response = call.execute();
                 if (response.isSuccessful()) {
-                    data.putExtra("action", COMMAND_SUCCESSFUL);
-                    LogFile.i(context,MainActivity.CHANNEL_ID, "CMD successful....");
+                    CommandStatus status = response.body();
+                    if(status.getStatus() == CMD_STATUS_SUCCESS ) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send successful.");
+                        data.putExtra("action", execResponse(context, token, VIN, component, operation, status.getCommandId()));
+                    } else if(status.getStatus() == CMD_REMOTE_START_LIMIT) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.");
+                        data.putExtra("action", COMMAND_REMOTE_START_LIMIT);
+                    } else {
+                        data.putExtra("action", COMMAND_EXCEPTION);
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send unknown response.");
+                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                    }
                 } else {
                     data.putExtra("action", COMMAND_FAILED);
-                    LogFile.i(context,MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context,MainActivity.CHANNEL_ID, "CMD UNSUCCESSFUL....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
                 }
             } catch (Exception e) {
                 data.putExtra("action", COMMAND_EXCEPTION);
-                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in NetworkCalls.putCommand: ", e);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.execCommand: ", e);
             }
         }
         return data;
+    }
+
+    private static String execResponse(Context context, String token, String VIN, String component, String operation, String idCode) {
+        StoredData appInfo = new StoredData(context);
+
+        // Delay 5 seconds before starting to check on status
+        try {
+            Thread.sleep(5 * 1000);
+        } catch (InterruptedException e) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.execResponse: ", e);
+        }
+
+        CommandService commandServiceClient = NetworkServiceGenerators.createCommandService(CommandService.class, context);
+        try {
+            for (int retries = 0; retries < 10; ++retries) {
+                Call<CommandStatus> call = commandServiceClient.getCommandResponse(token,
+                        Constants.APID, VIN, component, operation, idCode);
+                Response<CommandStatus> response = call.execute();
+                if (response.isSuccessful()) {
+                    CommandStatus status = response.body();
+                    switch (status.getStatus()) {
+                        case CMD_STATUS_SUCCESS:
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response successful.");
+                            return COMMAND_SUCCESSFUL;
+                        case CMD_STATUS_FAILED:
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response failed.");
+                            return COMMAND_FAILED;
+                        case CMD_STATUS_INPROGRESS:
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response waiting.");
+                            break;
+                        default:
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response unknown: status = " + status.getStatus());
+                            return COMMAND_FAILED;
+                    }
+                } else {
+                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response UNSUCCESSFUL.");
+                    return COMMAND_FAILED;
+                }
+                Thread.sleep(2 * 1000);
+            }
+            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD timeout?");
+            return COMMAND_FAILED;
+        } catch (Exception e) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.execResponse: ", e);
+            return COMMAND_EXCEPTION;
+        }
     }
 
     // Code for encryption and decryption of personal data
@@ -427,6 +491,4 @@ public class NetworkCalls {
         byte[] plainText = cipher.doFinal(cipherBytes, GCM_IV_LENGTH, cipherBytes.length - GCM_IV_LENGTH);
         return new String(plainText, StandardCharsets.UTF_8);
     }
-
-
 }

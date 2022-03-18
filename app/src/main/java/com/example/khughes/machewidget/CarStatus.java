@@ -225,6 +225,14 @@ public class CarStatus {
         }
     }
 
+    public Boolean getRemoteStartStatus() {
+        try {
+            return getVehiclestatus().getRemoteStartStatus().getValue() == 1;
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
     public String getAlarm() {
         try {
             return getVehiclestatus().getAlarm().getValue();

@@ -7,7 +7,6 @@ public class Constants {
     public static final String LOCALTIMEFORMATUS = "MMM d, HH:mm z"; // Jan 29, 13:00 PST
     public static final String LOCALTIMEFORMAT = "d MMM, HH:mm z"; // 29 Jan, 13:00 PST
     public static final String OLDLOCALTIMEFORMAT = "yyyy-MM-dd HH:mm:ss z"; // 2022-01-29 13:00:00 PST
-    public static final String MACHEVINSTART = "3FM";
     public static final Double KMTOMILES = 0.6213711922;
     public static final Double KPATOPSI = 0.14503774;
     public static final Double KPATOBAR = 0.01;
