@@ -59,9 +59,16 @@ public class StoredData {
     private static final String WIDGETMODE = "widgetmode";
 
     private static final String LATESTVERSION = "LatestVersion";
+
     public static final String GOOD = "Good";
     public static final String BAD = "Bad";
     public static final String UGLY = "Ugly";
+
+    public static final String STATUS_NOT_LOGGED_IN = "Logged out";
+    public static final String STATUS_LOG_OUT = "Log out";
+    public static final String STATUS_LOG_IN = "Log in";
+    public static final String STATUS_UPDATED = "Updated";
+    public static final String STATUS_UNKNOWN = "Unknown";
 
     private final Context mContext;
     private final Gson gson = new GsonBuilder().create();
@@ -245,15 +252,14 @@ public class StoredData {
         commitWait(edit.putLong(TOKENTIMEOUT, time));
     }
 
-    public ProgramStateMachine.States getProgramState(String VIN) {
+    public String getProgramState(String VIN) {
         SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return ProgramStateMachine.States.valueOf(pref.getString(PROGRAMSTATE,
-                ProgramStateMachine.States.INITIAL_STATE.name()));
+        return pref.getString(PROGRAMSTATE, Constants.STATE_INITIAL_STATE);
     }
 
-    public void setProgramState(String VIN, ProgramStateMachine.States state) {
+    public void setProgramState(String VIN, String state) {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        commitWait(edit.putString(PROGRAMSTATE, state.name()));
+        commitWait(edit.putString(PROGRAMSTATE, state));
     }
 
     public CarStatus getCarStatus(String VIN) {
@@ -527,11 +533,11 @@ public class StoredData {
         return pref.getInt(key, 0);
     }
 
-    public void resetCounters() {
+    public void removeCounters() {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
-        edit.putInt(GOOD, 0);
-        edit.putInt(BAD, 0);
-        edit.putInt(UGLY, 0);
+        edit.remove(GOOD);
+        edit.remove(BAD);
+        edit.remove(UGLY);
         commitWait(edit);
     }
 
@@ -542,4 +548,6 @@ public class StoredData {
         commitWait(edit.putInt(key, value));
         return value;
     }
+
+
 }

@@ -233,7 +233,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         // Fill in the last update time
         Calendar lastUpdateTime = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
             lastUpdateTime.setTime(sdf.parse(carStatus.getLastRefresh()));// all done
@@ -242,7 +242,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
         Calendar currentTime = Calendar.getInstance();
         long minutes = (Duration.between(lastUpdateTime.toInstant(), currentTime.toInstant()).getSeconds() + 30) / 60;
-        LogFile.i(context, MainActivity.CHANNEL_ID, "Last vehicle update was " + minutes + " minutes ago.");
+        LogFile.i(context, MainActivity.CHANNEL_ID, "updateAppWidget(): last vehicle update was " + minutes + " minutes ago.");
 
         String refresh = "Last refresh:\n  ";
         Boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
@@ -398,7 +398,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                     } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
                         rangeCharge += "Preconditioning";
                     } else {
-                        sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.US);
+                        sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
                         Calendar endChargeTime = Calendar.getInstance();
                         String endChargeTimeStr = carStatus.getVehiclestatus().getChargeEndTime().getValue();
                         try {
@@ -772,10 +772,10 @@ public class CarStatusWidget extends AppWidgetProvider {
             matchWidgetWithVin(context, VIN);
         }
 
-        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
+        String state = appInfo.getProgramState(VIN);
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            if (!state.equals(ProgramStateMachine.States.INITIAL_STATE)) {
+            if (!state.equals(Constants.STATE_INITIAL_STATE)) {
                 updateAppWidget(context, appWidgetManager, appWidgetId);
             } else {
                 updateAppLogout(context, appWidgetManager, appWidgetId);
@@ -904,7 +904,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 long lastUpdateInMillis = new StoredData(context).getLastUpdateTime(VIN);
                 String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, new StoredData(context).getTimeFormatByCountry(VIN));
                 Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
-                long lastAlarmInMillis = new StoredData(context).getLastUpdateTime(VIN);
+                long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
                 String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, new StoredData(context).getTimeFormatByCountry(VIN));
                 Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
             }

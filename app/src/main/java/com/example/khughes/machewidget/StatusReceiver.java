@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.text.MessageFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -41,32 +42,37 @@ public class StatusReceiver extends BroadcastReceiver {
         // Store time when we run the update;
         appInfo.setLastAlarmTime(VIN);
 
-        ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
+        String state = appInfo.getProgramState(VIN);
 
-        LogFile.d(mContext, MainActivity.CHANNEL_ID, "time is " + (timeout - nowtime) / Millis + ", state is " + state.name() +
-                ", battery optimization is " + MainActivity.checkBatteryOptimizations(context));
+        LogFile.d(mContext, MainActivity.CHANNEL_ID,
+                MessageFormat.format("StatusReceiver: time({0}), state({1}), battery optimization({2})",
+                        (timeout - nowtime) / Millis, state, MainActivity.checkBatteryOptimizations(context)));
 
         // Check whether credentials are being saved
         Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
                 .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
 
-        if (state.equals(ProgramStateMachine.States.INITIAL_STATE)) {
+        if (state.equals(Constants.STATE_INITIAL_STATE)) {
             LogFile.d(mContext, MainActivity.CHANNEL_ID, "Initial state: how'd did the alarm go off (manual refresh)?");
             cancelAlarm(context);
-            appInfo.incCounter(StoredData.UGLY);
-        } else if (state.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN)) {
+            appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN);
+        } else if (state.equals(Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN)) {
             if (savingCredentials) {
                 LogFile.d(mContext, MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
                 getAccess();
-                appInfo.incCounter(StoredData.BAD);
+                appInfo.incCounter(StoredData.STATUS_LOG_IN);
             } else {
-                appInfo.setProgramState(VIN, ProgramStateMachine.States.INITIAL_STATE);
+                appInfo.setProgramState(VIN, Constants.STATE_INITIAL_STATE);
                 LogFile.d(mContext, MainActivity.CHANNEL_ID, "Log-in required but credentials are not being saved: cancelling alarm");
                 cancelAlarm(context);
-                appInfo.incCounter(StoredData.UGLY);
+                appInfo.incCounter(StoredData.STATUS_LOG_OUT);
             }
-        } else if (state.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) ||
-                state.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+        } else if (state.equals(Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN)) {
+            LogFile.d(mContext, MainActivity.CHANNEL_ID, "STILL need to refresh token");
+            getRefresh(appInfo.getRefreshToken(VIN));
+            appInfo.incCounter(StoredData.STATUS_UPDATED);
+        } else if (state.equals(Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS) ||
+                state.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             int delayInMillis = new Integer(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
 
@@ -82,7 +88,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 getStatus(appInfo.getAccessToken(VIN));
                 getOTAStatus(appInfo.getAccessToken(VIN));
             }
-            appInfo.incCounter(StoredData.GOOD);
+            appInfo.incCounter(StoredData.STATUS_UPDATED);
         }
         // Since everything above should cover all the states, we should never get here
         else {
@@ -92,13 +98,17 @@ public class StatusReceiver extends BroadcastReceiver {
             } else {
                 LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
             }
-            appInfo.incCounter(StoredData.UGLY);
+            appInfo.incCounter(StoredData.STATUS_UNKNOWN);
         }
-        int good = appInfo.getCounter(StoredData.GOOD);
-        int bad = appInfo.getCounter(StoredData.BAD);
-        int ugly = appInfo.getCounter(StoredData.UGLY);
 
-        LogFile.d(mContext, MainActivity.CHANNEL_ID, "good = " + good + ", bad = " + bad + ", ugly = " + ugly);
+        LogFile.d(mContext, MainActivity.CHANNEL_ID,
+                MessageFormat.format("StatusReceiver status history: {0}({1}) {2}({3}) {4}({5}) {6}({7}) {8}({9})",
+                        StoredData.STATUS_NOT_LOGGED_IN, appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
+                        StoredData.STATUS_LOG_OUT, appInfo.getCounter(StoredData.STATUS_LOG_OUT),
+                        StoredData.STATUS_LOG_IN, appInfo.getCounter(StoredData.STATUS_LOG_IN),
+                        StoredData.STATUS_UPDATED, appInfo.getCounter(StoredData.STATUS_UPDATED),
+                        StoredData.STATUS_UNKNOWN, appInfo.getCounter(StoredData.STATUS_UNKNOWN)
+                ));
     }
 
     private Bundle bb = new Bundle();
@@ -109,11 +119,10 @@ public class StatusReceiver extends BroadcastReceiver {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
-                String xx = bb.getString("action");
-                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
+                String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Access: " + action);
                 appInfo.setProgramState(VIN, action);
-                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
                     String accessToken = bb.getString("access_token");
                     String refreshToken = bb.getString("refresh_token");
                     int expires = bb.getInt("expires", 0);
@@ -134,10 +143,10 @@ public class StatusReceiver extends BroadcastReceiver {
             public void handleMessage(Message msg) {
                 String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
                 bb = msg.getData();
-                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
+                String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Refresh: " + action);
                 appInfo.setProgramState(VIN, action);
-                if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS)) {
+                if (action.equals(Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS)) {
                     String accessToken = bb.getString("access_token");
                     String refreshToken = bb.getString("refresh_token");
                     int expires = bb.getInt("expires", 0);
@@ -146,7 +155,7 @@ public class StatusReceiver extends BroadcastReceiver {
                     appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
                     getStatus(accessToken);
                     getOTAStatus(accessToken);
-                } else if (action.equals(ProgramStateMachine.States.INITIAL_STATE)) {
+                } else if (action.equals(Constants.STATE_INITIAL_STATE)) {
                     getAccess();
                 }
             }
@@ -160,10 +169,10 @@ public class StatusReceiver extends BroadcastReceiver {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
-                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
+                String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Status: " + action);
                 appInfo.setProgramState(VIN, action);
-                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(mContext);
                 }
             }
@@ -197,7 +206,7 @@ public class StatusReceiver extends BroadcastReceiver {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(delay);
         String timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US));
-        LogFile.i(context, MainActivity.CHANNEL_ID, "next status alarm at " + timeText);
+        LogFile.i(context, MainActivity.CHANNEL_ID, "StatusReceiver: next status alarm at " + timeText);
         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
@@ -213,7 +222,7 @@ public class StatusReceiver extends BroadcastReceiver {
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
         pendingIntent.cancel();
-        Log.d(MainActivity.CHANNEL_ID, "cancelling status alarm");
+        Log.d(MainActivity.CHANNEL_ID, "StatusReceiver: cancelling status alarm");
     }
 
     // If no alarm is pending, start one
@@ -224,7 +233,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 getIntent(context), PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
             nextAlarm(context);
         } else {
-            Log.d(MainActivity.CHANNEL_ID, "no pending status alarm");
+            Log.d(MainActivity.CHANNEL_ID, "StatusReceiver: no pending status alarm");
         }
     }
 }

@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
         StoredData appInfo = new StoredData(context);
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         if (!VIN.equals("")) {
-            ProgramStateMachine.States state = new ProgramStateMachine(appInfo.getProgramState(VIN)).getCurrentState();
-            if (state.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+            String state = appInfo.getProgramState(VIN);
+            if (state.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
                 StatusReceiver.initateAlarm(context);
             }
         }
@@ -110,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
         if (BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
 
             // Add operations here
+
+            // Remove Good/Bad/Ugly counters
+            if (lastVersion.compareTo("2022.03.21") < 0) {
+                new StoredData(context).removeCounters();
+            }
 
             // Update internally
             prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();

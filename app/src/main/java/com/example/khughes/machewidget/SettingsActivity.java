@@ -3,6 +3,7 @@ package com.example.khughes.machewidget;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -127,9 +128,12 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     StoredData appInfo = new StoredData(getContext());
-                    String units = "units = " + appInfo.getSpeedUnits(VIN) +
-                            ", " + appInfo.getDistanceUnits(VIN) +
-                            ", " + appInfo.getPressureUnits(VIN);
+                    String units = MessageFormat.format( "status = {0}/{1}/{2}/{3}/{4}" ,
+                            appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
+                                    appInfo.getCounter(StoredData.STATUS_LOG_OUT),
+                                    appInfo.getCounter(StoredData.STATUS_LOG_IN),
+                                    appInfo.getCounter(StoredData.STATUS_UPDATED),
+                                    appInfo.getCounter(StoredData.STATUS_UNKNOWN));
                     Toast.makeText(getContext(), units, Toast.LENGTH_LONG).show();
                     return false;
                 }

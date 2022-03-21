@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.ArrayMap;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -64,7 +66,7 @@ public class NetworkCalls {
 
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
-        ProgramStateMachine.States nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
+        String nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
 
         if (MainActivity.checkInternetConnection(context)) {
             AccessTokenService fordClient = NetworkServiceGenerators.createFordService(AccessTokenService.class, context);
@@ -93,7 +95,7 @@ public class NetworkCalls {
                             appInfo.setPressureUnits(VIN, accessToken.getUserProfile().getUomPressure());
                             appInfo.setDistanceUnits(VIN, accessToken.getUserProfile().getUomDistance());
                             appInfo.setSpeedUnits(VIN, accessToken.getUserProfile().getUomSpeed());
-                            nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS;
+                            nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
                         }
                     } catch (IOException e) {
                         LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
@@ -103,7 +105,7 @@ public class NetworkCalls {
                 LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
             }
         }
-        data.putExtra("action", nextState.name());
+        data.putExtra("action", nextState);
         return data;
     }
 
@@ -125,7 +127,7 @@ public class NetworkCalls {
 
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
-        ProgramStateMachine.States nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
+        String nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN;
 
         if (MainActivity.checkInternetConnection(context)) {
             Map<String, String> jsonParams = new ArrayMap<>();
@@ -142,17 +144,17 @@ public class NetworkCalls {
                     data.putExtra("access_token", accessToken.getAccessToken());
                     data.putExtra("refresh_token", accessToken.getRefreshToken());
                     data.putExtra("expires", accessToken.getExpiresIn());
-                    nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS;
+                    nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
                 } else {
                     LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
                     LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
-                    nextState = ProgramStateMachine.States.INITIAL_STATE;
+                    nextState = Constants.STATE_INITIAL_STATE;
                 }
             } catch (Exception e) {
                 LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.refreshAccessToken: ", e);
             }
         }
-        data.putExtra("action", nextState.name());
+        data.putExtra("action", nextState);
         return data;
     }
 
@@ -174,7 +176,7 @@ public class NetworkCalls {
 
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
-        ProgramStateMachine.States nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS;
+        String nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
         String language = appInfo.getLanguage(VIN);
 
         if (MainActivity.checkInternetConnection(context)) {
@@ -183,48 +185,48 @@ public class NetworkCalls {
             try {
                 Response<CarStatus> response = call.execute();
                 if (response.isSuccessful()) {
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "status successful....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "status successful.");
 //                    String tmp =response.toString();
                     CarStatus car = response.body();
                     if (car.getStatus() == Constants.HTTP_SERVER_ERROR) {
                         LogFile.i(context, MainActivity.CHANNEL_ID, "server is broken");
                     } else if (car.getVehiclestatus() != null) {
                         Calendar lastRefreshTime = Calendar.getInstance();
-                        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH);
+                        SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
                         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
                         long currentRefreshTime = 0;
                         try {
                             lastRefreshTime.setTime(sdf.parse(car.getLastRefresh()));
                             currentRefreshTime = lastRefreshTime.toInstant().toEpochMilli();
                         } catch (ParseException e) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in exception in NetworkCalls.getStatus: ", e);
+                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
                         }
                         long priorRefreshTime = appInfo.getLastRefreshTime(VIN);
-                        if (priorRefreshTime < currentRefreshTime) {
+                        if (priorRefreshTime <= currentRefreshTime) {
                             appInfo.setCarStatus(VIN, car);
                             appInfo.setLastRefreshTime(VIN, currentRefreshTime);
                         }
                         Notifications.checkLVBStatus(context, car, VIN);
                         Notifications.checkTPMSStatus(context, car, VIN);
-                        nextState = ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS;
+                        nextState = Constants.STATE_HAVE_TOKEN_AND_STATUS;
                         LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
                     } else {
-                        nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN;
+                        nextState = Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN;
                         LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle status is null");
                     }
                 } else {
                     LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.");
                     // For either of these client errors, we probably need to refresh the access token
                     if (response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED) {
-                        nextState = ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN;
+                        nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
                     }
                 }
             } catch (Exception e) {
                 LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
             }
         }
-        data.putExtra("action", nextState.name());
+        data.putExtra("action", nextState);
         return data;
     }
 
@@ -256,7 +258,7 @@ public class NetworkCalls {
             try {
                 Response<OTAStatus> response = call.execute();
                 if (response.isSuccessful()) {
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful.");
                     appInfo.setOTAStatus(VIN, response.body());
                 } else {
                     try {
@@ -268,7 +270,7 @@ public class NetworkCalls {
                         LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
                     }
                     LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL....");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL.");
                 }
             } catch (Exception e) {
                 LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
@@ -334,7 +336,6 @@ public class NetworkCalls {
 
         Intent data = new Intent();
         StoredData appInfo = new StoredData(context);
-        String language = appInfo.getLanguage(VIN);
 
         if (!MainActivity.checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
@@ -352,10 +353,12 @@ public class NetworkCalls {
                 Response<CommandStatus> response = call.execute();
                 if (response.isSuccessful()) {
                     CommandStatus status = response.body();
-                    if(status.getStatus() == CMD_STATUS_SUCCESS ) {
+                    if (status.getStatus() == CMD_STATUS_SUCCESS) {
                         LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send successful.");
+                        Looper.prepare();
+                        Toast.makeText(context, "Command transmitted.", Toast.LENGTH_SHORT).show();
                         data.putExtra("action", execResponse(context, token, VIN, component, operation, status.getCommandId()));
-                    } else if(status.getStatus() == CMD_REMOTE_START_LIMIT) {
+                    } else if (status.getStatus() == CMD_REMOTE_START_LIMIT) {
                         LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.");
                         data.putExtra("action", COMMAND_REMOTE_START_LIMIT);
                     } else {

@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                         super.onAuthenticationSucceeded(result);
                         String username = appInfo.getUsername(VIN);
                         String password = appInfo.getPassword(VIN);
-                        appInfo.setProgramState(VIN, ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
+                        appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
                         getAccess(username, password);
                     }
                 });
@@ -231,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (VIN.length() != 17) {
                     Toast.makeText(getApplicationContext(), "Please enter a valid VIN.", Toast.LENGTH_SHORT).show();
                 } else {
-                    appInfo.setProgramState(VIN, ProgramStateMachine.States.ATTEMPT_TO_GET_ACCESS_TOKEN);
+                    appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
                     sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
                     getAccess(username, password);
                 }
@@ -250,12 +250,12 @@ public class LoginActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 String xx = bb.getString("action");
-                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
+                String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Access: " + action);
                 appInfo.setProgramState(VIN, action);
-                if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VEHICLE_STATUS) ||
-                        action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN) ||
-                        action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+                if (action.equals(Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS) ||
+                        action.equals(Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN) ||
+                        action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
 
                     // If profiles are not being used, update the VIN list.
                     if (!profilesActive) {
@@ -292,10 +292,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
-                ProgramStateMachine.States action = ProgramStateMachine.States.valueOf(bb.getString("action"));
+                String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Status: " + action);
                 appInfo.setProgramState(VIN, action);
-                if (action.equals(ProgramStateMachine.States.HAVE_TOKEN_AND_STATUS)) {
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(getApplicationContext());
                     StatusReceiver.nextAlarm(getApplicationContext());
                     getOTAStatus(accessToken);
@@ -307,7 +307,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     setResult(Activity.RESULT_OK, data);
                     finish();
-                } else if (action.equals(ProgramStateMachine.States.ATTEMPT_TO_GET_VIN_AGAIN)) {
+                } else if (action.equals(Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN)) {
                     Toast.makeText(getApplicationContext(), "Unable to retrieve status: check your VIN?", Toast.LENGTH_LONG).show();
                 }
             }
