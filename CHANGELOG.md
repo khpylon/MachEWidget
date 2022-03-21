@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.03.21
+### Added
+Remote stop command is supported now.  Double-tap on the ignition icon to start or stop.  Once remote start is initiated, the ignition icon will turn yellow to indicate this.
+
+### Changes
+- Commands (lock/unlock and remote start/stop) now poll to determine whether the command was completed successfully
+- Internal changes for tracking status of Ford server connection.  Hopefully these will improve the performance of automatic updates for the vehicle's status.
+
+### Fixed
+- Fuel levels capped at 100%.
+
 ## 2022.03.10
 ### Changes
 - Make the odometer output match the value reported by FordPass.
