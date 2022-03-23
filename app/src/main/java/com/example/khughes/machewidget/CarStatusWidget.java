@@ -78,7 +78,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         // Get the tire pressure and do any conversion necessary.
         if (pressure != null) {
-            Double value = Double.valueOf(pressure) * conversion;
+            Double value = Double.parseDouble(pressure) * conversion;
             // If conversion is really small, show value in tenths
             String pattern = conversion >= 0.1 ? "#" : "#.0";
             pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
@@ -99,8 +99,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(ids[dataLine], "Location:");
 
         Geocoder mGeocoder = new Geocoder(context, Locale.getDefault());
-        Double lat = Double.valueOf(latitude);
-        Double lon = Double.valueOf(longitude);
+        double lat = Double.parseDouble(latitude);
+        double lon = Double.parseDouble(longitude);
         try {
             addresses = mGeocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
@@ -150,7 +150,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     // Set background transparency
     private void setBackground(Context context, RemoteViews views) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean useTranparency = sharedPref.getBoolean(context.getResources().getString(R.string.transp_bg_key), false);
+        boolean useTranparency = sharedPref.getBoolean(context.getResources().getString(R.string.transp_bg_key), false);
         views.setInt(R.id.thewidget, "setBackgroundResource",
                 useTranparency ? R.color.transparent_black : R.color.black);
     }
@@ -167,13 +167,13 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+        boolean profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
 
         if (profilesActive) {
             views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, PROFILE_CLICK));
         }
 
-        Boolean showAppLinks = sharedPref.getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
+        boolean showAppLinks = sharedPref.getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {
             views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, LEFT_BUTTON_CLICK));
             views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, RIGHT_BUTTON_CLICK));
@@ -182,7 +182,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
         }
 
-        Boolean enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
+        boolean enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.enable_commands_key), false);
         if (enableCommands) {
             views.setOnClickPendingIntent(R.id.lock, getPendingSelfIntent(context, LOCK_CLICK));
@@ -203,9 +203,8 @@ public class CarStatusWidget extends AppWidgetProvider {
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        // Assume the default of a Mach-E if there is no VIN or the VIN matches a Mach-E
-        Boolean MachE = VIN.equals("") || Utils.isMachE(VIN);
-        Boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+        int fuelType = Utils.getFuelType(VIN);
+        boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
 
         RemoteViews views = getWidgetView(context);
 
@@ -245,7 +244,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         LogFile.i(context, MainActivity.CHANNEL_ID, "updateAppWidget(): last vehicle update was " + minutes + " minutes ago.");
 
         String refresh = "Last refresh:\n  ";
-        Boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
+        boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.last_refresh_time_key), false);
         if (displayTime) {
             sdf = new SimpleDateFormat(new StoredData(context).getTimeFormatByCountry(VIN), Locale.ENGLISH);
@@ -289,13 +288,13 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         // Get conversion factors for Metric vs Imperial measurement units
         StoredData appInfo = new StoredData(context);
-        Integer units = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context)
+        int units = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(
                         context.getResources().getString(R.string.units_key),
                         context.getResources().getString(R.string.units_system)
                 ));
 
-        Double distanceConversion;
+        double distanceConversion;
         String distanceUnits;
         if ((units == Constants.UNITS_SYSTEM && appInfo.getSpeedUnits(VIN).equals("MPH")) || units == Constants.UNITS_IMPERIAL) {
             distanceConversion = Constants.KMTOMILES;
@@ -304,7 +303,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             distanceConversion = 1.0;
             distanceUnits = "km";
         }
-        Double pressureConversion;
+        double pressureConversion;
         String pressureUnits;
         if ((units == Constants.UNITS_SYSTEM && appInfo.getPressureUnits(VIN).equals("PSI")) || units == Constants.UNITS_IMPERIAL) {
             pressureConversion = Constants.KPATOPSI;
@@ -327,7 +326,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Ignition and remote start
         String ignition = carStatus.getIgnition();
         Boolean remote = carStatus.getRemoteStartStatus();
-        if (remote != null && remote == true) {
+        if (remote != null && remote) {
             views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow);
         } else if (ignition != null) {
             views.setImageViewResource(R.id.ignition, ignition.equals("Off") ?
@@ -351,7 +350,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         String rangeCharge = "N/A";
-        if (MachE) {
+        if (fuelType == Utils.FUEL_ELECTRIC) {
 
             // Estimated range
             Double range = carStatus.getElVehDTE();
@@ -387,42 +386,38 @@ public class CarStatusWidget extends AppWidgetProvider {
                         break;
                 }
 
-                // If charging, display any status information
-                if (chargeStatus != null) {
-                    // Normally there will be something from the GOM; if so, display this info below it
-                    if (!rangeCharge.equals("")) {
-                        rangeCharge += "\n";
-                    }
-                    if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
-                        rangeCharge += "Target Reached";
-                    } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
-                        rangeCharge += "Preconditioning";
-                    } else {
-                        sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
-                        Calendar endChargeTime = Calendar.getInstance();
-                        String endChargeTimeStr = carStatus.getVehiclestatus().getChargeEndTime().getValue();
-                        try {
-                            endChargeTime.setTime(sdf.parse(carStatus.getVehiclestatus().getChargeEndTime().getValue()));
+                // Normally there will be something from the GOM; if so, display this info below it
+                if (!rangeCharge.equals("")) {
+                    rangeCharge += "\n";
+                }
+                if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
+                    rangeCharge += "Target Reached";
+                } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
+                    rangeCharge += "Preconditioning";
+                } else {
+                    sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
+                    Calendar endChargeTime = Calendar.getInstance();
+                    try {
+                        endChargeTime.setTime(sdf.parse(carStatus.getVehiclestatus().getChargeEndTime().getValue()));
 
-                            Calendar nowTime = Calendar.getInstance();
-                            long min = Duration.between(nowTime.toInstant(), endChargeTime.toInstant()).getSeconds() / 60;
-                            if (min > 0) {
-                                int hours = (int) min / 60;
-                                min %= 60;
-                                if (hours > 0) {
-                                    rangeCharge += hours + " hr";
-                                    if (min > 0) {
-                                        rangeCharge += ", ";
-                                    }
-                                }
+                        Calendar nowTime = Calendar.getInstance();
+                        long min = Duration.between(nowTime.toInstant(), endChargeTime.toInstant()).getSeconds() / 60;
+                        if (min > 0) {
+                            int hours = (int) min / 60;
+                            min %= 60;
+                            if (hours > 0) {
+                                rangeCharge += hours + " hr";
                                 if (min > 0) {
-                                    rangeCharge += (int) min + " min";
+                                    rangeCharge += ", ";
                                 }
-                                rangeCharge += " left";
                             }
-                        } catch (ParseException e) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+                            if (min > 0) {
+                                rangeCharge += (int) min + " min";
+                            }
+                            rangeCharge += " left";
                         }
+                    } catch (ParseException e) {
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
                     }
                 }
             } else {
@@ -441,7 +436,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         } else {
             // Estimated range
             Double range = carStatus.getDistanceToEmpty();
-            if (range != null & range >= 0) {
+            if (range != null && range >= 0) {
                 appInfo.setLastDTE(VIN, range);
             } else {
                 range = appInfo.getLastDTE(VIN);
@@ -501,7 +496,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         if (odometer != null && odometer > 0) {
             // FordPass truncates; go figure.
             views.setTextViewText(R.id.odometer,
-                    MessageFormat.format("Odo: {0} {1}", new Double(odometer * distanceConversion).intValue(), distanceUnits));
+                    MessageFormat.format("Odo: {0} {1}", Double.valueOf(odometer * distanceConversion).intValue(), distanceUnits));
         } else {
             views.setTextViewText(R.id.odometer, "Odo: ---");
         }
@@ -527,11 +522,9 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         // Hood, tailgate, and door statuses
         views.setImageViewResource(R.id.hood,
-                isDoorClosed(carStatus.getFrunk()) ?
-                        R.drawable.filler : vehicleImages.get(Utils.HOOD));
+                isDoorClosed(carStatus.getFrunk()) ? R.drawable.filler : vehicleImages.get(Utils.HOOD));
         views.setImageViewResource(R.id.tailgate,
-                isDoorClosed(carStatus.getTailgate()) ?
-                        R.drawable.filler : vehicleImages.get(Utils.TAILGATE));
+                isDoorClosed(carStatus.getTailgate()) ? R.drawable.filler : vehicleImages.get(Utils.TAILGATE));
         views.setImageViewResource(R.id.lt_ft_door,
                 isDoorClosed(carStatus.getDriverDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
         views.setImageViewResource(R.id.rt_ft_door,
@@ -545,18 +538,18 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextColor(R.id.DataLine2, context.getColor(R.color.white));
         // OTA status
         OTAStatus otaStatus = new StoredData(context).getOTAStatus(VIN);
-        Boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
+        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.show_OTA_key), true);
         int dataLine = 0;
         if (displayOTA && otaStatus != null) {
             views.setTextViewText(R.id.DataLine1, "OTA Status:");
             String OTArefresh;
-            Long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context);
+            long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context);
             String currentUTCOTATime = otaStatus.getOTADateTime();
             if (currentUTCOTATime == null) {
                 OTArefresh = "Unknown";
             } else {
-                Long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+                long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
 
                 // If there's new information, display that data/time in a different color
                 if (currentOTATime > lastOTATime) {
@@ -595,7 +588,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        Boolean MachE = VIN.startsWith(new StoredData(context).getWidgetMode());
+        int fuelType = Utils.getFuelType(VIN);
 
         RemoteViews views = getWidgetView(context);
 
@@ -636,7 +629,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         updateTire(views, null, null, "", 1.0, R.id.lrtire);
         updateTire(views, null, null, "", 1.0, R.id.rrtire);
 
-        if (MachE) {
+        if (fuelType != Utils.FUEL_GAS) {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
             views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
             views.setImageViewResource(R.id.plug, R.drawable.plug_icon_gray);
@@ -657,7 +650,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void setImageBitmap(RemoteViews views, Drawable icon, int id) {
-        int size = (icon.getIntrinsicWidth() <= 96) ? icon.getIntrinsicWidth() : 96;
+        int size = Math.min(icon.getIntrinsicWidth(), 96);
         Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -683,7 +676,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private void updateLinkedApps(Context context, AppWidgetManager appWidgetManager, int appWidgetId, String VIN) {
         RemoteViews views = getWidgetView(context);
 
-        Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
+        boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {
             setAppBitmap(context, views, new StoredData(context).getLeftAppPackage(VIN), R.id.leftappbutton);
             setAppBitmap(context, views, new StoredData(context).getRightAppPackage(VIN), R.id.rightappbutton);
@@ -815,10 +808,9 @@ public class CarStatusWidget extends AppWidgetProvider {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
             this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
         } else if (action.equals(PROFILE_CLICK)) {
-            String alias = ProfileManager.changeProfile(context);
             MainActivity.updateWidget(context);
         } else if (action.equals(WIDGET_CLICK)) {
-            String activity = null;
+            String activity;
             switch (new StoredData(context).getWidgetMode()) {
                 case Utils.WORLD_MANUFACTURING_IDENTIFIER_BRONCO:
                     activity = ".BroncoMainActivity";
@@ -889,7 +881,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 CarStatus carStatus = new StoredData(context).getCarStatus(VIN);
                 if (!awaitingUpdate && carStatus != null && carStatus.getRemoteStartStatus() != null
                         && carStatus.getIgnition() != null && carStatus.getIgnition().equals("Off")) {
-                    if (carStatus.getRemoteStartStatus() == false) {
+                    if (!carStatus.getRemoteStartStatus()) {
                         remoteStart(context);
                     } else {
                         remoteStop(context);

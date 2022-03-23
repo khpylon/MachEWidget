@@ -24,7 +24,6 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -40,7 +39,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
 
-    private static Context context;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         // Only enable "Choose Linked Apps" if app buttons are enabled
-        Boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(this)
+        boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         menu.findItem(R.id.action_chooseapp).setEnabled(showAppLinks);
 
@@ -185,70 +184,65 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_login:
-                // Depending on whether profiles are being used, either start the profile manager or go straight to login screen
-                Boolean profiles = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
-                Intent intent = new Intent(this, profiles ? ProfileManager.class : LoginActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_refresh:
-                String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-                if (new StoredData(context).getLastUpdateElapsedTime() > 5 * 60 * 1000) {
-//                    StatusReceiver.cancelAlarm(context);
-                    StatusReceiver.nextAlarm(context, 5);
-                    Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
+        int id = item.getItemId();
+        if (id == R.id.action_login) {
+            // Depending on whether profiles are being used, either start the profile manager or go straight to login screen
+            boolean profiles = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+            Intent intent = new Intent(this, profiles ? ProfileManager.class : LoginActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.action_refresh) {
+            if (new StoredData(context).getLastUpdateElapsedTime() > 5 * 60 * 1000) {
+                StatusReceiver.nextAlarm(context, 5);
+                Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "An update occurred within the past 5 minutes.", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        } else if (id == R.id.action_chooseapp) {
+            Intent intent = new Intent(this, ChooseApp.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.action_ota_view) {
+            Intent intent = new Intent(this, OTAViewActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.action_copylog) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                String result = LogFile.copyLogFile(context);
+                if (result == null) {
+                    Toast.makeText(context, "Log file copied to Download folder.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context, "An update occurred within the past 5 minutes.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
                 }
-                return true;
-            case R.id.action_chooseapp:
-                intent = new Intent(this, ChooseApp.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_ota_view:
-                intent = new Intent(this, OTAViewActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_copylog:
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    String result = LogFile.copyLogFile(context);
-                    if (result == null) {
-                        Toast.makeText(context, "Log file copied to Download folder.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context, "Logging not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            case R.id.action_backup:
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    ZipManager.zipStuff(context);
-                    Toast.makeText(context, "Settings saved.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            case R.id.action_restore:
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("application/*");
-                    String[] mimeTypes = new String[]{"application/zip"};
-                    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                    restoreSettingsLauncher.launch(intent);
-                } else {
-                    Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-
-            case R.id.action_settings:
-                intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            default:
-                // Do nothing
+            } else {
+                Toast.makeText(context, "Logging not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        } else if (id == R.id.action_backup) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                ZipManager.zipStuff(context);
+                Toast.makeText(context, "Settings saved.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        } else if (id == R.id.action_restore) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/*");
+                String[] mimeTypes = new String[]{"application/zip"};
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                restoreSettingsLauncher.launch(intent);
+            } else {
+                Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -256,28 +250,21 @@ public class MainActivity extends AppCompatActivity {
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Channel name"; // getString(R.string.channel_name);
-            String description = "De-scription"; // getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        CharSequence name = "Channel name"; // getString(R.string.channel_name);
+        String description = "Description"; // getString(R.string.channel_description);
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        channel.setDescription(description);
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviors after this
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
     }
 
     public static Boolean checkBatteryOptimizations(Context context) {
         String packageName = context.getPackageName();
         PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
         return pm.isIgnoringBatteryOptimizations(packageName);
-    }
-
-    public static boolean checkInternetConnection() {
-        // Get Connectivity Manager
-        return checkInternetConnection(context);
     }
 
     public static boolean checkInternetConnection(Context context) {

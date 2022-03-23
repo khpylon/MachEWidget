@@ -49,56 +49,61 @@ public class StatusReceiver extends BroadcastReceiver {
                         (timeout - nowtime) / Millis, state, MainActivity.checkBatteryOptimizations(context)));
 
         // Check whether credentials are being saved
-        Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
                 .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
 
-        if (state.equals(Constants.STATE_INITIAL_STATE)) {
-            LogFile.d(mContext, MainActivity.CHANNEL_ID, "Initial state: how'd did the alarm go off (manual refresh)?");
-            cancelAlarm(context);
-            appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN);
-        } else if (state.equals(Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN)) {
-            if (savingCredentials) {
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
-                getAccess();
-                appInfo.incCounter(StoredData.STATUS_LOG_IN);
-            } else {
-                appInfo.setProgramState(VIN, Constants.STATE_INITIAL_STATE);
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Log-in required but credentials are not being saved: cancelling alarm");
+        switch (state) {
+            case Constants.STATE_INITIAL_STATE:
+                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Initial state: how'd did the alarm go off (manual refresh)?");
                 cancelAlarm(context);
-                appInfo.incCounter(StoredData.STATUS_LOG_OUT);
-            }
-        } else if (state.equals(Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN)) {
-            LogFile.d(mContext, MainActivity.CHANNEL_ID, "STILL need to refresh token");
-            getRefresh(appInfo.getRefreshToken(VIN));
-            appInfo.incCounter(StoredData.STATUS_UPDATED);
-        } else if (state.equals(Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS) ||
-                state.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            int delayInMillis = new Integer(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
-
-            // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
-            // the next update.
-            long calculation = (timeout - delayInMillis - 5 * Millis) - nowtime;
-            LogFile.d(mContext, MainActivity.CHANNEL_ID, "Calculating time as " + calculation);
-            if (timeout - delayInMillis - 5 * Millis < nowtime) {
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Need to refresh token");
+                appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN);
+                break;
+            case Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN:
+                if (savingCredentials) {
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
+                    getAccess();
+                    appInfo.incCounter(StoredData.STATUS_LOG_IN);
+                } else {
+                    appInfo.setProgramState(VIN, Constants.STATE_INITIAL_STATE);
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Log-in required but credentials are not being saved: cancelling alarm");
+                    cancelAlarm(context);
+                    appInfo.incCounter(StoredData.STATUS_LOG_OUT);
+                }
+                break;
+            case Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN:
+                LogFile.d(mContext, MainActivity.CHANNEL_ID, "STILL need to refresh token");
                 getRefresh(appInfo.getRefreshToken(VIN));
-            } else {
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Token good? Just grab info");
-                getStatus(appInfo.getAccessToken(VIN));
-                getOTAStatus(appInfo.getAccessToken(VIN));
-            }
-            appInfo.incCounter(StoredData.STATUS_UPDATED);
-        }
-        // Since everything above should cover all the states, we should never get here
-        else {
-            if (savingCredentials) {
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Trying to login");
-                getAccess();
-            } else {
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
-            }
-            appInfo.incCounter(StoredData.STATUS_UNKNOWN);
+                appInfo.incCounter(StoredData.STATUS_UPDATED);
+                break;
+            case Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS:
+            case Constants.STATE_HAVE_TOKEN_AND_STATUS:
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+                int delayInMillis = Integer.parseInt(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
+
+                // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
+                // the next update.
+                long calculation = (timeout - delayInMillis - 5 * Millis) - nowtime;
+                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Calculating time as " + calculation);
+                if (timeout - delayInMillis - 5 * Millis < nowtime) {
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Need to refresh token");
+                    getRefresh(appInfo.getRefreshToken(VIN));
+                } else {
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Token good? Just grab info");
+                    getStatus(appInfo.getAccessToken(VIN));
+                    getOTAStatus(appInfo.getAccessToken(VIN));
+                }
+                appInfo.incCounter(StoredData.STATUS_UPDATED);
+                break;
+            // Since everything above should cover all the states, we should never get here
+            default:
+                if (savingCredentials) {
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Trying to login");
+                    getAccess();
+                } else {
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
+                }
+                appInfo.incCounter(StoredData.STATUS_UNKNOWN);
+                break;
         }
 
         LogFile.d(mContext, MainActivity.CHANNEL_ID,
@@ -192,7 +197,7 @@ public class StatusReceiver extends BroadcastReceiver {
 
     public static void nextAlarm(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        int delay = new Integer(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10"));
+        int delay = Integer.parseInt(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10"));
         if (delay != 0) {
             nextAlarm(context, delay * 60);
         }
@@ -203,7 +208,6 @@ public class StatusReceiver extends BroadcastReceiver {
     }
 
     public static void nextAlarm(Context context, int delay) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(delay);
         String timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US));
         LogFile.i(context, MainActivity.CHANNEL_ID, "StatusReceiver: next status alarm at " + timeText);
@@ -228,7 +232,6 @@ public class StatusReceiver extends BroadcastReceiver {
     // If no alarm is pending, start one
     @SuppressLint("NewApi")
     public static void initateAlarm(Context context) {
-        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (PendingIntent.getBroadcast(context, 0,
                 getIntent(context), PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
             nextAlarm(context);

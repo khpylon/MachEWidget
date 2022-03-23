@@ -8,13 +8,10 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import androidx.core.content.FileProvider;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,20 +25,20 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipManager {
     private static final String TAG = "ZipManager";
-    private static int BUFFER_SIZE = 6 * 1024;
+    private static final int BUFFER_SIZE = 6 * 1024;
 
     public static File zip(String[] files, String zipFile) throws IOException {
-        BufferedInputStream origin = null;
+        BufferedInputStream origin;
         File fred = new File(zipFile);
         try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(fred)))) {
             try {
-                byte data[] = new byte[BUFFER_SIZE];
+                byte[] data = new byte[BUFFER_SIZE];
 
-                for (int i = 0; i < files.length; i++) {
-                    FileInputStream fi = new FileInputStream(files[i]);
+                for (String file : files) {
+                    FileInputStream fi = new FileInputStream(file);
                     origin = new BufferedInputStream(fi, BUFFER_SIZE);
                     try {
-                        ZipEntry entry = new ZipEntry(files[i].substring(files[i].lastIndexOf("/") + 1));
+                        ZipEntry entry = new ZipEntry(file.substring(file.lastIndexOf("/") + 1));
                         out.putNextEntry(entry);
                         int count;
                         while ((count = origin.read(data, 0, BUFFER_SIZE)) != -1) {
@@ -66,7 +63,7 @@ public class ZipManager {
             ZipInputStream zin = new ZipInputStream(new FileInputStream(
                     context.getContentResolver().openFileDescriptor(zipFile, "r").getFileDescriptor()));
             try {
-                ZipEntry ze = null;
+                ZipEntry ze;
                 while ((ze = zin.getNextEntry()) != null) {
                     String path = fromDir + File.separator + ze.getName();
 
@@ -102,41 +99,36 @@ public class ZipManager {
         String zipfile = new File(dataDir, "prefs.zip").toString();
 
         // Get all the files we need to zip
-        File fromDir = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            fromDir = new File(dataDir, "shared_prefs");
-        }
+        File fromDir;
+        fromDir = new File(dataDir, "shared_prefs");
         ArrayList<String> fileList = new ArrayList<>();
         for (File from : fromDir.listFiles()) {
             fileList.add(from.toString());
         }
-        String[] fromFiles = fileList.toArray(new String[fileList.size()]);
+        String[] fromFiles = fileList.toArray(new String[0]);
 
         // Create the zip file
-        File zipfileName = null;
+        File zipfileName;
         try {
             zipfileName = ZipManager.zip(fromFiles, zipfile);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in ZipManager.zipStuff(): ", e);
+            return;
         }
 
-        InputStream inputStream = null;
+        InputStream inputStream ;
         try {
             inputStream = new FileInputStream(zipfileName);
         Uri fileCollection = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-            fileCollection = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                    ? MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-                    : MediaStore.Downloads.EXTERNAL_CONTENT_URI;
+            fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
         }
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Downloads.DISPLAY_NAME, "prefs.zip");
         contentValues.put(MediaStore.Downloads.MIME_TYPE, "application/zip");
         ContentResolver resolver = context.getContentResolver();
+
         Uri uri = resolver.insert(fileCollection, contentValues);
-//        if (uri == null) {
-//            throw new IOException("Couldn't create MediaStore Entry");
-//        }
         OutputStream outStream = resolver.openOutputStream(uri);
         int len;
         byte[] buffer = new byte[65536];
@@ -149,8 +141,5 @@ public class ZipManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-
 }

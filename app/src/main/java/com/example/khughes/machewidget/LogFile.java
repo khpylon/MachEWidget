@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -41,7 +40,7 @@ public class LogFile {
     }
 
     public static void appendToLogFile(Context context, String tag, String message) {
-        Boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
+        boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.logging_key), false);
         if (verbose && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             try {
@@ -83,9 +82,7 @@ public class LogFile {
             InputStream inputStream = new FileInputStream(logFile);
             Uri fileCollection = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                fileCollection = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                        ? MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-                        : MediaStore.Downloads.EXTERNAL_CONTENT_URI;
+                fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
             }
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.Downloads.DISPLAY_NAME, LOGFILENAME);

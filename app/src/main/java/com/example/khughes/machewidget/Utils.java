@@ -14,7 +14,7 @@ public class Utils {
 
     public static final int LINE_SERIES_START_INDEX = 5 - 1;
     public static final int LINE_SERIES_END_INDEX = 7;
-    //    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
+//    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
 //    public static final String LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
 //    public static final String LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
 //    public static final String LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
@@ -38,10 +38,34 @@ public class Utils {
     public static final String LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
     public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
 
-    public static final String F150_REGULAR_CAB = "F-150 Regular Cab";
-    public static final String F150_SUPER_CAB = "F-150 SuperCab";
-    public static final String F150_SUPER_CREW = "F-150 SuperCrew";
-    public static final String F150_RAPTOR = "F-150 Raptor";
+    // 1FT F W1E D XMFB06341
+    public static final int FUEL_TYPE_START_INDEX = 8 - 1;
+    public static final int FUEL_TYPE_END_INDEX = 8;
+    public static final String HYBRID_TRUCK_2_5_LITER = "3";
+    public static final String ELEC_TRUCK_EXT_BATT_REAR_MOTOR = "7";
+    public static final String HYBRID_TRUCK_3_5_LITER = "D";
+    public static final String ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
+    public static final String ELEC_TRUCK_STD_BATT_DUAL_MOTOR = "L";
+    public static final String ELEC_TRUCK_STD_BATT_REAR_MOTOR = "M";
+    public static final String ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
+    public static final String ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
+    public static final String ELEC_TRUCK_EXT_BATT_DUAL_MOTOR = "V";
+    public static final String ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
+    public static final String HYBRID_TRUCK_3_3_LITER = "W";
+    public static final String PHEV_TRUCK_3_0_LITER = "Y";
+    public static final String PHEV_TRUCK_2_5_LITER = "Z";
+    public static final String ELEC_CAR_EXT_BATT_REAR_MOTOR = "7";
+    public static final String ELEC_CAR_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
+    public static final String ELEC_CAR_STD_BATT_REAR_MOTOR = "M";
+    public static final String ELEC_CAR_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
+    public static final String ELEC_CAR_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
+    public static final String ELEC_CAR_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
+
+    public static final int FUEL_UNKNOWN = 0;
+    public static final int FUEL_GAS = FUEL_UNKNOWN + 1;
+    public static final int FUEL_HYBRID = FUEL_GAS + 1;
+    public static final int FUEL_PHEV = FUEL_HYBRID + 1;
+    public static final int FUEL_ELECTRIC = FUEL_PHEV + 1;
 
     public static boolean isMachE(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
@@ -58,6 +82,64 @@ public class Utils {
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_BRONCO);
     }
 
+    private static final Set<String> fuelElectric;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(ELEC_TRUCK_STD_BATT_DUAL_MOTOR);
+        tmpSet.add(ELEC_TRUCK_EXT_BATT_REAR_MOTOR);
+        tmpSet.add(ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR);
+        tmpSet.add(ELEC_TRUCK_STD_BATT_REAR_MOTOR);
+        tmpSet.add(ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
+        tmpSet.add(ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
+        tmpSet.add(ELEC_TRUCK_EXT_BATT_DUAL_MOTOR);
+        tmpSet.add(ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR);
+        fuelElectric = tmpSet;
+    }
+
+    private static final Set<String> fuelHybrid;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(HYBRID_TRUCK_2_5_LITER);
+        tmpSet.add(HYBRID_TRUCK_3_3_LITER);
+        tmpSet.add(HYBRID_TRUCK_3_5_LITER);
+        fuelHybrid = tmpSet;
+    }
+
+    private static final Set<String> fuelPHEV;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(PHEV_TRUCK_2_5_LITER);
+        tmpSet.add(PHEV_TRUCK_3_0_LITER);
+        fuelPHEV = tmpSet;
+    }
+
+    public static int getFuelType(String VIN) {
+        // Default is a Mach-E
+        if (VIN == null || VIN.equals("") || isMachE(VIN)) {
+            return FUEL_ELECTRIC;
+        }
+        // Otherwise check the VIN
+        else if (isF150(VIN) || isBronco(VIN)) {
+            String fuelType = VIN.substring(FUEL_TYPE_START_INDEX, FUEL_TYPE_END_INDEX);
+            if (fuelElectric.contains(fuelType)) {
+                return FUEL_ELECTRIC;
+            } else if (fuelHybrid.contains(fuelType)) {
+                return FUEL_HYBRID;
+            } else if (fuelPHEV.contains(fuelType)) {
+                return FUEL_PHEV;
+            } else {
+                return FUEL_GAS;
+            }
+        }
+        // Uh-oh: don't fina anything to match
+        else {
+            return FUEL_UNKNOWN;
+        }
+    }
+
     public static String getWMI(String VIN) {
         if (isF150(VIN)) {
             return WORLD_MANUFACTURING_IDENTIFIER_F150;
@@ -68,35 +150,35 @@ public class Utils {
         }
     }
 
-    private static final Set<String> regularCabs;
+    private static final Set<String> f150RegularCabs;
 
     static {
         Set<String> tmpSet = new HashSet<>();
         tmpSet.add(LINE_SERIES_F150_REGULAR_4X2);
         tmpSet.add(LINE_SERIES_F150_REGULAR_4X4);
-        regularCabs = tmpSet;
+        f150RegularCabs = tmpSet;
     }
 
     public static boolean isF150RegularCab(String VIN) {
         String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return regularCabs.contains(lineSeries);
+        return f150RegularCabs.contains(lineSeries);
     }
 
-    private static final Set<String> superCabs;
+    private static final Set<String> f150SuperCabs;
 
     static {
         Set<String> tmpSet = new HashSet<>();
         tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X2);
         tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X4);
-        superCabs = tmpSet;
+        f150SuperCabs = tmpSet;
     }
 
     public static boolean isF150SuperCab(String VIN) {
         String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return superCabs.contains(lineSeries);
+        return f150SuperCabs.contains(lineSeries);
     }
 
-    private static final Set<String> superCrews;
+    private static final Set<String> f150SuperCrews;
 
     static {
         Set<String> tmpSet = new HashSet<>();
@@ -105,31 +187,17 @@ public class Utils {
         tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_POLICE);
         tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X2_SSV);
         tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_SSV);
-        superCrews = tmpSet;
+        f150SuperCrews = tmpSet;
     }
 
     public static boolean isF150SuperCrew(String VIN) {
         String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return superCrews.contains(lineSeries);
+        return f150SuperCrews.contains(lineSeries);
     }
 
     public static boolean isF150Raptor(String VIN) {
         String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
         return lineSeries.equals(LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR);
-    }
-
-    public static String identifyF150Line(String VIN) {
-        if (isF150RegularCab(VIN)) {
-            return F150_REGULAR_CAB;
-        } else if (isF150SuperCab(VIN)) {
-            return F150_SUPER_CAB;
-        } else if (isF150SuperCrew(VIN)) {
-            return F150_SUPER_CREW;
-        } else if (isF150Raptor(VIN)) {
-            return F150_RAPTOR;
-        } else {
-            return "";
-        }
     }
 
     public static final String WIREFRAME = "wireframe";
@@ -229,7 +297,6 @@ public class Utils {
         tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor);
         broncobase4x4Drawables = tmpMap;
     }
-
 
     // Get the set of drawables for a particular style of F-150
     public static Map<String, Integer> getVehicleDrawables(String VIN) {

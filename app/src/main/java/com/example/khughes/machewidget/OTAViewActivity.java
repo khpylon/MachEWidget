@@ -11,14 +11,11 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -80,11 +77,11 @@ public class OTAViewActivity extends AppCompatActivity {
             }
             return cal.toInstant().toEpochMilli();
         } else {
-            return Long.valueOf(lastOTATime);
+            return Long.parseLong(lastOTATime);
         }
     }
 
-    private Long currentOTATime = Long.valueOf(0);
+    private long currentOTATime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,20 +134,16 @@ public class OTAViewActivity extends AppCompatActivity {
         }
         mWebView.loadData(encodedHtml, "text/html", "base64");
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        Long lastOTATime = getLastOTATimeInMillis(getApplicationContext());
+        long lastOTATime = getLastOTATimeInMillis(getApplicationContext());
 
         Button clear = findViewById(R.id.button);
         clear.setEnabled(currentOTATime > lastOTATime);
-        clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (currentOTATime > 0) {
-                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    sharedPref.edit().putString(context.getResources().getString(R.string.last_ota_time), currentOTATime.toString()).apply();
-                    MainActivity.updateWidget(context);
-                    clear.setEnabled(false);
-                }
+        clear.setOnClickListener(view -> {
+            if (currentOTATime > 0) {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                sharedPref.edit().putString(context.getResources().getString(R.string.last_ota_time), Long.valueOf(currentOTATime).toString()).apply();
+                MainActivity.updateWidget(context);
+                clear.setEnabled(false);
             }
         });
     }

@@ -5,17 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 import android.database.DataSetObserver;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,9 +21,6 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -50,13 +41,13 @@ public class ChooseApp extends AppCompatActivity {
             list.setAdapter(customAdapter);
             list.setOnItemClickListener((adapterView, view, i, l) -> {
                 RadioButton right = findViewById(R.id.rightIcon);
-                Boolean rightButton = right.isChecked();
+                boolean rightButton = right.isChecked();
                 AppList app = arrayList.get(i);
                 StoredData appInfo = new StoredData(getApplicationContext());
-                if (rightButton == false) {
-                    appInfo.setLeftAppPackage(VIN,app.packageName);
+                if (!rightButton) {
+                    appInfo.setLeftAppPackage(VIN, app.packageName);
                 } else {
-                    appInfo.setRightAppPackage(VIN,app.packageName);
+                    appInfo.setRightAppPackage(VIN, app.packageName);
                 }
                 MainActivity.updateWidget(getApplicationContext());
                 finish();
@@ -65,18 +56,16 @@ public class ChooseApp extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Error")
                     .setMessage("No other apps were found.")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Continue with delete operation
-                            finish();
-                        }
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        // Continue with delete operation
+                        finish();
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
     }
 
-    private class CustomAdapter implements ListAdapter {
+    private static class CustomAdapter implements ListAdapter {
         ArrayList<AppList> arrayList;
         Context context;
 
@@ -128,14 +117,14 @@ public class ChooseApp extends AppCompatActivity {
             AppList subjectData = arrayList.get(position);
             if (convertView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                convertView = layoutInflater.inflate(R.layout.applist_row, null);
+                convertView = layoutInflater.inflate(R.layout.applist_row, parent, false);
                 TextView tittle = convertView.findViewById(R.id.title);
                 TextView app = convertView.findViewById(R.id.appname);
-                ImageView imag = convertView.findViewById(R.id.list_image);
+                ImageView image = convertView.findViewById(R.id.list_image);
 
                 tittle.setText(subjectData.appName);
                 app.setText(subjectData.packageName);
-                imag.setImageDrawable(subjectData.icon);
+                image.setImageDrawable(subjectData.icon);
             }
             return convertView;
         }
@@ -157,11 +146,11 @@ public class ChooseApp extends AppCompatActivity {
     }
 
     private ArrayList<AppList> getApps(Context context) {
-        ArrayList<AppList> arrayList = new ArrayList<AppList>();
+        ArrayList<AppList> arrayList = new ArrayList<>();
         List<String> packages = Arrays.asList(getResources().getStringArray(R.array.packages));
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Boolean noFilter = sharedPref.getBoolean(context.getResources().getString(R.string.show_all_apps_key), false);
+        boolean noFilter = sharedPref.getBoolean(context.getResources().getString(R.string.show_all_apps_key), false);
 
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
 
@@ -180,37 +169,28 @@ public class ChooseApp extends AppCompatActivity {
 
         // Loop through the ResolveInfo list
         for (ResolveInfo resolveInfo : resolveInfoList) {
-            // Get the ActivityInfo from current ResolveInfo
-            ActivityInfo activityInfo = resolveInfo.activityInfo;
-
             String packName = resolveInfo.activityInfo.applicationInfo.packageName;
-            Boolean isSystemPackage = (resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
+            boolean isSystemPackage = (resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
 
             // If this is not a system app package
-            if ((noFilter == true && !isSystemPackage) ||
-                    (noFilter == false && packages.contains(packName))) {
+            if ((noFilter && !isSystemPackage) ||
+                    (!noFilter && packages.contains(packName))) {
                 ApplicationInfo appInfo = resolveInfo.activityInfo.applicationInfo;
                 CharSequence appName = getPackageManager().getApplicationLabel(appInfo);
                 Drawable icon = context.getPackageManager().getApplicationIcon(appInfo);
                 arrayList.add(new AppList(appName.toString(), packName, icon));
-                // Add the non system package to the listpackageNames.add(activityInfo.applicationInfo.packageName);
             }
         }
 
         // Sort by names
-        arrayList.sort(new Comparator<AppList>() {
-            @Override
-            public int compare(AppList subjectData, AppList t1) {
-                return subjectData.appName.compareTo(t1.appName);
-            }
-        });
+        arrayList.sort(Comparator.comparing(subjectData -> subjectData.appName));
 
         // Add an entry to the top of the list to ley user remove the current app.
         arrayList.add(0, new AppList("Remove current app", null, null));
         return arrayList;
     }
 
-    private class AppList {
+    private static class AppList {
         String appName;
         String packageName;
         Drawable icon;

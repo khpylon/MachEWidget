@@ -6,15 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class Notifications extends BroadcastReceiver {
     private static final int OTA_NOTIFICATION = 935;

@@ -28,9 +28,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ProfileManager extends AppCompatActivity {
-
-    private static final int PROFILEREQUEST = 0;
-
     private static final String BLANK_VIN = "Unused Entry";
 
     private ArrayList<Profile> arrayList;
@@ -70,7 +67,6 @@ public class ProfileManager extends AppCompatActivity {
                             new StoredData(getApplicationContext()).addProfile(VIN, alias);
                             sortProfiles();
                             adapter.notifyDataSetChanged();
-                            return;
                         }
                     }
                 }
@@ -85,7 +81,7 @@ public class ProfileManager extends AppCompatActivity {
         arrayList = getProfiles(this);
         sortProfiles();
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         adapter = new CustomAdapter(arrayList);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -93,12 +89,7 @@ public class ProfileManager extends AppCompatActivity {
     }
 
     private void sortProfiles() {
-        arrayList.sort(new Comparator<Profile>() {
-            @Override
-            public int compare(Profile p1, Profile p2) {
-                return p1.getVIN().compareTo(p2.getVIN());
-            }
-        });
+        arrayList.sort(Comparator.comparing(Profile::getVIN));
     }
 
     private class CustomAdapter extends RecyclerView.Adapter<ProfileManager.ViewHolder> {
@@ -112,9 +103,7 @@ public class ProfileManager extends AppCompatActivity {
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
             View listItem = layoutInflater.inflate(R.layout.profiles_row, parent, false);
-            ViewHolder viewHolder = new ViewHolder(listItem);
-
-            return viewHolder;
+            return new ViewHolder(listItem);
         }
 
         @Override
@@ -122,29 +111,26 @@ public class ProfileManager extends AppCompatActivity {
             final Profile profile = arrayList.get(position);
             holder.profileNameView.setText(profile.getProfileName());
             holder.VINView.setText(profile.getVIN());
-            holder.delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Profile p = arrayList.get(position);
+            holder.delete.setOnClickListener(view -> {
+                Profile p = arrayList.get(position);
 
-                    // Delete is only valid when there is a VIN defined
-                    if (!p.getVIN().equals("")) {
+                // Delete is only valid when there is a VIN defined
+                if (!p.getVIN().equals("")) {
 
-                        // If this profile matches the active VIN, clear the active VIN
-                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        String VIN = sharedPref.getString(getApplicationContext().getResources().getString(R.string.VIN_key), "");
-                        if (p.getVIN().equals(VIN)) {
-                            sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), "").apply();
-                        }
-
-                        // Remove thh entry
-                        new StoredData(getApplicationContext()).removeProfile(VIN);
-
-                        // Replace this list entry with a blank one
-                        arrayList.set(position, getBlankProfile());
-                        sortProfiles();
-                        adapter.notifyDataSetChanged();
+                    // If this profile matches the active VIN, clear the active VIN
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    String VIN = sharedPref.getString(getApplicationContext().getResources().getString(R.string.VIN_key), "");
+                    if (p.getVIN().equals(VIN)) {
+                        sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), "").apply();
                     }
+
+                    // Remove thh entry
+                    new StoredData(getApplicationContext()).removeProfile(VIN);
+
+                    // Replace this list entry with a blank one
+                    arrayList.set(position, getBlankProfile());
+                    sortProfiles();
+                    adapter.notifyDataSetChanged();
                 }
             });
             holder.relativeLayout.setOnClickListener((i) -> {
@@ -165,17 +151,17 @@ public class ProfileManager extends AppCompatActivity {
     }
 
     private static class ViewHolder extends RecyclerView.ViewHolder { //implements View.OnClickListener {
-        private TextView profileNameView;
-        private TextView VINView;
-        private ImageView delete;
-        private RelativeLayout relativeLayout;
+        private final TextView profileNameView;
+        private final TextView VINView;
+        private final ImageView delete;
+        private final RelativeLayout relativeLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            profileNameView = (TextView) itemView.findViewById(R.id.alias);
-            VINView = (TextView) itemView.findViewById(R.id.VIN);
+            profileNameView = itemView.findViewById(R.id.alias);
+            VINView = itemView.findViewById(R.id.VIN);
             delete = itemView.findViewById(R.id.profiledelete);
-            relativeLayout = (RelativeLayout) itemView.findViewById(R.id.profile_rowlayout);
+            relativeLayout = itemView.findViewById(R.id.profile_rowlayout);
         }
     }
 
@@ -183,7 +169,7 @@ public class ProfileManager extends AppCompatActivity {
         ArrayList<Profile> profiles = new ArrayList<>();
 
         StoredData appInfo = new StoredData(context);
-        for(String VIN: appInfo.getProfiles()) {
+        for (String VIN : appInfo.getProfiles()) {
             profiles.add(new Profile(VIN, appInfo.getProfileName(VIN)));
         }
 
@@ -195,27 +181,5 @@ public class ProfileManager extends AppCompatActivity {
 
     private Profile getBlankProfile() {
         return new Profile(BLANK_VIN, "");
-    }
-
-    private static int ix = 0;
-
-    public static String changeProfile(Context context) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
-        ArrayList<String> profiles = new StoredData(context).getProfiles();
-
-        StoredData appInfo = new StoredData(context);
-        for(String p: appInfo.getProfiles()) {
-            if(p.equals(VIN)) {
-//                int index = (profiles.indexOf(p) + 1) % profiles.size();
-                ix = (ix + 1) % profiles.size();
-                int index = ix;
-
-                VIN = profiles.get(index);
-                sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), VIN).apply();
-                return appInfo.getProfileName(VIN);
-            }
-        }
-        return null;
     }
 }

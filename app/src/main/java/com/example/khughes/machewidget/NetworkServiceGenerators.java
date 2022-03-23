@@ -2,8 +2,6 @@ package com.example.khughes.machewidget;
 
 import android.content.Context;
 
-import androidx.preference.PreferenceManager;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;

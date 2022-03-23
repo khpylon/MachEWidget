@@ -13,16 +13,13 @@ import org.apache.commons.compress.utils.Charsets;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Random;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
@@ -112,7 +109,7 @@ public class StoredData {
 
     public ArrayList<String> getProfiles() {
         SharedPreferences pref = mContext.getSharedPreferences(VINLIST, MODE_PRIVATE);
-        return new ArrayList<String>(pref.getAll().keySet());
+        return new ArrayList<>(pref.getAll().keySet());
     }
 
     private void setProfiles(ArrayList<String> profiles) {
@@ -149,7 +146,7 @@ public class StoredData {
             commitWait(mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().remove(VIN));
 
             // Remove the actual file from storage
-            File f = new File (mContext.getDataDir(), "/shared_prefs");;
+            File f = new File(mContext.getDataDir(), "/shared_prefs");
             f = new File(f, VIN + ".xml");
             f.delete();
         }
@@ -161,15 +158,14 @@ public class StoredData {
         SharedPreferences.Editor edit = prefs.edit();
 
         // Keep the latest version info
-        File f = new File (mContext.getDataDir(), "/shared_prefs");
-        String t = f.toPath().toString();
-        for (File m: f.listFiles()) {
+        File f = new File(mContext.getDataDir(), "/shared_prefs");
+        String t;
+        for (File m : f.listFiles()) {
             t = m.getName().toUpperCase();
-            if(t.toUpperCase().startsWith("3FMT") && t.toUpperCase().endsWith(".XML")) {
+            if (t.toUpperCase().startsWith("3FMT") && t.toUpperCase().endsWith(".XML")) {
                 System.out.println(t);
             }
         }
-        String version = getLatestVersion();
         for (String key : prefs.getAll().keySet()) {
             // This key should not be present anyway, but just in case it is don't remove it
             if (!key.equals(StoredData.LATESTVERSION)) {
@@ -182,13 +178,12 @@ public class StoredData {
 
     // Getters/setters for specific attributes
 
-    private boolean commitWait(SharedPreferences.Editor edit) {
+    private void commitWait(SharedPreferences.Editor edit) {
         for (int i = 0; i < 10; ++i) {
             if (edit.commit()) {
-                return true;
+                return;
             }
         }
-        return false;
     }
 
     public void setProfileName(String VIN, String name) {
@@ -381,7 +376,7 @@ public class StoredData {
 
     public Double getLastFuelLevel(String VIN) {
         SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return new Float(pref.getFloat(LASTFUELLEVEL,0)).doubleValue();
+        return Float.valueOf(pref.getFloat(LASTFUELLEVEL, 0)).doubleValue();
     }
 
     public void setLastFuelLevel(String VIN, Double level) {
@@ -392,7 +387,7 @@ public class StoredData {
 
     public Double getLastDTE(String VIN) {
         SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return new Float(pref.getFloat(LASTDTE, 0)).doubleValue();
+        return Float.valueOf(pref.getFloat(LASTDTE, 0)).doubleValue();
     }
 
     public void setLastDTE(String VIN, Double distance) {
@@ -423,7 +418,7 @@ public class StoredData {
         commitWait(edit);
     }
 
-    private void createPassword(String VIN) {
+    private void createPassword() {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
         if (!pref.contains(PASSWORD)) {
             byte[] array = new byte[64];
@@ -436,17 +431,17 @@ public class StoredData {
         String value = "";
 
         // Just in case, make sure we're supposed to save this
-        Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
                 .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
         if (savingCredentials) {
-            createPassword(VIN);
+            createPassword();
             SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
             String password = pref.getString(PASSWORD, null);
             pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
             String cipher = pref.getString(tag, null);
             if (password != null && cipher != null) {
                 try {
-                    value = NetworkCalls.decrypt(mContext, password.toCharArray(), cipher);
+                    value = NetworkCalls.decrypt(password.toCharArray(), cipher);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -458,16 +453,16 @@ public class StoredData {
     private void setCryptoString(String VIN, String tag, String value) {
 
         // Just in case, make sure we're supposed to save this
-        Boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
                 .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
         if (savingCredentials) {
-            createPassword(VIN);
+            createPassword();
             SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
             String password = pref.getString(PASSWORD, null);
             pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
             if (password != null) {
                 try {
-                    String cipher = NetworkCalls.encrypt(mContext, password.toCharArray(), value);
+                    String cipher = NetworkCalls.encrypt(password.toCharArray(), value);
                     commitWait(pref.edit().putString(tag, cipher));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -478,7 +473,7 @@ public class StoredData {
 
     private void clearCryptoString(String VIN, String tag) {
         SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        if(pref.contains(tag)) {
+        if (pref.contains(tag)) {
             commitWait(pref.edit().remove(tag));
         }
     }
@@ -541,12 +536,11 @@ public class StoredData {
         commitWait(edit);
     }
 
-    public int incCounter(String key) {
+    public void incCounter(String key) {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         int value = pref.getInt(key, 0) + 1;
         commitWait(edit.putInt(key, value));
-        return value;
     }
 
 

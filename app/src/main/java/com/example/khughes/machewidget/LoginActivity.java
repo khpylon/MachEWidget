@@ -1,6 +1,5 @@
 package com.example.khughes.machewidget;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private String VIN;
     private String alias;
-    private Button login;
 
     private void updateDisclamer(TextView view, boolean saved) {
         if (saved) {
@@ -73,17 +69,14 @@ public class LoginActivity extends AppCompatActivity {
 
         Switch credentials = findViewById(R.id.storeCredentials);
         credentials.setChecked(savingCredentials);
-        credentials.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton button, boolean value) {
-                savingCredentials = value;
-                sharedPref.edit().putBoolean(context.getResources().getString(R.string.save_credentials_key), value).commit();
-                if (savingCredentials == false) {
-                    new StoredData(context).clearUsernameAndPassword();
-                }
-                fingerprint.setVisibility(View.GONE);
-                updateDisclamer(disclaimerView, savingCredentials);
+        credentials.setOnCheckedChangeListener((button, value) -> {
+            savingCredentials = value;
+            sharedPref.edit().putBoolean(context.getResources().getString(R.string.save_credentials_key), value).commit();
+            if (!savingCredentials) {
+                new StoredData(context).clearUsernameAndPassword();
             }
+            fingerprint.setVisibility(View.GONE);
+            updateDisclamer(disclaimerView, savingCredentials);
         });
 
         updateDisclamer(disclaimerView, savingCredentials);
@@ -114,20 +107,24 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             }
-            aliasWidget.getEditText().setText(alias);
+            if (aliasWidget != null && aliasWidget.getEditText() != null) {
+                aliasWidget.getEditText().setText(alias);
+            }
             VIN = getIntent().getStringExtra(VINIDENTIFIER);
         } else {
             VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         }
 
         if (VIN != null && !VIN.equals("")) {
-            VINWidget.getEditText().setText(VIN);
+            if (VINWidget != null && VINWidget.getEditText() != null) {
+                VINWidget.getEditText().setText(VIN);
+            }
         }
 
         // If the user has stored credentials, allow to reuse if they have registered a fingerprint
         if (savingCredentials) {
-            final Boolean fingerprintHardware;
-            final Boolean fingerprintSaved;
+            final boolean fingerprintHardware;
+            final boolean fingerprintSaved;
             BiometricManager biometricManager = androidx.biometric.BiometricManager.from(context);
             switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
                 // We have everything we need
@@ -141,6 +138,9 @@ public class LoginActivity extends AppCompatActivity {
                     fingerprintSaved = false;
                     break;
                 // No fingerprint scanner
+                case BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED:
+                case BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED:
+                case BiometricManager.BIOMETRIC_STATUS_UNKNOWN:
                 case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
                 case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
                 default:
@@ -179,7 +179,8 @@ public class LoginActivity extends AppCompatActivity {
                     // There is a fingerprint registered
                     if (fingerprintSaved) {
                         // As long as the user didn't enter a new VIN, then look for a fingerprint match
-                        if (VIN.equals(VINWidget.getEditText().getText().toString())) {
+                        if (VINWidget != null && VINWidget.getEditText() != null &&
+                                VIN.equals(VINWidget.getEditText().getText().toString())) {
                             biometricPrompt.authenticate(new BiometricPrompt.PromptInfo.Builder().setTitle("Fingerprint required.")
                                     .setDescription("Use your fingerprint to authenticate.").setNegativeButtonText("Cancel").build());
                         } else {
@@ -194,47 +195,49 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-        login = findViewById(R.id.login);
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        Button login = findViewById(R.id.login);
+        login.setOnClickListener(view -> {
+            if (usernameWidget == null || usernameWidget.getEditText() == null ||
+                    passwordWidget == null || passwordWidget.getEditText() == null ||
+                    VINWidget == null || VINWidget.getEditText() == null) {
+                return;
+            }
 
-                String username = usernameWidget.getEditText().getText().toString();
-                String password = passwordWidget.getEditText().getText().toString();
-                VIN = VINWidget.getEditText().getText().toString();
+            String username = usernameWidget.getEditText().getText().toString();
+            String password = passwordWidget.getEditText().getText().toString();
+            VIN = VINWidget.getEditText().getText().toString();
 
-                // Only allow no alias if there are no profiles or the only profile matches this VIN
-                if (profilesActive) {
-                    String alias = aliasWidget.getEditText().getText().toString();
-                    if (alias.length() == 0) {
-                        // 1) there are no profiles
-                        if ((profiles.size() == 1 && !profiles.get(0).getVIN().equals(VIN)) || profiles.size() > 1) {
-                            Toast.makeText(getApplicationContext(), "Please enter a profile name.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-
-                    // Check if alias exists with a different profile
-                    if (alias.length() > 0) {
-                        Profile match = profiles.stream().filter(s -> s.getProfileName().equals(alias) && !s.getVIN().equals(VIN)).findAny().orElse(null);
-                        if (match != null) {
-                            Toast.makeText(getApplicationContext(), "The profile name is already in use.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+            // Only allow no alias if there are no profiles or the only profile matches this VIN
+            if (profilesActive && aliasWidget != null && aliasWidget.getEditText() != null) {
+                String alias = aliasWidget.getEditText().getText().toString();
+                if (alias.length() == 0) {
+                    // 1) there are no profiles
+                    if ((profiles.size() == 1 && !profiles.get(0).getVIN().equals(VIN)) || profiles.size() > 1) {
+                        Toast.makeText(getApplicationContext(), "Please enter a profile name.", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                 }
 
-                if (username.length() == 0) {
-                    Toast.makeText(getApplicationContext(), "Please enter a username.", Toast.LENGTH_SHORT).show();
-                } else if (password.length() == 0) {
-                    Toast.makeText(getApplicationContext(), "Please enter a password.", Toast.LENGTH_SHORT).show();
-                } else if (VIN.length() != 17) {
-                    Toast.makeText(getApplicationContext(), "Please enter a valid VIN.", Toast.LENGTH_SHORT).show();
-                } else {
-                    appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
-                    sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
-                    getAccess(username, password);
+                // Check if alias exists with a different profile
+                if (alias.length() > 0) {
+                    Profile match = profiles.stream().filter(s -> s.getProfileName().equals(alias) && !s.getVIN().equals(VIN)).findAny().orElse(null);
+                    if (match != null) {
+                        Toast.makeText(getApplicationContext(), "The profile name is already in use.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
+            }
+
+            if (username.length() == 0) {
+                Toast.makeText(getApplicationContext(), "Please enter a username.", Toast.LENGTH_SHORT).show();
+            } else if (password.length() == 0) {
+                Toast.makeText(getApplicationContext(), "Please enter a password.", Toast.LENGTH_SHORT).show();
+            } else if (VIN.length() != 17) {
+                Toast.makeText(getApplicationContext(), "Please enter a valid VIN.", Toast.LENGTH_SHORT).show();
+            } else {
+                appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
+                sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
+                getAccess(username, password);
             }
         });
     }
@@ -249,7 +252,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
-                String xx = bb.getString("action");
                 String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Access: " + action);
                 appInfo.setProgramState(VIN, action);
@@ -302,7 +304,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Status retrieved successfully.", Toast.LENGTH_SHORT).show();
                     Intent data = new Intent();
                     data.putExtra(VINIDENTIFIER, VIN);
-                    if (profilesActive) {
+                    if (profilesActive && aliasWidget != null && aliasWidget.getEditText() != null) {
                         data.putExtra(PROFILENAME, aliasWidget.getEditText().getText().toString());
                     }
                     setResult(Activity.RESULT_OK, data);

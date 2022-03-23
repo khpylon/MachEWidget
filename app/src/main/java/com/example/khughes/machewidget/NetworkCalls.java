@@ -49,14 +49,11 @@ public class NetworkCalls {
     private static final int CMD_REMOTE_START_LIMIT = 590;
 
     public static void getAccessToken(Handler handler, Context context, String username, String password) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = NetworkCalls.getAccessToken(context, username, password);
-                Message m = Message.obtain();
-                m.setData(intent.getExtras());
-                handler.sendMessage(m);
-            }
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.getAccessToken(context, username, password);
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
         });
         t.start();
     }
@@ -110,23 +107,17 @@ public class NetworkCalls {
     }
 
     public static void refreshAccessToken(Handler handler, Context context, String refreshToken) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = NetworkCalls.refreshAccessToken(context, refreshToken);
-                Message m = Message.obtain();
-                m.setData(intent.getExtras());
-                handler.sendMessage(m);
-            }
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.refreshAccessToken(context, refreshToken);
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
         });
         t.start();
     }
 
     private static Intent refreshAccessToken(Context context, String token) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
         Intent data = new Intent();
-        StoredData appInfo = new StoredData(context);
         String nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN;
 
         if (MainActivity.checkInternetConnection(context)) {
@@ -159,14 +150,11 @@ public class NetworkCalls {
     }
 
     public static void getStatus(Handler handler, Context context, String token) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = NetworkCalls.getStatus(context, token);
-                Message m = Message.obtain();
-                m.setData(intent.getExtras());
-                handler.sendMessage(m);
-            }
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.getStatus(context, token);
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
         });
         t.start();
     }
@@ -231,14 +219,11 @@ public class NetworkCalls {
     }
 
     public static void getOTAStatus(Handler handler, Context context, String token) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = NetworkCalls.getOTAStatus(context, token);
-                Message m = Message.obtain();
-                m.setData(intent.getExtras());
-                handler.sendMessage(m);
-            }
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.getOTAStatus(context, token);
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
         });
         t.start();
     }
@@ -280,68 +265,54 @@ public class NetworkCalls {
     }
 
     public static void remoteStart(Handler handler, Context context, String token) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "v5", "engine", "start", "put");
-                Message m = Message.obtain();
-                m.setData(intent.getExtras());
-                handler.sendMessage(m);
-            }
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.execCommand(context, token, "v5", "engine", "start", "put");
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
         });
         t.start();
     }
 
     public static void remoteStop(Handler handler, Context context, String token) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "v5", "engine", "start", "delete");
-                Message m = Message.obtain();
-                m.setData(intent.getExtras());
-                handler.sendMessage(m);
-            }
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.execCommand(context, token, "v5", "engine", "start", "delete");
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
         });
         t.start();
     }
 
     public static void lockDoors(Handler handler, Context context, String token) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "v2", "doors", "lock", "put");
-                Message m = Message.obtain();
-                m.setData(intent.getExtras());
-                handler.sendMessage(m);
-            }
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.execCommand(context, token, "v2", "doors", "lock", "put");
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
         });
         t.start();
     }
 
     public static void unlockDoors(Handler handler, Context context, String token) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = NetworkCalls.execCommand(context, token, "v2", "doors", "lock", "delete");
-                Message m = Message.obtain();
-                m.setData(intent.getExtras());
-                handler.sendMessage(m);
-            }
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.execCommand(context, token, "v2", "doors", "lock", "delete");
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
         });
         t.start();
     }
 
     private static Intent execCommand(Context context, String token, String version, String component, String operation, String request) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
         Intent data = new Intent();
-        StoredData appInfo = new StoredData(context);
 
         if (!MainActivity.checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
         } else {
             CommandService commandServiceClient = NetworkServiceGenerators.createCommandService(CommandService.class, context);
-            Call<CommandStatus> call = null;
+            Call<CommandStatus> call;
             if (request.equals("put")) {
                 call = commandServiceClient.putCommand(token, Constants.APID,
                         version, VIN, component, operation);
@@ -380,8 +351,6 @@ public class NetworkCalls {
     }
 
     private static String execResponse(Context context, String token, String VIN, String component, String operation, String idCode) {
-        StoredData appInfo = new StoredData(context);
-
         // Delay 5 seconds before starting to check on status
         try {
             Thread.sleep(5 * 1000);
@@ -454,20 +423,20 @@ public class NetworkCalls {
     }
 
     // Get the application's secret key; password is randomly generated for the app
-    private static java.security.Key getSecretKey(Context context, char[] password) throws Exception {
+    private static java.security.Key getSecretKey(char[] password) throws Exception {
         generateKey();
         return keyStore.getKey(KEY_ALIAS, password);
     }
 
     // Encrypt
-    public static String encrypt(Context context, char[] password, String input) throws Exception {
+    public static String encrypt(char[] password, String input) throws Exception {
         //Prepare the nonce
         SecureRandom secureRandom = new SecureRandom();
         byte[] iv = new byte[GCM_IV_LENGTH];
         secureRandom.nextBytes(iv);
 
         Cipher c = Cipher.getInstance(AES_MODE);
-        Key key = getSecretKey(context, password);
+        Key key = getSecretKey(password);
         GCMParameterSpec parameterSpec = new GCMParameterSpec(128, iv);
         c.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
         byte[] encodedBytes = c.doFinal(input.getBytes(StandardCharsets.UTF_8));
@@ -479,9 +448,9 @@ public class NetworkCalls {
         return Base64.getEncoder().encodeToString(byteBuffer.array());
     }
 
-    public static String decrypt(Context context, char[] password, String input) throws Exception {
+    public static String decrypt(char[] password, String input) throws Exception {
         Cipher cipher = Cipher.getInstance(AES_MODE);
-        Key key = getSecretKey(context, password);
+        Key key = getSecretKey(password);
 
         // Get byte[] back from stored string
         byte[] cipherBytes = Base64.getDecoder().decode(input);

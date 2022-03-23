@@ -5,12 +5,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.text.format.DateUtils;
-import android.util.Log;
-
-import androidx.preference.PreferenceManager;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -19,7 +15,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Arrays;
 
 public class UpdateReceiver extends BroadcastReceiver {
     private Context mContext;
@@ -45,7 +40,7 @@ public class UpdateReceiver extends BroadcastReceiver {
                     urlConnection.connect();
                     InputStream input = new BufferedInputStream(url.openStream(), 8192);
                     byte[] data = new byte[2048];
-                    int count = 0;
+                    int count;
                     while ((count = input.read(data)) != -1) {
                         current += new String(data, 0, count, StandardCharsets.UTF_8);
                     }
@@ -88,7 +83,6 @@ public class UpdateReceiver extends BroadcastReceiver {
     }
 
     public static void nextAlarm(Context context) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(4);
         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
