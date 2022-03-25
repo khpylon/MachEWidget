@@ -78,12 +78,18 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         // Get the tire pressure and do any conversion necessary.
         if (pressure != null) {
-            Double value = Double.parseDouble(pressure) * conversion;
-            // If conversion is really small, show value in tenths
-            String pattern = conversion >= 0.1 ? "#" : "#.0";
-            pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
-                    DecimalFormatSymbols.getInstance(Locale.US)).format(value), units);
-            views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval);
+            Double value = Double.parseDouble(pressure);
+            // Only display value if it's not ridiculous; after some OTA updates the
+            // raw value is "65533"
+            if(value < 2000) {
+                // If conversion is really small, show value in tenths
+                String pattern = conversion >= 0.1 ? "#" : "#.0";
+                pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
+                        DecimalFormatSymbols.getInstance(Locale.US)).format(value * conversion), units);
+                views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval);
+            } else {
+                pressure = "N/A";
+            }
         } else {
             pressure = "N/A";
         }
