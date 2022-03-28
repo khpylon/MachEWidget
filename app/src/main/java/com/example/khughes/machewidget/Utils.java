@@ -38,7 +38,6 @@ public class Utils {
     public static final String LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
     public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
 
-    // 1FT F W1E D XMFB06341
     public static final int FUEL_TYPE_START_INDEX = 8 - 1;
     public static final int FUEL_TYPE_END_INDEX = 8;
     public static final String HYBRID_TRUCK_2_5_LITER = "3";
