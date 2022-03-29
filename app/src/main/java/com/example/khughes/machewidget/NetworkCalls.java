@@ -77,7 +77,7 @@ public class NetworkCalls {
 
                     Map<String, String> jsonParams = new ArrayMap<>();
                     jsonParams.put("code", accessToken.getAccessToken());
-                    RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (new JSONObject(jsonParams)).toString());
+                    RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(),okhttp3.MediaType.parse("application/json; charset=utf-8"));
 
                     call = OAuth2Client.getAccessToken(body);
                     try {
@@ -123,7 +123,7 @@ public class NetworkCalls {
         if (MainActivity.checkInternetConnection(context)) {
             Map<String, String> jsonParams = new ArrayMap<>();
             jsonParams.put("refresh_token", token);
-            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (new JSONObject(jsonParams)).toString());
+            RequestBody body = RequestBody.create( (new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
             AccessTokenService OAuth2Client = NetworkServiceGenerators.createOAuth2Service(AccessTokenService.class, context);
             Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
             try {
