@@ -8,7 +8,8 @@ import java.util.Set;
 public class Utils {
     public static final int WORLD_MANUFACTURING_IDENTIFIER_START_INDEX = 1 - 1;
     public static final int WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3;
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_MACHE = "3FM";
+    public static final String WORLD_MANUFACTURING_IDENTIFIER_MACHE_NORTH_AMERICA = "3FM";
+    public static final String WORLD_MANUFACTURING_IDENTIFIER_MACHE_EUROPE = "WF0";
     public static final String WORLD_MANUFACTURING_IDENTIFIER_F150 = "1FT";
     public static final String WORLD_MANUFACTURING_IDENTIFIER_BRONCO = "1FM";
 
@@ -68,7 +69,7 @@ public class Utils {
 
     public static boolean isMachE(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MACHE);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MACHE_NORTH_AMERICA) || WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MACHE_EUROPE);
     }
 
     public static boolean isF150(String VIN) {
@@ -132,10 +133,8 @@ public class Utils {
             } else {
                 return FUEL_GAS;
             }
-        }
-        // Uh-oh: don't fina anything to match
-        else {
-            return FUEL_UNKNOWN;
+        } else {
+            return FUEL_ELECTRIC;
         }
     }
 
@@ -145,7 +144,7 @@ public class Utils {
         } else if (isBronco(VIN)) {
             return WORLD_MANUFACTURING_IDENTIFIER_BRONCO;
         } else {
-            return WORLD_MANUFACTURING_IDENTIFIER_MACHE;
+            return WORLD_MANUFACTURING_IDENTIFIER_MACHE_NORTH_AMERICA;
         }
     }
 
