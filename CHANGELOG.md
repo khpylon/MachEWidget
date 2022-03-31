@@ -5,9 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.03.31
+### Added
+- An Update Activity has been created.  When a new version of the app is pushed to GitHub, you will get a notification as before; however, when you click on the
+notification, an activity will start that lets you read the change log and lets you install the new version.  You can also access this screen
+  from the three-bar menu (note that this will *not* check Github for a new update, only reflect information already found there).  The frequency of checking for updates
+  has also be changed to once an hour.
+
+### Changes
+- Various changes in the networking code to handle retries and log less information for known exceptions.
+
+### Fixed
+- Recognize European Mach-E VINs starting with **WF0**.  If your Mach-E's VIN starts with something other **3FM** or **WFO**, please create a new issue and include your VIN except for the last 5 digits.
+
 ## 2022.03.21
 ### Added
-Remote stop command is supported now.  Double-tap on the ignition icon to start or stop.  Once remote start is initiated, the ignition icon will turn yellow to indicate this.
+- Remote stop command is supported now.  Double-tap on the ignition icon to start or stop.  Once remote start is initiated, the ignition icon will turn yellow to indicate this.
 
 ### Changes
 - Commands (lock/unlock and remote start/stop) now poll to determine whether the command was completed successfully
