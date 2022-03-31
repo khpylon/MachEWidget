@@ -10,7 +10,10 @@ import android.text.format.DateUtils;
 public class BootComplete extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
+        String action = intent.getAction();
+        if (action.equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED) ||
+                action.equalsIgnoreCase(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+            LogFile.d(context, MainActivity.CHANNEL_ID, "BootComplete received action " + action);
 
             // Check the car's status as soon as possible.
             intent = new Intent(context, StatusReceiver.class);
@@ -25,8 +28,9 @@ public class BootComplete extends BroadcastReceiver {
             pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.HOUR_IN_MILLIS, pendingIntent);
-            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.HOUR_IN_MILLIS,
+            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.MINUTE_IN_MILLIS, pendingIntent);
         }
+        UpdateActivity.removeAPK(context);
     }
 }

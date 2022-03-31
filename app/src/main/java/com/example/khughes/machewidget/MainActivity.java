@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         performUpdates(context);
 
         // Initiate check for a new app version
-        UpdateReceiver.initateAlarm(context);
+        UpdateReceiver.initiateAlarm(context);
 
         // Initiate update of the widget
         Intent updateIntent = new Intent();
@@ -238,6 +238,10 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
             }
+            return true;
+        } else if (id == R.id.action_update) {
+            Intent intent = new Intent(this, UpdateActivity.class);
+            startActivity(intent);
             return true;
         } else if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);

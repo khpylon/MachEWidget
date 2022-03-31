@@ -14,7 +14,7 @@ android {
         minSdk 28
         targetSdk 31
         versionCode 3
-        versionName "2022.03.21"
+        versionName "2022.03.21-a"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -82,6 +82,7 @@ dependencies {
     implementation 'androidx.webkit:webkit:1.4.0'
     implementation 'androidx.core:core:1.7.0'
     implementation 'androidx.biometric:biometric:1.1.0'
+    implementation 'org.commonmark:commonmark:0.18.2'
 
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.0.0'
 

@@ -28,7 +28,7 @@ Observations from users have noticed this progression:
 6a. success (OTAM_S1010), or alternately  
 6b. failure (OTAM_E1016)
    
-#### Q: Why is the odometer show a different value that the vehicle?
+#### Q: Why is the odometer showing a different value that the vehicle?
 
 Ford stores the odometer reading as an integer, in kilometers.  When it's converted to miles, it is only an approximation.  It should be accurate to within +/- 0.5 miles.
 

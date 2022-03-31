@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.khughes.machewidget">
 
     <application
@@ -9,7 +10,6 @@
         android:roundIcon="@mipmap/mache_launcher_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.MacheWidget">
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -50,7 +50,12 @@
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:label="@string/action_settings"></activity>
+            android:label="@string/action_settings" />
+        <activity
+            android:name=".UpdateActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:label="@string/update_info" />
         <activity
             android:name=".ChooseApp"
             android:exported="false"
@@ -82,6 +87,42 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity-alias
+            android:name=".BroncoMainActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/bronco_icon"
+            android:label="@string/bronco_app_name"
+            android:roundIcon="@mipmap/bronco_icon_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".F150MainActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/f150_icon"
+            android:label="@string/f150_app_name"
+            android:roundIcon="@mipmap/f150_icon_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
         <receiver
             android:name=".CarStatusWidget"
@@ -94,33 +135,36 @@
                 android:resource="@xml/mache_widget_info" />
         </receiver>
         <receiver android:name=".StatusReceiver" />
-        <receiver android:name=".UpdateReceiver" />
         <receiver android:name=".Notifications" />
+        <receiver android:name=".UpdateReceiver" />
         <receiver
             android:name=".BootComplete"
             android:enabled="true"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
     </application>
 
     <queries>
-
         <!-- Specific apps you interact with, eg: -->
         <intent>
             <action android:name="android.intent.action.MAIN" />
-
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
-
         <package android:name="com.coulombtech" /> <!-- Chargepoint -->
         <package android:name="com.ford.fordpass" />
     </queries>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<!--    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
+        tools:ignore="ProtectedPermissions" /> -->
+
 </manifest>

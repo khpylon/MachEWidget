@@ -38,6 +38,11 @@
         android:title="@string/action_copylog"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_update"
+        android:orderInCategory="30"
+        android:title="@string/action_update"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="30"
         android:title="@string/action_settings"

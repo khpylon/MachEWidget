@@ -12,6 +12,8 @@
     <string name="action_backup">Save Settings</string>
     <string name="action_restore">Restore Settings</string>
     <string name="action_copylog">Save Logfile</string>
+    <string name="action_update">Update App</string>
+    <string name="update_info">Update Information</string>
 
     <!-- Widget things -->
     <string name="add_widget">Add widget</string>
@@ -68,7 +70,8 @@
     <string name="units_metric">1</string>
     <string name="units_imperial">2</string>
 
-    <string name="clear_alert">Clear alert</string>
+    <string name="clear_alert">Clear Alert</string>
+    <string name="install_update">Install Update</string>
 
     <string name="disclamer">
         Your login credentials are only used to gain access to the Ford website.  They are stored encrypted in the app.

@@ -10,28 +10,36 @@ import android.text.format.DateUtils;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class UpdateReceiver extends BroadcastReceiver {
-    private Context mContext;
 
     @Override
-    public void onReceive(Context context, Intent arg) {
-        mContext = context;
-        nextAlarm(mContext);
+    public void onReceive(Context context, Intent intent) {
+        nextAlarm(context);
         final String apiUrl = "https://raw.githubusercontent.com/khpylon/MachEWidget/master/app/VERSION.txt";
-        new Download().execute(apiUrl);
+        new Download(context).execute(apiUrl);
     }
 
-    private class Download extends AsyncTask<String, String, String> {
+    private static class Download extends AsyncTask<String, String, String> {
+
+        private final WeakReference<Context> mContext;
+
+        public Download(Context context) {
+            mContext = new WeakReference<>(context);
+        }
 
         @Override
         protected String doInBackground(String... urls) {
-            String current = "";
+            Context context = mContext.get();
+            StringBuilder current = new StringBuilder();
             try {
                 HttpURLConnection urlConnection = null;
                 URL url = new URL(urls[0]);
@@ -42,27 +50,26 @@ public class UpdateReceiver extends BroadcastReceiver {
                     byte[] data = new byte[2048];
                     int count;
                     while ((count = input.read(data)) != -1) {
-                        current += new String(data, 0, count, StandardCharsets.UTF_8);
+                        current.append(new String(data, 0, count, StandardCharsets.UTF_8));
                     }
                     input.close();
-                    return current;
                 } catch (Exception e) {
-                    LogFile.e(mContext, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.doInBackground()" + e);
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.doInBackground()" + e);
                 } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
                     }
                 }
-
             } catch (Exception e) {
-                LogFile.e(mContext, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.doInBackground()" + e);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.doInBackground()" + e);
             }
-            return current;
+            return current.toString();
         }
 
         protected void onPostExecute(String result) {
+            Context context = mContext.get();
             final String Version = "Version: ";
-            StoredData appInfo = new StoredData(mContext);
+            StoredData appInfo = new StoredData(context);
             final String latestVersion = appInfo.getLatestVersion();
             for (String item : result.split("\n")) {
                 if (item.contains(Version)) {
@@ -70,7 +77,7 @@ public class UpdateReceiver extends BroadcastReceiver {
                     if (newVersion.compareTo(BuildConfig.VERSION_NAME) > 0 &&
                             newVersion.compareTo(latestVersion) > 0) {
                         appInfo.setLatestVersion(newVersion);
-                        Notifications.newApp(mContext);
+                        Notifications.newApp(context);
                         return;
                     }
                 }
@@ -83,7 +90,9 @@ public class UpdateReceiver extends BroadcastReceiver {
     }
 
     public static void nextAlarm(Context context) {
-        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(4);
+        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(1);
+        String timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US));
+        LogFile.i(context, MainActivity.CHANNEL_ID, "UpdateReceiver: next update alarm at " + timeText);
         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
@@ -94,7 +103,7 @@ public class UpdateReceiver extends BroadcastReceiver {
     }
 
     // If no alarm is pending, start one
-    public static void initateAlarm(Context context) {
+    public static void initiateAlarm(Context context) {
         if (PendingIntent.getBroadcast(context, 0,
                 getIntent(context), PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
             nextAlarm(context);

@@ -22,11 +22,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.SecureRandom;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -68,38 +70,64 @@ public class NetworkCalls {
         if (MainActivity.checkInternetConnection(context)) {
             AccessTokenService fordClient = NetworkServiceGenerators.createFordService(AccessTokenService.class, context);
             AccessTokenService OAuth2Client = NetworkServiceGenerators.createOAuth2Service(AccessTokenService.class, context);
-            Call<AccessToken> call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
-            try {
-                Response<AccessToken> response = call.execute();
-                if (response.isSuccessful()) {
-                    AccessToken accessToken = response.body();
-                    data.putExtra("access_token", accessToken.getAccessToken());
 
-                    Map<String, String> jsonParams = new ArrayMap<>();
-                    jsonParams.put("code", accessToken.getAccessToken());
-                    RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(),okhttp3.MediaType.parse("application/json; charset=utf-8"));
+            for (int retry1 = 2; retry1 >= 0; --retry1) {
+                Call<AccessToken> call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
+                try {
+                    Response<AccessToken> response = call.execute();
+                    if (response.isSuccessful()) {
+                        AccessToken accessToken = response.body();
+                        data.putExtra("access_token", accessToken.getAccessToken());
 
-                    call = OAuth2Client.getAccessToken(body);
-                    try {
-                        response = call.execute();
-                        if (response.isSuccessful()) {
-                            accessToken = response.body();
-                            data.putExtra("access_token", accessToken.getAccessToken());
-                            data.putExtra("refresh_token", accessToken.getRefreshToken());
-                            data.putExtra("expires", accessToken.getExpiresIn());
-                            appInfo.setLanguage(VIN, accessToken.getUserProfile().getLanguage());
-                            appInfo.setCountry(VIN, accessToken.getUserProfile().getCountry());
-                            appInfo.setPressureUnits(VIN, accessToken.getUserProfile().getUomPressure());
-                            appInfo.setDistanceUnits(VIN, accessToken.getUserProfile().getUomDistance());
-                            appInfo.setSpeedUnits(VIN, accessToken.getUserProfile().getUomSpeed());
-                            nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
+                        for (int retry2 = 2; retry2 >= 0; --retry2) {
+                            Map<String, String> jsonParams = new ArrayMap<>();
+                            jsonParams.put("code", accessToken.getAccessToken());
+                            RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
+
+                            call = OAuth2Client.getAccessToken(body);
+                            try {
+                                response = call.execute();
+                                if (response.isSuccessful()) {
+                                    accessToken = response.body();
+                                    data.putExtra("access_token", accessToken.getAccessToken());
+                                    data.putExtra("refresh_token", accessToken.getRefreshToken());
+                                    data.putExtra("expires", accessToken.getExpiresIn());
+                                    appInfo.setLanguage(VIN, accessToken.getUserProfile().getLanguage());
+                                    appInfo.setCountry(VIN, accessToken.getUserProfile().getCountry());
+                                    appInfo.setPressureUnits(VIN, accessToken.getUserProfile().getUomPressure());
+                                    appInfo.setDistanceUnits(VIN, accessToken.getUserProfile().getUomDistance());
+                                    appInfo.setSpeedUnits(VIN, accessToken.getUserProfile().getUomSpeed());
+                                    nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
+                                    retry1 = retry2 = 0;
+                                    break;
+                                }
+                            } catch (java.net.SocketTimeoutException ee) {
+                                LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getAccessToken");
+                                LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry2));
+                                try {
+                                    Thread.sleep(3 * 1000);
+                                } catch (InterruptedException e) {
+                                }
+                            } catch (IOException e) {
+                                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
+                                break;
+                            }
                         }
-                    } catch (IOException e) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
                     }
+                } catch (java.net.SocketTimeoutException ee) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getAccessToken");
+                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry1));
+                    try {
+                        Thread.sleep(3 * 1000);
+                    } catch (InterruptedException e) {
+                    }
+                } catch (java.net.UnknownHostException e3) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getAccessToken");
+                    break;
+                } catch (Exception e) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
+                    break;
                 }
-            } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
             }
         }
         data.putExtra("action", nextState);
@@ -123,26 +151,40 @@ public class NetworkCalls {
         if (MainActivity.checkInternetConnection(context)) {
             Map<String, String> jsonParams = new ArrayMap<>();
             jsonParams.put("refresh_token", token);
-            RequestBody body = RequestBody.create( (new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
+            RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
             AccessTokenService OAuth2Client = NetworkServiceGenerators.createOAuth2Service(AccessTokenService.class, context);
-            Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
-            try {
-                Response<AccessToken> response = call.execute();
-                LogFile.i(context, MainActivity.CHANNEL_ID, "refresh here.");
-                if (response.isSuccessful()) {
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "refresh successful");
-                    AccessToken accessToken = response.body();
-                    data.putExtra("access_token", accessToken.getAccessToken());
-                    data.putExtra("refresh_token", accessToken.getRefreshToken());
-                    data.putExtra("expires", accessToken.getExpiresIn());
-                    nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
-                } else {
-                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
-                    nextState = Constants.STATE_INITIAL_STATE;
+            for (int retry = 2; retry >= 0; --retry) {
+                Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
+                try {
+                    Response<AccessToken> response = call.execute();
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "refresh here.");
+                    if (response.isSuccessful()) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "refresh successful");
+                        AccessToken accessToken = response.body();
+                        data.putExtra("access_token", accessToken.getAccessToken());
+                        data.putExtra("refresh_token", accessToken.getRefreshToken());
+                        data.putExtra("expires", accessToken.getExpiresIn());
+                        nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
+                    } else {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
+                        nextState = Constants.STATE_INITIAL_STATE;
+                    }
+                    break;
+                } catch (java.net.SocketTimeoutException ee) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.refreshAccessToken");
+                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+                    try {
+                        Thread.sleep(3 * 1000);
+                    } catch (InterruptedException e) {
+                    }
+                } catch (java.net.UnknownHostException e3) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.refreshAccessToken");
+                    break;
+                } catch (Exception e) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.refreshAccessToken: ", e);
+                    break;
                 }
-            } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.refreshAccessToken: ", e);
             }
         }
         data.putExtra("action", nextState);
@@ -169,49 +211,63 @@ public class NetworkCalls {
 
         if (MainActivity.checkInternetConnection(context)) {
             StatusService statusClient = NetworkServiceGenerators.createCarStatusService(StatusService.class, context);
-            Call<CarStatus> call = statusClient.getStatus(token, language, Constants.APID, VIN);
-            try {
-                Response<CarStatus> response = call.execute();
-                if (response.isSuccessful()) {
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "status successful.");
+            for (int retry = 2; retry >= 0; --retry) {
+                Call<CarStatus> call = statusClient.getStatus(token, language, Constants.APID, VIN);
+                try {
+                    Response<CarStatus> response = call.execute();
+                    if (response.isSuccessful()) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "status successful.");
 //                    String tmp =response.toString();
-                    CarStatus car = response.body();
-                    if (car.getStatus() == Constants.HTTP_SERVER_ERROR) {
-                        LogFile.i(context, MainActivity.CHANNEL_ID, "server is broken");
-                    } else if (car.getVehiclestatus() != null) {
-                        Calendar lastRefreshTime = Calendar.getInstance();
-                        SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
-                        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        long currentRefreshTime = 0;
-                        try {
-                            lastRefreshTime.setTime(sdf.parse(car.getLastRefresh()));
-                            currentRefreshTime = lastRefreshTime.toInstant().toEpochMilli();
-                        } catch (ParseException e) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
+                        CarStatus car = response.body();
+                        if (car.getStatus() == Constants.HTTP_SERVER_ERROR) {
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "server is broken");
+                        } else if (car.getVehiclestatus() != null) {
+                            Calendar lastRefreshTime = Calendar.getInstance();
+                            SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
+                            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                            long currentRefreshTime = 0;
+                            try {
+                                lastRefreshTime.setTime(sdf.parse(car.getLastRefresh()));
+                                currentRefreshTime = lastRefreshTime.toInstant().toEpochMilli();
+                            } catch (ParseException e) {
+                                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
+                            }
+                            long priorRefreshTime = appInfo.getLastRefreshTime(VIN);
+                            if (priorRefreshTime <= currentRefreshTime) {
+                                appInfo.setCarStatus(VIN, car);
+                                appInfo.setLastRefreshTime(VIN, currentRefreshTime);
+                            }
+                            Notifications.checkLVBStatus(context, car, VIN);
+                            Notifications.checkTPMSStatus(context, car, VIN);
+                            nextState = Constants.STATE_HAVE_TOKEN_AND_STATUS;
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
+                        } else {
+                            nextState = Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN;
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle status is null");
                         }
-                        long priorRefreshTime = appInfo.getLastRefreshTime(VIN);
-                        if (priorRefreshTime <= currentRefreshTime) {
-                            appInfo.setCarStatus(VIN, car);
-                            appInfo.setLastRefreshTime(VIN, currentRefreshTime);
-                        }
-                        Notifications.checkLVBStatus(context, car, VIN);
-                        Notifications.checkTPMSStatus(context, car, VIN);
-                        nextState = Constants.STATE_HAVE_TOKEN_AND_STATUS;
-                        LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
                     } else {
-                        nextState = Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN;
-                        LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle status is null");
+                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.");
+                        // For either of these client errors, we probably need to refresh the access token
+                        if (response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED) {
+                            nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
+                        }
                     }
-                } else {
-                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.");
-                    // For either of these client errors, we probably need to refresh the access token
-                    if (response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED) {
-                        nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
+                    break;
+                } catch (java.net.SocketTimeoutException e2) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getStatus");
+                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+                    try {
+                        Thread.sleep(3 * 1000);
+                    } catch (InterruptedException e) {
                     }
+                } catch (java.net.UnknownHostException e3) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getStatus");
+                    break;
+                } catch (Exception e) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
+                    break;
                 }
-            } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
             }
         }
         data.putExtra("action", nextState);
@@ -239,26 +295,40 @@ public class NetworkCalls {
 
         if (MainActivity.checkInternetConnection(context)) {
             OTAStatusService OTAstatusClient = NetworkServiceGenerators.createOTAStatusService(OTAStatusService.class, context);
-            Call<OTAStatus> call = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
-            try {
-                Response<OTAStatus> response = call.execute();
-                if (response.isSuccessful()) {
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful.");
-                    appInfo.setOTAStatus(VIN, response.body());
-                } else {
-                    try {
-                        if (response.errorBody().string().contains("UpstreamException")) {
-                            OTAStatus status = new OTAStatus();
-                            status.setError("UpstreamException");
+            for (int retry = 2; retry >= 0; --retry) {
+                Call<OTAStatus> call = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
+                try {
+                    Response<OTAStatus> response = call.execute();
+                    if (response.isSuccessful()) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful.");
+                        appInfo.setOTAStatus(VIN, response.body());
+                    } else {
+                        try {
+                            if (response.errorBody().string().contains("UpstreamException")) {
+                                OTAStatus status = new OTAStatus();
+                                status.setError("UpstreamException");
+                            }
+                        } catch (Exception e) {
+                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
                         }
-                    } catch (Exception e) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
+                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL.");
                     }
-                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL.");
+                    break;
+                } catch (java.net.SocketTimeoutException ee) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getOTAStatus");
+                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+                    try {
+                        Thread.sleep(3 * 1000);
+                    } catch (InterruptedException e) {
+                    }
+                } catch (java.net.UnknownHostException e3) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getOTAStatus");
+                    break;
+                } catch (Exception e) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
+                    break;
                 }
-            } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
             }
         }
         return data;

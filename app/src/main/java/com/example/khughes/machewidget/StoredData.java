@@ -514,7 +514,7 @@ public class StoredData {
 
     public String getWidgetMode() {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-        return pref.getString(WIDGETMODE, Utils.WORLD_MANUFACTURING_IDENTIFIER_MACHE);
+        return pref.getString(WIDGETMODE, Utils.WORLD_MANUFACTURING_IDENTIFIER_MACHE_NORTH_AMERICA);
     }
 
     public void setWidgetMode(String mode) {
