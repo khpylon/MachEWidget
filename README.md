@@ -39,8 +39,8 @@ As listed above, this app
 - is only intended for the Ford Mustang Mach-E, as that's the only Ford I own
 - does not include all the function of tonesto7's Apple/iOS widget
 - is not guaranteed to support accounts outside of the United States
-- if you are using the app with an F-150, it may be necessary to uninstall when upgrading to newer versions.  This is because the 
-  app is registered by the name "Mach-E Info", and using with an F-150 aliases it under the name "F-150 Info" which can confuse
+- if you are using the app with an F-150 or Bronco, it may be necessary to uninstall when upgrading to newer versions.  This is because the 
+  app is registered by the name "Mach-E Info", and using with an F-150 or Bronco aliases the app's name which can confuse
   your Android OS when it comes time to upgrade
   
 ## Bug Reports
@@ -67,7 +67,7 @@ verbose HTTP logging is enabled, those which contain the string "OkHttp".
 
 ## Frequently Asked Questions
 
-Refer to the [FAQ](https://github.com/khpylon/MachEWidget/FAQ.md) file.  It's a work in progress.  If your questions isn't there, ask on the forums or 
+Refer to the [FAQ](https://github.com/khpylon/MachEWidget/blob/master/FAQ.md) file.  It's a work in progress.  If your questions isn't there, ask on the forums or 
 send a message to suggest adding it.
 
 ## To do
