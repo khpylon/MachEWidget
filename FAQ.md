@@ -25,8 +25,8 @@ Observations from users have noticed this progression:
 3. artifact_retrieval_in_progress (OTAM_S1023)
 4. installation_queued  (OTAM_S1007)
 5. deploying  (OTAM_S1021)
-   6a. success (OTAM_S1010), or alternately  
-   6b. failure (OTAM_E1016)
+6a. success (OTAM_S1010), or alternately  
+6b. failure (OTAM_E1016)
    
 #### Q: Why is the odometer show a different value that the vehicle?
 
