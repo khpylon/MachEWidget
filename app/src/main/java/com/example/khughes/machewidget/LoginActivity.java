@@ -2,6 +2,7 @@ package com.example.khughes.machewidget;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
@@ -235,6 +237,17 @@ public class LoginActivity extends AppCompatActivity {
             } else if (VIN.length() != 17) {
                 Toast.makeText(getApplicationContext(), "Please enter a valid VIN.", Toast.LENGTH_SHORT).show();
             } else {
+                if (!(Utils.isMachE(VIN) || Utils.isF150(VIN) || Utils.isBronco(VIN))) {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Warning")
+                            .setMessage("Your VIN is not recognized; the app may not work correctly. Please create an issue " +
+                                    "on GitHub and provide the first three characters of your VIN.")
+                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                return;
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
                 appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
                 sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
                 getAccess(username, password);
