@@ -213,7 +213,7 @@ public class Utils {
         Map<String, Integer> tmpMap = new HashMap<>();
         tmpMap.put(WIREFRAME, R.drawable.mache_wireframe);
         tmpMap.put(HOOD, R.drawable.mache_frunk);
-        tmpMap.put(TAILGATE, R.drawable.mache_trunk);
+        tmpMap.put(TAILGATE, R.drawable.mache_hatch);
         tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor);
         tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor);
         tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor);
