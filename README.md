@@ -59,11 +59,8 @@ external storage
 
 If the bug is something more serious that it isn't captured in these logs, you may need to capture some logcat output. 
 A good summary of ways to get logcat output is
-[described here](https://www.xda-developers.com/how-to-take-logs-android/).  If your issue seems related to network access
-with the Ford servers, you should go to Settings and set "Enable verbose HTTP logging".  Note that this output may expose
-your Ford account credentials (username and password), so before sending the logs be sure to remove this information.  There
-will probably be a lot of unrelated information in the log output; the only lines of interest are those which contain the string "934TXS" and, if 
-verbose HTTP logging is enabled, those which contain the string "OkHttp".
+[described here](https://www.xda-developers.com/how-to-take-logs-android/).  Since most likely only crash information 
+will be in the logcat, you most likely will want to run the logcat using the "-b crash" option.
 
 ## Frequently Asked Questions
 
