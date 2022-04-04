@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2022.04.0x
+## 2022.04.04
 ### Added
 - Initial support for Ford Explorers SUVs (tell your friends!).  Many thanks to @FrankThompson for being the beta tester.
 - A smaller widget is now supported; this widget only show the vehicle image and associated icons.  It's a work in progress; you may end up with 
