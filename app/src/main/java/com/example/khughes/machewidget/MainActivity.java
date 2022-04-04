@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
                 indexPage = "https://appassets.androidplatform.net/assets/index_bronco.html";
             } else if (Utils.isF150(VIN)) {
                 indexPage = "https://appassets.androidplatform.net/assets/index_f150.html";
+            } else if (Utils.isExplorer(VIN)) {
+                indexPage = "https://appassets.androidplatform.net/assets/index_explorer.html";
             }
         }
         mWebView.loadUrl(indexPage);
@@ -115,6 +117,21 @@ public class MainActivity extends AppCompatActivity {
                 new StoredData(context).removeCounters();
             }
 
+            // Replace widget mode identifiers based on WMI
+            if (lastVersion.compareTo("2022.04.02") < 0) {
+                StoredData appInfo = new StoredData(context);
+                switch (appInfo.getWidgetMode()) {
+                    case Utils.WORLD_MANUFACTURING_IDENTIFIER_USA_MPV:
+                        appInfo.setWidgetMode(Utils.WIDGETMODE_BRONCO);
+                        break;
+                    case Utils.WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK:
+                        appInfo.setWidgetMode(Utils.WIDGETMODE_F150);
+                        break;
+                    default:
+                        appInfo.setWidgetMode(Utils.WIDGETMODE_MACHE);
+                        break;
+                }
+            }
             // Update internally
             prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
         }

@@ -6,21 +6,28 @@ import java.util.Map;
 import java.util.Set;
 
 public class Utils {
+    public static final String WIDGETMODE_MACHE = "ModeMachE";
+    public static final String WIDGETMODE_F150 = "ModeF150";
+    public static final String WIDGETMODE_BRONCO = "ModeBrondo";
+    public static final String WIDGETMODE_EXPLORER = "ModeExplorer";
+
     public static final int WORLD_MANUFACTURING_IDENTIFIER_START_INDEX = 1 - 1;
     public static final int WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3;
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_MACHE_NORTH_AMERICA = "3FM";
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_MACHE_EUROPE = "WF0";
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_F150 = "1FT";
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_BRONCO = "1FM";
+    public static final String WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV = "3FM";
+    public static final String WORLD_MANUFACTURING_IDENTIFIER_GERMANY = "WF0";
+    public static final String WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK = "1FT";
+    public static final String WORLD_MANUFACTURING_IDENTIFIER_USA_MPV = "1FM";
 
     public static final int LINE_SERIES_START_INDEX = 5 - 1;
     public static final int LINE_SERIES_END_INDEX = 7;
-//    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
-//    public static final String LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
-//    public static final String LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
-//    public static final String LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
-//    public static final String LINE_SERIES_MACHE_PREMIUM_AWD = "K3S"; // Premium AWD?
-//    public static final String LINE_SERIES_MACHE_GT_RWD = "K4S"; // GT AWD
+
+    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
+    public static final String LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
+    public static final String LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
+    public static final String LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
+    public static final String LINE_SERIES_MACHE_PREMIUM_AWD = "K3S"; // Premium AWD?
+    public static final String LINE_SERIES_MACHE_GT_RWD = "K4S"; // GT AWD
+
     public static final String LINE_SERIES_F150_REGULAR_4X2 = "F1C"; // 4x2 chassis, regular cab
     public static final String LINE_SERIES_F150_REGULAR_4X4 = "F1E"; // 4x4 chassis, regular cab
     public static final String LINE_SERIES_F150_SUPERCREW_4X2 = "W1C"; // 4x2, SuperCrew
@@ -31,6 +38,7 @@ public class Utils {
     public static final String LINE_SERIES_F150_SUPERCREW_4X4_SSV = "W1T"; // 4x4, superCrew, SSV (Special Service Vehicle), government
     public static final String LINE_SERIES_F150_SUPERCAB_4X2 = "X1C"; // 4x2, SuperCab
     public static final String LINE_SERIES_F150_SUPERCAB_4X4 = "X1E"; // 4x4, SuperCab
+
     public static final String LINE_SERIES_BRONCO_BASE_2DOOR_4X4 = "E5A"; //
     public static final String LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B"; //
     public static final String LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C"; //
@@ -38,6 +46,23 @@ public class Utils {
     public static final String LINE_SERIES_BRONCO_FE_4DOOR_AWD = "E5E"; //
     public static final String LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
     public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
+
+    public static final String LINE_SERIES_EXPLORER_BASE_RWD = "K7B";
+    public static final String LINE_SERIES_EXPLORER_XLT_RWD = "K7D";
+    public static final String LINE_SERIES_EXPLORER_LIMITED_RWD = "K7F";
+    public static final String LINE_SERIES_EXPLORER_PLATINUM_RWD = "K7H";
+    public static final String LINE_SERIES_EXPLORER_KING_RWD = "K7L";
+    public static final String LINE_SERIES_EXPLORER_ST_RWD = "K7G";
+    public static final String LINE_SERIES_EXPLORER_STLINE_RWD = "K7K";
+    public static final String LINE_SERIES_EXPLORER_POLICE = "K8A";
+    public static final String LINE_SERIES_EXPLORER_BASE_4WD = "K8B";
+    public static final String LINE_SERIES_EXPLORER_XLT_4WD = "K8D";
+    public static final String LINE_SERIES_EXPLORER_LIMITED_4WD = "K8F";
+    public static final String LINE_SERIES_EXPLORER_ST_4WD = "K8G";
+    public static final String LINE_SERIES_EXPLORER_PLATINUM_4WD = "K8H";
+    public static final String LINE_SERIES_EXPLORER_KING_4WD = "K8L";
+    public static final String LINE_SERIES_EXPLORER_STLINE_4WD = "K8K";
+    public static final String LINE_SERIES_EXPLORER_TIMBERLINE_4WD = "K8J";
 
     public static final int FUEL_TYPE_START_INDEX = 8 - 1;
     public static final int FUEL_TYPE_END_INDEX = 8;
@@ -67,19 +92,133 @@ public class Utils {
     public static final int FUEL_PHEV = FUEL_HYBRID + 1;
     public static final int FUEL_ELECTRIC = FUEL_PHEV + 1;
 
+    private static final Set<String> macheLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_MACHE_SELECT_RWD);
+        tmpSet.add(LINE_SERIES_MACHE_SELECT_AWD);
+        tmpSet.add(LINE_SERIES_MACHE_CAROUTE1_RWD);
+        tmpSet.add(LINE_SERIES_MACHE_PREMIUM_RWD);
+        tmpSet.add(LINE_SERIES_MACHE_PREMIUM_AWD);
+        tmpSet.add(LINE_SERIES_MACHE_GT_RWD);
+        macheLineSeries = tmpSet;
+    }
+
     public static boolean isMachE(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MACHE_NORTH_AMERICA) || WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MACHE_EUROPE);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return  WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) ||
+                (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV) && macheLineSeries.contains(lineSeries));
+    }
+    private static final Set<String> f150RegularCabsLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_F150_REGULAR_4X2);
+        tmpSet.add(LINE_SERIES_F150_REGULAR_4X4);
+        f150RegularCabsLineSeries = tmpSet;
+    }
+
+    public static boolean isF150RegularCab(String VIN) {
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return f150RegularCabsLineSeries.contains(lineSeries);
+    }
+
+    private static final Set<String> f150SuperCabsLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X2);
+        tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X4);
+        f150SuperCabsLineSeries = tmpSet;
+    }
+
+    public static boolean isF150SuperCab(String VIN) {
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return f150SuperCabsLineSeries.contains(lineSeries);
+    }
+
+    private static final Set<String> f150SuperCrewsLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X2);
+        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4);
+        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_POLICE);
+        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X2_SSV);
+        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_SSV);
+        f150SuperCrewsLineSeries = tmpSet;
+    }
+
+    public static boolean isF150SuperCrew(String VIN) {
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return f150SuperCrewsLineSeries.contains(lineSeries);
+    }
+
+    public static boolean isF150Raptor(String VIN) {
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return lineSeries.equals(LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR);
     }
 
     public static boolean isF150(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_F150);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK) &&
+                (isF150RegularCab(VIN) || isF150SuperCab(VIN) || isF150SuperCrew( VIN) || isF150Raptor(VIN));
+    }
+
+    private static final Set<String> explorerLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_EXPLORER_BASE_RWD);
+        tmpSet.add(LINE_SERIES_EXPLORER_XLT_RWD);
+        tmpSet.add(LINE_SERIES_EXPLORER_LIMITED_RWD);
+        tmpSet.add(LINE_SERIES_EXPLORER_PLATINUM_RWD);
+        tmpSet.add(LINE_SERIES_EXPLORER_KING_RWD);
+        tmpSet.add(LINE_SERIES_EXPLORER_ST_RWD);
+        tmpSet.add(LINE_SERIES_EXPLORER_STLINE_RWD);
+        tmpSet.add(LINE_SERIES_EXPLORER_POLICE);
+        tmpSet.add(LINE_SERIES_EXPLORER_BASE_4WD);
+        tmpSet.add(LINE_SERIES_EXPLORER_XLT_4WD);
+        tmpSet.add(LINE_SERIES_EXPLORER_LIMITED_4WD);
+        tmpSet.add(LINE_SERIES_EXPLORER_ST_4WD);
+        tmpSet.add(LINE_SERIES_EXPLORER_PLATINUM_4WD);
+        tmpSet.add(LINE_SERIES_EXPLORER_KING_4WD);
+        tmpSet.add(LINE_SERIES_EXPLORER_STLINE_4WD);
+        tmpSet.add(LINE_SERIES_EXPLORER_TIMBERLINE_4WD);
+        explorerLineSeries = tmpSet;
+    }
+
+    public static boolean isExplorer(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && explorerLineSeries.contains(lineSeries);
+    }
+
+    private static final Set<String> broncoLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_BRONCO_BASE_2DOOR_4X4);
+        tmpSet.add(LINE_SERIES_BRONCO_BASE_4DOOR_4X4);
+        tmpSet.add(LINE_SERIES_BRONCO_BASE_2DOOR_AWD);
+        tmpSet.add(LINE_SERIES_BRONCO_BASE_4DOOR_AWD);
+        tmpSet.add(LINE_SERIES_BRONCO_FE_4DOOR_AWD);
+        tmpSet.add(LINE_SERIES_BRONCO_FE_2DOOR_AWD);
+        tmpSet.add(LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR);
+        broncoLineSeries = tmpSet;
     }
 
     public static boolean isBronco(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_BRONCO);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoLineSeries.contains(lineSeries);
+    }
+
+    // Check to see if we recognize a VIN in general
+    public static boolean isVINRecognized(String VIN) {
+        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN);
     }
 
     private static final Set<String> fuelElectric;
@@ -122,7 +261,7 @@ public class Utils {
             return FUEL_ELECTRIC;
         }
         // Otherwise check the VIN
-        else if (isF150(VIN) || isBronco(VIN)) {
+        else if (isF150(VIN) || isBronco(VIN) || isExplorer(VIN)) {
             String fuelType = VIN.substring(FUEL_TYPE_START_INDEX, FUEL_TYPE_END_INDEX);
             if (fuelElectric.contains(fuelType)) {
                 return FUEL_ELECTRIC;
@@ -140,62 +279,14 @@ public class Utils {
 
     public static String getWMI(String VIN) {
         if (isF150(VIN)) {
-            return WORLD_MANUFACTURING_IDENTIFIER_F150;
+            return WIDGETMODE_F150;
         } else if (isBronco(VIN)) {
-            return WORLD_MANUFACTURING_IDENTIFIER_BRONCO;
+            return WIDGETMODE_BRONCO;
+        } else if (isExplorer(VIN)) {
+            return WIDGETMODE_EXPLORER;
         } else {
-            return WORLD_MANUFACTURING_IDENTIFIER_MACHE_NORTH_AMERICA;
+            return WIDGETMODE_MACHE;
         }
-    }
-
-    private static final Set<String> f150RegularCabs;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_F150_REGULAR_4X2);
-        tmpSet.add(LINE_SERIES_F150_REGULAR_4X4);
-        f150RegularCabs = tmpSet;
-    }
-
-    public static boolean isF150RegularCab(String VIN) {
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return f150RegularCabs.contains(lineSeries);
-    }
-
-    private static final Set<String> f150SuperCabs;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X2);
-        tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X4);
-        f150SuperCabs = tmpSet;
-    }
-
-    public static boolean isF150SuperCab(String VIN) {
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return f150SuperCabs.contains(lineSeries);
-    }
-
-    private static final Set<String> f150SuperCrews;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X2);
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4);
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_POLICE);
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X2_SSV);
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_SSV);
-        f150SuperCrews = tmpSet;
-    }
-
-    public static boolean isF150SuperCrew(String VIN) {
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return f150SuperCrews.contains(lineSeries);
-    }
-
-    public static boolean isF150Raptor(String VIN) {
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return lineSeries.equals(LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR);
     }
 
     public static final String WIREFRAME = "wireframe";
@@ -296,6 +387,22 @@ public class Utils {
         broncobase4x4Drawables = tmpMap;
     }
 
+    // Drawables for Explorer ST
+    private static final Map<String, Integer> explorerSTDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe);
+        tmpMap.put(HOOD, R.drawable.explorer_hood);
+        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor);
+        explorerSTDrawables = tmpMap;
+    }
+
+
     // Get the set of drawables for a particular style of F-150
     public static Map<String, Integer> getVehicleDrawables(String VIN) {
         if (VIN != null && !VIN.equals("")) {
@@ -310,8 +417,11 @@ public class Utils {
                     return raptorDrawables;
                 }
             }
-            if (isBronco(VIN)) {
+            else if (isBronco(VIN)) {
                 return broncobase4x4Drawables;
+            }
+            else if (isExplorer(VIN) ) {
+                return explorerSTDrawables;
             }
         }
         return macheDrawables;
@@ -322,8 +432,11 @@ public class Utils {
             if (isF150(VIN)) {
                 return R.layout.f150_widget;
             }
-            if (isBronco(VIN)) {
+            else if (isBronco(VIN)) {
                 return R.layout.bronco_widget;
+            }
+            else if (isExplorer(VIN)) {
+                return R.layout.explorer_widget;
             }
         }
         return R.layout.mache_widget;

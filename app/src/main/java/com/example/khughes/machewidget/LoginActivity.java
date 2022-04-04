@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
+import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -62,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
         appInfo = new StoredData(this);
 
-        setContentView(profilesActive ? R.layout.profile_login_activity : R.layout.login_activity);
+        setContentView( R.layout.login_activity);
 
         savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
 
@@ -94,9 +95,12 @@ public class LoginActivity extends AppCompatActivity {
         passwordWidget = findViewById(R.id.password);
         VINWidget = findViewById(R.id.VIN);
 
+        aliasWidget = findViewById(R.id.alias);
+        if (aliasWidget != null ) {
+            aliasWidget.setVisibility(profilesActive ? View.VISIBLE : View.GONE);
+        }
+        alias = getIntent().getStringExtra(PROFILENAME);
         if (profilesActive) {
-            aliasWidget = findViewById(R.id.alias);
-            alias = getIntent().getStringExtra(PROFILENAME);
 
             // No alias is OK when there is only one profile.
             // If there is no alias and more than one profile, create a new generic alias
@@ -237,11 +241,11 @@ public class LoginActivity extends AppCompatActivity {
             } else if (VIN.length() != 17) {
                 Toast.makeText(getApplicationContext(), "Please enter a valid VIN.", Toast.LENGTH_SHORT).show();
             } else {
-                if (!(Utils.isMachE(VIN) || Utils.isF150(VIN) || Utils.isBronco(VIN))) {
+                if (!(Utils.isVINRecognized(VIN))) {
                     new AlertDialog.Builder(this)
                             .setTitle("Warning")
                             .setMessage("Your VIN is not recognized; the app may not work correctly. Please create an issue " +
-                                    "on GitHub and provide the first three characters of your VIN.")
+                                    "on GitHub and provide the first twelve characters of your VIN.")
                             .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                 return;
                             })

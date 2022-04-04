@@ -15,9 +15,11 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -58,8 +60,8 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private void updateWindow(RemoteViews views, String window, int id, int drawable) {
         // If we can't confirm the window is open, draw nothing.
-        if (window == null || window.equals("Fully closed position")
-                || window.contains("Undefined")) {
+        if (window == null || window.toLowerCase().replaceAll("[^a-z0-9]", "").contains("fullyclosed")
+                || window.toLowerCase().contains("undefined")) {
             drawable = R.drawable.filler;
         }
         views.setImageViewResource(id, drawable);
@@ -78,10 +80,10 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         // Get the tire pressure and do any conversion necessary.
         if (pressure != null) {
-            Double value = Double.parseDouble(pressure);
+            double value = Double.parseDouble(pressure);
             // Only display value if it's not ridiculous; after some OTA updates the
             // raw value is "65533"
-            if(value < 2000) {
+            if (value < 2000) {
                 // If conversion is really small, show value in tenths
                 String pattern = conversion >= 0.1 ? "#" : "#.0";
                 pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
@@ -150,7 +152,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     // Check if a door is open or closed.  Undefined defaults to closed.
     private Boolean isDoorClosed(String status) {
-        return (status == null || status.equals("Closed"));
+        return (status == null || status.toLowerCase().contains("closed"));
     }
 
     // Set background transparency
@@ -213,6 +215,10 @@ public class CarStatusWidget extends AppWidgetProvider {
         boolean profilesActive = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
 
         RemoteViews views = getWidgetView(context);
+
+        // Make sure the left side is visible depending on the widget width
+        Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        onResize(appWidgetOptions, views);
 
         // Setup actions for specific widgets
         setCallbacks(context, views);
@@ -548,32 +554,36 @@ public class CarStatusWidget extends AppWidgetProvider {
                 .getBoolean(context.getResources().getString(R.string.show_OTA_key), true);
         int dataLine = 0;
         if (displayOTA && otaStatus != null) {
-            views.setTextViewText(R.id.DataLine1, "OTA Status:");
-            String OTArefresh;
-            long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context);
-            String currentUTCOTATime = otaStatus.getOTADateTime();
-            if (currentUTCOTATime == null) {
-                OTArefresh = "Unknown";
-            } else {
-                long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
-
-                // If there's new information, display that data/time in a different color
-                if (currentOTATime > lastOTATime) {
-                    // if OTA failed, show it in red (that means something bad)
-                    String OTAResult = otaStatus.getOTAAggregateStatus();
-                    if (OTAResult != null && OTAResult.equals("failure")) {
-                        views.setTextColor(R.id.DataLine2, context.getColor(R.color.red));
-                    } else {
-                        views.setTextColor(R.id.DataLine2, context.getColor(R.color.green));
-                    }
-                    OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
-                    Notifications.newOTA(context);
+            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
+            String OTAAlertStatus = otaStatus.getOtaAlertStatus();
+            if (OTAAlertStatus != null && !OTAAlertStatus.toLowerCase().replaceAll("[^a-z0-9]", "").contains("doesntsupport")) {
+                views.setTextViewText(R.id.DataLine1, "OTA Status:");
+                String OTArefresh;
+                long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context);
+                String currentUTCOTATime = otaStatus.getOTADateTime();
+                if (currentUTCOTATime == null) {
+                    OTArefresh = "Unknown";
                 } else {
-                    OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
+                    long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+
+                    // If there's new information, display that data/time in a different color
+                    if (currentOTATime > lastOTATime) {
+                        // if OTA failed, show it in red (that means something bad)
+                        String OTAResult = otaStatus.getOTAAggregateStatus();
+                        if (OTAResult != null && OTAResult.equals("failure")) {
+                            views.setTextColor(R.id.DataLine2, context.getColor(R.color.red));
+                        } else {
+                            views.setTextColor(R.id.DataLine2, context.getColor(R.color.green));
+                        }
+                        OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
+                        Notifications.newOTA(context);
+                    } else {
+                        OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, new StoredData(context).getTimeFormatByCountry(VIN));
+                    }
                 }
+                views.setTextViewText(R.id.DataLine2, PADDING + OTArefresh);
+                dataLine += 2;
             }
-            views.setTextViewText(R.id.DataLine2, PADDING + OTArefresh);
-            dataLine += 2;
         }
 
         // Location
@@ -597,6 +607,10 @@ public class CarStatusWidget extends AppWidgetProvider {
         int fuelType = Utils.getFuelType(VIN);
 
         RemoteViews views = getWidgetView(context);
+
+        // Make sure the left side is visible depending on the widget width
+        Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        onResize(appWidgetOptions, views);
 
         setCallbacks(context, views);
 
@@ -744,19 +758,24 @@ public class CarStatusWidget extends AppWidgetProvider {
             appInfo.setWidgetMode(newMode);
             PackageManager manager = context.getPackageManager();
             String packageName = context.getPackageName();
-            String f150Activity = packageName + ".F150MainActivity";
-            manager.setComponentEnabledSetting(new ComponentName(packageName, f150Activity),
-                    Utils.isF150(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
             String macheActivity = packageName + ".MainActivity";
             manager.setComponentEnabledSetting(new ComponentName(packageName, macheActivity),
                     Utils.isMachE(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                     PackageManager.DONT_KILL_APP);
+            String f150Activity = packageName + ".F150MainActivity";
+            manager.setComponentEnabledSetting(new ComponentName(packageName, f150Activity),
+                    Utils.isF150(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
             String broncoActivity = packageName + ".BroncoMainActivity";
             manager.setComponentEnabledSetting(new ComponentName(packageName, broncoActivity),
                     Utils.isBronco(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+            String explorerActivity = packageName + ".ExplorerMainActivity";
+            manager.setComponentEnabledSetting(new ComponentName(packageName, explorerActivity),
+                    Utils.isExplorer(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                     PackageManager.DONT_KILL_APP);
         }
@@ -781,6 +800,23 @@ public class CarStatusWidget extends AppWidgetProvider {
             }
             updateLinkedApps(context, appWidgetManager, appWidgetId, VIN);
         }
+    }
+
+    private void onResize(Bundle newOptions, RemoteViews views) {
+        int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+//        Toast.makeText(context, "width = " + minWidth, Toast.LENGTH_SHORT).show();
+        if (minWidth < 250) {
+            views.setViewVisibility(R.id.leftside, View.GONE);
+        } else {
+            views.setViewVisibility(R.id.leftside, View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+        RemoteViews views = getWidgetView(context);
+        onResize(newOptions, views);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
@@ -814,15 +850,19 @@ public class CarStatusWidget extends AppWidgetProvider {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
             this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
         } else if (action.equals(PROFILE_CLICK)) {
+            String alias = ProfileManager.changeProfile(context);
             MainActivity.updateWidget(context);
         } else if (action.equals(WIDGET_CLICK)) {
             String activity;
             switch (new StoredData(context).getWidgetMode()) {
-                case Utils.WORLD_MANUFACTURING_IDENTIFIER_BRONCO:
+                case Utils.WIDGETMODE_BRONCO:
                     activity = ".BroncoMainActivity";
                     break;
-                case Utils.WORLD_MANUFACTURING_IDENTIFIER_F150:
+                case Utils.WIDGETMODE_F150:
                     activity = ".F150MainActivity";
+                    break;
+                case Utils.WIDGETMODE_EXPLORER:
+                    activity = ".ExplorerMainActivity";
                     break;
                 default:
                     activity = ".MainActivity";

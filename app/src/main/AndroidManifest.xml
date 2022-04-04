@@ -47,6 +47,20 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias
+            android:name=".ExplorerMainActivity"
+            android:roundIcon="@mipmap/explorer_icon_round"
+            android:label="@string/explorer_app_name"
+            android:icon="@mipmap/explorer_icon"
+            android:enabled="false"
+            android:exported="true"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
         <activity
             android:name=".SettingsActivity"
             android:exported="false"

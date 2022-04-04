@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.04.0x
+### Added
+- Initial support for Ford Explorers SUVs (tell your friends!).  Many thanks to @FrankThompson for being the beta tester.
+- A smaller widget is now supported; this widget only show the vehicle image and associated icons.  It's a work in progress; you may end up with 
+  some "dead space" to the left side. 
+- If a VIN is not recognized upon log-in, the app will display a notice that things may not work correctly and encourage the user to upload data
+  to a new Issue on GitHub.
+  
+## Changes
+- Related to the addition of Explorer support, more of the code was changed for recognizing information about each vehicle from its VIN.  Heads up; if you 
+notice something not right, *open an issue on GitHub*.
+
+### Fixed
+- Profiles should work again; a number of issues were discovered and fixed.
+
 ## 2022.03.31
 ### Added
 - An Update Activity has been created.  When a new version of the app is pushed to GitHub, you will get a notification as before; however, when you click on the

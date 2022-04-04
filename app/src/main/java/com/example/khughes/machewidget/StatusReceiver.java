@@ -34,6 +34,11 @@ public class StatusReceiver extends BroadcastReceiver {
         nextAlarm(mContext);
 
         String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+        if (VIN.equals("")) {
+            LogFile.e(mContext, MainActivity.CHANNEL_ID, "StatusReceiver: VIN is empty!?");
+            return;
+        }
+
         appInfo = new StoredData(context);
         long timeout = appInfo.getTokenTimeout(VIN);
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());

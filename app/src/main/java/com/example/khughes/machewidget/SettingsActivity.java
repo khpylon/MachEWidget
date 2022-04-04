@@ -76,6 +76,22 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
 
+            // Modify the VIN file when profiles are changed.
+            Preference profiles = findPreference(this.getResources().getString(R.string.show_profiles_key));
+            profiles.setOnPreferenceChangeListener((preference, newValue) -> {
+                if ((Boolean) newValue) {
+                    // when enabled, create a profile for the current VIN
+                    String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+                    if (!VIN.equals("")) {
+                        new StoredData(mContext).addProfile(VIN, "User 1");
+                    }
+                } else {
+                    // when disables, remove all profiles
+                    new StoredData(mContext).clearProfiles();
+                }
+                return true;
+            });
+
 //            Preference vintest = findPreference("vintest");
 //            vintest.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 //                @Override

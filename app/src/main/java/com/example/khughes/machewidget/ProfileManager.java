@@ -182,4 +182,25 @@ public class ProfileManager extends AppCompatActivity {
     private Profile getBlankProfile() {
         return new Profile(BLANK_VIN, "");
     }
+
+    private static int ix = 0;
+
+    public static String changeProfile(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
+        ArrayList<String> profiles = new StoredData(context).getProfiles();
+
+        StoredData appInfo = new StoredData(context);
+        for(String p: appInfo.getProfiles()) {
+            if(p.equals(VIN)) {
+                ix = (ix + 1) % profiles.size();
+                int index = ix;
+
+                VIN = profiles.get(index);
+                sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), VIN).apply();
+                return appInfo.getProfileName(VIN);
+            }
+        }
+        return null;
+    }
 }
