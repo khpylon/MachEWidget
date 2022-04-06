@@ -35,3 +35,10 @@ Ford stores the odometer reading as an integer, in kilometers.  When it's conver
 #### Q: What are the two "X"'s on the bottom left of the widget?
 
 These are short-cut links you can assign to other apps.  To do so, select **Choose Linked Apps** in the three-dot menu, then select which app you'd like to link   to which button.  If you don't see the app you want listed, go into **Setting** and enable **Allow any app to be linked to the "charger" widget**.
+
+#### Q: Why does the app require permission to "install unknown apps"?
+
+Google's Play Store vets the apps you download to prevent malware from being installed on your phone which might compromise your personal data.
+As such, a non Play Store app needs your permission to perform an installation.  This app only downloads the *app-release.apk* file from the
+project's GitHub repository and nothing else.  It's meant as a convenience; if you are still suspicious of it, you can still download the apk directly.  
+Go to "Settings" in the three-dot menu, scroll to the bottom, and click on "GitHub repo" to take you there.

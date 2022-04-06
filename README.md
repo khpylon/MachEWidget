@@ -7,13 +7,15 @@
 This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/tonesto7), which is in turn based on the earlier work of 
 [David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps](https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
 .  It is not a complete implementation of the functionality of their widgets, as it:
-- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own.  As of Feb 2022 I'm extending capabilities to support F-150 and Bronco owners as well (feedback needed) 
+- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own.  As of Feb 2022 I'm extending capabilities to support F-150, Bronco, and
+  Explorer owners as well (feedback needed) 
 - does not include all the function of tonesto7's Apple/iOS widget
 - does not currently support accounts outside of the United States, although it may still work
 
-<img src="app/src/main/assets/appwidget_sample.png" alt="Mach-E widget example" width="300" />
-<img src="app/src/main/assets/appwidget_sample_f150.png" alt="F-150 widget example" width="300" />
-<img src="app/src/main/assets/appwidget_sample_bronco.png" alt="Bronco widget example" width="300" />
+  <img src="app/src/main/assets/appwidget_sample.png" alt="Mach-E widget example" width="300" />
+  <img src="app/src/main/assets/appwidget_sample_f150.png" alt="F-150 widget example" width="300" />
+  <img src="app/src/main/assets/appwidget_sample_bronco.png" alt="Bronco widget example" width="300" />
+  <img src="app/src/main/assets/appwidget_sample_explorer.png" alt="Explorer widget example" width="300" />
 
 My purpose for hosting this code on GitHub under the GPL v3 license is to provide a starting point for anyone who wants to extend its functionality.
 
@@ -39,7 +41,7 @@ As listed above, this app
 - is only intended for the Ford Mustang Mach-E, as that's the only Ford I own
 - does not include all the function of tonesto7's Apple/iOS widget
 - is not guaranteed to support accounts outside of the United States
-- if you are using the app with an F-150 or Bronco, it may be necessary to uninstall when upgrading to newer versions.  This is because the 
+- if you are using the app with an F-150/Bronco/Explorer, it may be necessary to uninstall when upgrading to newer versions.  This is because the 
   app is registered by the name "Mach-E Info", and using with an F-150 or Bronco aliases the app's name which can confuse
   your Android OS when it comes time to upgrade
   
@@ -75,7 +77,7 @@ send a message to suggest adding it.
 
 Thanks to [tonesto7](https://github.com/tonesto7/fordpass-scriptable) for his work on the new widget, and to
 [dschablowsky](https://github.com/dschablowsky/FordPassWidget) for his work on the original widget, 
-[d4v3y0rk](https://github.com/d4v3y0rk) for finding out the information about the ford api.
+[d4v3y0rk](https://github.com/d4v3y0rk) for finding out the information about the Ford api.
 Thanks to [@DevSecOps](https://www.macheforum.com/site/members/devsecops.7076/) on the [Mach-E Forums](https://www.macheforum.com/site/) 
 for his valuable input and help with updating the appearance of the widget and permitting the use of the assets from his app.
 Additional thanks to [marco79cgn](https://github.com/marco79cgn) and [Tobias Battenberg](https://github.com/mountbatt) for your widgets.  Also, thanks to those
@@ -88,8 +90,7 @@ A number of the icons used in this app are derived from free ones found on [Icon
 I was inspired to create this app for Android in order to see more information about my vehicle, and to learn new things about Android programming.
 I am not employed by Ford, and this app is not supported by Ford. 
 The API used can be changed at any time by Ford. 
-I am NOT liable for any kind of damage (special, direct, indirect, consequential or whatsoever) resulting from the use of 
-this app. 
+I am NOT liable for any kind of damage (special, direct, indirect, consequential or whatsoever) resulting from the use of this app. 
 
 ## License
 
