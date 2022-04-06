@@ -2,15 +2,14 @@ package com.example.khughes.machewidget;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.pm.PackageInstaller;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,11 +24,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -37,7 +33,6 @@ import java.nio.charset.StandardCharsets;
 
 public class UpdateActivity extends AppCompatActivity {
 
-    private static final String ACTION_INSTALL_COMPLETE = "com.example.khughes.machewidget.INSTALL_COMPLETE";
     private static final String CHANGELOG_URL = "https://raw.githubusercontent.com/khpylon/MachEWidget/master/CHANGELOG.md";
     private static final String appUrl = "https://github.com/khpylon/MachEWidget/blob/master/app/release/app-release.apk?raw=true";
 
@@ -55,6 +50,12 @@ public class UpdateActivity extends AppCompatActivity {
             return;
         }
 
+        // Make sure we have permission to install apps
+        String packageName = "package:" + context.getPackageName();
+        if (!getPackageManager().canRequestPackageInstalls()) {
+            startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse(packageName)));
+        }
+
         setContentView(R.layout.activity_update);
 
         WebView mWebView = findViewById(R.id.changelog_webview);
@@ -69,12 +70,18 @@ public class UpdateActivity extends AppCompatActivity {
         new DownloadChangelog(context, mWebView).execute(CHANGELOG_URL);
 
         Button applyButton = findViewById(R.id.apply_button);
-        applyButton.setOnClickListener(view -> new AlertDialog.Builder(this)
-                .setTitle("Notice")
-                .setMessage("After the app is updated, it will close.")
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> new DownloadApp(context).execute(appUrl))
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show());
+        applyButton.setOnClickListener(view -> {
+            if (!context.getPackageManager().canRequestPackageInstalls()) {
+                Toast.makeText(context, "The app needs permission to perform installs from unknown sources.For more info, read the FAQ on GitHub.", Toast.LENGTH_LONG).show();
+            } else {
+                new AlertDialog.Builder(this)
+                        .setTitle("Notice")
+                        .setMessage("After the app is updated, it will close.")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> new DownloadApp(context).execute(appUrl))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
     }
 
     private static class DownloadChangelog extends AsyncTask<String, String, String> {
@@ -118,7 +125,7 @@ public class UpdateActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             Context context = mContext.get();
 
-            // Attempt to isolate only the inform between the current version and he new vesion.
+            // Attempt to isolate only the inform between the current version and he new version.
             String newVersion = "## " + new StoredData(context).getLatestVersion();
             String currentVersion = "## " + BuildConfig.VERSION_NAME;
             int startIndex = result.indexOf(newVersion);
@@ -176,70 +183,12 @@ public class UpdateActivity extends AppCompatActivity {
 
         protected void onPostExecute(File apkFile) {
             Context context = mContext.get();
-            PackageInstaller pi = context.getPackageManager().getPackageInstaller();
-            PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
-            params.setAppPackageName(context.getPackageName());
-            try {
-                int sessionId = pi.createSession(params);
-                PackageInstaller.Session session = pi.openSession(sessionId);
-                InputStream in = new FileInputStream(apkFile);
-                OutputStream out = session.openWrite("package", 0, apkFile.length());
-                byte[] buffer = new byte[65536];
-                int c;
-                while ((c = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, c);
-                }
-                session.fsync(out);
-                in.close();
-                out.close();
-
-                Intent intent = new Intent(context, UpdateActivity.class);
-                intent.setAction(ACTION_INSTALL_COMPLETE);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-                IntentSender statusReceiver = pendingIntent.getIntentSender();
-
-                // Commit the session (this will start the installation workflow).
-                session.commit(statusReceiver);
-                session.close();
-//                apkFile.delete();
-            } catch (IOException e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.DownloadApp()" + e);
-            }
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Bundle extras = intent.getExtras();
-        if (ACTION_INSTALL_COMPLETE.equals(intent.getAction())) {
-            int status = extras.getInt(PackageInstaller.EXTRA_STATUS);
-            String message = extras.getString(PackageInstaller.EXTRA_STATUS_MESSAGE);
-            switch (status) {
-                case PackageInstaller.STATUS_PENDING_USER_ACTION:
-                    // This test app isn't privileged, so the user has to confirm the install.
-                    Intent confirmIntent = (Intent) extras.get(Intent.EXTRA_INTENT);
-                    startActivity(confirmIntent);
-                    break;
-                case PackageInstaller.STATUS_SUCCESS:
-                    Toast.makeText(this, "Install succeeded!", Toast.LENGTH_SHORT).show();
-                    break;
-                case PackageInstaller.STATUS_FAILURE_ABORTED:
-                    Toast.makeText(this, "Install aborted.", Toast.LENGTH_SHORT).show();
-                    finish();
-                    break;
-                case PackageInstaller.STATUS_FAILURE:
-                case PackageInstaller.STATUS_FAILURE_BLOCKED:
-                case PackageInstaller.STATUS_FAILURE_CONFLICT:
-                case PackageInstaller.STATUS_FAILURE_INCOMPATIBLE:
-                case PackageInstaller.STATUS_FAILURE_INVALID:
-                case PackageInstaller.STATUS_FAILURE_STORAGE:
-                    Toast.makeText(this, "Install failed! " + status + ", " + message,
-                            Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    Toast.makeText(this, "Unrecognized status received from installer: " + status,
-                            Toast.LENGTH_SHORT).show();
+            if (apkFile != null) {
+                Uri apkURI = FileProvider.getUriForFile(context.getApplicationContext(), context.getPackageName() + ".provider", apkFile);
+                Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
+                context.startActivity(intent);
             }
         }
     }
