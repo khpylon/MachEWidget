@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.04.06
+### Fixed
+- Changes to the code for the Update activity.  The app will check that it has permission to install from unknown sources, and if the user does
+  not grant this permission a toast message will display explaining that these permissions are necessary.  Since this code doesn't work in
+  2022.04.04, you will need to manually sideload the apk from [GitHub](https://github.com/khpylon/MachEWidget/blob/master/app/release/app-release.apk?raw=true) this time
+  (use this clickable link).
+
 ## 2022.04.04
 ### Added
 - Initial support for Ford Explorers SUVs (tell your friends!).  Many thanks to @FrankThompson for being the beta tester.
@@ -13,7 +20,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 - If a VIN is not recognized upon log-in, the app will display a notice that things may not work correctly and encourage the user to upload data
   to a new Issue on GitHub.
   
-## Changes
+### Changes
 - Related to the addition of Explorer support, more of the code was changed for recognizing information about each vehicle from its VIN.  Heads up; if you 
 notice something not right, *open an issue on GitHub*.
 

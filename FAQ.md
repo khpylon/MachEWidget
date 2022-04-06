@@ -40,5 +40,5 @@ These are short-cut links you can assign to other apps.  To do so, select **Choo
 
 Google's Play Store vets the apps you download to prevent malware from being installed on your phone which might compromise your personal data.
 As such, a non Play Store app needs your permission to perform an installation.  This app only downloads the *app-release.apk* file from the
-project's GitHub repository and nothing else.  It's meant as a convenience; if you are still suspicious of it, you can still download the apk directly.  
+project's GitHub repository and nothing else.  It's meant as a convenience; if you are still suspicious of it, you can still download the apk directly. 
 Go to "Settings" in the three-dot menu, scroll to the bottom, and click on "GitHub repo" to take you there.
