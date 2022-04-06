@@ -72,7 +72,7 @@ public class UpdateActivity extends AppCompatActivity {
         Button applyButton = findViewById(R.id.apply_button);
         applyButton.setOnClickListener(view -> {
             if (!context.getPackageManager().canRequestPackageInstalls()) {
-                Toast.makeText(context, "The app needs permission to perform installs from unknown sources.For more info, read the FAQ on GitHub.", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "The app needs permission to install unknown apps. For more info, read the FAQ on GitHub.", Toast.LENGTH_LONG).show();
             } else {
                 new AlertDialog.Builder(this)
                         .setTitle("Notice")
