@@ -14,8 +14,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Base64;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.commonmark.node.Node;
@@ -35,6 +37,8 @@ public class UpdateActivity extends AppCompatActivity {
 
     private static final String CHANGELOG_URL = "https://raw.githubusercontent.com/khpylon/MachEWidget/master/CHANGELOG.md";
     private static final String appUrl = "https://github.com/khpylon/MachEWidget/blob/master/app/release/app-release.apk?raw=true";
+
+    private static final int progressIntervals = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,9 @@ public class UpdateActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_update);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setMax(progressIntervals);
+        progressBar.setVisibility(View.GONE);
 
         WebView mWebView = findViewById(R.id.changelog_webview);
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
@@ -77,7 +84,11 @@ public class UpdateActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this)
                         .setTitle("Notice")
                         .setMessage("After the app is updated, it will close.")
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> new DownloadApp(context).execute(appUrl))
+                        .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                            progressBar.setVisibility(View.VISIBLE);
+                            new DownloadApp(context, progressBar).execute(appUrl);
+                        }
+                        )
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
             }
@@ -142,12 +153,14 @@ public class UpdateActivity extends AppCompatActivity {
         }
     }
 
-    private static class DownloadApp extends AsyncTask<String, String, File> {
+    private static class DownloadApp extends AsyncTask<String, Integer, File> {
 
         private final WeakReference<Context> mContext;
+        private final WeakReference<ProgressBar> mProgressBar;
 
-        public DownloadApp(Context context) {
+        public DownloadApp(Context context, ProgressBar mProgress) {
             mContext = new WeakReference<>(context);
+            mProgressBar = new WeakReference<>(mProgress);
         }
 
         @Override
@@ -161,12 +174,20 @@ public class UpdateActivity extends AppCompatActivity {
                 URL url = new URL(urls[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.connect();
+                int fileLength = urlConnection.getContentLength();
                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
                 FileOutputStream output = new FileOutputStream(apkFile);
                 byte[] data = new byte[8192];
                 int c;
+                int currentSize = 0;
+                int lastSize = 0;
                 while ((c = input.read(data)) != -1) {
                     output.write(data, 0, c);
+                    currentSize += c;
+                    if((currentSize - lastSize)*progressIntervals/fileLength > 0 ) {
+                        publishProgress((currentSize*progressIntervals)/fileLength);
+                        lastSize = currentSize;
+                    }
                 }
                 input.close();
                 output.close();
@@ -181,9 +202,15 @@ public class UpdateActivity extends AppCompatActivity {
             return apkFile;
         }
 
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            mProgressBar.get().setProgress(values[0]);
+        }
+
         protected void onPostExecute(File apkFile) {
             Context context = mContext.get();
-            if (apkFile != null) {
+            mProgressBar.get().setVisibility(View.GONE);
+             if (apkFile != null) {
                 Uri apkURI = FileProvider.getUriForFile(context.getApplicationContext(), context.getPackageName() + ".provider", apkFile);
                 Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -28,6 +28,14 @@
             android:text="@string/install_update"
             android:layout_margin="4dp"/>
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progressBackgroundTint="@color/purple_500"
+            android:progressTint="@color/purple_200"
+            android:progress="0"
+            style="@android:style/Widget.ProgressBar.Horizontal"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
