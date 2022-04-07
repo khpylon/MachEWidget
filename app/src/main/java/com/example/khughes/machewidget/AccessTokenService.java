@@ -24,12 +24,12 @@ public interface AccessTokenService {
     @Headers({"Content-Type: application/json",
             "Accept-Language: en-US", "Application-Id: "+ Constants.APID,
             "Authorization: Basic ZWFpLWNsaWVudDo="})
-    @PUT("token")
+    @PUT("oauth2/v1/token")
     Call<AccessToken> getAccessToken(@Body RequestBody token);
 
     @Headers({"Content-Type: application/json",
             "Accept-Language: en-US", "Application-Id: "+ Constants.APID,
             "Authorization: Basic ZWFpLWNsaWVudDo="})
-    @PUT("refresh")
+    @PUT("oauth2/v1/refresh")
     Call<AccessToken> refreshAccessToken(@Body RequestBody token);
 }

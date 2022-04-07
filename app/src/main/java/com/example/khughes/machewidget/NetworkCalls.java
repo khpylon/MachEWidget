@@ -28,7 +28,6 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Timer;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -68,8 +67,8 @@ public class NetworkCalls {
         String nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
 
         if (MainActivity.checkInternetConnection(context)) {
-            AccessTokenService fordClient = NetworkServiceGenerators.createFordService(AccessTokenService.class, context);
-            AccessTokenService OAuth2Client = NetworkServiceGenerators.createOAuth2Service(AccessTokenService.class, context);
+            AccessTokenService fordClient = NetworkServiceGenerators.createIBMCloudService(AccessTokenService.class, context);
+            AccessTokenService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(AccessTokenService.class, context);
 
             for (int retry1 = 2; retry1 >= 0; --retry1) {
                 Call<AccessToken> call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
@@ -152,7 +151,7 @@ public class NetworkCalls {
             Map<String, String> jsonParams = new ArrayMap<>();
             jsonParams.put("refresh_token", token);
             RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
-            AccessTokenService OAuth2Client = NetworkServiceGenerators.createOAuth2Service(AccessTokenService.class, context);
+            AccessTokenService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(AccessTokenService.class, context);
             for (int retry = 2; retry >= 0; --retry) {
                 Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
                 try {
@@ -210,7 +209,7 @@ public class NetworkCalls {
         String language = appInfo.getLanguage(VIN);
 
         if (MainActivity.checkInternetConnection(context)) {
-            StatusService statusClient = NetworkServiceGenerators.createCarStatusService(StatusService.class, context);
+            USAPICVService statusClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
             for (int retry = 2; retry >= 0; --retry) {
                 Call<CarStatus> call = statusClient.getStatus(token, language, Constants.APID, VIN);
                 try {
@@ -234,6 +233,11 @@ public class NetworkCalls {
                             }
                             long priorRefreshTime = appInfo.getLastRefreshTime(VIN);
                             if (priorRefreshTime <= currentRefreshTime) {
+                                // If the charging status changes, reset the old charge station info so we know to update it later
+                                String lastChargeStatus = appInfo.getCarStatus(VIN).getChargingStatus();
+                                if (!car.getChargingStatus().equals(lastChargeStatus)) {
+                                    appInfo.setChargeStation(VIN, new ChargeStation());
+                                }
                                 appInfo.setCarStatus(VIN, car);
                                 appInfo.setLastRefreshTime(VIN, currentRefreshTime);
                             }
@@ -294,7 +298,7 @@ public class NetworkCalls {
         String country = appInfo.getCountry(VIN);
 
         if (MainActivity.checkInternetConnection(context)) {
-            OTAStatusService OTAstatusClient = NetworkServiceGenerators.createOTAStatusService(OTAStatusService.class, context);
+            DigitalServicesService OTAstatusClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
             for (int retry = 2; retry >= 0; --retry) {
                 Call<OTAStatus> call = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
                 try {
@@ -381,7 +385,7 @@ public class NetworkCalls {
         if (!MainActivity.checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
         } else {
-            CommandService commandServiceClient = NetworkServiceGenerators.createCommandService(CommandService.class, context);
+            USAPICVService commandServiceClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
             Call<CommandStatus> call;
             if (request.equals("put")) {
                 call = commandServiceClient.putCommand(token, Constants.APID,
@@ -428,7 +432,7 @@ public class NetworkCalls {
             LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.execResponse: ", e);
         }
 
-        CommandService commandServiceClient = NetworkServiceGenerators.createCommandService(CommandService.class, context);
+        USAPICVService commandServiceClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
         try {
             for (int retries = 0; retries < 10; ++retries) {
                 Call<CommandStatus> call = commandServiceClient.getCommandResponse(token,

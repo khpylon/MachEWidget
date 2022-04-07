@@ -11,6 +11,11 @@ public class NetworkServiceGenerators {
 
     private static Context mContext;
 
+    private static final String IBMCLOUD_BASE_URL = "https://fcis.ice.ibmcloud.com/v1.0/endpoint/default/";
+    private static final String APIMPS_BASE_URL = "https://api.mps.ford.com/api/";
+    private static final String USAPICV_BASE_URL = "https://usapi.cv.ford.com/api/";
+    private static final String DIGITALSERVICES_BASE_URL = "https://www.digitalservices.ford.com/";
+
     private static final HttpLoggingInterceptor logging =
             new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                 public void log(String message) {
@@ -27,126 +32,87 @@ public class NetworkServiceGenerators {
             })
                     .setLevel(HttpLoggingInterceptor.Level.BODY);
 
-    // Generators for account authentication
-
-    private static final String FORD_BASE_URL = "https://fcis.ice.ibmcloud.com/v1.0/endpoint/default/";
-
-    private static final Retrofit.Builder fordBuilder =
+    private static final Retrofit.Builder ibmCloudBuilder =
             new Retrofit.Builder()
-                    .baseUrl(FORD_BASE_URL)
+                    .baseUrl(IBMCLOUD_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create());
 
-    private static Retrofit fordRetrofit = fordBuilder.build();
+    private static Retrofit ibmCloudRetrofit = ibmCloudBuilder.build();
 
-    private static final OkHttpClient.Builder fordHttpClient =
+    private static final OkHttpClient.Builder ibmCloudHttpClient =
             new OkHttpClient.Builder();
 
-    public static <S> S createFordService(
+    public static <S> S createIBMCloudService(
             Class<S> serviceClass, Context context) {
         mContext = context;
-        if (!fordHttpClient.interceptors().contains(logging)) {
-            fordHttpClient.addInterceptor(logging);
-            fordBuilder.client(fordHttpClient.build());
-            fordRetrofit = fordBuilder.build();
+        if (!ibmCloudHttpClient.interceptors().contains(logging)) {
+            ibmCloudHttpClient.addInterceptor(logging);
+            ibmCloudBuilder.client(ibmCloudHttpClient.build());
+            ibmCloudRetrofit = ibmCloudBuilder.build();
         }
-        return fordRetrofit.create(serviceClass);
+        return ibmCloudRetrofit.create(serviceClass);
     }
 
-    private static final String OATH2_BASE_URL = "https://api.mps.ford.com/api/oauth2/v1/";
-
-    private static final Retrofit.Builder OAuth2Builder =
+    private static final Retrofit.Builder APIMPS =
             new Retrofit.Builder()
-                    .baseUrl(OATH2_BASE_URL)
+                    .baseUrl(APIMPS_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create());
 
-    private static Retrofit OAuth2Retrofit = OAuth2Builder.build();
+    private static Retrofit APIMPSRetrofit = APIMPS.build();
 
-    private static final OkHttpClient.Builder OAuth2HttpClient =
+    private static final OkHttpClient.Builder APIMPSHttpClient =
             new OkHttpClient.Builder();
 
-    public static <S> S createOAuth2Service(
+    public static <S> S createAPIMPSService(
             Class<S> serviceClass, Context context) {
         mContext = context;
-        if (!OAuth2HttpClient.interceptors().contains(logging)) {
-            OAuth2HttpClient.addInterceptor(logging);
-            OAuth2Builder.client(OAuth2HttpClient.build());
-            OAuth2Retrofit = OAuth2Builder.build();
+        if (!APIMPSHttpClient.interceptors().contains(logging)) {
+            APIMPSHttpClient.addInterceptor(logging);
+            APIMPS.client(APIMPSHttpClient.build());
+            APIMPSRetrofit = APIMPS.build();
         }
-        return OAuth2Retrofit.create(serviceClass);
+        return APIMPSRetrofit.create(serviceClass);
     }
 
-    // Generator for car status
-
-    private static final String CAR_STATUS_BASE_URL = "https://usapi.cv.ford.com/api/";
-
-    private static final Retrofit.Builder carStatusBuilder =
+    private static final Retrofit.Builder USAPICVBuilder =
             new Retrofit.Builder()
-                    .baseUrl(CAR_STATUS_BASE_URL)
+                    .baseUrl(USAPICV_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create());
 
-    private static Retrofit carStatusRetrofit = carStatusBuilder.build();
+    private static Retrofit USAPICVRetrofit = USAPICVBuilder.build();
 
-    private static final OkHttpClient.Builder carStatusHttpClient =
+    private static final OkHttpClient.Builder USASPICVHttpClient =
             new OkHttpClient.Builder();
 
-    public static <S> S createCarStatusService(
+    public static <S> S createUSAPICVService(
             Class<S> serviceClass, Context context) {
         mContext = context;
-        if (!carStatusHttpClient.interceptors().contains(logging)) {
-            carStatusHttpClient.addInterceptor(logging);
-            carStatusBuilder.client(carStatusHttpClient.build());
-            carStatusRetrofit = carStatusBuilder.build();
+        if (!USASPICVHttpClient.interceptors().contains(logging)) {
+            USASPICVHttpClient.addInterceptor(logging);
+            USAPICVBuilder.client(USASPICVHttpClient.build());
+            USAPICVRetrofit = USAPICVBuilder.build();
         }
-        return carStatusRetrofit.create(serviceClass);
+        return USAPICVRetrofit.create(serviceClass);
     }
 
-    // Generator for over-the-air update status
-
-    private static final String OTA_STATUS_BASE_URL = "https://www.digitalservices.ford.com/owner/api/v2/ota/";
-
-    private static final Retrofit.Builder OTAStatusBuilder =
+    private static final Retrofit.Builder DIGITALSERVICESBuilder =
             new Retrofit.Builder()
-                    .baseUrl(OTA_STATUS_BASE_URL)
+                    .baseUrl(DIGITALSERVICES_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create());
 
-    private static Retrofit OTAStatusRetrofit = OTAStatusBuilder.build();
+    private static Retrofit DIGITALSERVICESRetrofit = DIGITALSERVICESBuilder.build();
 
-    private static final OkHttpClient.Builder OTAStatusHttpClient =
+    private static final OkHttpClient.Builder DIGITALSERVICESHttpClient =
             new OkHttpClient.Builder();
 
-    public static <S> S createOTAStatusService(
+    public static <S> S createDIGITALSERVICESService(
             Class<S> serviceClass, Context context) {
         mContext = context;
-        if (!OTAStatusHttpClient.interceptors().contains(logging)) {
-            OTAStatusHttpClient.addInterceptor(logging);
-            OTAStatusBuilder.client(OTAStatusHttpClient.build());
-            OTAStatusRetrofit = OTAStatusBuilder.build();
+        if (!DIGITALSERVICESHttpClient.interceptors().contains(logging)) {
+            DIGITALSERVICESHttpClient.addInterceptor(logging);
+            DIGITALSERVICESBuilder.client(DIGITALSERVICESHttpClient.build());
+            DIGITALSERVICESRetrofit = DIGITALSERVICESBuilder.build();
         }
-        return OTAStatusRetrofit.create(serviceClass);
-    }
-
-    // Generator for vehicle commands
-
-    private static final String COMMAND_BASE_URL = "https://usapi.cv.ford.com/api/";
-
-    private static final Retrofit.Builder commandBuilder =
-            new Retrofit.Builder()
-                    .baseUrl(COMMAND_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create());
-
-    private static Retrofit commandRetrofit = commandBuilder.build();
-
-    private static final OkHttpClient.Builder commandHttpClient =
-            new OkHttpClient.Builder();
-
-    public static <S> S createCommandService(
-            Class<S> serviceClass, Context context) {
-        mContext = context;
-        if (!commandHttpClient.interceptors().contains(logging)) {
-            commandHttpClient.addInterceptor(logging);
-            commandBuilder.client(commandHttpClient.build());
-            commandRetrofit = commandBuilder.build();
-        }
-        return commandRetrofit.create(serviceClass);
+        return DIGITALSERVICESRetrofit.create(serviceClass);
     }
 }

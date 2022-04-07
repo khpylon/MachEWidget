@@ -1,14 +1,23 @@
 package com.example.khughes.machewidget;
 
 import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.PUT;
 import retrofit2.http.DELETE;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.GET;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
-public interface CommandService {
+public interface USAPICVService {
+    @Headers({"Accept: application/json",
+            "Accept-Encoding: gzip, deflate, br",
+            "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110"})
+    @GET("vehicles/v4/{VIN}/status")
+    Call<CarStatus> getStatus(@Header("auth-token") String token,
+                              @Header("Accept-Language") String language,
+                              @Header("Application-Id") String APID,
+                              @Path("VIN") String VIN);
+
     @Headers({"Content-Type: application/json",
             "Accept-Encoding: gzip, deflate, br",
             "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110"})
@@ -42,11 +51,10 @@ public interface CommandService {
             "Origin: https://ford.com'"})
     @GET("vehicles/v3/{VIN}/{COMPONENT}/{OPERATION}/{CODE}")
     Call<CommandStatus> getCommandResponse(@Header("auth-token") String token,
-                                      @Header("Application-Id") String APID,
-                                      @Path("VIN") String VIN,
-                                      @Path("COMPONENT") String component,
-                                      @Path("OPERATION") String operation,
-                                      @Path("CODE") String code
+                                           @Header("Application-Id") String APID,
+                                           @Path("VIN") String VIN,
+                                           @Path("COMPONENT") String component,
+                                           @Path("OPERATION") String operation,
+                                           @Path("CODE") String code
     );
-
 }
