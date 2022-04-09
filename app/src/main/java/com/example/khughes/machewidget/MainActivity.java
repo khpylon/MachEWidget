@@ -189,8 +189,10 @@ public class MainActivity extends AppCompatActivity {
                                     Intent intent = new Intent(context, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
-                                } catch (IOException e) {
-                                    Log.e(MainActivity.CHANNEL_ID, "exception in MainActivity.restoreSettingsLauncher: ", e);
+                                } catch (ZipManager.SettingFileException e) {
+                                    Toast.makeText(context, "Error: Settings ZIP file version mismatch.", Toast.LENGTH_SHORT).show();
+                                } catch (IOException e2) {
+                                    Log.e(MainActivity.CHANNEL_ID, "exception in MainActivity.restoreSettingsLauncher: ", e2);
                                 }
                             }
                         }

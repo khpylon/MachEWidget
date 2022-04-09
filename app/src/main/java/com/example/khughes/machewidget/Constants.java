@@ -29,4 +29,6 @@ public class Constants {
     public static final int UNITS_IMPERIAL = 2;
 
     public static final String REPOURL = "https://github.com/khpylon/MachEWidget";
+
+    public static final String FSVERSION_1 = "FSVERSION_1";
 }

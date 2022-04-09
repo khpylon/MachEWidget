@@ -4,9 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -18,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -29,8 +28,8 @@ public class ZipManager {
 
     public static File zip(String[] files, String zipFile) throws IOException {
         BufferedInputStream origin;
-        File fred = new File(zipFile);
-        try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(fred)))) {
+        File filename = new File(zipFile);
+        try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
             try {
                 byte[] data = new byte[BUFFER_SIZE];
 
@@ -49,25 +48,46 @@ public class ZipManager {
                     }
                 }
             } finally {
+                out.setComment(Constants.FSVERSION_1);
                 out.close();
             }
         }
-        return fred;
+        return filename;
     }
 
-    public static void unzip(Context context, Uri zipFile) throws IOException {
-        try {
+    public static void unzip(Context context, Uri zipFile) throws IOException, SettingFileException {
             File dataDir = context.getDataDir();
             File fromDir = new File(dataDir, "shared_prefs");
 
-            ZipInputStream zin = new ZipInputStream(new FileInputStream(
-                    context.getContentResolver().openFileDescriptor(zipFile, "r").getFileDescriptor()));
-            try {
-                ZipEntry ze;
-                while ((ze = zin.getNextEntry()) != null) {
-                    String path = fromDir + File.separator + ze.getName();
+            InputStream inStream = context.getContentResolver().openInputStream(zipFile);
+            File tmpfile = File.createTempFile("temp", ".zip");
+            OutputStream outStream = new FileOutputStream(tmpfile);
+            {
+                int len;
+                byte[] buffer = new byte[65536];
+                while ((len = inStream.read(buffer)) != -1) {
+                    outStream.write(buffer, 0, len);
+                }
+                inStream.close();
+                outStream.close();
+            }
 
-                    if (ze.isDirectory()) {
+            ZipFile localZipFile = new ZipFile( tmpfile);
+            String comment = localZipFile.getComment();
+            localZipFile.close();
+            if(comment == null || !comment.equals(Constants.FSVERSION_1)) {
+                tmpfile.delete();
+                throw new SettingFileException();
+            }
+
+            ZipInputStream zin = new ZipInputStream(new FileInputStream(tmpfile));
+            try {
+                ZipEntry entry;
+
+                while ((entry = zin.getNextEntry()) != null) {
+                    String path = fromDir + File.separator + entry.getName();
+
+                    if (entry.isDirectory()) {
                         File unzipFile = new File(path);
                         if (!unzipFile.isDirectory()) {
                             unzipFile.mkdirs();
@@ -87,11 +107,12 @@ public class ZipManager {
                 }
             } finally {
                 zin.close();
+                tmpfile.delete();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "Unzip exception", e);
-        }
+    }
+
+    public static class SettingFileException extends Exception {
+
     }
 
     public static void zipStuff(Context context) {
