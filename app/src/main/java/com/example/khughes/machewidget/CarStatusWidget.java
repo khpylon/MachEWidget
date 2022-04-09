@@ -34,12 +34,17 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class CarStatusWidget extends AppWidgetProvider {
-    public static final String WIDGET_IDS_KEY = "com.example.khughes.machewidget.CARSTATUSWIDGET";
+    public static final String WIDGET_IDS_KEY = BuildConfig.APPLICATION_ID + ".CARSTATUSWIDGET";
 
     private static final String PROFILE_CLICK = "Profile";
     private static final String WIDGET_CLICK = "Widget";
@@ -758,26 +763,35 @@ public class CarStatusWidget extends AppWidgetProvider {
             appInfo.setWidgetMode(newMode);
             PackageManager manager = context.getPackageManager();
             String packageName = context.getPackageName();
-            String macheActivity = packageName + ".MainActivity";
-            manager.setComponentEnabledSetting(new ComponentName(packageName, macheActivity),
-                    Utils.isMachE(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
-            String f150Activity = packageName + ".F150MainActivity";
-            manager.setComponentEnabledSetting(new ComponentName(packageName, f150Activity),
-                    Utils.isF150(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
-            String broncoActivity = packageName + ".BroncoMainActivity";
-            manager.setComponentEnabledSetting(new ComponentName(packageName, broncoActivity),
-                    Utils.isBronco(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
-            String explorerActivity = packageName + ".ExplorerMainActivity";
-            manager.setComponentEnabledSetting(new ComponentName(packageName, explorerActivity),
-                    Utils.isExplorer(VIN) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
+
+            Callable<Boolean> macheCheck = () -> {
+                return Utils.isMachE(VIN);
+            };
+            Callable<Boolean> f150Check = () -> {
+                return Utils.isF150(VIN);
+            };
+            Callable<Boolean> broncoCheck = () -> {
+                return Utils.isBronco(VIN);
+            };
+            Callable<Boolean> explorerCheck = () -> {
+                return Utils.isExplorer(VIN);
+            };
+            ExecutorService service = Executors.newSingleThreadExecutor();
+            Map<String, Future<Boolean>> results = new HashMap<>();
+            results.put(".MainActivity", service.submit(macheCheck));
+            results.put(".F150MainActivity", service.submit(f150Check));
+            results.put(".BroncoMainActivity", service.submit(broncoCheck));
+            results.put(".ExplorerMainActivity", service.submit(explorerCheck));
+            try {
+                for (String activity : results.keySet()) {
+                    manager.setComponentEnabledSetting(new ComponentName(packageName, packageName + activity),
+                            results.get(activity).get() ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
+                }
+            } catch (Exception e) {
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.matchWidgetWithVin()" + e);
+            }
         }
     }
 
@@ -850,7 +864,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
             this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
         } else if (action.equals(PROFILE_CLICK)) {
-            String alias = ProfileManager.changeProfile(context);
+            ProfileManager.changeProfile(context);
             MainActivity.updateWidget(context);
         } else if (action.equals(WIDGET_CLICK)) {
             String activity;

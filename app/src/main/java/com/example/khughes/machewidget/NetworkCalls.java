@@ -68,7 +68,7 @@ public class NetworkCalls {
 
         if (MainActivity.checkInternetConnection(context)) {
             AccessTokenService fordClient = NetworkServiceGenerators.createIBMCloudService(AccessTokenService.class, context);
-            AccessTokenService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(AccessTokenService.class, context);
+            APIMPSService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
 
             for (int retry1 = 2; retry1 >= 0; --retry1) {
                 Call<AccessToken> call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
@@ -151,7 +151,7 @@ public class NetworkCalls {
             Map<String, String> jsonParams = new ArrayMap<>();
             jsonParams.put("refresh_token", token);
             RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
-            AccessTokenService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(AccessTokenService.class, context);
+            APIMPSService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
             for (int retry = 2; retry >= 0; --retry) {
                 Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
                 try {

@@ -57,4 +57,16 @@ public interface USAPICVService {
                                            @Path("OPERATION") String operation,
                                            @Path("CODE") String code
     );
+
+    @Headers({"Accept: application/json",
+            "Accept-Encoding: gzip",
+            "Connection: Keep-Alive",
+            "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
+            "Referer: https://ford.com",
+            "Origin: https://ford.com'"})
+    @GET("users/vehicles/{VIN}/detail") // ?lrdt=01-01-1970%2000:00:00"
+    Call<VehicleInfo> getVehicleInfo(@Header("auth-token") String token,
+                                           @Header("Application-Id") String APID,
+                                           @Path("VIN") String VIN
+    );
 }

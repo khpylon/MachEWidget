@@ -26,6 +26,9 @@ public class AccessToken {
     @SerializedName("UserProfile")
     @Expose
     private UserProfile userProfile;
+    @SerializedName("userId")
+    @Expose
+    private String userId;
 
     @Generated("jsonschema2pojo")
     public class UserProfile {
@@ -136,5 +139,11 @@ public class AccessToken {
         this.userProfile = userProfile;
     }
 
+    public String getUserId() {
+        return userId;
+    }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

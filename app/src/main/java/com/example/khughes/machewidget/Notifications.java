@@ -32,7 +32,7 @@ public class Notifications extends BroadcastReceiver {
     }
 
     private static final int LVB_STATUS = 936;
-    private static final String LVB_NOTIFICATION = "com.example.khughes.machewidget.Notifications.LVB";
+    private static final String LVB_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.LVB";
 
     private static Boolean LVBNotificationVisible = false;
 
@@ -42,7 +42,7 @@ public class Notifications extends BroadcastReceiver {
         String currentLVBStatus = carStatus.getLVBStatus();
         if (currentLVBStatus != null && !currentLVBStatus.equals(lastHVBStatus)) {
             // Save the current status
-            appInfo.setHVBStatus(VIN,currentLVBStatus);
+            appInfo.setHVBStatus(VIN, currentLVBStatus);
             // If the current status is bad and we haven't already posted the notification, then post it
             if (!currentLVBStatus.equals("STATUS_GOOD") && !LVBNotificationVisible) {
                 Intent intent = new Intent(context, Notifications.class);
@@ -67,7 +67,7 @@ public class Notifications extends BroadcastReceiver {
     }
 
     private static final int TPMS_STATUS = 937;
-    private static final String TPMS_NOTIFICATION = "com.example.khughes.machewidget.Notifications.TPMS";
+    private static final String TPMS_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.TPMS";
 
     private static final String LEFT_FRONT_TIRE = "the left front tire is";
     private static final String RIGHT_FRONT_TIRE = "the right front tire is";
@@ -100,7 +100,7 @@ public class Notifications extends BroadcastReceiver {
 
         if (!lastTPMSStatus.equals(badTire)) {
             // Save the current status
-            appInfo.setTPMSStatus(VIN,badTire);
+            appInfo.setTPMSStatus(VIN, badTire);
             // If the current status is bad and we haven't already posted the notification, then post it
             if (!badTire.equals("") && !TPMSNotificationVisible) {
                 Intent intent = new Intent(context, Notifications.class);
