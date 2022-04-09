@@ -37,6 +37,7 @@ public class StoredData {
     private static final String TOKENTIMEOUT = "TokenTimeout";
     private static final String CARSTATUS = "CarStatus";
     private static final String OTASTATUS = "OTAStatus";
+    private static final String CHARGESTATION = "ChargeStation";
     private static final String HVBSTATUS = "HVBStatus";
     private static final String TPMSSTATUS = "TPMSStatus";
     private static final String COUNTRY = "Country";
@@ -289,6 +290,22 @@ public class StoredData {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
         String str = new String(StoredData.StringCompressor.compress(gson.toJson(status)), Charsets.ISO_8859_1);
         edit.putString(OTASTATUS, str);
+        commitWait(edit);
+    }
+
+    public ChargeStation getChargeStation(String VIN) {
+        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+        String status = pref.getString(CHARGESTATION, "{}");
+        if (!status.equals("{}") && !status.contains("otaAlertStatus")) {
+            status = StringCompressor.decompress(status.getBytes(Charsets.ISO_8859_1));
+        }
+        return gson.fromJson(status, ChargeStation.class);
+    }
+
+    public void setChargeStation(String VIN, ChargeStation station) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+        String str = new String(StoredData.StringCompressor.compress(gson.toJson(station)), Charsets.ISO_8859_1);
+        edit.putString(CHARGESTATION, str);
         commitWait(edit);
     }
 
