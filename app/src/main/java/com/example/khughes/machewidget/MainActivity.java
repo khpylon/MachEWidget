@@ -17,15 +17,25 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.icu.text.MessageFormat;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
+import android.icu.util.TimeZone;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.PowerManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +44,19 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.example.khughes.machewidget.db.UserInfoDao;
+import com.example.khughes.machewidget.db.UserInfoDatabase;
+import com.example.khughes.machewidget.db.VehicleInfoDatabase;
+
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
@@ -46,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
+
+        // First thing, check logcat for a crash and save if so
+        checkLogcat(context);
 
         // Initialize preferences
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false);
@@ -103,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // This method is intended to bundle various changes from older versions to the most recent.
-    private void performUpdates(Context context) {
+    public static void performUpdates(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String lastVersion = prefs.getString(context.getResources().getString(R.string.last_version_key), "");
 
@@ -134,6 +159,47 @@ public class MainActivity extends AppCompatActivity {
             }
             // Update internally
             prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
+        }
+    }
+
+    // See if there was a crash, and if so dump the logcat output to a file
+    private void checkLogcat(Context context) {
+        try {
+            // Dump the crash buffer and exit
+            Process process = Runtime.getRuntime().exec("logcat -d -b crash");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            StringBuilder log = new StringBuilder();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                log.append(line + "\n");
+            }
+
+            // If we find something, write to logcat.txt file
+            if (log.length() > 0) {
+                Uri fileCollection = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                }
+                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+                String crashFile =  "machewidget-logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, crashFile);
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/plain");
+                ContentResolver resolver = context.getContentResolver();
+                Uri uri = resolver.insert(fileCollection, contentValues);
+                if (uri == null) {
+                    throw new IOException("Couldn't create MediaStore Entry");
+                }
+                OutputStream outStream = resolver.openOutputStream(uri);
+                outStream.write(log.toString().getBytes());
+                outStream.close();
+
+                // Clear the crash log.
+                Runtime.getRuntime().exec("logcat -c");
+                Toast.makeText(context,MessageFormat.format("logcat crash file \"{0}\" copied to output folder.", crashFile), Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
         }
     }
 

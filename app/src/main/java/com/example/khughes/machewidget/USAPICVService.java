@@ -1,5 +1,7 @@
 package com.example.khughes.machewidget;
 
+import com.example.khughes.machewidget.CarStatus.CarStatus;
+
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.Header;

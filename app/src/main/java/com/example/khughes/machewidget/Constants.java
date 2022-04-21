@@ -31,4 +31,6 @@ public class Constants {
     public static final String REPOURL = "https://github.com/khpylon/MachEWidget";
 
     public static final String FSVERSION_1 = "FSVERSION_1";
+
+    public static final String SHAREDPREFS_FOLDER = "shared_prefs";
 }

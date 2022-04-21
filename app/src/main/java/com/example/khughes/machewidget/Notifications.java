@@ -9,6 +9,8 @@ import android.net.Uri;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.khughes.machewidget.CarStatus.CarStatus;
+
 import java.util.HashMap;
 import java.util.Map;
 

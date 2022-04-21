@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
+import com.example.khughes.machewidget.CarStatus.CarStatus;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
