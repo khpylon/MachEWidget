@@ -25,6 +25,9 @@ import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
+import com.example.khughes.machewidget.CarStatus.CarStatus;
+import com.example.khughes.machewidget.OTAStatus.OTAStatus;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

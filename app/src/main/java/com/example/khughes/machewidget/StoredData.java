@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
+import com.example.khughes.machewidget.CarStatus.CarStatus;
+import com.example.khughes.machewidget.OTAStatus.OTAStatus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

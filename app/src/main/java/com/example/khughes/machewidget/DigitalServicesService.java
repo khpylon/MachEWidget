@@ -1,5 +1,7 @@
 package com.example.khughes.machewidget;
 
+import com.example.khughes.machewidget.OTAStatus.OTAStatus;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;

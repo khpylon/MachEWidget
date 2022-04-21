@@ -16,6 +16,11 @@ android {
         versionCode 3
         versionName "2022.04.06"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+            arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -51,6 +56,11 @@ Application-name: com.example.khughes.machewidget
     }
 }
 
+configurations {
+    cleanedAnnotations
+    implementation.exclude group: 'org.jetbrains' , module:'annotations'
+}
+
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
@@ -83,8 +93,11 @@ dependencies {
     implementation 'androidx.core:core:1.7.0'
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'org.commonmark:commonmark:0.18.2'
+    implementation 'androidx.room:room-runtime:2.5.0-alpha01'
+    implementation 'androidx.room:room-compiler:2.5.0-alpha01'
 
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.0.0'
+    annotationProcessor 'androidx.room:room-compiler:2.5.0-alpha01'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

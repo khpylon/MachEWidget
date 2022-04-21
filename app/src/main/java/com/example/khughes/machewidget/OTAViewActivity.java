@@ -14,6 +14,10 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.widget.Button;
 
+import com.example.khughes.machewidget.OTAStatus.FuseResponse;
+import com.example.khughes.machewidget.OTAStatus.FuseResponseList;
+import com.example.khughes.machewidget.OTAStatus.OTAStatus;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -96,7 +100,7 @@ public class OTAViewActivity extends AppCompatActivity {
         String dateFormat = new StoredData(context).getTimeFormatByCountry(VIN);
         if (ota != null && ota.getFuseResponse() != null) {
             String tmp;
-            for (OTAStatus.FuseResponse__1 fuse : ota.getFuseResponse().getFuseResponseList()) {
+            for (FuseResponseList fuse : ota.getFuseResponse().getFuseResponseList()) {
                 if (fuse.getLatestStatus() != null) {
                     currentOTATime = convertDateToMillis(fuse.getLatestStatus().getDateTimestamp());
                     unencodedHtml.append("<b>Latest status</b><ul>");
