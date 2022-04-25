@@ -32,5 +32,6 @@ public class BootComplete extends BroadcastReceiver {
                     DateUtils.MINUTE_IN_MILLIS, pendingIntent);
         }
         UpdateActivity.removeAPK(context);
+        MainActivity.performUpdates(context);
     }
 }

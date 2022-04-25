@@ -18,6 +18,9 @@ public interface VehicleInfoDao {
     @Query("SELECT * FROM vehicle_info WHERE vin LIKE :VIN")
     VehicleInfo findVehicleInfoByVIN(String VIN);
 
+    @Query("SELECT vin FROM vehicle_info WHERE userId LIKE :userId")
+    List<String> findVINsByUserId(String userId);
+
     @Query("SELECT * FROM vehicle_info WHERE userId LIKE :userId")
     List<VehicleInfo> findVehicleInfoByUserId(String userId);
 

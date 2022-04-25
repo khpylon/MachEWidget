@@ -174,12 +174,9 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
 
-        if (profilesActive) {
-            views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, PROFILE_CLICK));
-            views.setOnClickPendingIntent(R.id.logo, getPendingSelfIntent(context, PROFILE_CLICK));
-        }
+        views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, PROFILE_CLICK));
+        views.setOnClickPendingIntent(R.id.logo, getPendingSelfIntent(context, PROFILE_CLICK));
 
         boolean showAppLinks = sharedPref.getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {
@@ -896,7 +893,6 @@ public class CarStatusWidget extends AppWidgetProvider {
             return;
         } else if (action.equals(PROFILE_CLICK)) {
             ProfileManager.changeProfile(context);
-            MainActivity.updateWidget(context);
             return;
         } else if (action.equals(WIDGET_CLICK)) {
             String activity;

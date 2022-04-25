@@ -2,7 +2,6 @@ package com.example.khughes.machewidget;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,21 +15,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
-import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceManager;
 
-import com.example.khughes.machewidget.CarStatus.Encryption;
 import com.example.khughes.machewidget.db.UserInfoDatabase;
 import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
@@ -39,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String VINIDENTIFIER = "VIN";
     public static final String PROFILENAME = "ProfileName";
 
-    private TextInputLayout aliasWidget, usernameWidget, passwordWidget, VINWidget;
+    private TextInputLayout aliasWidget, usernameWidget, passwordWidget;
 
     private StoredData appInfo;
 
@@ -97,7 +91,6 @@ public class LoginActivity extends AppCompatActivity {
 
         usernameWidget = findViewById(R.id.username);
         passwordWidget = findViewById(R.id.password);
-        VINWidget = findViewById(R.id.VIN);
 
         aliasWidget = findViewById(R.id.alias);
         if (aliasWidget != null ) {
@@ -123,12 +116,6 @@ public class LoginActivity extends AppCompatActivity {
             VIN = getIntent().getStringExtra(VINIDENTIFIER);
         } else {
             VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        }
-
-        if (VIN != null && !VIN.equals("")) {
-            if (VINWidget != null && VINWidget.getEditText() != null) {
-                VINWidget.getEditText().setText(VIN);
-            }
         }
 
         // If the user has stored credentials, allow to reuse if they have registered a fingerprint
@@ -214,14 +201,8 @@ public class LoginActivity extends AppCompatActivity {
                 fingerprint.setOnClickListener(v -> {
                     // There is a fingerprint registered
                     if (fingerprintSaved) {
-                        // As long as the user didn't enter a new VIN, then look for a fingerprint match
-                        if (VINWidget != null && VINWidget.getEditText() != null &&
-                                VIN.equals(VINWidget.getEditText().getText().toString())) {
                             biometricPrompt.authenticate(new BiometricPrompt.PromptInfo.Builder().setTitle("Fingerprint required.")
                                     .setDescription("Use your fingerprint to authenticate.").setNegativeButtonText("Cancel").build());
-                        } else {
-                            Toast.makeText(context, "Can't use old credentials; VIN has been changed.", Toast.LENGTH_SHORT).show();
-                        }
                     }
                     // Uh, no there isn't.  Explain why they can't use this
                     else {
@@ -234,14 +215,12 @@ public class LoginActivity extends AppCompatActivity {
         Button login = findViewById(R.id.login);
         login.setOnClickListener(view -> {
             if (usernameWidget == null || usernameWidget.getEditText() == null ||
-                    passwordWidget == null || passwordWidget.getEditText() == null ||
-                    VINWidget == null || VINWidget.getEditText() == null) {
+                    passwordWidget == null || passwordWidget.getEditText() == null ) {
                 return;
             }
 
             String username = usernameWidget.getEditText().getText().toString();
             String password = passwordWidget.getEditText().getText().toString();
-            VIN = VINWidget.getEditText().getText().toString();
 
             // Only allow no alias if there are no profiles or the only profile matches this VIN
             if (profilesActive && aliasWidget != null && aliasWidget.getEditText() != null) {

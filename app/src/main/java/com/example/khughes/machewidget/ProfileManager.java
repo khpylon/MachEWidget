@@ -16,6 +16,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.khughes.machewidget.db.UserInfoDatabase;
 import com.example.khughes.machewidget.db.VehicleInfoDao;
 import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 
@@ -190,21 +194,45 @@ public class ProfileManager extends AppCompatActivity {
 
     private static int index = 0;
 
-    public static String changeProfile(Context context) {
+    public static void changeProfile(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
-        StoredData appInfo = new StoredData(context);
- //       ArrayList<String> profiles = appInfo.getVINs();
-//
-//        index = profiles.indexOf(VIN);
-//        if (index >= 0) {
-//            index = (index + 1) % profiles.size();
-//            VIN = profiles.get(index);
-//            sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), VIN).apply();
-//            StatusReceiver.nextAlarm(context, 5);
-//            return appInfo.getNickname(VIN);
-//        }
-        return null;
+        final String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
+
+        Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle = msg.getData();
+                if (bundle.containsKey("VINs")) {
+                    ArrayList<String> VINs = bundle.getStringArrayList("VINs");
+                    index = VINs.indexOf(VIN);
+                    // If there's only one VIN; nothing to do
+                    if (VINs.size() > 1 && index >= 0) {
+                        index = (index + 1) % VINs.size();
+                        String newVIN = VINs.get(index);
+                        sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), newVIN).apply();
+                        MainActivity.updateWidget(context);
+                    }
+                }
+            }
+        };
+
+        new Thread(() -> {
+            VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
+                    .vehicleInfoDao().findVehicleInfoByVIN(VIN);
+            if (vehInfo != null) {
+                Bundle bundle = new Bundle();
+                UserInfo userInfo = UserInfoDatabase.getInstance(context)
+                        .userInfoDao().findUserInfo(vehInfo.getUserId());
+                Message m = Message.obtain();
+                ArrayList<String> VINs = new ArrayList<>();
+                VINs.addAll(VehicleInfoDatabase.getInstance(context)
+                        .vehicleInfoDao().findVINsByUserId(userInfo.getUserId()));
+                bundle.putStringArrayList("VINs", VINs);
+                m.setData(bundle);
+                handler.sendMessage(m);
+            }
+        }).start();
+
     }
 
     // After a successful login, make any changes necessary to the associated VINs
@@ -229,6 +257,7 @@ public class ProfileManager extends AppCompatActivity {
 //
         // Set the current VIN
         prefs.edit().putString(context.getResources().getString(R.string.VIN_key), vehicles.keySet().toArray(new String[0])[0]).apply();
+        LogFile.i(context, MainActivity.CHANNEL_ID, "Setting VIN to " + vehicles.keySet().toArray()[0]);
 
 //        // Remove any current VINs which are now missing from the new list
 //        for (String VIN : currentVINs) {

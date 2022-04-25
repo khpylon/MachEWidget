@@ -17,16 +17,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.icu.text.MessageFormat;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
-import android.icu.util.TimeZone;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -35,7 +29,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,22 +37,12 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.example.khughes.machewidget.db.UserInfoDao;
 import com.example.khughes.machewidget.db.UserInfoDatabase;
 import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
@@ -89,12 +72,10 @@ public class MainActivity extends AppCompatActivity {
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         context.sendBroadcast(updateIntent);
 
-        // If app has been running OK, tty to initiate status updates
-        StoredData appInfo = new StoredData(context);
+        // If app has been running OK, try to initiate status updates
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         if (!VIN.equals("")) {
             new Thread(() -> {
-//                String state = appInfo.getProgramState(VIN);
                 VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
                         .vehicleInfoDao().findVehicleInfoByVIN(VIN);
                 String userId = vehInfo.getUserId();
@@ -168,9 +149,142 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
             }
+
+            // Replace sharedpreference files with databases
+            if (lastVersion.compareTo("2022.04.26") < 0) {
+                migrateToDatabases(context);
+            }
+
             // Update internally
             prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
         }
+    }
+
+    private static void migrateToDatabases(Context context) {
+
+        // Turn off profiles
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String currentVIN = prefs.getString(context.getResources().getString(R.string.VIN_key), "");
+        prefs.edit().putBoolean(context.getResources().getString(R.string.show_profiles_key), false).apply();
+
+        StoredData appInfo = new StoredData(context);
+
+        // If stored credentials are active, get user and vehicle info for each VIN and
+        // set up databases
+
+        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
+
+        appInfo.setLeftAppPackage(appInfo.getLeftAppPackage(currentVIN));
+        appInfo.setRightAppPackage(appInfo.getRightAppPackage(currentVIN));
+
+        if (savingCredentials) {
+            // Clear current VIN
+            prefs.edit().putString(context.getResources().getString(R.string.VIN_key), "").apply();
+
+            for (String VIN : appInfo.getProfiles()) {
+                String username = appInfo.getUsername(VIN);
+                String password = appInfo.getPassword(VIN);
+                Handler h = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                    }
+                };
+                NetworkCalls.getAccessToken(h, context, username, password);
+                appInfo.removeProfile(VIN);
+            }
+        }
+
+        // if store credentials aren't available, add the current VIN file to vehicle database
+        // and assign to a temp user ID
+        else {
+            prefs.edit().putString(context.getResources().getString(R.string.VIN_key), "").apply();
+
+            ArrayList<String> VINs = appInfo.getProfiles();
+            UserInfo userInfo = new UserInfo();
+
+            if (!VINs.isEmpty()) {
+                String userId = "temporary";
+                userInfo.setUserId(userId);
+                userInfo.setAccessToken(appInfo.getAccessToken(currentVIN));
+                userInfo.setRefreshToken(appInfo.getRefreshToken(currentVIN));
+                userInfo.setCountry(appInfo.getCountry(currentVIN));
+                userInfo.setUsername("");
+                userInfo.setPassword("");
+                userInfo.setProgramState(appInfo.getProgramState(currentVIN));
+                userInfo.setAccessToken(appInfo.getAccessToken(currentVIN));
+                userInfo.setRefreshToken(appInfo.getRefreshToken(currentVIN));
+                userInfo.setExpiresIn(appInfo.getTokenTimeout(currentVIN));
+                userInfo.setCountry(appInfo.getCountry(currentVIN));
+                userInfo.setLanguage(appInfo.getLanguage(currentVIN));
+                userInfo.setUomSpeed(appInfo.getSpeedUnits(currentVIN));
+                userInfo.setUomDistance(appInfo.getDistanceUnits(currentVIN));
+                userInfo.setUomPressure(appInfo.getPressureUnits(currentVIN));
+                new Thread(() -> {
+                    UserInfoDatabase.getInstance(context)
+                            .userInfoDao()
+                            .insertUserInfo(userInfo);
+                }).start();
+            }
+            for (String VIN : VINs) {
+                Handler h = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                    }
+                };
+                NetworkCalls.getUserVehicles(h, context);
+                appInfo.removeProfile(VIN);
+            }
+
+//            new Thread(() -> {
+//                // Use the last five digits of the VIN as user and nickname
+//                String userId = currentVIN.substring(currentVIN.length()-5);
+//
+//                VehicleInfo vehInfo = new VehicleInfo();
+//                vehInfo.setVIN(currentVIN);
+//                vehInfo.setUserId(userId);
+//                vehInfo.setNickname(userId);
+//                vehInfo.setLastRefreshTime(appInfo.getLastRefreshTime(currentVIN));
+//                vehInfo.setLastUpdateTime(appInfo.getLastUpdateTime(currentVIN));
+//                vehInfo.setLastLVBStatus(appInfo.getHVBStatus(currentVIN));
+//                vehInfo.setLastTPMSStatus(appInfo.getTPMSStatus(currentVIN));
+//                vehInfo.setLastDTE(appInfo.getLastDTE(currentVIN));
+//                vehInfo.setLastFuelLevel(appInfo.getLastFuelLevel(currentVIN));
+//                vehInfo.setCarStatus(appInfo.getCarStatus(currentVIN));
+//                vehInfo.fromOTAStatus(appInfo.getOTAStatus(currentVIN));
+//                VehicleInfoDatabase.getInstance(context)
+//                        .vehicleInfoDao()
+//                        .insertVehicleInfo(vehInfo);
+//
+//                UserInfo userInfo = new UserInfo();
+//                userInfo.setUserId(userId);
+//                userInfo.setUsername("");
+//                userInfo.setPassword("");
+//                userInfo.setProgramState(appInfo.getProgramState(currentVIN));
+//                userInfo.setAccessToken(appInfo.getAccessToken(currentVIN));
+//                userInfo.setRefreshToken(appInfo.getRefreshToken(currentVIN));
+//                userInfo.setExpiresIn(appInfo.getTokenTimeout(currentVIN));
+//                userInfo.setCountry(appInfo.getCountry(currentVIN));
+//                userInfo.setLanguage(appInfo.getLanguage(currentVIN));
+//                userInfo.setUomSpeed(appInfo.getSpeedUnits(currentVIN));
+//                userInfo.setUomDistance(appInfo.getDistanceUnits(currentVIN));
+//                userInfo.setUomPressure(appInfo.getPressureUnits(currentVIN));
+//                UserInfoDatabase.getInstance(context)
+//                        .userInfoDao()
+//                        .insertUserInfo(userInfo);
+//
+//                // Delete all the VIN files
+//                for (String VIN : appInfo.getProfiles()) {
+//                    appInfo.removeProfile(VIN);
+//                }
+//            }).start();
+        }
+
+        // Remove VINs.xml file
+        new File(context.getDataDir() + File.separator + Constants.SHAREDPREFS_FOLDER, StoredData.VINLIST + ".xml").deleteOnExit();
+
+        // Do a refresh in 10 seconds
+        StatusReceiver.nextAlarm(context, 10);
     }
 
     private static class LocalContentWebViewClient extends WebViewClientCompat {
