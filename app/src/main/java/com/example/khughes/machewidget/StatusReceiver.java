@@ -100,6 +100,7 @@ public class StatusReceiver extends BroadcastReceiver {
                     appInfo.incCounter(StoredData.STATUS_UPDATED);
                     break;
                 case Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS:
+                case Constants.STATE_HAVE_TOKEN_AND_STATUS:
                 case Constants.STATE_HAVE_TOKEN_AND_VIN:
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
                     int delayInMillis = Integer.parseInt(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;

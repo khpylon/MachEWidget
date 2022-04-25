@@ -3,7 +3,8 @@
     <EditTextPreference
         app:key="@string/VIN_key"
         app:title="@string/VIN"
-        app:useSimpleSummaryProvider="true" />
+        app:useSimpleSummaryProvider="true"
+        app:enabled="false" />
 
     <!--
     <ListPreference
@@ -73,7 +74,8 @@
         app:defaultValue="false"
         app:key="@string/show_profiles_key"
         app:singleLineTitle="false"
-        app:title="@string/show_profiles" />
+        app:title="@string/show_profiles"
+        app:enabled="false"/>
 
     <ListPreference
         app:key="@string/units_key"

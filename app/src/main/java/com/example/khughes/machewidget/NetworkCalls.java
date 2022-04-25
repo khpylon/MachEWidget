@@ -2,6 +2,7 @@ package com.example.khughes.machewidget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
+import com.example.khughes.machewidget.CarStatus.Encryption;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
 import com.example.khughes.machewidget.db.UserInfoDao;
 import com.example.khughes.machewidget.db.UserInfoDatabase;
@@ -86,125 +88,126 @@ public class NetworkCalls {
         UserInfoDao userDao = UserInfoDatabase.getInstance(context).userInfoDao();
         UserInfo userInfo = new UserInfo();
 
-            if (MainActivity.checkInternetConnection(context)) {
-                AccessTokenService fordClient = NetworkServiceGenerators.createIBMCloudService(AccessTokenService.class, context);
-                APIMPSService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
-                APIMPSService userDetailsClient = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
+        if (MainActivity.checkInternetConnection(context)) {
+            AccessTokenService fordClient = NetworkServiceGenerators.createIBMCloudService(AccessTokenService.class, context);
+            APIMPSService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
+            APIMPSService userDetailsClient = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
 
-                for (int retry = 2; retry >= 0; --retry) {
-                    try {
+            for (int retry = 2; retry >= 0; --retry) {
+                try {
 
-                        AccessToken accessToken = null;
-                        Call<AccessToken> call;
-                        Map<String, Object> jsonParams;
-                        RequestBody body;
+                    AccessToken accessToken = null;
+                    Call<AccessToken> call;
+                    Map<String, Object> jsonParams;
+                    RequestBody body;
 
-                        if (stage == 1) {
-                            // Start by getting token we need for OAuth2 authentication
-                            call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
-                            Response<AccessToken> response = call.execute();
-                            if (!response.isSuccessful()) {
-                                break;
-                            }
-                            stage = 2;
-                            accessToken = response.body();
-                            token = accessToken.getAccessToken();
+                    if (stage == 1) {
+                        // Start by getting token we need for OAuth2 authentication
+                        call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
+                        Response<AccessToken> response = call.execute();
+                        if (!response.isSuccessful()) {
+                            break;
                         }
-                        // Next, try to get the user's data
-                        if (stage == 2) {
-                            jsonParams = new ArrayMap<>();
-                            jsonParams.put("code", token);
-                            body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
-                            call = OAuth2Client.getAccessToken(body);
-                            Response<AccessToken> response = call.execute();
-                            if (!response.isSuccessful()) {
-                                break;
-                            }
-
-                            nextState = Constants.STATE_HAVE_TOKEN;
-                            accessToken = response.body();
-                            token = accessToken.getAccessToken();
-                            userId = UUID.nameUUIDFromBytes(accessToken.getUserId().getBytes()).toString();
-                            userDao.deleteUserInfoByUserId(userId);
-
-                            userInfo.setUserId(userId);
-                            userInfo.setAccessToken(token);
-                            userInfo.setRefreshToken(accessToken.getRefreshToken());
-                            LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(accessToken.getExpiresIn());
-                            long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                            userInfo.setExpiresIn(nextTime);
-                            userInfo.setLanguage(accessToken.getUserProfile().getLanguage());
-                            userInfo.setCountry(accessToken.getUserProfile().getCountry());
-                            userInfo.setUomPressure(accessToken.getUserProfile().getUomPressure());
-                            userInfo.setUomDistance(accessToken.getUserProfile().getUomDistance());
-                            userInfo.setUomSpeed(accessToken.getUserProfile().getUomSpeed());
-                            userInfo.setProgramState(nextState);
-
-                            // TODO: encrypt these
-
-//                            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-//                            Boolean savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
-//                            if(savingCredentials) {
-//                            userInfo.setUsername(username);
-//                            userInfo.setPassword(password);
-//                            }
-
-                            userDao.insertUserInfo(userInfo);
-
-                            data.putExtra("access_token", token);
-                            data.putExtra("language", userInfo.getLanguage());
-                            data.putExtra("country", userInfo.getCountry());
-                            stage = 3;
-                        }
-                        // Finally, tty to get the user details
-                        if (stage == 3) {
-                            String country = accessToken.getUserProfile().getCountry();
-                            Map<String, String> modified = new ArrayMap<>();
-                            modified.put("If-Modified-Since", "Sat, 26 Mar 2022 15:59:38 GMT");
-                            Map<String, Object> entityRefresh = new ArrayMap<>();
-                            entityRefresh.put("userVehicles", modified);
-                            jsonParams = new ArrayMap<>();
-                            jsonParams.put("dashboardRefreshRequest", "EntityRefresh");
-                            jsonParams.put("entityRefresh", entityRefresh);
-                            body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
-                            Call<UserDetails> call2 = userDetailsClient.getUserDetails(token, Constants.APID, country, body);
-                            Response<UserDetails> response2 = call2.execute();
-                            LogFile.i(context, MainActivity.CHANNEL_ID, "refresh here.");
-                            if (!response2.isSuccessful()) {
-                                break;
-                            }
-
-                            UserDetails userDetails = response2.body();
-                            Map<String, String> vehicleInfo = new HashMap<>();
-                            for (UserDetails.VehicleDetail vehicle : userDetails.getUserVehicles().getVehicleDetails()) {
-                                String VIN = vehicle.getVin();
-                                vehicleInfo.put(VIN, vehicle.getNickName());
-                            }
-                            data.putExtra("vehicles", vehicleInfo.size());
-                            if (!vehicleInfo.isEmpty()) {
-                                ProfileManager.updateProfile(context, userInfo, vehicleInfo);
-                                nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
-                                userDao.updateProgramState(nextState, userId);
-                            }
+                        stage = 2;
+                        accessToken = response.body();
+                        token = accessToken.getAccessToken();
+                    }
+                    // Next, try to get the user's data
+                    if (stage == 2) {
+                        jsonParams = new ArrayMap<>();
+                        jsonParams.put("code", token);
+                        body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
+                        call = OAuth2Client.getAccessToken(body);
+                        Response<AccessToken> response = call.execute();
+                        if (!response.isSuccessful()) {
                             break;
                         }
 
-                    } catch (java.net.SocketTimeoutException ee) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getAccessToken");
-                        LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
-                        try {
-                            Thread.sleep(3 * 1000);
-                        } catch (InterruptedException e) {
+                        nextState = Constants.STATE_HAVE_TOKEN;
+                        accessToken = response.body();
+                        token = accessToken.getAccessToken();
+                        userId = UUID.nameUUIDFromBytes(accessToken.getUserId().getBytes()).toString();
+                        userDao.deleteUserInfoByUserId(userId);
+
+                        userInfo.setUserId(userId);
+                        userInfo.setAccessToken(token);
+                        userInfo.setRefreshToken(accessToken.getRefreshToken());
+                        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(accessToken.getExpiresIn());
+                        long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                        userInfo.setExpiresIn(nextTime);
+                        userInfo.setLanguage(accessToken.getUserProfile().getLanguage());
+                        userInfo.setCountry(accessToken.getUserProfile().getCountry());
+                        userInfo.setUomPressure(accessToken.getUserProfile().getUomPressure());
+                        userInfo.setUomDistance(accessToken.getUserProfile().getUomDistance());
+                        userInfo.setUomSpeed(accessToken.getUserProfile().getUomSpeed());
+                        userInfo.setProgramState(nextState);
+
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+                        Boolean savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
+                        if (savingCredentials) {
+                            Encryption encrypt = new Encryption(context);
+                            String encryptedUsername = encrypt.getCryptoString(username);
+                            String encryptedPassword = encrypt.getCryptoString(password);
+                            userInfo.setUsername(encryptedUsername);
+                            userInfo.setPassword(encryptedPassword);
                         }
-                    } catch (java.net.UnknownHostException e3) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getAccessToken");
-                        break;
-                    } catch (Exception e) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
+
+                        userDao.insertUserInfo(userInfo);
+
+                        data.putExtra("access_token", token);
+                        data.putExtra("language", userInfo.getLanguage());
+                        data.putExtra("country", userInfo.getCountry());
+                        stage = 3;
+                    }
+                    // Finally, tty to get the user details
+                    if (stage == 3) {
+                        String country = accessToken.getUserProfile().getCountry();
+                        Map<String, String> modified = new ArrayMap<>();
+                        modified.put("If-Modified-Since", "Sat, 26 Mar 2022 15:59:38 GMT");
+                        Map<String, Object> entityRefresh = new ArrayMap<>();
+                        entityRefresh.put("userVehicles", modified);
+                        jsonParams = new ArrayMap<>();
+                        jsonParams.put("dashboardRefreshRequest", "EntityRefresh");
+                        jsonParams.put("entityRefresh", entityRefresh);
+                        body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
+                        Call<UserDetails> call2 = userDetailsClient.getUserDetails(token, Constants.APID, country, body);
+                        Response<UserDetails> response2 = call2.execute();
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "refresh here.");
+                        if (!response2.isSuccessful()) {
+                            break;
+                        }
+
+                        UserDetails userDetails = response2.body();
+                        Map<String, String> vehicleInfo = new HashMap<>();
+                        for (UserDetails.VehicleDetail vehicle : userDetails.getUserVehicles().getVehicleDetails()) {
+                            String VIN = vehicle.getVin();
+                            vehicleInfo.put(VIN, vehicle.getNickName());
+                        }
+                        data.putExtra("vehicles", vehicleInfo.size());
+                        if (!vehicleInfo.isEmpty()) {
+                            ProfileManager.updateProfile(context, userInfo, vehicleInfo);
+                            nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
+                            userDao.updateProgramState(nextState, userId);
+                        }
                         break;
                     }
+
+                } catch (java.net.SocketTimeoutException ee) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getAccessToken");
+                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+                    try {
+                        Thread.sleep(3 * 1000);
+                    } catch (InterruptedException e) {
+                    }
+                } catch (java.net.UnknownHostException e3) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getAccessToken");
+                    break;
+                } catch (Exception e) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getAccessToken: ", e);
+                    break;
                 }
             }
+        }
 
         data.putExtra("action", nextState);
         return data;
@@ -252,7 +255,7 @@ public class NetworkCalls {
                         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                         userInfo.setExpiresIn(nextTime);
                         dao.updateUserInfo(userInfo);
-                        nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
+                        nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                     } else {
                         LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
                         LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
@@ -302,7 +305,7 @@ public class NetworkCalls {
         VehicleInfo VehInfo = infoDao.findVehicleInfoByVIN(VIN);
         String userId = VehInfo.getUserId();
 
-        for(VehicleInfo info : infoDao.findVehicleInfoByUserId(userId)) {
+        for (VehicleInfo info : infoDao.findVehicleInfoByUserId(userId)) {
             if (MainActivity.checkInternetConnection(context)) {
                 USAPICVService statusClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
                 for (int retry = 2; retry >= 0; --retry) {
@@ -337,9 +340,11 @@ public class NetworkCalls {
 //                                    appInfo.setCarStatus(VIN, car);
 //                                    appInfo.setLastRefreshTime(VIN, currentRefreshTime);
                                     info.setCarStatus(car);
+                                    info.setLastUpdateTime();
                                     info.setLastRefreshTime(currentRefreshTime);
                                     infoDao.updateVehicleInfo(info);
-                                    context.startService(
+//                                    info.setCarStatus(car);
+                                    context.startForegroundService(
                                             new Intent(context, CarStatusWidgetIntent.class)
                                                     .putExtra(CarStatusWidgetIntent.WIDGETINTENTACTIONKEY, CarStatusWidgetIntent.CARSTATUSINTENTACTION)
                                     );
@@ -551,7 +556,7 @@ public class NetworkCalls {
 
     public static void remoteStart(Handler handler, Context context) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.execCommand(context,  "v5", "engine", "start", "put");
+            Intent intent = NetworkCalls.execCommand(context, "v5", "engine", "start", "put");
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -561,7 +566,7 @@ public class NetworkCalls {
 
     public static void remoteStop(Handler handler, Context context) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.execCommand(context,  "v5", "engine", "start", "delete");
+            Intent intent = NetworkCalls.execCommand(context, "v5", "engine", "start", "delete");
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -581,7 +586,7 @@ public class NetworkCalls {
 
     public static void unlockDoors(Handler handler, Context context) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.execCommand(context,  "v2", "doors", "lock", "delete");
+            Intent intent = NetworkCalls.execCommand(context, "v2", "doors", "lock", "delete");
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -685,72 +690,72 @@ public class NetworkCalls {
         }
     }
 
-    // Code for encryption and decryption of personal data
-    private static final String AndroidKeyStore = "AndroidKeyStore";
-    private static final String AES_MODE = "AES/GCM/NoPadding";
-    private static final String KEY_ALIAS = "MacheEWidget";
-    private static final int GCM_IV_LENGTH = 12;
-    private static KeyStore keyStore = null;
-
-    // Generate a key in the Android Keystore
-    private static void generateKey() {
-        try {
-            keyStore = KeyStore.getInstance(AndroidKeyStore);
-            keyStore.load(null);
-            if (!keyStore.containsAlias(KEY_ALIAS)) {
-                KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, AndroidKeyStore);
-                keyGenerator.init(
-                        new KeyGenParameterSpec.Builder(KEY_ALIAS,
-                                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                                .setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                                .setRandomizedEncryptionRequired(false)
-                                .build());
-                keyGenerator.generateKey();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Get the application's secret key; password is randomly generated for the app
-    private static java.security.Key getSecretKey(char[] password) throws Exception {
-        generateKey();
-        return keyStore.getKey(KEY_ALIAS, password);
-    }
-
-    // Encrypt
-    public static String encrypt(char[] password, String input) throws Exception {
-        //Prepare the nonce
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] iv = new byte[GCM_IV_LENGTH];
-        secureRandom.nextBytes(iv);
-
-        Cipher c = Cipher.getInstance(AES_MODE);
-        Key key = getSecretKey(password);
-        GCMParameterSpec parameterSpec = new GCMParameterSpec(128, iv);
-        c.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
-        byte[] encodedBytes = c.doFinal(input.getBytes(StandardCharsets.UTF_8));
-
-        // Put IV and cipherText into a Base64 String for storage
-        ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encodedBytes.length);
-        byteBuffer.put(iv);
-        byteBuffer.put(encodedBytes);
-        return Base64.getEncoder().encodeToString(byteBuffer.array());
-    }
-
-    public static String decrypt(char[] password, String input) throws Exception {
-        Cipher cipher = Cipher.getInstance(AES_MODE);
-        Key key = getSecretKey(password);
-
-        // Get byte[] back from stored string
-        byte[] cipherBytes = Base64.getDecoder().decode(input);
-
-        // Pull the IV out of the packet
-        GCMParameterSpec gcmIv = new GCMParameterSpec(128, cipherBytes, 0, GCM_IV_LENGTH);
-        cipher.init(Cipher.DECRYPT_MODE, key, gcmIv);
-
-        // Everything else is the ciphertext
-        byte[] plainText = cipher.doFinal(cipherBytes, GCM_IV_LENGTH, cipherBytes.length - GCM_IV_LENGTH);
-        return new String(plainText, StandardCharsets.UTF_8);
-    }
+//    // Code for encryption and decryption of personal data
+//    private static final String AndroidKeyStore = "AndroidKeyStore";
+//    private static final String AES_MODE = "AES/GCM/NoPadding";
+//    private static final String KEY_ALIAS = "MacheEWidget";
+//    private static final int GCM_IV_LENGTH = 12;
+//    private static KeyStore keyStore = null;
+//
+//    // Generate a key in the Android Keystore
+//    private static void generateKey() {
+//        try {
+//            keyStore = KeyStore.getInstance(AndroidKeyStore);
+//            keyStore.load(null);
+//            if (!keyStore.containsAlias(KEY_ALIAS)) {
+//                KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, AndroidKeyStore);
+//                keyGenerator.init(
+//                        new KeyGenParameterSpec.Builder(KEY_ALIAS,
+//                                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+//                                .setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+//                                .setRandomizedEncryptionRequired(false)
+//                                .build());
+//                keyGenerator.generateKey();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    // Get the application's secret key; password is randomly generated for the app
+//    private static java.security.Key getSecretKey(char[] password) throws Exception {
+//        generateKey();
+//        return keyStore.getKey(KEY_ALIAS, password);
+//    }
+//
+//    // Encrypt
+//    public static String encrypt(char[] password, String input) throws Exception {
+//        //Prepare the nonce
+//        SecureRandom secureRandom = new SecureRandom();
+//        byte[] iv = new byte[GCM_IV_LENGTH];
+//        secureRandom.nextBytes(iv);
+//
+//        Cipher c = Cipher.getInstance(AES_MODE);
+//        Key key = getSecretKey(password);
+//        GCMParameterSpec parameterSpec = new GCMParameterSpec(128, iv);
+//        c.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
+//        byte[] encodedBytes = c.doFinal(input.getBytes(StandardCharsets.UTF_8));
+//
+//        // Put IV and cipherText into a Base64 String for storage
+//        ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encodedBytes.length);
+//        byteBuffer.put(iv);
+//        byteBuffer.put(encodedBytes);
+//        return Base64.getEncoder().encodeToString(byteBuffer.array());
+//    }
+//
+//    public static String decrypt(char[] password, String input) throws Exception {
+//        Cipher cipher = Cipher.getInstance(AES_MODE);
+//        Key key = getSecretKey(password);
+//
+//        // Get byte[] back from stored string
+//        byte[] cipherBytes = Base64.getDecoder().decode(input);
+//
+//        // Pull the IV out of the packet
+//        GCMParameterSpec gcmIv = new GCMParameterSpec(128, cipherBytes, 0, GCM_IV_LENGTH);
+//        cipher.init(Cipher.DECRYPT_MODE, key, gcmIv);
+//
+//        // Everything else is the ciphertext
+//        byte[] plainText = cipher.doFinal(cipherBytes, GCM_IV_LENGTH, cipherBytes.length - GCM_IV_LENGTH);
+//        return new String(plainText, StandardCharsets.UTF_8);
+//    }
 }

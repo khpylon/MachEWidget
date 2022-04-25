@@ -63,7 +63,8 @@ public class SettingsActivity extends AppCompatActivity {
             // No matter the choice, erase the username and password for all profiles
             Preference cred = findPreference(this.getResources().getString(R.string.save_credentials_key));
             cred.setOnPreferenceChangeListener((preference, newValue) -> {
-                new StoredData(mContext).clearUsernameAndPassword();
+// TODO
+//                new StoredData(mContext).clearUsernameAndPassword();
                 return true;
             });
 
@@ -150,36 +151,35 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.settings_preferences, rootKey);
-            EditTextPreference vinPreference = findPreference(this.getResources().getString(R.string.VIN_key));
-
-            Context context = getContext();
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
-
-            // When profiles are enabled, you can't change the VIN here
-            if (profilesActive) {
-                vinPreference.setEnabled(false);
-            } else {
-                // Only allow number and upper-case letters (no punctuation) in a VIN
-                if (vinPreference != null) {
-                    vinPreference.setOnBindEditTextListener(
-                            (EditText editText) -> {
-                                InputFilter filter = (source, start, end, dest, dstart, dend) -> {
-                                    String result = "";
-                                    for (int i = start; i < end; i++) {
-                                        char c = source.charAt(i);
-                                        if (!Character.isLetterOrDigit(c)) { // Accept only letter & digits ; otherwise just return
-                                            return "";
-                                        }
-                                        result += Character.toUpperCase(c);
-                                    }
-                                    return result;
-                                };
-
-                                editText.setFilters(new InputFilter[]{filter});
-                            });
-                }
-            }
+//
+//            Context context = getContext();
+//            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+//            boolean profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+//
+//            // When profiles are enabled, you can't change the VIN here
+//            if (profilesActive) {
+//                vinPreference.setEnabled(false);
+//            } else {
+//                // Only allow number and upper-case letters (no punctuation) in a VIN
+//                if (vinPreference != null) {
+//                    vinPreference.setOnBindEditTextListener(
+//                            (EditText editText) -> {
+//                                InputFilter filter = (source, start, end, dest, dstart, dend) -> {
+//                                    String result = "";
+//                                    for (int i = start; i < end; i++) {
+//                                        char c = source.charAt(i);
+//                                        if (!Character.isLetterOrDigit(c)) { // Accept only letter & digits ; otherwise just return
+//                                            return "";
+//                                        }
+//                                        result += Character.toUpperCase(c);
+//                                    }
+//                                    return result;
+//                                };
+//
+//                                editText.setFilters(new InputFilter[]{filter});
+//                            });
+//                }
+//            }
         }
     }
 }

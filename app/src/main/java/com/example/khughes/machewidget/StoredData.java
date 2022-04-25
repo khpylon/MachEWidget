@@ -217,16 +217,6 @@ public class StoredData {
 //        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTREFRESHTIME, 0);
 //    }
 //
-//    public void setLastAlarmTime(String VIN) {
-//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-//        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-//        commitWait(edit.putLong(LASTALARMTIME, nowtime));
-//    }
-//
-//    public long getLastAlarmTime() {
-//        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
-//        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
-//    }
 
 //    public String getAccessToken(String VIN) {
 //        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
@@ -459,88 +449,99 @@ public class StoredData {
         commitWait(edit);
     }
 
-    private void createPassword() {
+    public String getSecretPassword() {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
         if (!pref.contains(PASSWORD)) {
             byte[] array = new byte[64];
             new Random().nextBytes(array);
             commitWait(pref.edit().putString(PASSWORD, new String(array, StandardCharsets.UTF_8)));
         }
+        return pref.getString(PASSWORD, "");
     }
 
-    private String getCryptoString(String VIN, String tag) {
-        String value = "";
-
-        // Just in case, make sure we're supposed to save this
-        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
-                .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
-        if (savingCredentials) {
-            createPassword();
-            SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-            String password = pref.getString(PASSWORD, null);
-            pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-            String cipher = pref.getString(tag, null);
-            if (password != null && cipher != null) {
-                try {
-                    value = NetworkCalls.decrypt(password.toCharArray(), cipher);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return value;
-    }
-
-    private void setCryptoString(String VIN, String tag, String value) {
-
-        // Just in case, make sure we're supposed to save this
-        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
-                .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
-        if (savingCredentials) {
-            createPassword();
-            SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-            String password = pref.getString(PASSWORD, null);
-            pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-            if (password != null) {
-                try {
-                    String cipher = NetworkCalls.encrypt(password.toCharArray(), value);
-                    commitWait(pref.edit().putString(tag, cipher));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private void clearCryptoString(String VIN, String tag) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        if (pref.contains(tag)) {
-            commitWait(pref.edit().remove(tag));
-        }
-    }
-
-    public String getUsername(String VIN) {
-        return getCryptoString(VIN, USERNAME);
-    }
-
-    public void setUsername(String VIN, String name) {
-        setCryptoString(VIN, USERNAME, name);
-    }
-
-    public String getPassword(String VIN) {
-        return getCryptoString(VIN, PASSWORD);
-    }
-
-    public void setPassword(String VIN, String name) {
-        setCryptoString(VIN, PASSWORD, name);
-    }
-
-    public void clearUsernameAndPassword() {
-        for (String VIN : getProfiles()) {
-            clearCryptoString(VIN, USERNAME);
-            clearCryptoString(VIN, PASSWORD);
-        }
-    }
+//    private void createPassword() {
+//        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
+//        if (!pref.contains(PASSWORD)) {
+//            byte[] array = new byte[64];
+//            new Random().nextBytes(array);
+//            commitWait(pref.edit().putString(PASSWORD, new String(array, StandardCharsets.UTF_8)));
+//        }
+//    }
+//
+//
+//    private String getCryptoString(String VIN, String tag) {
+//        String value = "";
+//
+//        // Just in case, make sure we're supposed to save this
+//        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+//                .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
+//        if (savingCredentials) {
+//            createPassword();
+//            SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
+//            String password = pref.getString(PASSWORD, null);
+//            pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//            String cipher = pref.getString(tag, null);
+//            if (password != null && cipher != null) {
+//                try {
+//                    value = NetworkCalls.decrypt(password.toCharArray(), cipher);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//        return value;
+//    }
+//
+//    private void setCryptoString(String VIN, String tag, String value) {
+//
+//        // Just in case, make sure we're supposed to save this
+//        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+//                .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
+//        if (savingCredentials) {
+//            createPassword();
+//            SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
+//            String password = pref.getString(PASSWORD, null);
+//            pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//            if (password != null) {
+//                try {
+//                    String cipher = NetworkCalls.encrypt(password.toCharArray(), value);
+//                    commitWait(pref.edit().putString(tag, cipher));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+//
+//    private void clearCryptoString(String VIN, String tag) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        if (pref.contains(tag)) {
+//            commitWait(pref.edit().remove(tag));
+//        }
+//    }
+//
+//    public String getUsername(String VIN) {
+//        return getCryptoString(VIN, USERNAME);
+//    }
+//
+//    public void setUsername(String VIN, String name) {
+//        setCryptoString(VIN, USERNAME, name);
+//    }
+//
+//    public String getPassword(String VIN) {
+//        return getCryptoString(VIN, PASSWORD);
+//    }
+//
+//    public void setPassword(String VIN, String name) {
+//        setCryptoString(VIN, PASSWORD, name);
+//    }
+//
+//    public void clearUsernameAndPassword() {
+//        for (String VIN : getProfiles()) {
+//            clearCryptoString(VIN, USERNAME);
+//            clearCryptoString(VIN, PASSWORD);
+//        }
+//    }
 
     public String getLatestVersion() {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
@@ -571,7 +572,8 @@ public class StoredData {
     }
 
     public long getLastAlarmTime() {
-        return mContext.getSharedPreferences(TAG, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
+        long nowtime = mContext.getSharedPreferences(TAG, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
+        return nowtime;
     }
 
     public int getCounter(String key) {

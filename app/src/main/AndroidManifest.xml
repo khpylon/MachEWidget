@@ -138,7 +138,8 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <service android:name=".CarStatusWidgetIntent" />
+        <service android:name=".CarStatusWidgetIntent"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
             android:name=".CarStatusWidget"
@@ -180,6 +181,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <!--    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" /> -->
 

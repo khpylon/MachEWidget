@@ -28,11 +28,13 @@ import java.util.Locale;
 public class LogFile {
 
     private static final String LOGFILENAME = "mache_logfile";
+    private static final String BACKUPLOGFILENAME = LOGFILENAME + ".0";
 
     public static void clearLogFile(Context context, boolean moveBackup) {
         try {
-            File backupLogFile = new File(context.getDataDir(), LOGFILENAME + ".bak");
+            File backupLogFile = new File(context.getDataDir(), BACKUPLOGFILENAME);
             backupLogFile.delete();
+            backupLogFile.createNewFile();
             File logFile = new File(context.getDataDir(), LOGFILENAME);
             if (moveBackup) {
                 InputStream inStream = new FileInputStream(logFile);
@@ -55,8 +57,7 @@ public class LogFile {
             try {
                 File logFile = new File(context.getDataDir(), LOGFILENAME);
                 if (logFile.length() > 750000) {
-                    File logFile2 = new File(context.getDataDir(), LOGFILENAME + ".bak");
-                    logFile2.delete();
+                    clearLogFile(context, true);
                 }
                 FileOutputStream outputStream = new FileOutputStream(logFile, true);
                 PrintStream printstream = new PrintStream(outputStream);
@@ -96,7 +97,7 @@ public class LogFile {
                 fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
             }
             LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-            String logFilename =  LOGFILENAME + "-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+            String logFilename = LOGFILENAME + "-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.Downloads.DISPLAY_NAME, logFilename);
             contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/plain");
@@ -106,13 +107,13 @@ public class LogFile {
                 throw new IOException("Couldn't create MediaStore Entry");
             }
             OutputStream outStream = resolver.openOutputStream(uri);
-            File logFile = new File(context.getDataDir(), LOGFILENAME+".bak");
-            if(logFile.exists()) {
-                InputStream inputStream = new FileInputStream(logFile);
+            File backupLogFile = new File(context.getDataDir(), BACKUPLOGFILENAME);
+            if (backupLogFile.exists()) {
+                InputStream inputStream = new FileInputStream(backupLogFile);
                 Utils.copyStreams(inputStream, outStream);
                 inputStream.close();
             }
-            logFile = new File(context.getDataDir(), LOGFILENAME);
+            File logFile = new File(context.getDataDir(), LOGFILENAME);
             InputStream inputStream = new FileInputStream(logFile);
             Utils.copyStreams(inputStream, outStream);
             inputStream.close();

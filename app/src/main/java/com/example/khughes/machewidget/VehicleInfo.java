@@ -78,7 +78,6 @@ public class VehicleInfo {
 
     public void setCarStatus(CarStatus carStatus) {
         this.carStatus = carStatus;
-        this.lastUpdateTime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     public Object getError() {
@@ -198,5 +197,36 @@ public class VehicleInfo {
 
     public void setLastUpdateTime(long lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public void setLastUpdateTime() {
+        this.lastUpdateTime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    @Entity
+    public class CarStatusInfo {
+        @PrimaryKey
+        @NonNull
+        private String VIN;
+
+        @Embedded
+        private CarStatus carStatus;
+
+        @NonNull
+        public String getVIN() {
+            return VIN;
+        }
+
+        public void setVIN(@NonNull String VIN) {
+            this.VIN = VIN;
+        }
+
+        public CarStatus getCarStatus() {
+            return carStatus;
+        }
+
+        public void setCarStatus(CarStatus carStatus) {
+            this.carStatus = carStatus;
+        }
     }
 }

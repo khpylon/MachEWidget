@@ -827,11 +827,11 @@ public class CarStatusWidget extends AppWidgetProvider {
             for (int appWidgetId : appWidgetIds) {
                 if (!state.equals(Constants.STATE_INITIAL_STATE)) {
                     updateAppWidget(context, appWidgetManager, appWidgetId);
-                    context.startService(
+                    context.startForegroundService(
                             new Intent(context, CarStatusWidgetIntent.class)
                                     .putExtra(CarStatusWidgetIntent.WIDGETINTENTACTIONKEY, CarStatusWidgetIntent.CARSTATUSINTENTACTION)
                     );
-                    context.startService(
+                    context.startForegroundService(
                             new Intent(context, CarStatusWidgetIntent.class)
                                     .putExtra(CarStatusWidgetIntent.WIDGETINTENTACTIONKEY, CarStatusWidgetIntent.OTASTATUSINTENTACTION)
                     );

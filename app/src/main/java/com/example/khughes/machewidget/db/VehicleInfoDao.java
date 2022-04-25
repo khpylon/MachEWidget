@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.khughes.machewidget.CarStatus.CarStatus;
 import com.example.khughes.machewidget.VehicleInfo;
 
 import java.util.List;
@@ -28,4 +29,8 @@ public interface VehicleInfoDao {
 
     @Update
     void updateVehicleInfo(VehicleInfo info);
+
+    @Update(entity = VehicleInfo.class)
+    void updateCarStatus(VehicleInfo.CarStatusInfo info);
+
 }

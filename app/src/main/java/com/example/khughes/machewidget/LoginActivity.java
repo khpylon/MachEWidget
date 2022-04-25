@@ -24,6 +24,9 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceManager;
 
+import com.example.khughes.machewidget.CarStatus.Encryption;
+import com.example.khughes.machewidget.db.UserInfoDatabase;
+import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.LocalDateTime;
@@ -75,9 +78,10 @@ public class LoginActivity extends AppCompatActivity {
         credentials.setOnCheckedChangeListener((button, value) -> {
             savingCredentials = value;
             sharedPref.edit().putBoolean(context.getResources().getString(R.string.save_credentials_key), value).commit();
-            if (!savingCredentials) {
-                new StoredData(context).clearUsernameAndPassword();
-            }
+            // TODO
+//            if (!savingCredentials) {
+//                new StoredData(context).clearUsernameAndPassword();
+//            }
             fingerprint.setVisibility(View.GONE);
             updateDisclamer(disclaimerView, savingCredentials);
         });
@@ -174,10 +178,36 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                         super.onAuthenticationSucceeded(result);
-                        String username = appInfo.getUsername(VIN);
-                        String password = appInfo.getPassword(VIN);
+                        Handler handler = new Handler(Looper.getMainLooper()) {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                Bundle bundle = msg.getData();
+                                Encryption encrypt = new Encryption(context);
+                                String username = encrypt.getPlaintextString(bundle.getString("username"));
+                                String password = encrypt.getPlaintextString(bundle.getString("password"));
+                                getAccess(username, password);
+                            }
+                        };
+
+                        new Thread(() -> {
+                            VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
+                                    .vehicleInfoDao().findVehicleInfoByVIN(VIN);
+                            if (vehInfo != null) {
+                                Bundle bundle = new Bundle();
+                                UserInfo userInfo = UserInfoDatabase.getInstance(context)
+                                        .userInfoDao().findUserInfo(vehInfo.getUserId());
+                                bundle.putString("username", userInfo.getUsername());
+                                bundle.putString("password", userInfo.getPassword());
+                                Message m = Message.obtain();
+                                m.setData(bundle);
+                                handler.sendMessage(m);
+                            }
+                        }).start();
+
+//                        String username = appInfo.getUsername(VIN);
+//                        String password = appInfo.getPassword(VIN);
 //                        appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
-                        getAccess(username, password);
+//                        getAccess(username, password);
                     }
                 });
 
@@ -267,12 +297,6 @@ public class LoginActivity extends AppCompatActivity {
                     // If profiles are not being used, update the VIN list.
                     if (!profilesActive) {
                         new StoredData(getApplicationContext()).addProfile(VIN, alias);
-                    }
-
-                    // See if we should save the login credentials
-                    if (savingCredentials) {
-                        appInfo.setUsername(VIN, username);
-                        appInfo.setPassword(VIN, password);
                     }
 
                     String accessToken = bb.getString("access_token");
