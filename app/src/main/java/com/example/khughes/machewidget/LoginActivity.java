@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         ArrayList<Profile> profiles = new ArrayList<>();
         for (String VIN : appInfo.getProfiles()) {
             Profile p = new Profile(VIN);
-            p.setAlias(appInfo.getProfileName(VIN));
+//            p.setAlias(appInfo.getProfileName(VIN));
             profiles.add(p);
         }
 
@@ -176,7 +176,7 @@ public class LoginActivity extends AppCompatActivity {
                         super.onAuthenticationSucceeded(result);
                         String username = appInfo.getUsername(VIN);
                         String password = appInfo.getPassword(VIN);
-                        appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
+//                        appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
                         getAccess(username, password);
                     }
                 });
@@ -238,22 +238,9 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Please enter a username.", Toast.LENGTH_SHORT).show();
             } else if (password.length() == 0) {
                 Toast.makeText(getApplicationContext(), "Please enter a password.", Toast.LENGTH_SHORT).show();
-            } else if (VIN.length() != 17) {
-                Toast.makeText(getApplicationContext(), "Please enter a valid VIN.", Toast.LENGTH_SHORT).show();
             } else {
-                if (!(Utils.isVINRecognized(VIN))) {
-                    new AlertDialog.Builder(this)
-                            .setTitle("Warning")
-                            .setMessage("Your VIN is not recognized; the app may not work correctly. Please create an issue " +
-                                    "on GitHub and provide the first twelve characters of your VIN.")
-                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                                return;
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
-                }
-                appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
-                sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
+//                appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
+//                sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
                 getAccess(username, password);
             }
         });
@@ -264,6 +251,7 @@ public class LoginActivity extends AppCompatActivity {
     private void getAccess(String username, String password) {
         Context context = getApplicationContext();
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
@@ -271,10 +259,10 @@ public class LoginActivity extends AppCompatActivity {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Access: " + action);
-                appInfo.setProgramState(VIN, action);
+//                appInfo.setProgramState(VIN, action);
                 if (action.equals(Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS) ||
                         action.equals(Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN) ||
-                        action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
+                        action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
 
                     // If profiles are not being used, update the VIN list.
                     if (!profilesActive) {
@@ -288,13 +276,17 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     String accessToken = bb.getString("access_token");
-                    String refreshToken = bb.getString("refresh_token");
-                    Toast.makeText(getApplicationContext(), "Log-in successful; attempting to get status.", Toast.LENGTH_SHORT).show();
-                    int expires = bb.getInt("expires", 0);
-                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
-                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
-                    getStatus(accessToken);
+                    String country= bb.getString("country");
+                    String language = bb.getString("language");
+
+//                    String refreshToken = bb.getString("refresh_token");
+//                    Toast.makeText(getApplicationContext(), "Log-in successful; attempting to get status.", Toast.LENGTH_SHORT).show();
+//                    int expires = bb.getInt("expires", 0);
+//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
+//                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
+                    getStatus(accessToken, language);
+                    getOTAStatus(accessToken, language, country);
                 } else {
                     Toast.makeText(getApplicationContext(), "Unable to login to server: check your username and/or password?", Toast.LENGTH_LONG).show();
                 }
@@ -303,7 +295,7 @@ public class LoginActivity extends AppCompatActivity {
         NetworkCalls.getAccessToken(h, getApplicationContext(), username, password);
     }
 
-    private void getStatus(String accessToken) {
+    private void getStatus(String accessToken, String language) {
         Context context = getApplicationContext();
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
@@ -313,11 +305,10 @@ public class LoginActivity extends AppCompatActivity {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Status: " + action);
-                appInfo.setProgramState(VIN, action);
+//                appInfo.setProgramState(VIN, action);
                 if (action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
                     MainActivity.updateWidget(getApplicationContext());
                     StatusReceiver.nextAlarm(getApplicationContext());
-                    getOTAStatus(accessToken);
                     Toast.makeText(getApplicationContext(), "Status retrieved successfully.", Toast.LENGTH_SHORT).show();
                     Intent data = new Intent();
                     data.putExtra(VINIDENTIFIER, VIN);
@@ -326,21 +317,19 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     setResult(Activity.RESULT_OK, data);
                     finish();
-                } else if (action.equals(Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN)) {
-                    Toast.makeText(getApplicationContext(), "Unable to retrieve status: check your VIN?", Toast.LENGTH_LONG).show();
                 }
             }
         };
-        NetworkCalls.getStatus(h, getApplicationContext(), accessToken);
+        NetworkCalls.getStatus(h, getApplicationContext(), accessToken, language);
     }
 
-    private void getOTAStatus(String accessToken) {
+    private void getOTAStatus(String accessToken, String language, String country) {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 MainActivity.updateWidget(getApplicationContext());
             }
         };
-        NetworkCalls.getOTAStatus(h, getApplicationContext(), accessToken);
+        NetworkCalls.getOTAStatus(h, getApplicationContext(), accessToken, language, country);
     }
 }

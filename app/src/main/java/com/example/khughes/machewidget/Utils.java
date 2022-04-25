@@ -1,7 +1,27 @@
 package com.example.khughes.machewidget;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.icu.text.MessageFormat;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -91,6 +111,9 @@ public class Utils {
     public static final int FUEL_HYBRID = FUEL_GAS + 1;
     public static final int FUEL_PHEV = FUEL_HYBRID + 1;
     public static final int FUEL_ELECTRIC = FUEL_PHEV + 1;
+
+    public static final int MODEL_YEAR_START_INDEX = 10 - 1;
+    public static final int MODEL_YEAR_END_INDEX = 10;
 
     private static final Set<String> macheLineSeries;
 
@@ -402,7 +425,6 @@ public class Utils {
         explorerSTDrawables = tmpMap;
     }
 
-
     // Get the set of drawables for a particular style of F-150
     public static Map<String, Integer> getVehicleDrawables(String VIN) {
         if (VIN != null && !VIN.equals("")) {
@@ -442,6 +464,37 @@ public class Utils {
         return R.layout.mache_widget;
     }
 
+    // Model year decoder
+    private static final Map<String, Integer> modelYears;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put("G", 2016);
+        tmpMap.put("H", 2017);
+        tmpMap.put("J", 2018);
+        tmpMap.put("K", 2019);
+        tmpMap.put("L", 2020);
+        tmpMap.put("M", 2021);
+        tmpMap.put("N", 2022);
+        tmpMap.put("P", 2023);
+        tmpMap.put("R", 2024);
+        tmpMap.put("S", 2025);
+        tmpMap.put("T", 2026);
+        tmpMap.put("V", 2027);
+        tmpMap.put("W", 2028);
+        tmpMap.put("X", 2029);
+        tmpMap.put("Y", 2030);
+        modelYears = tmpMap;
+    }
+
+    public static int getModelYear(String VIN) {
+        String vehicleYearCode = VIN.substring(MODEL_YEAR_START_INDEX, MODEL_YEAR_END_INDEX);
+        Integer year = modelYears.get(vehicleYearCode);
+        if(year != null) {
+            return year;
+        }
+        return 0;
+     }
 
     // Mapping from long state/territory names to abbreviations
     public static final Map<String, String> states;
@@ -521,5 +574,60 @@ public class Utils {
         tmpStates.put("Yukon Territory", "YT");
         states = tmpStates;
     }
+
+    public static void copyStreams(InputStream inStream, OutputStream outStream) {
+        try {
+            int len;
+            byte[] buffer = new byte[65536];
+            while ((len = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            Log.e(MainActivity.CHANNEL_ID, "exception in LogFile.copyStream()", e);
+        }
+    }
+
+    // See if there was a crash, and if so dump the logcat output to a file
+    public static void checkLogcat(Context context) {
+        try {
+            // Dump the crash buffer and exit
+            Process process = Runtime.getRuntime().exec("logcat -d -b crash");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            StringBuilder log = new StringBuilder();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                log.append(line + "\n");
+            }
+
+            // If we find something, write to logcat.txt file
+            if (log.length() > 0) {
+                Uri fileCollection = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                }
+                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+                String crashFile =  "machewidget-logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+                InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, crashFile);
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/plain");
+                ContentResolver resolver = context.getContentResolver();
+                Uri uri = resolver.insert(fileCollection, contentValues);
+                if (uri == null) {
+                    throw new IOException("Couldn't create MediaStore Entry");
+                }
+                OutputStream outStream = resolver.openOutputStream(uri);
+                copyStreams(inStream,outStream);
+                outStream.close();
+
+                // Clear the crash log.
+                Runtime.getRuntime().exec("logcat -c");
+                Toast.makeText(context, MessageFormat.format("logcat crash file \"{0}\" copied to output folder.", crashFile), Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+        }
+    }
+
 
 }

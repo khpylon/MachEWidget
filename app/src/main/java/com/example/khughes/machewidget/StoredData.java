@@ -132,7 +132,7 @@ public class StoredData {
         commitWait(mContext.getSharedPreferences(VINLIST, MODE_PRIVATE).edit().putInt(VIN, 0));
 
         // Store the profile name
-        setProfileName(VIN, profileName);
+//        setProfileName(VIN, profileName);
     }
 
     public void clearProfiles() {
@@ -189,17 +189,17 @@ public class StoredData {
         }
     }
 
-    public void setProfileName(String VIN, String name) {
-        commitWait(mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putString(PROFILENAME, name));
-    }
-
-    public String getProfileName(String VIN) {
-        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getString(PROFILENAME, "");
-    }
-
-    public long getLastUpdateTime(String VIN) {
-        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTUPDATETIME, 0);
-    }
+//    public void setProfileName(String VIN, String name) {
+//        commitWait(mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit().putString(PROFILENAME, name));
+//    }
+//
+//    public String getProfileName(String VIN) {
+//        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getString(PROFILENAME, "");
+//    }
+//
+//    public long getLastUpdateTime(String VIN) {
+//        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTUPDATETIME, 0);
+//    }
 
     public long getLastUpdateElapsedTime() {
         String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
@@ -208,231 +208,253 @@ public class StoredData {
         return nowtime - lastUpdate;
     }
 
-    public void setLastRefreshTime(String VIN, long time) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        commitWait(edit.putLong(LASTREFRESHTIME, time));
-    }
+//    public void setLastRefreshTime(String VIN, long time) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        commitWait(edit.putLong(LASTREFRESHTIME, time));
+//    }
+//
+//    public long getLastRefreshTime(String VIN) {
+//        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTREFRESHTIME, 0);
+//    }
+//
+//    public void setLastAlarmTime(String VIN) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        commitWait(edit.putLong(LASTALARMTIME, nowtime));
+//    }
+//
+//    public long getLastAlarmTime() {
+//        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+//        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
+//    }
 
-    public long getLastRefreshTime(String VIN) {
-        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTREFRESHTIME, 0);
-    }
+//    public String getAccessToken(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(ACCESSTOKEN, "");
+//    }
+//
+//    public String getRefreshToken(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(REFRESHTOKEN, "");
+//    }
+//
+//    public long getTokenTimeout(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getLong(TOKENTIMEOUT, 0);
+//    }
+//
+//    public void setTokenInfo(String VIN, String access, String refresh, long time) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(ACCESSTOKEN, access);
+//        edit.putString(REFRESHTOKEN, refresh);
+//        commitWait(edit.putLong(TOKENTIMEOUT, time));
+//    }
+//
+//    public String getProgramState(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(PROGRAMSTATE, Constants.STATE_INITIAL_STATE);
+//    }
+//
+//    public void setProgramState(String VIN, String state) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        commitWait(edit.putString(PROGRAMSTATE, state));
+//    }
+//
+//    public CarStatus getCarStatus(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        String status = pref.getString(CARSTATUS, "{}");
+//        if (!status.equals("{}") && !status.contains("vehiclestatus")) {
+//            status = StringCompressor.decompress(status.getBytes(Charsets.ISO_8859_1));
+//        }
+//        return gson.fromJson(status, CarStatus.class);
+//    }
+//
+//    public void setCarStatus(String VIN, CarStatus status) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        String str = new String(StoredData.StringCompressor.compress(gson.toJson(status)), Charsets.ISO_8859_1);
+//        edit.putString(CARSTATUS, str);
+//        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        edit.putLong(LASTUPDATETIME, nowtime);
+//        commitWait(edit);
+//        CarStatusWidget.clearAwaitingFlag();
+//    }
+//
+//    public OTAStatus getOTAStatus(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        String status = pref.getString(OTASTATUS, "{}");
+//        if (!status.equals("{}") && !status.contains("otaAlertStatus")) {
+//            status = StringCompressor.decompress(status.getBytes(Charsets.ISO_8859_1));
+//        }
+//        return gson.fromJson(status, OTAStatus.class);
+//    }
+//
+//    public void setOTAStatus(String VIN, OTAStatus status) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        String str = new String(StoredData.StringCompressor.compress(gson.toJson(status)), Charsets.ISO_8859_1);
+//        edit.putString(OTASTATUS, str);
+//        commitWait(edit);
+//    }
+//
+//    public ChargeStation getChargeStation(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        String status = pref.getString(CHARGESTATION, "{}");
+//        if (!status.equals("{}") && !status.contains("otaAlertStatus")) {
+//            status = StringCompressor.decompress(status.getBytes(Charsets.ISO_8859_1));
+//        }
+//        return gson.fromJson(status, ChargeStation.class);
+//    }
+//
+//    public void setChargeStation(String VIN, ChargeStation station) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        String str = new String(StoredData.StringCompressor.compress(gson.toJson(station)), Charsets.ISO_8859_1);
+//        edit.putString(CHARGESTATION, str);
+//        commitWait(edit);
+//    }
+//
+//    public String getHVBStatus(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(HVBSTATUS, "STATUS_GOOD");
+//    }
+//
+//    public void setHVBStatus(String VIN, String status) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(HVBSTATUS, status);
+//        commitWait(edit);
+//    }
+//
+//    public String getTPMSStatus(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(TPMSSTATUS, "STATUS_GOOD");
+//    }
+//
+//    public void setTPMSStatus(String VIN, String status) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(TPMSSTATUS, status);
+//        commitWait(edit);
+//    }
+//
+//    public String getLanguage(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(LANGUAGE, "");
+//    }
+//
+//    public void setLanguage(String VIN, String language) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(LANGUAGE, language);
+//        commitWait(edit);
+//    }
+//
+//    public String getCountry(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(COUNTRY, "");
+//    }
+//
+//    public void setCountry(String VIN, String country) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(COUNTRY, country);
+//        commitWait(edit);
+//    }
+//
+//    public String getTimeFormatByCountry(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(COUNTRY, "USA").equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+//    }
+//
+//    public String getSpeedUnits(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(SPEEDUNITS, "MPH");
+//    }
+//
+//    public void setSpeedUnits(String VIN, String units) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(SPEEDUNITS, units);
+//        commitWait(edit);
+//    }
+//
+//    public int getDistanceUnits(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getInt(DISTANCEUNITS, -1);
+//    }
+//
+//    public void setDistanceUnits(String VIN, int units) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putInt(DISTANCEUNITS, units);
+//        commitWait(edit);
+//    }
+//
+//    public String getPressureUnits(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(PRESSUREUNITS, "PSI");
+//    }
+//
+//    public void setPressureUnits(String VIN, String units) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(PRESSUREUNITS, units);
+//        commitWait(edit);
+//    }
+//
+//    public Double getLastFuelLevel(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return Float.valueOf(pref.getFloat(LASTFUELLEVEL, 0)).doubleValue();
+//    }
+//
+//    public void setLastFuelLevel(String VIN, Double level) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putFloat(LASTFUELLEVEL, level.floatValue());
+//        commitWait(edit);
+//    }
+//
+//    public Double getLastDTE(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return Float.valueOf(pref.getFloat(LASTDTE, 0)).doubleValue();
+//    }
+//
+//    public void setLastDTE(String VIN, Double distance) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putFloat(LASTDTE, distance.floatValue());
+//        commitWait(edit);
+//    }
+//
+//    public String getLeftAppPackage(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(LEFTAPPPACKAGE, "com.ford.fordpass");
+//    }
+//
+//    public void setLeftAppPackage(String VIN, String name) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(LEFTAPPPACKAGE, name);
+//        commitWait(edit);
+//    }
+//
+//    public String getRightAppPackage(String VIN) {
+//        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+//        return pref.getString(RIGHTAPPPACKAGE, null);
+//    }
+//
+//    public void setRightAppPackage(String VIN, String name) {
+//        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+//        edit.putString(RIGHTAPPPACKAGE, name);
+//        commitWait(edit);
+//    }
 
-    public void setLastAlarmTime(String VIN) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        commitWait(edit.putLong(LASTALARMTIME, nowtime));
-    }
-
-    public long getLastAlarmTime() {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
-        return mContext.getSharedPreferences(VIN, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
-    }
-
-    public String getAccessToken(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(ACCESSTOKEN, "");
-    }
-
-    public String getRefreshToken(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(REFRESHTOKEN, "");
-    }
-
-    public long getTokenTimeout(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getLong(TOKENTIMEOUT, 0);
-    }
-
-    public void setTokenInfo(String VIN, String access, String refresh, long time) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(ACCESSTOKEN, access);
-        edit.putString(REFRESHTOKEN, refresh);
-        commitWait(edit.putLong(TOKENTIMEOUT, time));
-    }
-
-    public String getProgramState(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(PROGRAMSTATE, Constants.STATE_INITIAL_STATE);
-    }
-
-    public void setProgramState(String VIN, String state) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        commitWait(edit.putString(PROGRAMSTATE, state));
-    }
-
-    public CarStatus getCarStatus(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        String status = pref.getString(CARSTATUS, "{}");
-        if (!status.equals("{}") && !status.contains("vehiclestatus")) {
-            status = StringCompressor.decompress(status.getBytes(Charsets.ISO_8859_1));
-        }
-        return gson.fromJson(status, CarStatus.class);
-    }
-
-    public void setCarStatus(String VIN, CarStatus status) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        String str = new String(StoredData.StringCompressor.compress(gson.toJson(status)), Charsets.ISO_8859_1);
-        edit.putString(CARSTATUS, str);
-        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        edit.putLong(LASTUPDATETIME, nowtime);
-        commitWait(edit);
-        CarStatusWidget.clearAwaitingFlag();
-    }
-
-    public OTAStatus getOTAStatus(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        String status = pref.getString(OTASTATUS, "{}");
-        if (!status.equals("{}") && !status.contains("otaAlertStatus")) {
-            status = StringCompressor.decompress(status.getBytes(Charsets.ISO_8859_1));
-        }
-        return gson.fromJson(status, OTAStatus.class);
-    }
-
-    public void setOTAStatus(String VIN, OTAStatus status) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        String str = new String(StoredData.StringCompressor.compress(gson.toJson(status)), Charsets.ISO_8859_1);
-        edit.putString(OTASTATUS, str);
-        commitWait(edit);
-    }
-
-    public ChargeStation getChargeStation(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        String status = pref.getString(CHARGESTATION, "{}");
-        if (!status.equals("{}") && !status.contains("otaAlertStatus")) {
-            status = StringCompressor.decompress(status.getBytes(Charsets.ISO_8859_1));
-        }
-        return gson.fromJson(status, ChargeStation.class);
-    }
-
-    public void setChargeStation(String VIN, ChargeStation station) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        String str = new String(StoredData.StringCompressor.compress(gson.toJson(station)), Charsets.ISO_8859_1);
-        edit.putString(CHARGESTATION, str);
-        commitWait(edit);
-    }
-
-    public String getHVBStatus(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(HVBSTATUS, "STATUS_GOOD");
-    }
-
-    public void setHVBStatus(String VIN, String status) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(HVBSTATUS, status);
-        commitWait(edit);
-    }
-
-    public String getTPMSStatus(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(TPMSSTATUS, "STATUS_GOOD");
-    }
-
-    public void setTPMSStatus(String VIN, String status) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(TPMSSTATUS, status);
-        commitWait(edit);
-    }
-
-    public String getLanguage(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(LANGUAGE, "");
-    }
-
-    public void setLanguage(String VIN, String language) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(LANGUAGE, language);
-        commitWait(edit);
-    }
-
-    public String getCountry(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(COUNTRY, "");
-    }
-
-    public void setCountry(String VIN, String country) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(COUNTRY, country);
-        commitWait(edit);
-    }
-
-    public String getTimeFormatByCountry(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(COUNTRY, "USA").equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-    }
-
-    public String getSpeedUnits(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(SPEEDUNITS, "MPH");
-    }
-
-    public void setSpeedUnits(String VIN, String units) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(SPEEDUNITS, units);
-        commitWait(edit);
-    }
-
-    public int getDistanceUnits(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getInt(DISTANCEUNITS, -1);
-    }
-
-    public void setDistanceUnits(String VIN, int units) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putInt(DISTANCEUNITS, units);
-        commitWait(edit);
-    }
-
-    public String getPressureUnits(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return pref.getString(PRESSUREUNITS, "PSI");
-    }
-
-    public void setPressureUnits(String VIN, String units) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putString(PRESSUREUNITS, units);
-        commitWait(edit);
-    }
-
-    public Double getLastFuelLevel(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return Float.valueOf(pref.getFloat(LASTFUELLEVEL, 0)).doubleValue();
-    }
-
-    public void setLastFuelLevel(String VIN, Double level) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putFloat(LASTFUELLEVEL, level.floatValue());
-        commitWait(edit);
-    }
-
-    public Double getLastDTE(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        return Float.valueOf(pref.getFloat(LASTDTE, 0)).doubleValue();
-    }
-
-    public void setLastDTE(String VIN, Double distance) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
-        edit.putFloat(LASTDTE, distance.floatValue());
-        commitWait(edit);
-    }
-
-    public String getLeftAppPackage(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+    public String getLeftAppPackage() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
         return pref.getString(LEFTAPPPACKAGE, "com.ford.fordpass");
     }
 
-    public void setLeftAppPackage(String VIN, String name) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+    public void setLeftAppPackage(String name) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
         edit.putString(LEFTAPPPACKAGE, name);
         commitWait(edit);
     }
 
-    public String getRightAppPackage(String VIN) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
+    public String getRightAppPackage() {
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
         return pref.getString(RIGHTAPPPACKAGE, null);
     }
 
-    public void setRightAppPackage(String VIN, String name) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(VIN, MODE_PRIVATE).edit();
+    public void setRightAppPackage(String name) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
         edit.putString(RIGHTAPPPACKAGE, name);
         commitWait(edit);
     }
@@ -540,6 +562,16 @@ public class StoredData {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
         edit.putString(WIDGETMODE, mode);
         commitWait(edit);
+    }
+
+    public void setLastAlarmTime() {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
+        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        commitWait(edit.putLong(LASTALARMTIME, nowtime));
+    }
+
+    public long getLastAlarmTime() {
+        return mContext.getSharedPreferences(TAG, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
     }
 
     public int getCounter(String key) {

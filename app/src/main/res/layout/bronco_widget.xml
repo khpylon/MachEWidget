@@ -7,22 +7,31 @@
     android:background="@color/black"
     android:id="@+id/thewidget">
 
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="120dp"
-        android:layout_height="60dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/bronco_logo" />
-
-    <ImageView
-        android:id="@+id/leftanchor"
+    <RelativeLayout
+        android:id="@+id/leftside"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_below="@id/logo"
-        android:background="@drawable/filler" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <include layout="@layout/leftside_info"/>
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/bronco_logo" />
+
+
+        <ImageView
+            android:id="@+id/leftanchor"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_below="@id/logo"
+            android:background="@drawable/filler" />
+
+        <include layout="@layout/leftside_info" />
+
+    </RelativeLayout>
 
     <include layout="@layout/f150_top"/>
 

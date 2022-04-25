@@ -24,8 +24,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.khughes.machewidget.db.VehicleInfoDao;
+import com.example.khughes.machewidget.db.VehicleInfoDatabase;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.Set;
 
 public class ProfileManager extends AppCompatActivity {
     private static final String BLANK_VIN = "Unused Entry";
@@ -52,7 +58,7 @@ public class ProfileManager extends AppCompatActivity {
                             // if the alias changed, update it
                             if (!match.getProfileName().equals(alias)) {
                                 match.setAlias(alias);
-                                new StoredData(getApplicationContext()).setProfileName(VIN, alias);
+//                                new StoredData(getApplicationContext()).setProfileName(VIN, alias);
                                 sortProfiles();
                                 adapter.notifyDataSetChanged();
                             }
@@ -71,7 +77,6 @@ public class ProfileManager extends AppCompatActivity {
                     }
                 }
             });
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +175,7 @@ public class ProfileManager extends AppCompatActivity {
 
         StoredData appInfo = new StoredData(context);
         for (String VIN : appInfo.getProfiles()) {
-            profiles.add(new Profile(VIN, appInfo.getProfileName(VIN)));
+//            profiles.add(new Profile(VIN, appInfo.getProfileName(VIN)));
         }
 
         while (profiles.size() < 4) {
@@ -183,24 +188,97 @@ public class ProfileManager extends AppCompatActivity {
         return new Profile(BLANK_VIN, "");
     }
 
-    private static int ix = 0;
+    private static int index = 0;
 
     public static String changeProfile(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
-        ArrayList<String> profiles = new StoredData(context).getProfiles();
-
         StoredData appInfo = new StoredData(context);
-        for(String p: appInfo.getProfiles()) {
-            if(p.equals(VIN)) {
-                ix = (ix + 1) % profiles.size();
-                int index = ix;
-
-                VIN = profiles.get(index);
-                sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), VIN).apply();
-                return appInfo.getProfileName(VIN);
-            }
-        }
+ //       ArrayList<String> profiles = appInfo.getVINs();
+//
+//        index = profiles.indexOf(VIN);
+//        if (index >= 0) {
+//            index = (index + 1) % profiles.size();
+//            VIN = profiles.get(index);
+//            sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), VIN).apply();
+//            StatusReceiver.nextAlarm(context, 5);
+//            return appInfo.getNickname(VIN);
+//        }
         return null;
     }
+
+    // After a successful login, make any changes necessary to the associated VINs
+    public static void updateProfile(Context context, UserInfo userInfo, Map<String, String> vehicles) {
+        StoredData appInfo = new StoredData(context);
+        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+//        Set<String> currentVINs = appInfo.getUserIdVINs(userId);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+//        boolean profilesActive = prefs.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
+//
+//        // When profiles are active, if the current VIN isn't one of the new VINs, remove the old profile information
+//        String currentVIN = prefs.getString(context.getResources().getString(R.string.VIN_key), "");
+//        if ( !currentVIN.equals("") && !vehicles.containsKey(currentVIN)) {
+//            String currentUserId = appInfo.getUserId(currentVIN);
+//            if (!currentUserId.equals(userId)) {
+//                for (String otherVIN : appInfo.getUserIdVINs(currentUserId)) {
+//                    appInfo.removeVIN(otherVIN);
+//                }
+//                appInfo.removeTmpAccount(currentUserId);
+//            }
+//        }
+//
+        // Set the current VIN
+        prefs.edit().putString(context.getResources().getString(R.string.VIN_key), vehicles.keySet().toArray(new String[0])[0]).apply();
+
+//        // Remove any current VINs which are now missing from the new list
+//        for (String VIN : currentVINs) {
+//            if (!vehicles.containsKey(VIN)) {
+//                appInfo.removeVIN(VIN);
+//                VehicleInfoDatabase.getInstance(context)
+//                        .vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
+//                File image = new File(imageDir, VIN + ".png");
+//                if (image.exists()) {
+//                    image.delete();
+//                }
+//            }
+//        }
+//
+//        // Process the new VINs
+        for (String VIN : vehicles.keySet()) {
+            String nickname = vehicles.get(VIN);
+            // If no nickname is specified, user the last 5 digits of the VIN
+            if (nickname == null || nickname.equals("")) {
+                nickname = VIN.substring(12);
+            }
+            File image = new File(imageDir, VIN + ".png");
+            if (!image.exists()) {
+                String accessToken = userInfo.getAccessToken();
+                String country = userInfo.getCountry();
+                NetworkCalls.getVehicleImage(context, accessToken, country, image.toPath());
+            }
+//            if (currentVINs.contains(VIN)) {
+//                //  fix the user id for this VIN if it was unknown
+//                String oldUserId = appInfo.getUserId(VIN);
+//                if (userId.startsWith(Constants.TMP_ACCOUNT_PREFIX)) {
+//                    appInfo.removeTmpAccount(oldUserId);
+//                    appInfo.setUserId(VIN, userId);
+//                }
+//            }
+//            appInfo.addVIN(VIN, nickname);
+//            appInfo.setUserId(VIN, userId);
+
+            VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context)
+                    .vehicleInfoDao();
+            infoDao.deleteVehicleInfoByVIN(VIN);
+            VehicleInfo info = new VehicleInfo();
+            info.setVIN(VIN);
+            info.setNickname(nickname);
+            info.setUserId(userInfo.getUserId());
+            infoDao.insertVehicleInfo(info);
+        }
+
+        // Update the user's VIN list
+//        appInfo.setUserIdVINs(userId, vehicles.keySet());
+    }
+
 }

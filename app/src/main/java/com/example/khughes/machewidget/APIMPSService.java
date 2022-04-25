@@ -30,7 +30,7 @@ public interface APIMPSService {
             "user-agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
     })
     @POST("expdashboard/v1/details")
-    Call<ResponseBody> getUserDetails(@Header("auth-token") String token,
+    Call<UserDetails> getUserDetails(@Header("auth-token") String token,
                                       @Header("application-id") String APID,
                                       @Header("countrycode") String country,
                                       @Body RequestBody data);

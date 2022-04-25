@@ -1,5 +1,7 @@
 package com.example.khughes.machewidget;
 
+import java.io.File;
+
 public class Constants {
     public static final String APID = "71A3AD0A-CF46-4CCF-B473-FC7FE5BC4592";
     public static final String CLIENTID = "9fb503e0-715b-47e8-adfd-ad4b7770f73b";
@@ -18,6 +20,8 @@ public class Constants {
     public static final String STATE_ATTEMPT_TO_GET_VEHICLE_STATUS = "ATTEMPT_TO_GET_VEHICLE_STATUS";
     public static final String STATE_ATTEMPT_TO_GET_VIN_AGAIN = "ATTEMPT_TO_GET_VIN_AGAIN";
     public static final String STATE_HAVE_TOKEN_AND_STATUS = "HAVE_TOKEN_AND_STATUS";
+    public static final String STATE_HAVE_TOKEN = "HAVE_TOKEN";
+    public static final String STATE_HAVE_TOKEN_AND_VIN = "HAVE_TOKEN_AND_VIN";
 
     public static final int HTTP_BAD_REQUEST = 400;
     public static final int HTTP_UNAUTHORIZED = 401;
@@ -33,4 +37,6 @@ public class Constants {
     public static final String FSVERSION_1 = "FSVERSION_1";
 
     public static final String SHAREDPREFS_FOLDER = "shared_prefs";
+    public static final String IMAGES_FOLDER = SHAREDPREFS_FOLDER + File.separator + "images";
+
 }

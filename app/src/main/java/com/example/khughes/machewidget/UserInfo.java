@@ -18,7 +18,7 @@ public class UserInfo {
 
     private String accessToken;
     private String refreshToken;
-    private Integer expiresIn;
+    private long expiresIn;
     private String country;
     private String language;
     private String uomSpeed;
@@ -81,11 +81,11 @@ public class UserInfo {
         this.refreshToken = refreshToken;
     }
 
-    public Integer getExpiresIn() {
+    public long getExpiresIn() {
         return expiresIn;
     }
 
-    public void setExpiresIn(Integer expiresIn) {
+    public void setExpiresIn(long expiresIn) {
         this.expiresIn = expiresIn;
     }
 

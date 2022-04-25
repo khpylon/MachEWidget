@@ -71,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
             Preference verbose = findPreference(this.getResources().getString(R.string.logging_key));
             verbose.setOnPreferenceChangeListener((preference, newValue) -> {
                 if ((Boolean) newValue) {
-                    LogFile.clearLogFile(mContext);
+                    LogFile.clearLogFile(mContext, false);
                 }
                 return true;
             });

@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.example.khughes.machewidget.db.VehicleInfoDatabase;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -45,9 +47,9 @@ public class ChooseApp extends AppCompatActivity {
                 AppList app = arrayList.get(i);
                 StoredData appInfo = new StoredData(getApplicationContext());
                 if (!rightButton) {
-                    appInfo.setLeftAppPackage(VIN, app.packageName);
+                    appInfo.setLeftAppPackage( app.packageName);
                 } else {
-                    appInfo.setRightAppPackage(VIN, app.packageName);
+                    appInfo.setRightAppPackage( app.packageName);
                 }
                 MainActivity.updateWidget(getApplicationContext());
                 finish();

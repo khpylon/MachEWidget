@@ -49,10 +49,13 @@ import com.example.khughes.machewidget.db.UserInfoDatabase;
 import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -70,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         context = this.getApplicationContext();
 
         // First thing, check logcat for a crash and save if so
-        checkLogcat(context);
+        Utils.checkLogcat(context);
 
         // Initialize preferences
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false);
@@ -90,10 +93,18 @@ public class MainActivity extends AppCompatActivity {
         StoredData appInfo = new StoredData(context);
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         if (!VIN.equals("")) {
-            String state = appInfo.getProgramState(VIN);
-            if (state.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
-                StatusReceiver.initateAlarm(context);
-            }
+            new Thread(() -> {
+//                String state = appInfo.getProgramState(VIN);
+                VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
+                        .vehicleInfoDao().findVehicleInfoByVIN(VIN);
+                String userId = vehInfo.getUserId();
+                UserInfo userInfo = UserInfoDatabase.getInstance(context)
+                        .userInfoDao().findUserInfo(userId);
+                String state = userInfo.getProgramState();
+                if (state.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
+                    StatusReceiver.initateAlarm(context);
+                }
+            }).start();
         }
 
         // Create the webview containing instruction for use.
@@ -159,47 +170,6 @@ public class MainActivity extends AppCompatActivity {
             }
             // Update internally
             prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
-        }
-    }
-
-    // See if there was a crash, and if so dump the logcat output to a file
-    private void checkLogcat(Context context) {
-        try {
-            // Dump the crash buffer and exit
-            Process process = Runtime.getRuntime().exec("logcat -d -b crash");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-            StringBuilder log = new StringBuilder();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                log.append(line + "\n");
-            }
-
-            // If we find something, write to logcat.txt file
-            if (log.length() > 0) {
-                Uri fileCollection = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                }
-                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-                String crashFile =  "machewidget-logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, crashFile);
-                contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/plain");
-                ContentResolver resolver = context.getContentResolver();
-                Uri uri = resolver.insert(fileCollection, contentValues);
-                if (uri == null) {
-                    throw new IOException("Couldn't create MediaStore Entry");
-                }
-                OutputStream outStream = resolver.openOutputStream(uri);
-                outStream.write(log.toString().getBytes());
-                outStream.close();
-
-                // Clear the crash log.
-                Runtime.getRuntime().exec("logcat -c");
-                Toast.makeText(context,MessageFormat.format("logcat crash file \"{0}\" copied to output folder.", crashFile), Toast.LENGTH_SHORT).show();
-            }
-        } catch (IOException e) {
         }
     }
 

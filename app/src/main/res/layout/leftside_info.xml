@@ -1,11 +1,21 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
+        android:id="@+id/profile"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/leftanchor"
+        android:gravity="center"
+        android:text="Profile: "
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+
+    <TextView
         android:id="@+id/lastRefresh"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/logo"
-        android:layout_marginTop="8dp"
+        android:layout_below="@id/profile"
+        android:layout_marginTop="12dp"
         android:layout_weight="1"
         android:gravity="left"
         android:text="Last refresh:\n   N/A"
@@ -23,6 +33,7 @@
         android:textColor="@color/white"
         android:textSize="12dp" />
 
+    <!--
     <TextView
         android:id="@+id/sleep"
         android:layout_width="120dp"
@@ -34,91 +45,96 @@
         android:text="Deep sleep: N/A"
         android:textColor="@color/white"
         android:textSize="12dp" />
+        -->
 
     <TextView
         android:id="@+id/LVBVoltage"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/sleep"
+        android:layout_below="@id/odometer"
         android:layout_weight="1"
         android:gravity="left"
         android:text="LVB Volts: N/A"
         android:textColor="@color/white"
         android:textSize="12dp" />
 
-    <TextView
-        android:id="@+id/DataLine1"
-        android:layout_width="140dp"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/LVBVoltage"
-        android:layout_weight="1"
-        android:gravity="left"
-        android:text="OTA Status:"
-        android:textColor="@color/white"
-        android:textSize="12dp" />
+        android:id="@+id/ota_container">
 
-    <TextView
-        android:id="@+id/DataLine2"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/DataLine1"
-        android:layout_alignParentLeft="true"
-        android:layout_weight="1"
-        android:ellipsize="end"
-        android:gravity="left"
-        android:maxLines="1"
-        android:text="   N/A"
-        android:textColor="@color/white"
-        android:textSize="12dp" />
+        <TextView
+            android:id="@+id/ota_line1"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:text="OTA Status:"
+            android:textColor="@color/white"
+            android:textSize="12dp" />
 
-    <TextView
-        android:id="@+id/DataLine3"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/DataLine2"
-        android:layout_weight="1"
-        android:gravity="left"
-        android:text="Location:"
-        android:textColor="@color/white"
-        android:textSize="12dp" />
+        <TextView
+            android:id="@+id/ota_line2"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ota_line1"
+            android:layout_alignParentLeft="true"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:maxLines="1"
+            android:text="   N/A"
+            android:textColor="@color/white"
+            android:textSize="12dp" />
 
-    <TextView
-        android:id="@+id/DataLine4"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/DataLine3"
-        android:layout_alignParentLeft="true"
-        android:layout_weight="1"
-        android:gravity="left"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@color/white"
-        android:textSize="12dp"
-        android:text="   N/A" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/DataLine5"
-        android:layout_width="140dp"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/DataLine4"
-        android:layout_alignParentLeft="true"
-        android:layout_weight="1"
-        android:gravity="left"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@color/white"
-        android:textSize="12dp"
-        android:text="" />
+        android:layout_below="@id/ota_container"
+        android:id="@+id/location_container">
 
-    <TextView
-        android:id="@+id/profile"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/DataLine5"
-        android:gravity="start"
-        android:text="Profile: "
-        android:textColor="@color/white"
-        android:textSize="12sp" />
+        <TextView
+            android:id="@+id/location_line1"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:text="Location:"
+            android:textColor="@color/white"
+            android:textSize="12dp" />
+
+        <TextView
+            android:id="@+id/location_line2"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/location_line1"
+            android:layout_alignParentLeft="true"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:text="   N/A" />
+
+        <TextView
+            android:id="@+id/location_line3"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/location_line2"
+            android:layout_alignParentLeft="true"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:text="" />
+
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/filler2"

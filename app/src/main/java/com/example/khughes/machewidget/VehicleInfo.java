@@ -10,13 +10,11 @@ import com.example.khughes.machewidget.CarStatus.CarStatus;
 import com.example.khughes.machewidget.OTAStatus.FuseResponse;
 import com.example.khughes.machewidget.OTAStatus.FuseResponseList;
 import com.example.khughes.machewidget.OTAStatus.LanguageText;
-import com.example.khughes.machewidget.OTAStatus.LatestStatus;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.List;
 
 @Entity(tableName = "vehicle_info")
 public class VehicleInfo {
@@ -26,6 +24,20 @@ public class VehicleInfo {
     private String VIN;
 
     private String userId;
+
+    private String nickname;
+
+    private long lastRefreshTime;
+
+    private long lastUpdateTime;
+
+    private String lastLVBStatus;
+
+    private String lastTPMSStatus;
+
+    private double lastDTE;
+
+    private double lastFuelLevel;
 
     @Embedded
     private CarStatus carStatus;
@@ -66,6 +78,7 @@ public class VehicleInfo {
 
     public void setCarStatus(CarStatus carStatus) {
         this.carStatus = carStatus;
+        this.lastUpdateTime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     public Object getError() {
@@ -131,4 +144,59 @@ public class VehicleInfo {
         return status;
     }
 
+    public long getLastRefreshTime() {
+        return lastRefreshTime;
+    }
+
+    public void setLastRefreshTime(long lastRefreshTime) {
+        this.lastRefreshTime = lastRefreshTime;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getLastLVBStatus() {
+        return lastLVBStatus;
+    }
+
+    public void setLastLVBStatus(String lastLVBStatus) {
+        this.lastLVBStatus = lastLVBStatus;
+    }
+
+    public String getLastTPMSStatus() {
+        return lastTPMSStatus;
+    }
+
+    public void setLastTPMSStatus(String lastTPMSStatus) {
+        this.lastTPMSStatus = lastTPMSStatus;
+    }
+
+    public double getLastDTE() {
+        return lastDTE;
+    }
+
+    public void setLastDTE(double lastDTE) {
+        this.lastDTE = lastDTE;
+    }
+
+    public double getLastFuelLevel() {
+        return lastFuelLevel;
+    }
+
+    public void setLastFuelLevel(double lastFuelLevel) {
+        this.lastFuelLevel = lastFuelLevel;
+    }
+
+    public long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(long lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
 }

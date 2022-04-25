@@ -17,6 +17,10 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
+import com.example.khughes.machewidget.db.UserInfoDatabase;
+import com.example.khughes.machewidget.db.VehicleInfoDao;
+import com.example.khughes.machewidget.db.VehicleInfoDatabase;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -24,10 +28,10 @@ import java.util.Locale;
 
 public class StatusReceiver extends BroadcastReceiver {
     private Context mContext;
-    private StoredData appInfo;
+//    private StoredData appInfo;
 
     @Override
-    public void onReceive(Context context, Intent arg1) {
+    public void onReceive(Context context, Intent intent) {
         final int Millis = 1000;
 
         mContext = context;
@@ -39,165 +43,191 @@ public class StatusReceiver extends BroadcastReceiver {
             return;
         }
 
-        appInfo = new StoredData(context);
-        long timeout = appInfo.getTokenTimeout(VIN);
-        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-        long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        StoredData appInfo = new StoredData(context);
 
-        // Store time when we run the update;
-        appInfo.setLastAlarmTime(VIN);
+        new Thread(() -> {
+            VehicleInfoDao vehDao = VehicleInfoDatabase.getInstance(context)
+                    .vehicleInfoDao();
+            VehicleInfo vehInfo = vehDao.findVehicleInfoByVIN(VIN);
+            String userId = vehInfo.getUserId();
+            UserInfo userInfo = UserInfoDatabase.getInstance(context)
+                    .userInfoDao().
+                            findUserInfo(userId);
 
-        String state = appInfo.getProgramState(VIN);
+            long timeout = userInfo.getExpiresIn();
+            LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+            long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        LogFile.d(mContext, MainActivity.CHANNEL_ID,
-                MessageFormat.format("StatusReceiver: time({0}), state({1}), battery optimization({2})",
-                        (timeout - nowtime) / Millis, state, MainActivity.checkBatteryOptimizations(context)));
+            String token = userInfo.getAccessToken();
 
-        // Check whether credentials are being saved
-        boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
-                .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
+            // Store time when we run the update;
+            appInfo.setLastAlarmTime();
 
-        switch (state) {
-            case Constants.STATE_INITIAL_STATE:
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Initial state: how'd did the alarm go off (manual refresh)?");
-                cancelAlarm(context);
-                appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN);
-                break;
-            case Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN:
-                if (savingCredentials) {
-                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
-                    getAccess();
-                    appInfo.incCounter(StoredData.STATUS_LOG_IN);
-                } else {
-                    appInfo.setProgramState(VIN, Constants.STATE_INITIAL_STATE);
-                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Log-in required but credentials are not being saved: cancelling alarm");
+            String state = userInfo.getProgramState();
+
+            LogFile.d(mContext, MainActivity.CHANNEL_ID,
+                    MessageFormat.format("StatusReceiver: time({0}), state({1}), battery optimization({2})",
+                            (timeout - nowtime) / Millis, state, MainActivity.checkBatteryOptimizations(context)));
+
+            // Check whether credentials are being saved
+            boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
+                    .getBoolean(mContext.getResources().getString(R.string.save_credentials_key), true);
+
+            switch (state) {
+                case Constants.STATE_INITIAL_STATE:
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Initial state: how'd did the alarm go off (manual refresh)?");
                     cancelAlarm(context);
-                    appInfo.incCounter(StoredData.STATUS_LOG_OUT);
-                }
-                break;
-            case Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN:
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "STILL need to refresh token");
-                getRefresh(appInfo.getRefreshToken(VIN));
-                appInfo.incCounter(StoredData.STATUS_UPDATED);
-                break;
-            case Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS:
-            case Constants.STATE_HAVE_TOKEN_AND_STATUS:
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-                int delayInMillis = Integer.parseInt(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
+                    appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN);
+                    break;
+                case Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN:
+                    if (savingCredentials) {
+                        LogFile.d(mContext, MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
 
-                // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
-                // the next update.
-                long calculation = (timeout - delayInMillis - 5 * Millis) - nowtime;
-                LogFile.d(mContext, MainActivity.CHANNEL_ID, "Calculating time as " + calculation);
-                if (timeout - delayInMillis - 5 * Millis < nowtime) {
-                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Need to refresh token");
-                    getRefresh(appInfo.getRefreshToken(VIN));
-                } else {
-                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Token good? Just grab info");
-                    getStatus(appInfo.getAccessToken(VIN));
-                    getOTAStatus(appInfo.getAccessToken(VIN));
-                }
-                appInfo.incCounter(StoredData.STATUS_UPDATED);
-                break;
-            // Since everything above should cover all the states, we should never get here
-            default:
-                if (savingCredentials) {
-                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Trying to login");
-                    getAccess();
-                } else {
-                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
-                }
-                appInfo.incCounter(StoredData.STATUS_UNKNOWN);
-                break;
-        }
+                        String username = "";
+                        String password = "";
+                        getAccess(username, password);
+                        appInfo.incCounter(StoredData.STATUS_LOG_IN);
+                    } else {
+                        userInfo.setProgramState(Constants.STATE_INITIAL_STATE);
+                        LogFile.d(mContext, MainActivity.CHANNEL_ID, "Log-in required but credentials are not being saved: cancelling alarm");
+                        cancelAlarm(context);
+                        appInfo.incCounter(StoredData.STATUS_LOG_OUT);
+                    }
+                    break;
+                case Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN:
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "STILL need to refresh token");
+                    getRefresh(userId, userInfo.getRefreshToken());
+                    appInfo.incCounter(StoredData.STATUS_UPDATED);
+                    break;
+                case Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS:
+                case Constants.STATE_HAVE_TOKEN_AND_VIN:
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+                    int delayInMillis = Integer.parseInt(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
 
-        LogFile.d(mContext, MainActivity.CHANNEL_ID,
-                MessageFormat.format("StatusReceiver status history: {0}({1}) {2}({3}) {4}({5}) {6}({7}) {8}({9})",
-                        StoredData.STATUS_NOT_LOGGED_IN, appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
-                        StoredData.STATUS_LOG_OUT, appInfo.getCounter(StoredData.STATUS_LOG_OUT),
-                        StoredData.STATUS_LOG_IN, appInfo.getCounter(StoredData.STATUS_LOG_IN),
-                        StoredData.STATUS_UPDATED, appInfo.getCounter(StoredData.STATUS_UPDATED),
-                        StoredData.STATUS_UNKNOWN, appInfo.getCounter(StoredData.STATUS_UNKNOWN)
-                ));
+                    // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
+                    // the next update.
+                    long calculation = (timeout - delayInMillis - 5 * Millis) - nowtime;
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "Calculating time as " + calculation);
+                    if (timeout - delayInMillis - 5 * Millis < nowtime) {
+                        LogFile.d(mContext, MainActivity.CHANNEL_ID, "Need to refresh token");
+                        getRefresh(userId, userInfo.getRefreshToken());
+                    } else {
+                        LogFile.d(mContext, MainActivity.CHANNEL_ID, "Token good? Just grab info");
+                        String language = userInfo.getLanguage();
+                        String country = userInfo.getCountry();
+                        getStatus(token, language);
+                        getOTAStatus(token, language, country);
+                    }
+                    appInfo.incCounter(StoredData.STATUS_UPDATED);
+                    break;
+                // Since everything above should cover all the states, we should never get here
+                default:
+                    if (savingCredentials) {
+                        LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Trying to login");
+                        String username = "";
+                        String password = "";
+                        getAccess(username, password);
+                    } else {
+                        LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
+                    }
+                    appInfo.incCounter(StoredData.STATUS_UNKNOWN);
+                    break;
+            }
+
+            LogFile.d(mContext, MainActivity.CHANNEL_ID,
+                    MessageFormat.format("StatusReceiver status history: {0}({1}) {2}({3}) {4}({5}) {6}({7}) {8}({9})",
+                            StoredData.STATUS_NOT_LOGGED_IN, appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
+                            StoredData.STATUS_LOG_OUT, appInfo.getCounter(StoredData.STATUS_LOG_OUT),
+                            StoredData.STATUS_LOG_IN, appInfo.getCounter(StoredData.STATUS_LOG_IN),
+                            StoredData.STATUS_UPDATED, appInfo.getCounter(StoredData.STATUS_UPDATED),
+                            StoredData.STATUS_UNKNOWN, appInfo.getCounter(StoredData.STATUS_UNKNOWN)
+                    ));
+        }).start();
     }
 
     private Bundle bb = new Bundle();
 
-    private void getAccess() {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+    private void getAccess(String username, String password) {
+//        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Access: " + action);
-                appInfo.setProgramState(VIN, action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
+//                appInfo.setProgramState(VIN, action);
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     String accessToken = bb.getString("access_token");
-                    String refreshToken = bb.getString("refresh_token");
-                    int expires = bb.getInt("expires", 0);
-                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
-                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
-                    getStatus(accessToken);
-                    getOTAStatus(accessToken);
+                    String country= bb.getString("country");
+                    String language = bb.getString("language");
+//                    String refreshToken = bb.getString("refresh_token");
+//                    int expires = bb.getInt("expires", 0);
+//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
+//                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
+                    getStatus(accessToken, language);
+                    getOTAStatus(accessToken, language, country);
                 }
             }
         };
-        NetworkCalls.getAccessToken(h, mContext, appInfo.getUsername(VIN), appInfo.getPassword(VIN));
+        NetworkCalls.getAccessToken(h, mContext, username, password);
     }
 
-    private void getRefresh(String refreshToken) {
+    private void getRefresh(String userId, String refreshToken) {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+//                String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Refresh: " + action);
-                appInfo.setProgramState(VIN, action);
-                if (action.equals(Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS)) {
+//                appInfo.setProgramState(VIN, action);
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     String accessToken = bb.getString("access_token");
-                    String refreshToken = bb.getString("refresh_token");
-                    int expires = bb.getInt("expires", 0);
-                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
-                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
-                    getStatus(accessToken);
-                    getOTAStatus(accessToken);
+                    String country= bb.getString("country");
+                    String language = bb.getString("language");
+//                    String refreshToken = bb.getString("refresh_token");
+//                    int expires = bb.getInt("expires", 0);
+//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
+//                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
+                    getStatus(accessToken, language);
+                    getOTAStatus(accessToken, language, country);
                 } else if (action.equals(Constants.STATE_INITIAL_STATE)) {
-                    getAccess();
+                    String username = "";
+                    String password = "";
+                    getAccess(username, password);
                 }
             }
         };
-        NetworkCalls.refreshAccessToken(h, mContext, refreshToken);
+        NetworkCalls.refreshAccessToken(h, mContext, userId, refreshToken);
     }
 
-    private void getStatus(String accessToken) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+    private void getStatus(String token, String language) {
+//        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Status: " + action);
-                appInfo.setProgramState(VIN, action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
+//                appInfo.setProgramState(VIN, action);
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     MainActivity.updateWidget(mContext);
                 }
             }
         };
-        NetworkCalls.getStatus(h, mContext, accessToken);
+        NetworkCalls.getStatus(h, mContext, token, language);
     }
 
-    private void getOTAStatus(String accessToken) {
+    private void getOTAStatus(String token, String language, String country) {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 MainActivity.updateWidget(mContext);
             }
         };
-        NetworkCalls.getOTAStatus(h, mContext, accessToken);
+        NetworkCalls.getOTAStatus(h, mContext, token, language, country);
     }
 
     public static void nextAlarm(Context context) {
