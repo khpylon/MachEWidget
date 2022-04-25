@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -32,19 +33,25 @@ public class ZipManager {
 
         final int BUFFER = 2048;
 
+        String unmodifiedFilePath = folder.getPath();
+        String relativePath = unmodifiedFilePath
+                .substring(basePathLength);
+        ZipEntry entry = new ZipEntry(relativePath+"/");
+        out.putNextEntry(entry);
+        out.closeEntry();
         File[] fileList = folder.listFiles();
-        BufferedInputStream origin = null;
+        BufferedInputStream origin;
         for (File file : fileList) {
+            unmodifiedFilePath = file.getPath();
+            relativePath = unmodifiedFilePath
+                    .substring(basePathLength);
             if (file.isDirectory()) {
                 zipSubFolder(out, file, basePathLength);
             } else {
                 byte[] data = new byte[BUFFER];
-                String unmodifiedFilePath = file.getPath();
-                String relativePath = unmodifiedFilePath
-                        .substring(basePathLength);
                 FileInputStream fi = new FileInputStream(unmodifiedFilePath);
                 origin = new BufferedInputStream(fi, BUFFER);
-                ZipEntry entry = new ZipEntry(relativePath);
+                entry = new ZipEntry(relativePath);
                 entry.setTime(file.lastModified()); // to keep modification time after unzipping
                 out.putNextEntry(entry);
                 int count;
@@ -54,35 +61,30 @@ public class ZipManager {
                 origin.close();
             }
         }
+
     }
 
     public static File zipSharedPrefs(Context context) throws IOException {
         File zipFile = File.createTempFile("temp", ".zip");
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
         File sourceDir = new File(context.getDataDir(), Constants.SHAREDPREFS_FOLDER);
-        zipSubFolder(out, sourceDir, sourceDir.getAbsolutePath().length()+1);
+        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length()+1);
+        sourceDir = new File(context.getDataDir(), Constants.DATABASES_FOLDER);
+        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length()+1);
         out.setComment(Constants.FSVERSION_1);
         out.close();
         return zipFile;
     }
 
     public static void unzip(Context context, Uri zipFile) throws IOException, SettingFileException {
-        File dataDir = context.getDataDir();
-        File fromDir = new File(dataDir, Constants.SHAREDPREFS_FOLDER);
+        File fromDir = context.getDataDir();
 
         InputStream inStream = context.getContentResolver().openInputStream(zipFile);
         File tmpfile = File.createTempFile("temp", ".zip");
-        String x = tmpfile.toPath().toString();
         OutputStream outStream = new FileOutputStream(tmpfile);
-        {
-            int len;
-            byte[] buffer = new byte[65536];
-            while ((len = inStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, len);
-            }
-            inStream.close();
-            outStream.close();
-        }
+        Utils.copyStreams(inStream, outStream);
+        inStream.close();
+        outStream.close();
 
         ZipFile localZipFile = new ZipFile(tmpfile);
         String comment = localZipFile.getComment();
@@ -95,28 +97,35 @@ public class ZipManager {
         ZipInputStream zin = new ZipInputStream(new FileInputStream(tmpfile));
         try {
             ZipEntry entry;
-
             while ((entry = zin.getNextEntry()) != null) {
                 String path = fromDir + File.separator + entry.getName();
 
+                File unzipFile = new File(path);
+
                 if (entry.isDirectory()) {
-                    File unzipFile = new File(path);
                     if (!unzipFile.isDirectory()) {
                         unzipFile.mkdirs();
                     }
                 } else {
+                    if(unzipFile.exists()) {
+                        unzipFile.delete();
+                    }
                     FileOutputStream fout = new FileOutputStream(path, false);
-
                     try {
-                        for (int c = zin.read(); c != -1; c = zin.read()) {
-                            fout.write(c);
+                        byte[] buffer = new byte[65536];
+                        int len;
+                        while ((len = zin.read(buffer)) != -1) {
+                            fout.write(buffer, 0, len);
                         }
                         zin.closeEntry();
                     } finally {
                         fout.close();
                     }
+                    unzipFile.setLastModified(entry.getLastModifiedTime().toMillis());
                 }
             }
+        } catch (Exception e) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "Exception in ZipManager.unzipStuff()", e);
         } finally {
             zin.close();
             tmpfile.delete();

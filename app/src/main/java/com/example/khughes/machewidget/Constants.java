@@ -37,6 +37,7 @@ public class Constants {
     public static final String FSVERSION_1 = "FSVERSION_1";
 
     public static final String SHAREDPREFS_FOLDER = "shared_prefs";
+    public static final String DATABASES_FOLDER = "databases";
     public static final String IMAGES_FOLDER = SHAREDPREFS_FOLDER + File.separator + "images";
 
 }
