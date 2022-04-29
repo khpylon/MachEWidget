@@ -24,8 +24,14 @@ public class NetworkServiceGenerators {
                         int index = message.indexOf("&username");
                         if (index > 0) {
                             message = message.substring(0, index);
-                            message += "&username=<redacted>&password=<redacted>";
+                            message += "&username=**redacted**&password=**redacted**";
                         }
+                    }
+                    if (message.contains("UserProfile\":{")) {
+                        message = message.replaceAll("\"UserProfile\":.[^}]*.[^}]*.[^}]*.", "\"UserProfile\":**redacted**");
+                    }
+                    if (message.contains("\"userId\"")) {
+                        message = message.replaceAll("\"userId\":.[^\"]*.", "\"userId\":**redacted**");
                     }
                     LogFile.d(mContext, "OkHttp3", message);
                 }

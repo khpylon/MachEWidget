@@ -17,9 +17,6 @@ public class Constants {
     public static final String STATE_INITIAL_STATE = "INITIAL_STATE";
     public static final String STATE_ATTEMPT_TO_GET_ACCESS_TOKEN = "ATTEMPT_TO_GET_ACCESS_TOKEN";
     public static final String STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN = "ATTEMPT_TO_REFRESH_ACCESS_TOKEN";
-    public static final String STATE_ATTEMPT_TO_GET_VEHICLE_STATUS = "ATTEMPT_TO_GET_VEHICLE_STATUS";
-    public static final String STATE_ATTEMPT_TO_GET_VIN_AGAIN = "ATTEMPT_TO_GET_VIN_AGAIN";
-    public static final String STATE_HAVE_TOKEN_AND_STATUS = "HAVE_TOKEN_AND_STATUS";
     public static final String STATE_HAVE_TOKEN = "HAVE_TOKEN";
     public static final String STATE_HAVE_TOKEN_AND_VIN = "HAVE_TOKEN_AND_VIN";
 
@@ -39,5 +36,7 @@ public class Constants {
     public static final String SHAREDPREFS_FOLDER = "shared_prefs";
     public static final String DATABASES_FOLDER = "databases";
     public static final String IMAGES_FOLDER = SHAREDPREFS_FOLDER + File.separator + "images";
+
+    public static final String TEMP_ACCOUNT = "temporary";
 
 }

@@ -629,5 +629,8 @@ public class Utils {
         }
     }
 
+    public static boolean OTASupportCheck (String alertStatus) {
+        return alertStatus != null && !alertStatus.toLowerCase().replaceAll("[^a-z0-9]", "").contains("doesntsupport");
+    }
 
 }

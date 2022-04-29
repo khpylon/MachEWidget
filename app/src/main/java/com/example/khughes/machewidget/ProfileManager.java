@@ -34,165 +34,165 @@ import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ProfileManager extends AppCompatActivity {
     private static final String BLANK_VIN = "Unused Entry";
 
-    private ArrayList<Profile> arrayList;
-    private CustomAdapter adapter;
+//    private ArrayList<Profile> arrayList;
+//    private CustomAdapter adapter;
 
-    ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // There are no request codes
-                        Intent data = result.getData();
-                        String VIN = data.getStringExtra(LoginActivity.VINIDENTIFIER);
-                        String alias = data.getStringExtra(LoginActivity.PROFILENAME);
-                        // Update the current active profile
-                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
+//    ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == Activity.RESULT_OK) {
+//                        // There are no request codes
+//                        Intent data = result.getData();
+//                        String VIN = data.getStringExtra(LoginActivity.VINIDENTIFIER);
+//                        String alias = data.getStringExtra(LoginActivity.PROFILENAME);
+//                        // Update the current active profile
+//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
+//
+//                        // Find a profile with a matching VIN
+//                        Profile match = arrayList.stream().filter(p -> p.getVIN().equals(VIN)).findFirst().orElse(null);
+//                        if (match != null) {
+//                            // if the alias changed, update it
+//                            if (!match.getProfileName().equals(alias)) {
+//                                match.setAlias(alias);
+////                                new StoredData(getApplicationContext()).setProfileName(VIN, alias);
+//                                sortProfiles();
+//                                adapter.notifyDataSetChanged();
+//                            }
+//                            return;
+//                        }
+//
+//                        // Create a new profile in an unused entry
+//                        match = arrayList.stream().filter(p -> p.getVIN().equals(BLANK_VIN)).findFirst().orElse(null);
+//                        if (match != null) {
+//                            match.setAlias(alias);
+//                            match.setVIN(VIN);
+//                            new StoredData(getApplicationContext()).addProfile(VIN, alias);
+//                            sortProfiles();
+//                            adapter.notifyDataSetChanged();
+//                        }
+//                    }
+//                }
+//            });
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_profile_manager);
+//
+//        arrayList = getProfiles(this);
+//        sortProfiles();
+//
+//        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+//        adapter = new CustomAdapter(arrayList);
+//        recyclerView.setHasFixedSize(true);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(adapter);
+//    }
+//
+//    private void sortProfiles() {
+//        arrayList.sort(Comparator.comparing(Profile::getVIN));
+//    }
+//
+//    private class CustomAdapter extends RecyclerView.Adapter<ProfileManager.ViewHolder> {
+//        ArrayList<Profile> arrayList;
+//
+//        public CustomAdapter(ArrayList<Profile> arrayList) {
+//            this.arrayList = arrayList;
+//        }
+//
+//        @Override
+//        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+//            View listItem = layoutInflater.inflate(R.layout.profiles_row, parent, false);
+//            return new ViewHolder(listItem);
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+//            final Profile profile = arrayList.get(position);
+//            holder.profileNameView.setText(profile.getProfileName());
+//            holder.VINView.setText(profile.getVIN());
+//            holder.delete.setOnClickListener(view -> {
+//                Profile p = arrayList.get(position);
+//
+//                // Delete is only valid when there is a VIN defined
+//                if (!p.getVIN().equals("")) {
+//
+//                    // If this profile matches the active VIN, clear the active VIN
+//                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//                    String VIN = sharedPref.getString(getApplicationContext().getResources().getString(R.string.VIN_key), "");
+//                    if (p.getVIN().equals(VIN)) {
+//                        sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), "").apply();
+//                    }
+//
+//                    // Remove thh entry
+//                    new StoredData(getApplicationContext()).removeProfile(VIN);
+//
+//                    // Replace this list entry with a blank one
+//                    arrayList.set(position, getBlankProfile());
+//                    sortProfiles();
+//                    adapter.notifyDataSetChanged();
+//                }
+//            });
+//            holder.relativeLayout.setOnClickListener((i) -> {
+//                Intent intent = new Intent(getApplicationContext(),
+//                        LoginActivity.class);
+//                String VIN = arrayList.get(position).getVIN();
+//                intent.putExtra(LoginActivity.VINIDENTIFIER, VIN.equals(BLANK_VIN) ? "" : VIN);
+//                intent.putExtra(LoginActivity.PROFILENAME, arrayList.get(position).getProfileName());
+//                someActivityResultLauncher.launch(intent);
+//            });
+//
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return arrayList.size();
+//        }
+//    }
+//
+//    private static class ViewHolder extends RecyclerView.ViewHolder { //implements View.OnClickListener {
+//        private final TextView profileNameView;
+//        private final TextView VINView;
+//        private final ImageView delete;
+//        private final RelativeLayout relativeLayout;
+//
+//        public ViewHolder(View itemView) {
+//            super(itemView);
+//            profileNameView = itemView.findViewById(R.id.alias);
+//            VINView = itemView.findViewById(R.id.VIN);
+//            delete = itemView.findViewById(R.id.profiledelete);
+//            relativeLayout = itemView.findViewById(R.id.profile_rowlayout);
+//        }
+//    }
+//
+//    private ArrayList<Profile> getProfiles(Context context) {
+//        ArrayList<Profile> profiles = new ArrayList<>();
+//
+//        StoredData appInfo = new StoredData(context);
+//        for (String VIN : appInfo.getProfiles()) {
+////            profiles.add(new Profile(VIN, appInfo.getProfileName(VIN)));
+//        }
+//
+//        while (profiles.size() < 4) {
+//            profiles.add(getBlankProfile());
+//        }
+//        return profiles;
+//    }
+//
+//    private Profile getBlankProfile() {
+//        return new Profile(BLANK_VIN, "");
+//    }
 
-                        // Find a profile with a matching VIN
-                        Profile match = arrayList.stream().filter(p -> p.getVIN().equals(VIN)).findFirst().orElse(null);
-                        if (match != null) {
-                            // if the alias changed, update it
-                            if (!match.getProfileName().equals(alias)) {
-                                match.setAlias(alias);
-//                                new StoredData(getApplicationContext()).setProfileName(VIN, alias);
-                                sortProfiles();
-                                adapter.notifyDataSetChanged();
-                            }
-                            return;
-                        }
-
-                        // Create a new profile in an unused entry
-                        match = arrayList.stream().filter(p -> p.getVIN().equals(BLANK_VIN)).findFirst().orElse(null);
-                        if (match != null) {
-                            match.setAlias(alias);
-                            match.setVIN(VIN);
-                            new StoredData(getApplicationContext()).addProfile(VIN, alias);
-                            sortProfiles();
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            });
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_manager);
-
-        arrayList = getProfiles(this);
-        sortProfiles();
-
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        adapter = new CustomAdapter(arrayList);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void sortProfiles() {
-        arrayList.sort(Comparator.comparing(Profile::getVIN));
-    }
-
-    private class CustomAdapter extends RecyclerView.Adapter<ProfileManager.ViewHolder> {
-        ArrayList<Profile> arrayList;
-
-        public CustomAdapter(ArrayList<Profile> arrayList) {
-            this.arrayList = arrayList;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-            View listItem = layoutInflater.inflate(R.layout.profiles_row, parent, false);
-            return new ViewHolder(listItem);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            final Profile profile = arrayList.get(position);
-            holder.profileNameView.setText(profile.getProfileName());
-            holder.VINView.setText(profile.getVIN());
-            holder.delete.setOnClickListener(view -> {
-                Profile p = arrayList.get(position);
-
-                // Delete is only valid when there is a VIN defined
-                if (!p.getVIN().equals("")) {
-
-                    // If this profile matches the active VIN, clear the active VIN
-                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    String VIN = sharedPref.getString(getApplicationContext().getResources().getString(R.string.VIN_key), "");
-                    if (p.getVIN().equals(VIN)) {
-                        sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), "").apply();
-                    }
-
-                    // Remove thh entry
-                    new StoredData(getApplicationContext()).removeProfile(VIN);
-
-                    // Replace this list entry with a blank one
-                    arrayList.set(position, getBlankProfile());
-                    sortProfiles();
-                    adapter.notifyDataSetChanged();
-                }
-            });
-            holder.relativeLayout.setOnClickListener((i) -> {
-                Intent intent = new Intent(getApplicationContext(),
-                        LoginActivity.class);
-                String VIN = arrayList.get(position).getVIN();
-                intent.putExtra(LoginActivity.VINIDENTIFIER, VIN.equals(BLANK_VIN) ? "" : VIN);
-                intent.putExtra(LoginActivity.PROFILENAME, arrayList.get(position).getProfileName());
-                someActivityResultLauncher.launch(intent);
-            });
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return arrayList.size();
-        }
-    }
-
-    private static class ViewHolder extends RecyclerView.ViewHolder { //implements View.OnClickListener {
-        private final TextView profileNameView;
-        private final TextView VINView;
-        private final ImageView delete;
-        private final RelativeLayout relativeLayout;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            profileNameView = itemView.findViewById(R.id.alias);
-            VINView = itemView.findViewById(R.id.VIN);
-            delete = itemView.findViewById(R.id.profiledelete);
-            relativeLayout = itemView.findViewById(R.id.profile_rowlayout);
-        }
-    }
-
-    private ArrayList<Profile> getProfiles(Context context) {
-        ArrayList<Profile> profiles = new ArrayList<>();
-
-        StoredData appInfo = new StoredData(context);
-        for (String VIN : appInfo.getProfiles()) {
-//            profiles.add(new Profile(VIN, appInfo.getProfileName(VIN)));
-        }
-
-        while (profiles.size() < 4) {
-            profiles.add(getBlankProfile());
-        }
-        return profiles;
-    }
-
-    private Profile getBlankProfile() {
-        return new Profile(BLANK_VIN, "");
-    }
-
-    private static int index = 0;
 
     public static void changeProfile(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -204,7 +204,7 @@ public class ProfileManager extends AppCompatActivity {
                 Bundle bundle = msg.getData();
                 if (bundle.containsKey("VINs")) {
                     ArrayList<String> VINs = bundle.getStringArrayList("VINs");
-                    index = VINs.indexOf(VIN);
+                    int index = VINs.indexOf(VIN);
                     // If there's only one VIN; nothing to do
                     if (VINs.size() > 1 && index >= 0) {
                         index = (index + 1) % VINs.size();
@@ -237,42 +237,62 @@ public class ProfileManager extends AppCompatActivity {
 
     // After a successful login, make any changes necessary to the associated VINs
     public static void updateProfile(Context context, UserInfo userInfo, Map<String, String> vehicles) {
-        StoredData appInfo = new StoredData(context);
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
-//        Set<String> currentVINs = appInfo.getUserIdVINs(userId);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-//        boolean profilesActive = prefs.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
-//
-//        // When profiles are active, if the current VIN isn't one of the new VINs, remove the old profile information
-//        String currentVIN = prefs.getString(context.getResources().getString(R.string.VIN_key), "");
-//        if ( !currentVIN.equals("") && !vehicles.containsKey(currentVIN)) {
-//            String currentUserId = appInfo.getUserId(currentVIN);
-//            if (!currentUserId.equals(userId)) {
-//                for (String otherVIN : appInfo.getUserIdVINs(currentUserId)) {
-//                    appInfo.removeVIN(otherVIN);
-//                }
-//                appInfo.removeTmpAccount(currentUserId);
-//            }
-//        }
-//
-        // Set the current VIN
-        prefs.edit().putString(context.getResources().getString(R.string.VIN_key), vehicles.keySet().toArray(new String[0])[0]).apply();
-        LogFile.i(context, MainActivity.CHANNEL_ID, "Setting VIN to " + vehicles.keySet().toArray()[0]);
+        String userId = userInfo.getUserId();
 
-//        // Remove any current VINs which are now missing from the new list
-//        for (String VIN : currentVINs) {
-//            if (!vehicles.containsKey(VIN)) {
-//                appInfo.removeVIN(VIN);
-//                VehicleInfoDatabase.getInstance(context)
-//                        .vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
-//                File image = new File(imageDir, VIN + ".png");
-//                if (image.exists()) {
-//                    image.delete();
-//                }
-//            }
-//        }
-//
-//        // Process the new VINs
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String currentVIN = prefs.getString(context.getResources().getString(R.string.VIN_key), "");
+
+        VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context)
+                .vehicleInfoDao();
+        VehicleInfo info;
+
+        // Before getting started, find and remove any unrecognized VINs.
+        HashSet<String> unknownVINs = new HashSet<>();
+        for (String VIN : vehicles.keySet()) {
+            if (!Utils.isVINRecognized(VIN)) {
+                unknownVINs.add(VIN);
+            }
+        }
+        for (String VIN : unknownVINs) {
+            vehicles.remove(VIN);
+        }
+
+        // If the current VIN is defined but isn't in the list of new VINs, handle it
+        if (!currentVIN.equals("") && !vehicles.isEmpty() && !vehicles.containsKey(currentVIN)) {
+
+            // Make the first VIN the current VIN
+            prefs.edit().putString(context.getResources().getString(R.string.VIN_key), vehicles.keySet().toArray(new String[0])[0]).apply();
+
+            // Get the info on the current vehicle
+            info = infoDao.findVehicleInfoByVIN(currentVIN);
+
+            // Delete all the vehicles and images associated with the user ID
+            if (info != null) {
+                List<String> VINs = infoDao.findVINsByUserId(info.getUserId());
+                if (VINs != null && !VINs.isEmpty()) {
+                    for (String v : infoDao.findVINsByUserId(info.getUserId())) {
+                        infoDao.deleteVehicleInfoByVIN(v);
+                        File image = new File(imageDir, v + ".png");
+                        if (image.exists()) {
+                            image.delete();
+                        }
+                    }
+                }
+            }
+
+            // If the user ID is also different, delete the user too
+            if (!info.getUserId().equals(userId)) {
+                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(info.getUserId());
+            }
+        }
+
+        // Make the first VIN the current VIN
+        if (currentVIN.equals("")) {
+            prefs.edit().putString(context.getResources().getString(R.string.VIN_key), vehicles.keySet().toArray(new String[0])[0]).apply();
+        }
+
+        // Process the new VINs
         for (String VIN : vehicles.keySet()) {
             String nickname = vehicles.get(VIN);
             // If no nickname is specified, user the last 5 digits of the VIN
@@ -283,31 +303,30 @@ public class ProfileManager extends AppCompatActivity {
             if (!image.exists()) {
                 String accessToken = userInfo.getAccessToken();
                 String country = userInfo.getCountry();
-                NetworkCalls.getVehicleImage(context, accessToken, country, image.toPath());
+                NetworkCalls.getVehicleImage(context, accessToken, VIN, country, image.toPath());
             }
-//            if (currentVINs.contains(VIN)) {
-//                //  fix the user id for this VIN if it was unknown
-//                String oldUserId = appInfo.getUserId(VIN);
-//                if (userId.startsWith(Constants.TMP_ACCOUNT_PREFIX)) {
-//                    appInfo.removeTmpAccount(oldUserId);
-//                    appInfo.setUserId(VIN, userId);
-//                }
-//            }
-//            appInfo.addVIN(VIN, nickname);
-//            appInfo.setUserId(VIN, userId);
+            info = infoDao.findVehicleInfoByVIN(VIN);
 
-            VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context)
-                    .vehicleInfoDao();
-            infoDao.deleteVehicleInfoByVIN(VIN);
-            VehicleInfo info = new VehicleInfo();
-            info.setVIN(VIN);
+            // If the vehicle is already in the database, check the user ID to see if it was a temporary one and if so
+            // delete that user
+            if (info != null) {
+                if (info.getUserId().equals(Constants.TEMP_ACCOUNT)) {
+                    UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(info.getUserId());
+                }
+            }
+            // If the vehicle is new, set the VIN and insert into the database
+            else {
+                info = new VehicleInfo();
+                info.setVIN(VIN);
+                infoDao.insertVehicleInfo(info);
+            }
+
+            // Fill in the important fields and update
             info.setNickname(nickname);
-            info.setUserId(userInfo.getUserId());
-            infoDao.insertVehicleInfo(info);
+            info.setUserId(userId);
+            infoDao.updateVehicleInfo(info);
         }
 
-        // Update the user's VIN list
-//        appInfo.setUserIdVINs(userId, vehicles.keySet());
+        MainActivity.updateWidget(context);
     }
-
 }

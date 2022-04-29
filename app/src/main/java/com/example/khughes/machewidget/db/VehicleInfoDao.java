@@ -32,8 +32,4 @@ public interface VehicleInfoDao {
 
     @Update
     void updateVehicleInfo(VehicleInfo info);
-
-    @Update(entity = VehicleInfo.class)
-    void updateCarStatus(VehicleInfo.CarStatusInfo info);
-
 }

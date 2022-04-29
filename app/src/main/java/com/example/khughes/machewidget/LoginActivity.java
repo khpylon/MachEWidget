@@ -72,10 +72,9 @@ public class LoginActivity extends AppCompatActivity {
         credentials.setOnCheckedChangeListener((button, value) -> {
             savingCredentials = value;
             sharedPref.edit().putBoolean(context.getResources().getString(R.string.save_credentials_key), value).commit();
-            // TODO
-//            if (!savingCredentials) {
-//                new StoredData(context).clearUsernameAndPassword();
-//            }
+            if (!savingCredentials) {
+                new Encryption(context).clearCredentials();
+            }
             fingerprint.setVisibility(View.GONE);
             updateDisclamer(disclaimerView, savingCredentials);
         });
@@ -190,11 +189,6 @@ public class LoginActivity extends AppCompatActivity {
                                 handler.sendMessage(m);
                             }
                         }).start();
-
-//                        String username = appInfo.getUsername(VIN);
-//                        String password = appInfo.getPassword(VIN);
-//                        appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
-//                        getAccess(username, password);
                     }
                 });
 
@@ -248,8 +242,6 @@ public class LoginActivity extends AppCompatActivity {
             } else if (password.length() == 0) {
                 Toast.makeText(getApplicationContext(), "Please enter a password.", Toast.LENGTH_SHORT).show();
             } else {
-//                appInfo.setProgramState(VIN, Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN);
-//                sharedPref.edit().putString(getApplicationContext().getResources().getString(R.string.VIN_key), VIN).apply();
                 getAccess(username, password);
             }
         });
@@ -269,8 +261,7 @@ public class LoginActivity extends AppCompatActivity {
                 String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Access: " + action);
 //                appInfo.setProgramState(VIN, action);
-                if (action.equals(Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS) ||
-                        action.equals(Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN) ||
+                if (action.equals(Constants.STATE_HAVE_TOKEN) ||
                         action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
 
                     // If profiles are not being used, update the VIN list.
@@ -281,15 +272,8 @@ public class LoginActivity extends AppCompatActivity {
                     String accessToken = bb.getString("access_token");
                     String country= bb.getString("country");
                     String language = bb.getString("language");
-
-//                    String refreshToken = bb.getString("refresh_token");
-//                    Toast.makeText(getApplicationContext(), "Log-in successful; attempting to get status.", Toast.LENGTH_SHORT).show();
-//                    int expires = bb.getInt("expires", 0);
-//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
-//                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-//                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
-                    getStatus(accessToken, language);
-                    getOTAStatus(accessToken, language, country);
+                    Toast.makeText(getApplicationContext(), "Log-in successful; attempting to get status.", Toast.LENGTH_SHORT).show();
+                    getStatus(accessToken, language, country);
                 } else {
                     Toast.makeText(getApplicationContext(), "Unable to login to server: check your username and/or password?", Toast.LENGTH_LONG).show();
                 }
@@ -298,7 +282,7 @@ public class LoginActivity extends AppCompatActivity {
         NetworkCalls.getAccessToken(h, getApplicationContext(), username, password);
     }
 
-    private void getStatus(String accessToken, String language) {
+    private void getStatus(String accessToken, String language, String country) {
         Context context = getApplicationContext();
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
@@ -309,7 +293,7 @@ public class LoginActivity extends AppCompatActivity {
                 String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Status: " + action);
 //                appInfo.setProgramState(VIN, action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     MainActivity.updateWidget(getApplicationContext());
                     StatusReceiver.nextAlarm(getApplicationContext());
                     Toast.makeText(getApplicationContext(), "Status retrieved successfully.", Toast.LENGTH_SHORT).show();
@@ -323,16 +307,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         };
-        NetworkCalls.getStatus(h, getApplicationContext(), accessToken, language);
-    }
-
-    private void getOTAStatus(String accessToken, String language, String country) {
-        Handler h = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                MainActivity.updateWidget(getApplicationContext());
-            }
-        };
-        NetworkCalls.getOTAStatus(h, getApplicationContext(), accessToken, language, country);
+        NetworkCalls.getStatus(h, getApplicationContext(), accessToken, language, country);
     }
 }

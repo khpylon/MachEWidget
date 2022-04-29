@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 UserInfo userInfo = UserInfoDatabase.getInstance(context)
                         .userInfoDao().findUserInfo(userId);
                 String state = userInfo.getProgramState();
-                if (state.equals(Constants.STATE_HAVE_TOKEN_AND_STATUS)) {
+                if (state.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     StatusReceiver.initateAlarm(context);
                 }
             }).start();
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Replace sharedpreference files with databases
-            if (lastVersion.compareTo("2022.04.26") < 0) {
+            if (lastVersion.compareTo("2022.04.29") < 0) {
                 migrateToDatabases(context);
             }
 
@@ -204,7 +204,8 @@ public class MainActivity extends AppCompatActivity {
             UserInfo userInfo = new UserInfo();
 
             if (!VINs.isEmpty()) {
-                String userId = "temporary";
+                LogFile.i(context, MainActivity.CHANNEL_ID, "creating temporary user profile");
+                String userId = Constants.TEMP_ACCOUNT;
                 userInfo.setUserId(userId);
                 userInfo.setAccessToken(appInfo.getAccessToken(currentVIN));
                 userInfo.setRefreshToken(appInfo.getRefreshToken(currentVIN));
@@ -224,16 +225,30 @@ public class MainActivity extends AppCompatActivity {
                     UserInfoDatabase.getInstance(context)
                             .userInfoDao()
                             .insertUserInfo(userInfo);
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "temporary user profile completed");
+
+                    Handler h1 = new Handler(Looper.getMainLooper()) {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            Bundle bundle = msg.getData();
+                            String userId = bundle.getString("userId");
+                            for (String VIN : VINs) {
+                                Handler h = new Handler(Looper.getMainLooper()) {
+                                    @Override
+                                    public void handleMessage(Message msg) {
+                                        LogFile.i(context, MainActivity.CHANNEL_ID, "handler returned "+VIN);
+                                    }
+                                };
+                                NetworkCalls.getUserVehicles(h, context, userId);
+                                LogFile.i(context, MainActivity.CHANNEL_ID, "processing VIN "+VIN);
+                                appInfo.removeProfile(VIN);
+                            }
+                        }
+                    };
+
+                    NetworkCalls.refreshAccessToken(h1, context, userId, userInfo.getRefreshToken());
+
                 }).start();
-            }
-            for (String VIN : VINs) {
-                Handler h = new Handler(Looper.getMainLooper()) {
-                    @Override
-                    public void handleMessage(Message msg) {
-                    }
-                };
-                NetworkCalls.getUserVehicles(h, context);
-                appInfo.removeProfile(VIN);
             }
 
 //            new Thread(() -> {
@@ -282,9 +297,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Remove VINs.xml file
         new File(context.getDataDir() + File.separator + Constants.SHAREDPREFS_FOLDER, StoredData.VINLIST + ".xml").deleteOnExit();
+        LogFile.i(context, MainActivity.CHANNEL_ID, "database conversion completed");
 
-        // Do a refresh in 10 seconds
-        StatusReceiver.nextAlarm(context, 10);
+        // Do a refresh in 5 seconds
+        StatusReceiver.nextAlarm(context, 5);
     }
 
     private static class LocalContentWebViewClient extends WebViewClientCompat {

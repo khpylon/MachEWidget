@@ -30,6 +30,8 @@ public class LogFile {
     private static final String LOGFILENAME = "mache_logfile";
     private static final String BACKUPLOGFILENAME = LOGFILENAME + ".0";
 
+    private static final int LOGFILE_SIZE = 750000;
+
     public static void clearLogFile(Context context, boolean moveBackup) {
         try {
             File backupLogFile = new File(context.getDataDir(), BACKUPLOGFILENAME);
@@ -56,7 +58,7 @@ public class LogFile {
         if (verbose && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             try {
                 File logFile = new File(context.getDataDir(), LOGFILENAME);
-                if (logFile.length() > 750000) {
+                if (logFile.length() > LOGFILE_SIZE) {
                     clearLogFile(context, true);
                 }
                 FileOutputStream outputStream = new FileOutputStream(logFile, true);

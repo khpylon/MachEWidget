@@ -28,7 +28,6 @@ import java.util.Locale;
 
 public class StatusReceiver extends BroadcastReceiver {
     private Context mContext;
-//    private StoredData appInfo;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -82,9 +81,9 @@ public class StatusReceiver extends BroadcastReceiver {
                 case Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN:
                     if (savingCredentials) {
                         LogFile.d(mContext, MainActivity.CHANNEL_ID, "Ok, trying to log in; wish me luck");
-
-                        String username = "";
-                        String password = "";
+                        Encryption encrypt = new Encryption(context);
+                        String username = encrypt.getPlaintextString(userInfo.getUsername());
+                        String password = encrypt.getPlaintextString(userInfo.getPassword());
                         getAccess(username, password);
                         appInfo.incCounter(StoredData.STATUS_LOG_IN);
                     } else {
@@ -99,8 +98,11 @@ public class StatusReceiver extends BroadcastReceiver {
                     getRefresh(userId, userInfo.getRefreshToken());
                     appInfo.incCounter(StoredData.STATUS_UPDATED);
                     break;
-                case Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS:
-                case Constants.STATE_HAVE_TOKEN_AND_STATUS:
+                case Constants.STATE_HAVE_TOKEN:
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "need to get vehicle info");
+                    getVehicleInfo(userId);
+                    appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO);
+                    break;
                 case Constants.STATE_HAVE_TOKEN_AND_VIN:
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
                     int delayInMillis = Integer.parseInt(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
@@ -116,8 +118,7 @@ public class StatusReceiver extends BroadcastReceiver {
                         LogFile.d(mContext, MainActivity.CHANNEL_ID, "Token good? Just grab info");
                         String language = userInfo.getLanguage();
                         String country = userInfo.getCountry();
-                        getStatus(token, language);
-                        getOTAStatus(token, language, country);
+                        getStatus(token, language, country);
                     }
                     appInfo.incCounter(StoredData.STATUS_UPDATED);
                     break;
@@ -125,8 +126,9 @@ public class StatusReceiver extends BroadcastReceiver {
                 default:
                     if (savingCredentials) {
                         LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Trying to login");
-                        String username = "";
-                        String password = "";
+                        Encryption encrypt = new Encryption(context);
+                        String username = encrypt.getPlaintextString(userInfo.getUsername());
+                        String password = encrypt.getPlaintextString(userInfo.getPassword());
                         getAccess(username, password);
                     } else {
                         LogFile.d(mContext, MainActivity.CHANNEL_ID, "Hmmm... How did I get here. Wish I could login");
@@ -136,11 +138,12 @@ public class StatusReceiver extends BroadcastReceiver {
             }
 
             LogFile.d(mContext, MainActivity.CHANNEL_ID,
-                    MessageFormat.format("StatusReceiver status history: {0}({1}) {2}({3}) {4}({5}) {6}({7}) {8}({9})",
+                    MessageFormat.format("StatusReceiver status history: {0}({1}) {2}({3}) {4}({5}) {6}({7}) {8}({9}) {10}({11})",
                             StoredData.STATUS_NOT_LOGGED_IN, appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
                             StoredData.STATUS_LOG_OUT, appInfo.getCounter(StoredData.STATUS_LOG_OUT),
                             StoredData.STATUS_LOG_IN, appInfo.getCounter(StoredData.STATUS_LOG_IN),
                             StoredData.STATUS_UPDATED, appInfo.getCounter(StoredData.STATUS_UPDATED),
+                            StoredData.STATUS_VEHICLE_INFO, appInfo.getCounter(StoredData.STATUS_VEHICLE_INFO),
                             StoredData.STATUS_UNKNOWN, appInfo.getCounter(StoredData.STATUS_UNKNOWN)
                     ));
         }).start();
@@ -149,25 +152,17 @@ public class StatusReceiver extends BroadcastReceiver {
     private Bundle bb = new Bundle();
 
     private void getAccess(String username, String password) {
-//        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Access: " + action);
-//                appInfo.setProgramState(VIN, action);
                 if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     String accessToken = bb.getString("access_token");
                     String country= bb.getString("country");
                     String language = bb.getString("language");
-//                    String refreshToken = bb.getString("refresh_token");
-//                    int expires = bb.getInt("expires", 0);
-//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
-//                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-//                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
-                    getStatus(accessToken, language);
-                    getOTAStatus(accessToken, language, country);
+                    getStatus(accessToken, language, country);
                 }
             }
         };
@@ -178,22 +173,14 @@ public class StatusReceiver extends BroadcastReceiver {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-//                String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Refresh: " + action);
-//                appInfo.setProgramState(VIN, action);
                 if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     String accessToken = bb.getString("access_token");
                     String country= bb.getString("country");
                     String language = bb.getString("language");
-//                    String refreshToken = bb.getString("refresh_token");
-//                    int expires = bb.getInt("expires", 0);
-//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(expires);
-//                    long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-//                    appInfo.setTokenInfo(VIN, accessToken, refreshToken, nextTime);
-                    getStatus(accessToken, language);
-                    getOTAStatus(accessToken, language, country);
+                    getStatus(accessToken, language, country);
                 } else if (action.equals(Constants.STATE_INITIAL_STATE)) {
                     String username = "";
                     String password = "";
@@ -204,31 +191,31 @@ public class StatusReceiver extends BroadcastReceiver {
         NetworkCalls.refreshAccessToken(h, mContext, userId, refreshToken);
     }
 
-    private void getStatus(String token, String language) {
-//        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
+    private void getVehicleInfo(String userId) {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Status: " + action);
-//                appInfo.setProgramState(VIN, action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
+            }
+        };
+        NetworkCalls.getUserVehicles(h, mContext, userId);
+    }
+
+    private void getStatus(String token, String language, String country) {
+        Handler h = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                bb = msg.getData();
+                String action = bb.getString("action");
+                LogFile.i(mContext, MainActivity.CHANNEL_ID, "Status: " + action);
+                if(action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     MainActivity.updateWidget(mContext);
                 }
             }
         };
-        NetworkCalls.getStatus(h, mContext, token, language);
-    }
-
-    private void getOTAStatus(String token, String language, String country) {
-        Handler h = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                MainActivity.updateWidget(mContext);
-            }
-        };
-        NetworkCalls.getOTAStatus(h, mContext, token, language, country);
+        NetworkCalls.getStatus(h, mContext, token, language, country);
     }
 
     public static void nextAlarm(Context context) {

@@ -20,7 +20,7 @@ public class BootComplete extends BroadcastReceiver {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.SECOND_IN_MILLIS, pendingIntent);
-            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.SECOND_IN_MILLIS,
+            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.SECOND_IN_MILLIS * 15,
                     DateUtils.SECOND_IN_MILLIS, pendingIntent);
 
             // Check for a new version of the app sometime soon
@@ -31,7 +31,10 @@ public class BootComplete extends BroadcastReceiver {
             alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.MINUTE_IN_MILLIS, pendingIntent);
         }
-        UpdateActivity.removeAPK(context);
-        MainActivity.performUpdates(context);
+        if (action.equalsIgnoreCase(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+            UpdateActivity.removeAPK(context);
+            MainActivity.performUpdates(context);
+            MainActivity.updateWidget(context);
+        }
     }
 }

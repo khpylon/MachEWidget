@@ -8,6 +8,8 @@ import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.R;
 import com.example.khughes.machewidget.StoredData;
+import com.example.khughes.machewidget.db.UserInfoDao;
+import com.example.khughes.machewidget.db.UserInfoDatabase;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -135,6 +137,12 @@ public class Encryption {
             }
         }
         return cipher;
+    }
+
+    public void clearCredentials() {
+        new Thread( () -> {
+            UserInfoDatabase.getInstance(context).userInfoDao().clearCredentials();
+        }).start();
     }
 
 }

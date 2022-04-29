@@ -22,8 +22,10 @@ public class UserInfo {
     private String country;
     private String language;
     private String uomSpeed;
-    private Integer uomDistance;
+    private int uomDistance;
     private String uomPressure;
+
+    private String lastModified;
 
     public String getCountry() {
         return country;
@@ -49,11 +51,11 @@ public class UserInfo {
         this.uomSpeed = uomSpeed;
     }
 
-    public Integer getUomDistance() {
+    public int getUomDistance() {
         return uomDistance;
     }
 
-    public void setUomDistance(Integer uomDistance) {
+    public void setUomDistance(int uomDistance) {
         this.uomDistance = uomDistance;
     }
 
@@ -119,5 +121,13 @@ public class UserInfo {
 
     public void setProgramState(String programState) {
         this.programState = programState;
+    }
+
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
     }
 }

@@ -44,6 +44,8 @@
     <string name="logging_summary">Store logging info in a local file, separate from system logs</string>
     <string name="github_title">GitHub repo</string>
     <string name="github_summary">Link to the code repository</string>
+    <string name="battery_opt">Battery optimization off</string>
+    <string name="battery_opt_summary">Indicates the status of battery optimizations for the app</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
@@ -64,7 +66,7 @@
     <string name="version_key">appVersion</string>
     <string name="last_version_key">lastVersion</string>
     <string name="widget_mode_key">widget_mode</string>
-
+    <string name="battery_opt_key">batteryOptimization</string>
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>

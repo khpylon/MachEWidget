@@ -47,9 +47,9 @@ public class ChooseApp extends AppCompatActivity {
                 AppList app = arrayList.get(i);
                 StoredData appInfo = new StoredData(getApplicationContext());
                 if (!rightButton) {
-                    appInfo.setLeftAppPackage( app.packageName);
+                    appInfo.setLeftAppPackage(app.packageName);
                 } else {
-                    appInfo.setRightAppPackage( app.packageName);
+                    appInfo.setRightAppPackage(app.packageName);
                 }
                 MainActivity.updateWidget(getApplicationContext());
                 finish();

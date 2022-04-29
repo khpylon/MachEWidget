@@ -8,48 +8,33 @@ import android.icu.util.TimeZone;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
 import android.util.ArrayMap;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
-import com.example.khughes.machewidget.CarStatus.Encryption;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
 import com.example.khughes.machewidget.db.UserInfoDao;
 import com.example.khughes.machewidget.db.UserInfoDatabase;
 import com.example.khughes.machewidget.db.VehicleInfoDao;
 import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import org.json.JSONObject;
 
 import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Base64;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.spec.GCMParameterSpec;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -68,30 +53,51 @@ public class NetworkCalls {
     private static final int CMD_STATUS_FAILED = 411;
     private static final int CMD_REMOTE_START_LIMIT = 590;
 
+    private static final boolean use_network = true;
+
     public static void getAccessToken(Handler handler, Context context, String username, String password) {
         Thread t = new Thread(() -> {
             Intent intent = NetworkCalls.getAccessToken(context, username, password);
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
+            if (intent.hasExtra("userId")) {
+                getUserVehicles(context, intent.getStringExtra("userId"));
+            }
+        });
+        t.start();
+    }
+
+    public static void getUserVehicles(Handler handler, Context context, String userId) {
+        Thread t = new Thread(() -> {
+            NetworkCalls.getUserVehicles(context, userId);
         });
         t.start();
     }
 
     private static Intent getAccessToken(Context context, String username, String password) {
         Intent data = new Intent();
-        StoredData appInfo = new StoredData(context);
         String nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
-        String token = null;
-        String userId = null;
-        int stage = 1;
+        int stage;
         UserInfoDao userDao = UserInfoDatabase.getInstance(context).userInfoDao();
         UserInfo userInfo = new UserInfo();
+        String userId = null;
+        String token = null;
+        String country = null;
+
+        if (username != null) {
+            stage = 1;
+        } else {
+            stage = 3;
+            userId = Constants.TEMP_ACCOUNT;
+            userInfo = userDao.findUserInfo(userId);
+            token = userInfo.getAccessToken();
+            country = userInfo.getCountry();
+        }
 
         if (MainActivity.checkInternetConnection(context)) {
             AccessTokenService fordClient = NetworkServiceGenerators.createIBMCloudService(AccessTokenService.class, context);
             APIMPSService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
-            APIMPSService userDetailsClient = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
 
             for (int retry = 2; retry >= 0; --retry) {
                 try {
@@ -108,10 +114,11 @@ public class NetworkCalls {
                         if (!response.isSuccessful()) {
                             break;
                         }
-                        stage = 2;
                         accessToken = response.body();
                         token = accessToken.getAccessToken();
+                        stage = 2;
                     }
+
                     // Next, try to get the user's data
                     if (stage == 2) {
                         jsonParams = new ArrayMap<>();
@@ -143,7 +150,7 @@ public class NetworkCalls {
                         userInfo.setProgramState(nextState);
 
                         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-                        Boolean savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
+                        boolean savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
                         if (savingCredentials) {
                             Encryption encrypt = new Encryption(context);
                             String encryptedUsername = encrypt.getCryptoString(username);
@@ -157,41 +164,9 @@ public class NetworkCalls {
                         data.putExtra("access_token", token);
                         data.putExtra("language", userInfo.getLanguage());
                         data.putExtra("country", userInfo.getCountry());
-                        stage = 3;
-                    }
-                    // Finally, tty to get the user details
-                    if (stage == 3) {
-                        String country = accessToken.getUserProfile().getCountry();
-                        Map<String, String> modified = new ArrayMap<>();
-                        modified.put("If-Modified-Since", "Sat, 26 Mar 2022 15:59:38 GMT");
-                        Map<String, Object> entityRefresh = new ArrayMap<>();
-                        entityRefresh.put("userVehicles", modified);
-                        jsonParams = new ArrayMap<>();
-                        jsonParams.put("dashboardRefreshRequest", "EntityRefresh");
-                        jsonParams.put("entityRefresh", entityRefresh);
-                        body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
-                        Call<UserDetails> call2 = userDetailsClient.getUserDetails(token, Constants.APID, country, body);
-                        Response<UserDetails> response2 = call2.execute();
-                        LogFile.i(context, MainActivity.CHANNEL_ID, "refresh here.");
-                        if (!response2.isSuccessful()) {
-                            break;
-                        }
-
-                        UserDetails userDetails = response2.body();
-                        Map<String, String> vehicleInfo = new HashMap<>();
-                        for (UserDetails.VehicleDetail vehicle : userDetails.getUserVehicles().getVehicleDetails()) {
-                            String VIN = vehicle.getVin();
-                            vehicleInfo.put(VIN, vehicle.getNickName());
-                        }
-                        data.putExtra("vehicles", vehicleInfo.size());
-                        if (!vehicleInfo.isEmpty()) {
-                            ProfileManager.updateProfile(context, userInfo, vehicleInfo);
-                            nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
-                            userDao.updateProgramState(nextState, userId);
-                        }
+                        data.putExtra("userId", userId);
                         break;
                     }
-
                 } catch (java.net.SocketTimeoutException ee) {
                     LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getAccessToken");
                     LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
@@ -209,6 +184,7 @@ public class NetworkCalls {
             }
         }
 
+        userDao.updateProgramState(nextState, userId);
         data.putExtra("action", nextState);
         return data;
     }
@@ -242,24 +218,29 @@ public class NetworkCalls {
                     if (response.isSuccessful()) {
                         LogFile.i(context, MainActivity.CHANNEL_ID, "refresh successful");
                         AccessToken accessToken = response.body();
-                        String token = accessToken.getAccessToken();
-                        data.putExtra("access_token", token);
-
                         UserInfo userInfo = dao.findUserInfo(userId);
-
-                        data.putExtra("language", userInfo.getLanguage());
-                        data.putExtra("country", userInfo.getCountry());
+                        if (userId.equals(Constants.TEMP_ACCOUNT)) {
+                            dao.deleteUserInfo(userInfo);
+                            userId = accessToken.getUserId();
+                            userInfo.setUserId(userId);
+                            dao.insertUserInfo(userInfo);
+                        }
+                        String token = accessToken.getAccessToken();
                         userInfo.setAccessToken(token);
                         userInfo.setRefreshToken(accessToken.getRefreshToken());
                         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(accessToken.getExpiresIn());
                         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                         userInfo.setExpiresIn(nextTime);
                         dao.updateUserInfo(userInfo);
+                        data.putExtra("access_token", token);
+                        data.putExtra("language", userInfo.getLanguage());
+                        data.putExtra("country", userInfo.getCountry());
+                        data.putExtra("userId", userId);
                         nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                     } else {
                         LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
                         LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
-                        nextState = Constants.STATE_INITIAL_STATE;
+                        nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
                     }
                     break;
                 } catch (java.net.SocketTimeoutException ee) {
@@ -283,9 +264,69 @@ public class NetworkCalls {
         return data;
     }
 
-    public static void getStatus(Handler handler, Context context, String token, String language) {
+    private static void getUserVehicles(Context context, String userId) {
+        UserInfoDao userDao = UserInfoDatabase.getInstance(context).userInfoDao();
+        UserInfo userInfo = userDao.findUserInfo(userId);
+        String token = userInfo.getAccessToken();
+        String country = userInfo.getCountry();
+
+        if (MainActivity.checkInternetConnection(context)) {
+            APIMPSService userDetailsClient = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
+
+            for (int retry = 2; retry >= 0; --retry) {
+                try {
+                    Map<String, String> modified = new ArrayMap<>();
+                    modified.put("If-Modified-Since", userInfo.getLastModified());
+                    Map<String, Object> entityRefresh = new ArrayMap<>();
+                    entityRefresh.put("userVehicles", modified);
+                    Map<String, Object> jsonParams = new ArrayMap<>();
+                    jsonParams.put("dashboardRefreshRequest", "EntityRefresh");
+                    jsonParams.put("entityRefresh", entityRefresh);
+                    RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
+                    Call<UserDetails> call = userDetailsClient.getUserDetails(token, Constants.APID, country, body);
+                    Response<UserDetails> response = call.execute();
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "refresh here.");
+                    if (!response.isSuccessful()) {
+                        break;
+                    }
+
+                    UserDetails userDetails = response.body();
+                    String lastModified = userDetails.getUserVehicles().getStatus().getLastModified();
+                    userDao.updateLastModified(lastModified, userId);
+                    Map<String, String> vehicleInfo = new HashMap<>();
+                    for (UserDetails.VehicleDetail vehicle : userDetails.getUserVehicles().getVehicleDetails()) {
+                        String VIN = vehicle.getVin();
+                        vehicleInfo.put(VIN, vehicle.getNickName());
+                    }
+                    ArrayList<String> VINs = new ArrayList<>();
+                    VINs.addAll(VehicleInfoDatabase.getInstance(context)
+                            .vehicleInfoDao().findVINsByUserId(userInfo.getUserId()));
+                    if (!vehicleInfo.isEmpty()) {
+                        ProfileManager.updateProfile(context, userInfo, vehicleInfo);
+                    }
+                    break;
+
+                } catch (java.net.SocketTimeoutException ee) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getUserVehicles");
+                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+                    try {
+                        Thread.sleep(3 * 1000);
+                    } catch (InterruptedException e) {
+                    }
+                } catch (java.net.UnknownHostException e3) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getUserVehicles");
+                    break;
+                } catch (Exception e) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getUserVehicles: ", e);
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void getStatus(Handler handler, Context context, String token, String language, String country) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.getStatus(context, token, language);
+            Intent intent = NetworkCalls.getStatus(context, token, language, country);
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -293,28 +334,33 @@ public class NetworkCalls {
         t.start();
     }
 
-    private static Intent getStatus(Context context, String token, String language) {
+    private static Intent getStatus(Context context, String token, String language, String country) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
         Intent data = new Intent();
-        StoredData appInfo = new StoredData(context);
-        String nextState = Constants.STATE_ATTEMPT_TO_GET_VEHICLE_STATUS;
-//        String language = appInfo.getLanguage(VIN);
+        String nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
 
-        VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao();
-        VehicleInfo VehInfo = infoDao.findVehicleInfoByVIN(VIN);
-        String userId = VehInfo.getUserId();
+        VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context)
+                .vehicleInfoDao();
+        VehicleInfo vehicleInfo = infoDao.findVehicleInfoByVIN(VIN);
+        String userId = vehicleInfo.getUserId();
+        UserInfoDao userDao = UserInfoDatabase.getInstance(context)
+                .userInfoDao();
+        boolean statusUpdated = false;
+        boolean supportsOTA = vehicleInfo.isSupportsOTA();
 
         for (VehicleInfo info : infoDao.findVehicleInfoByUserId(userId)) {
             if (MainActivity.checkInternetConnection(context)) {
                 USAPICVService statusClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
+                DigitalServicesService OTAstatusClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
                 for (int retry = 2; retry >= 0; --retry) {
-                    Call<CarStatus> call = statusClient.getStatus(token, language, Constants.APID, VIN);
+
                     try {
-                        Response<CarStatus> response = call.execute();
-                        if (response.isSuccessful()) {
+                        // Try to get the latest car status
+                        Call<CarStatus> callStatus = statusClient.getStatus(token, language, Constants.APID, VIN);
+                        Response<CarStatus> responseStatus = callStatus.execute();
+                        if (responseStatus.isSuccessful()) {
                             LogFile.i(context, MainActivity.CHANNEL_ID, "status successful.");
-                            CarStatus car = response.body();
+                            CarStatus car = responseStatus.body();
                             if (car.getStatus() == Constants.HTTP_SERVER_ERROR) {
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "server is broken");
                             } else if (car.getVehiclestatus() != null) {
@@ -328,44 +374,68 @@ public class NetworkCalls {
                                 } catch (ParseException e) {
                                     LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
                                 }
-//                                long priorRefreshTime = appInfo.getLastRefreshTime(VIN);
-                                long priorRefreshTime = info.getLastRefreshTime();
 
+                                // If the charging status changes, reset the old charge station info so we know to update it later
+                                long priorRefreshTime = info.getLastRefreshTime();
                                 if (priorRefreshTime <= currentRefreshTime) {
-//                                    // If the charging status changes, reset the old charge station info so we know to update it later
-//                                    String lastChargeStatus = appInfo.getCarStatus(VIN).getChargingStatus();
-//                                    if (!car.getChargingStatus().equals(lastChargeStatus)) {
-//                                        appInfo.setChargeStation(VIN, new ChargeStation());
-//                                    }
-//                                    appInfo.setCarStatus(VIN, car);
-//                                    appInfo.setLastRefreshTime(VIN, currentRefreshTime);
                                     info.setCarStatus(car);
                                     info.setLastUpdateTime();
                                     info.setLastRefreshTime(currentRefreshTime);
-                                    infoDao.updateVehicleInfo(info);
-//                                    info.setCarStatus(car);
-                                    context.startForegroundService(
-                                            new Intent(context, CarStatusWidgetIntent.class)
-                                                    .putExtra(CarStatusWidgetIntent.WIDGETINTENTACTIONKEY, CarStatusWidgetIntent.CARSTATUSINTENTACTION)
-                                    );
+                                    statusUpdated = true;
                                 }
                                 Notifications.checkLVBStatus(context, car, VIN);
                                 Notifications.checkTPMSStatus(context, car, VIN);
-                                nextState = Constants.STATE_HAVE_TOKEN_AND_STATUS;
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
                             } else {
-                                nextState = Constants.STATE_ATTEMPT_TO_GET_VIN_AGAIN;
+                                nextState = Constants.STATE_HAVE_TOKEN;
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle status is null");
                             }
                         } else {
-                            LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                            LogFile.i(context, MainActivity.CHANNEL_ID, responseStatus.raw().toString());
                             LogFile.i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.");
                             // For either of these client errors, we probably need to refresh the access token
-                            if (response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED) {
-                                nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
+                            if (responseStatus.code() == Constants.HTTP_BAD_REQUEST || responseStatus.code() == Constants.HTTP_UNAUTHORIZED) {
+                                nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN;
                             }
                         }
+
+                        // Don't bother checking the OTA status if we've seen the vehicle doesn't support them
+                        if (supportsOTA) {
+                            // Try to get the OTA update status
+                            Call<OTAStatus> callOTA = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
+                            Response<OTAStatus> responseOTA = callOTA.execute();
+                            if (responseStatus.isSuccessful()) {
+                                LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful.");
+                                OTAStatus status = responseOTA.body();
+
+                                // Check to see if it looks like the vehicle support OTA updates
+                                if(status.getFuseResponse() == null || !Utils.OTASupportCheck(status.getOtaAlertStatus())) {
+                                    LogFile.i(context, MainActivity.CHANNEL_ID, "This vehicle doesn't support OTA updates.");
+                                    info.setSupportsOTA( false );
+                                } else {
+                                    info.fromOTAStatus(status);
+                                }
+                                statusUpdated = true;
+                            } else {
+                                try {
+                                    if (responseStatus.errorBody().string().contains("UpstreamException")) {
+                                        OTAStatus status = new OTAStatus();
+                                        status.setError("UpstreamException");
+                                    }
+                                } catch (Exception e) {
+                                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
+                                }
+                                LogFile.i(context, MainActivity.CHANNEL_ID, responseStatus.raw().toString());
+                                LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL.");
+                            }
+                        }
+
+                        // If the vehicle info changed, commit
+                        if (statusUpdated) {
+                            infoDao.updateVehicleInfo(info);
+                        }
                         break;
+
                     } catch (java.net.SocketTimeoutException e2) {
                         LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getStatus");
                         LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
@@ -383,76 +453,9 @@ public class NetworkCalls {
                 }
             }
         }
+
+        userDao.updateProgramState(nextState, userId);
         data.putExtra("action", nextState);
-        return data;
-    }
-
-    public static void getOTAStatus(Handler handler, Context context, String token, String language, String country) {
-        Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.getOTAStatus(context, token, language, country);
-            Message m = Message.obtain();
-            m.setData(intent.getExtras());
-            handler.sendMessage(m);
-        });
-        t.start();
-    }
-
-    private static Intent getOTAStatus(Context context, String token, String language, String country) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
-        Intent data = new Intent();
-        StoredData appInfo = new StoredData(context);
-
-//        String language = appInfo.getLanguage(VIN);
-//        String country = appInfo.getCountry(VIN);
-
-        if (MainActivity.checkInternetConnection(context)) {
-            DigitalServicesService OTAstatusClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
-            for (int retry = 2; retry >= 0; --retry) {
-                Call<OTAStatus> call = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
-                try {
-                    Response<OTAStatus> response = call.execute();
-                    if (response.isSuccessful()) {
-                        LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful.");
-                        OTAStatus status = response.body();
-//                        appInfo.setOTAStatus(VIN, status);
-                        VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao();
-                        VehicleInfo info = infoDao.findVehicleInfoByVIN(VIN);
-                        info.fromOTAStatus(status);
-                        infoDao.updateVehicleInfo(info);
-                        context.startService(
-                                new Intent(context, CarStatusWidgetIntent.class)
-                                        .putExtra(CarStatusWidgetIntent.WIDGETINTENTACTIONKEY, CarStatusWidgetIntent.OTASTATUSINTENTACTION)
-                        );
-                    } else {
-                        try {
-                            if (response.errorBody().string().contains("UpstreamException")) {
-                                OTAStatus status = new OTAStatus();
-                                status.setError("UpstreamException");
-                            }
-                        } catch (Exception e) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
-                        }
-                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                        LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL.");
-                    }
-                    break;
-                } catch (java.net.SocketTimeoutException ee) {
-                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getOTAStatus");
-                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
-                    try {
-                        Thread.sleep(3 * 1000);
-                    } catch (InterruptedException e) {
-                    }
-                } catch (java.net.UnknownHostException e3) {
-                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getOTAStatus");
-                    break;
-                } catch (Exception e) {
-                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getOTAStatus: ", e);
-                    break;
-                }
-            }
-        }
         return data;
     }
 
@@ -467,7 +470,6 @@ public class NetworkCalls {
 
     private static void getChargeStation(Context context, String token) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        StoredData appInfo = new StoredData(context);
 
         if (MainActivity.checkInternetConnection(context)) {
             APIMPSService chargeStationClient = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
@@ -509,7 +511,7 @@ public class NetworkCalls {
         }
     }
 
-    public static void getVehicleImage(Context context, String token, String country, Path filePath) {
+    public static void getVehicleImage(Context context, String token, String VIN, String country, Path filePath) {
         // Create the images folder if necessary
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
         if (!imageDir.exists()) {
@@ -517,36 +519,38 @@ public class NetworkCalls {
         }
 
         Thread t = new Thread(() -> {
-            String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
             String modelYear = String.valueOf(Utils.getModelYear(VIN));
-            if (MainActivity.checkInternetConnection(context)) {
-                DigitalServicesService vehicleImageClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
-                for (int retry = 2; retry >= 0; --retry) {
-                    final String angle = "1";
-                    Call<ResponseBody> call = vehicleImageClient.getVehicleImage(token, Constants.APID, VIN, modelYear, country, angle);
-                    try {
-                        Response<ResponseBody> response = call.execute();
-                        if (response.isSuccessful()) {
-                            Files.copy(response.body().byteStream(), filePath);
-                            LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image successful.");
-                        } else {
-                            LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                            LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image UNSUCCESSFUL.");
-                        }
-                        break;
-                    } catch (java.net.SocketTimeoutException ee) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getVehicleImage");
-                        LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+            if (use_network) {
+                if (MainActivity.checkInternetConnection(context)) {
+                    DigitalServicesService vehicleImageClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
+                    for (int retry = 2; retry >= 0; --retry) {
+                        final String angle = "1";
+                        Call<ResponseBody> call = vehicleImageClient.getVehicleImage(token, Constants.APID, VIN, modelYear, country, angle);
                         try {
-                            Thread.sleep(3 * 1000);
-                        } catch (InterruptedException e) {
+                            Response<ResponseBody> response = call.execute();
+                            if (response.isSuccessful()) {
+                                Files.copy(response.body().byteStream(), filePath);
+                                LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image successful.");
+                                MainActivity.updateWidget(context);
+                            } else {
+                                LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                                LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image UNSUCCESSFUL.");
+                            }
+                            break;
+                        } catch (java.net.SocketTimeoutException ee) {
+                            LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getVehicleImage");
+                            LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+                            try {
+                                Thread.sleep(3 * 1000);
+                            } catch (InterruptedException e) {
+                            }
+                        } catch (java.net.UnknownHostException e3) {
+                            LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getVehicleImage");
+                            break;
+                        } catch (Exception e) {
+                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getVehicleImage: ", e);
+                            break;
                         }
-                    } catch (java.net.UnknownHostException e3) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getVehicleImage");
-                        break;
-                    } catch (Exception e) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getVehicleImage: ", e);
-                        break;
                     }
                 }
             }

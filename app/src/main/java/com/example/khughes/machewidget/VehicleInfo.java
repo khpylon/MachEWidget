@@ -2,6 +2,7 @@ package com.example.khughes.machewidget;
 
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -39,21 +40,33 @@ public class VehicleInfo {
 
     private double lastFuelLevel;
 
-    @Embedded
+    private boolean supportsOTA;
+
+    public VehicleInfo() {
+        lastRefreshTime = 0;
+        lastUpdateTime = 0;
+        lastLVBStatus = "STATUS_GOOD";
+        lastTPMSStatus = "Normal";
+        lastDTE = 0.0;
+        lastFuelLevel = 0.0;
+        supportsOTA = true;
+    }
+
+    @Embedded(prefix = "car_")
     private CarStatus carStatus;
 
-    @Embedded
+    @Embedded(prefix = "ota_")
     private FuseResponseList responseList;
 
-    @Embedded
+    @Embedded(prefix = "ota_")
     private Object error;
 
     private String otaAlertStatus;
 
-    @Embedded
+    @Embedded(prefix = "ota_")
     private Object updatePendingState;
 
-    @Embedded
+    @Embedded(prefix = "ota_")
     private LanguageText languageText;
 
     public String getUserId() {
@@ -201,6 +214,14 @@ public class VehicleInfo {
 
     public void setLastUpdateTime() {
         this.lastUpdateTime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    public boolean isSupportsOTA() {
+        return supportsOTA;
+    }
+
+    public void setSupportsOTA(boolean supportsOTA) {
+        this.supportsOTA = supportsOTA;
     }
 
     @Entity
