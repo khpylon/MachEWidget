@@ -254,8 +254,11 @@ public class ProfileManager extends AppCompatActivity {
                 unknownVINs.add(VIN);
             }
         }
-        for (String VIN : unknownVINs) {
-            vehicles.remove(VIN);
+        if (!unknownVINs.isEmpty()) {
+            LogFile.i(context, MainActivity.CHANNEL_ID, "ProfileManager.updateProfile(): " + unknownVINs.size() + " unrecognized VINs removed.");
+            for (String VIN : unknownVINs) {
+                vehicles.remove(VIN);
+            }
         }
 
         // If the current VIN is defined but isn't in the list of new VINs, handle it

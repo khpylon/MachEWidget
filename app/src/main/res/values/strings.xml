@@ -44,7 +44,7 @@
     <string name="logging_summary">Store logging info in a local file, separate from system logs</string>
     <string name="github_title">GitHub repo</string>
     <string name="github_summary">Link to the code repository</string>
-    <string name="battery_opt">Battery optimization off</string>
+    <string name="battery_opt">Battery optimization</string>
     <string name="battery_opt_summary">Indicates the status of battery optimizations for the app</string>
     <string name="version">App version</string>
 
