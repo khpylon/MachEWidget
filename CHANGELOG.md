@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.04.29
+### Added
+- Your vehicle's image and nickname are now displayed in place of the vehicle logo in the widget.
+- You no longer need to enter a VIN when logging into your Ford account.  Once logged in, the app retrieves a list of all supported vehicles and automatically tracks them.
+- The way profiles works has changed; for now, only one Ford account can be used at a time.  However, if you have multiple vehicles under that account, you can now switch
+  between them by tapping on the vehicle's image.
+- If the app crashes, the logcat output for the crash is automatically saved to your Download folder when you restart the app.
+- You can view/change the battery optimization settings from the Settings menu.
+
+### Changes
+- The ZIP file created when storing user data now contains versioning information.  When significant changes are made to the app, it may not be possible to restore 
+  user data from older versions; this is true for this release.
+- Log files now have a maximum size limit of 1.5MB.  This is accomplished by using a primary and backup log file of max size 750KB each.  When you save the log file
+  to your Download folder, these files are combined into a single file.
+
+### Fixed
+- Your Ford user profile information (name, address, phone, etc.) is redacted from log files.
+
 ## 2022.04.06
 ### Fixed
 - Changes to the code for the Update activity.  The app will check that it has permission to install from unknown sources, and if the user does
