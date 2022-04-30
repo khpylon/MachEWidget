@@ -74,10 +74,12 @@ public class UpdateReceiver extends BroadcastReceiver {
             for (String item : result.split("\n")) {
                 if (item.contains(Version)) {
                     String newVersion = item.replace(Version, "");
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "UpdateReceiver.onPostExecute(): newest version is " + newVersion);
                     if (newVersion.compareTo(BuildConfig.VERSION_NAME) > 0 &&
                             newVersion.compareTo(latestVersion) > 0) {
                         appInfo.setLatestVersion(newVersion);
                         Notifications.newApp(context);
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "UpdateReceiver.onPostExecute(): launching notification");
                         return;
                     }
                 }

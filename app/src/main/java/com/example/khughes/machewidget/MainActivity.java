@@ -250,49 +250,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }).start();
             }
-
-//            new Thread(() -> {
-//                // Use the last five digits of the VIN as user and nickname
-//                String userId = currentVIN.substring(currentVIN.length()-5);
-//
-//                VehicleInfo vehInfo = new VehicleInfo();
-//                vehInfo.setVIN(currentVIN);
-//                vehInfo.setUserId(userId);
-//                vehInfo.setNickname(userId);
-//                vehInfo.setLastRefreshTime(appInfo.getLastRefreshTime(currentVIN));
-//                vehInfo.setLastUpdateTime(appInfo.getLastUpdateTime(currentVIN));
-//                vehInfo.setLastLVBStatus(appInfo.getHVBStatus(currentVIN));
-//                vehInfo.setLastTPMSStatus(appInfo.getTPMSStatus(currentVIN));
-//                vehInfo.setLastDTE(appInfo.getLastDTE(currentVIN));
-//                vehInfo.setLastFuelLevel(appInfo.getLastFuelLevel(currentVIN));
-//                vehInfo.setCarStatus(appInfo.getCarStatus(currentVIN));
-//                vehInfo.fromOTAStatus(appInfo.getOTAStatus(currentVIN));
-//                VehicleInfoDatabase.getInstance(context)
-//                        .vehicleInfoDao()
-//                        .insertVehicleInfo(vehInfo);
-//
-//                UserInfo userInfo = new UserInfo();
-//                userInfo.setUserId(userId);
-//                userInfo.setUsername("");
-//                userInfo.setPassword("");
-//                userInfo.setProgramState(appInfo.getProgramState(currentVIN));
-//                userInfo.setAccessToken(appInfo.getAccessToken(currentVIN));
-//                userInfo.setRefreshToken(appInfo.getRefreshToken(currentVIN));
-//                userInfo.setExpiresIn(appInfo.getTokenTimeout(currentVIN));
-//                userInfo.setCountry(appInfo.getCountry(currentVIN));
-//                userInfo.setLanguage(appInfo.getLanguage(currentVIN));
-//                userInfo.setUomSpeed(appInfo.getSpeedUnits(currentVIN));
-//                userInfo.setUomDistance(appInfo.getDistanceUnits(currentVIN));
-//                userInfo.setUomPressure(appInfo.getPressureUnits(currentVIN));
-//                UserInfoDatabase.getInstance(context)
-//                        .userInfoDao()
-//                        .insertUserInfo(userInfo);
-//
-//                // Delete all the VIN files
-//                for (String VIN : appInfo.getProfiles()) {
-//                    appInfo.removeProfile(VIN);
-//                }
-//            }).start();
         }
 
         // Remove VINs.xml file
@@ -425,8 +382,10 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         } else if (id == R.id.action_update) {
-            Intent intent = new Intent(this, UpdateActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(this, UpdateReceiver.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            context.sendBroadcast(intent);
+            Toast.makeText(context, "Checking for an update; if one is found, a notification will appear.", Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);

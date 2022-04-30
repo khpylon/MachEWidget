@@ -13,7 +13,7 @@
     <string name="action_backup">Save Settings</string>
     <string name="action_restore">Restore Settings</string>
     <string name="action_copylog">Save Logfile</string>
-    <string name="action_update">Update App</string>
+    <string name="action_update">Check For Update</string>
     <string name="update_info">Update Information</string>
 
     <!-- Widget things -->
