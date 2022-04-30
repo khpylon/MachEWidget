@@ -267,6 +267,10 @@ public class NetworkCalls {
     private static void getUserVehicles(Context context, String userId) {
         UserInfoDao userDao = UserInfoDatabase.getInstance(context).userInfoDao();
         UserInfo userInfo = userDao.findUserInfo(userId);
+        if (userInfo == null) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "NetworkCalls.getUserVehicles(): userInfo is null for userId " + userId);
+            return;
+        }
         String token = userInfo.getAccessToken();
         String country = userInfo.getCountry();
 
@@ -342,6 +346,12 @@ public class NetworkCalls {
         VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context)
                 .vehicleInfoDao();
         VehicleInfo vehicleInfo = infoDao.findVehicleInfoByVIN(VIN);
+        if (vehicleInfo == null) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "NetworkCalls.getStatus(): vehicleInfo is null for VIN " + VIN);
+            data.putExtra("action", nextState);
+            return data;
+        }
+
         String userId = vehicleInfo.getUserId();
         UserInfoDao userDao = UserInfoDatabase.getInstance(context)
                 .userInfoDao();
@@ -409,9 +419,9 @@ public class NetworkCalls {
                                 OTAStatus status = responseOTA.body();
 
                                 // Check to see if it looks like the vehicle support OTA updates
-                                if(status.getFuseResponse() == null || !Utils.OTASupportCheck(status.getOtaAlertStatus())) {
+                                if (status.getFuseResponse() == null || !Utils.OTASupportCheck(status.getOtaAlertStatus())) {
                                     LogFile.i(context, MainActivity.CHANNEL_ID, "This vehicle doesn't support OTA updates.");
-                                    info.setSupportsOTA( false );
+                                    info.setSupportsOTA(false);
                                 } else {
                                     info.fromOTAStatus(status);
                                 }
