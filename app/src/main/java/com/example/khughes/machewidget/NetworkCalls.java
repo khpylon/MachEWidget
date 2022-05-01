@@ -91,6 +91,10 @@ public class NetworkCalls {
             stage = 3;
             userId = Constants.TEMP_ACCOUNT;
             userInfo = userDao.findUserInfo(userId);
+            if(userInfo == null) {
+                data.putExtra("action", nextState);
+                return data;
+            }
             token = userInfo.getAccessToken();
             country = userInfo.getCountry();
         }
@@ -266,9 +270,11 @@ public class NetworkCalls {
 
     private static void getUserVehicles(Context context, String userId) {
         UserInfoDao userDao = UserInfoDatabase.getInstance(context).userInfoDao();
+        String nextState = Constants.STATE_HAVE_TOKEN;
         UserInfo userInfo = userDao.findUserInfo(userId);
         if (userInfo == null) {
             LogFile.e(context, MainActivity.CHANNEL_ID, "NetworkCalls.getUserVehicles(): userInfo is null for userId " + userId);
+            userDao.updateProgramState(nextState, userId);
             return;
         }
         String token = userInfo.getAccessToken();
@@ -308,6 +314,7 @@ public class NetworkCalls {
                     if (!vehicleInfo.isEmpty()) {
                         ProfileManager.updateProfile(context, userInfo, vehicleInfo);
                     }
+                    nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                     break;
 
                 } catch (java.net.SocketTimeoutException ee) {
@@ -326,6 +333,8 @@ public class NetworkCalls {
                 }
             }
         }
+        userDao.updateProgramState(nextState, userId);
+        return;
     }
 
     public static void getStatus(Handler handler, Context context, String token, String language, String country) {
