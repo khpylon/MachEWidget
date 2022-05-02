@@ -351,10 +351,12 @@ public class NetworkCalls {
         String userId = vehicleInfo.getUserId();
         UserInfoDao userDao = UserInfoDatabase.getInstance(context)
                 .userInfoDao();
-        boolean statusUpdated = false;
-        boolean supportsOTA = vehicleInfo.isSupportsOTA();
 
         for (VehicleInfo info : infoDao.findVehicleInfoByUserId(userId)) {
+            boolean statusUpdated = false;
+            boolean supportsOTA = info.isSupportsOTA();
+            VIN = info.getVIN();
+            LogFile.i(context, MainActivity.CHANNEL_ID, "getting status for VIN " + VIN);
             if (MainActivity.checkInternetConnection(context)) {
                 USAPICVService statusClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
                 DigitalServicesService OTAstatusClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);

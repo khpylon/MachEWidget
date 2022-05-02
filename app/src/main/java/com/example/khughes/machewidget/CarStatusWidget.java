@@ -586,6 +586,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
                     .getBoolean(context.getResources().getString(R.string.show_OTA_key), true);
 
+            views.setViewVisibility(R.id.ota_container, displayOTA ? View.VISIBLE : View.GONE);
             if (displayOTA && otaStatus != null) {
                 // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
                 if (vehicleInfo.isSupportsOTA() && Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
@@ -621,7 +622,10 @@ public class CarStatusWidget extends AppWidgetProvider {
             // Location
             if (PreferenceManager.getDefaultSharedPreferences(context)
                     .getBoolean(context.getResources().getString(R.string.show_location_key), true)) {
+                views.setViewVisibility(R.id.location_container, View.VISIBLE);
                 updateLocation(context, views, carStatus.getLatitude(), carStatus.getLongitude());
+            } else {
+                views.setViewVisibility(R.id.location_container, View.GONE);
             }
 
             updateLinkedApps(context, views);
@@ -822,6 +826,8 @@ public class CarStatusWidget extends AppWidgetProvider {
                                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                             PackageManager.DONT_KILL_APP);
                 }
+                // Give the OS some time to finish reconfiguring things
+                Thread.sleep(1500);
             } catch (Exception e) {
                 LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.matchWidgetWithVin()" + e);
             }

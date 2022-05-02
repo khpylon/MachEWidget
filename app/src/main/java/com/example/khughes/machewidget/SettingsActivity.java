@@ -1,7 +1,9 @@
 package com.example.khughes.machewidget;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +16,9 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -39,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == LAUNCH_BATTERY_OPTIMIZATIONS) {
+        if (requestCode == LAUNCH_BATTERY_OPTIMIZATIONS) {
             displayOptimizationMessage(getApplicationContext());
         }
     }
@@ -47,12 +52,14 @@ public class SettingsActivity extends AppCompatActivity {
     private static Preference battery;
 
     private static void displayOptimizationMessage(Context context) {
-        if(MainActivity.checkBatteryOptimizations(context)) {
+        if (MainActivity.checkBatteryOptimizations(context)) {
             battery.setSummary("Off (recommended)");
         } else {
             battery.setSummary("On (may cause issues)");
         }
     }
+
+    private static long lastLockClicktime = 0;
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -138,15 +145,32 @@ public class SettingsActivity extends AppCompatActivity {
             Preference version = findPreference(this.getResources().getString(R.string.version_key));
             version.setSummary(BuildConfig.VERSION_NAME);
             version.setOnPreferenceClickListener(preference -> {
-                StoredData appInfo = new StoredData(getContext());
-                String units1 = MessageFormat.format("status = {0}/{1}/{2}/{3}/{4}/{5}",
-                        appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
-                        appInfo.getCounter(StoredData.STATUS_LOG_OUT),
-                        appInfo.getCounter(StoredData.STATUS_LOG_IN),
-                        appInfo.getCounter(StoredData.STATUS_VEHICLE_INFO),
-                        appInfo.getCounter(StoredData.STATUS_UPDATED),
-                        appInfo.getCounter(StoredData.STATUS_UNKNOWN));
-                Toast.makeText(getContext(), units1, Toast.LENGTH_LONG).show();
+                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+                long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                if (nowtime - lastLockClicktime > 1000 && nowtime - lastLockClicktime < 2000) {
+                    PackageManager manager = context.getPackageManager();
+                    String packageName = context.getPackageName();
+                    manager.setComponentEnabledSetting(new ComponentName(packageName, packageName + ".MainActivity"),
+                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                            PackageManager.DONT_KILL_APP);
+                    Toast.makeText(getContext(), "Resetting app component to Mache", Toast.LENGTH_SHORT).show();
+                    try {
+                        Thread.sleep(2 * 1000);
+                    } catch (InterruptedException e) {
+                    }
+                } else {
+                    StoredData appInfo = new StoredData(getContext());
+                    String units1 = MessageFormat.format("status = {0}/{1}/{2}/{3}/{4}/{5}",
+                            appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
+                            appInfo.getCounter(StoredData.STATUS_LOG_OUT),
+                            appInfo.getCounter(StoredData.STATUS_LOG_IN),
+                            appInfo.getCounter(StoredData.STATUS_VEHICLE_INFO),
+                            appInfo.getCounter(StoredData.STATUS_UPDATED),
+                            appInfo.getCounter(StoredData.STATUS_UNKNOWN));
+                    Toast.makeText(getContext(), units1, Toast.LENGTH_LONG).show();
+                }
+                lastLockClicktime = nowtime;
+
                 return false;
             });
 
