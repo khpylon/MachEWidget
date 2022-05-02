@@ -94,6 +94,7 @@ public class OTAViewActivity extends AppCompatActivity {
     private static long lastOTATime;
 
     private static Button clear;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +138,10 @@ public class OTAViewActivity extends AppCompatActivity {
 
             VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao().findVehicleInfoByVIN(VINs[0]);
+            if (vehInfo == null) {
+                LogFile.e(context, MainActivity.CHANNEL_ID, "OTAViewActivity.DownloadChangelog(): vehicle info is null for VIN " + VINs[0]);
+                return null;
+            }
             UserInfo userInfo = UserInfoDatabase.getInstance(context)
                     .userInfoDao().findUserInfo(vehInfo.getUserId());
 
@@ -153,32 +158,36 @@ public class OTAViewActivity extends AppCompatActivity {
             if (ota != null && ota.getFuseResponse() != null) {
                 String tmp;
                 for (FuseResponseList fuse : ota.getFuseResponse().getFuseResponseList()) {
-                    if (fuse.getLatestStatus() != null) {
-                        currentOTATime = convertDateToMillis(fuse.getLatestStatus().getDateTimestamp());
-                        unencodedHtml.append("<b>Latest status</b><ul>");
-                        unencodedHtml.append("<li><b>Aggregate:</b> ");
-                        unencodedHtml.append((tmp = fuse.getLatestStatus().getAggregateStatus()) != null ? tmp : "");
-                        unencodedHtml.append("<li><b>Detailed:</b> ");
-                        unencodedHtml.append((tmp = fuse.getLatestStatus().getDetailedStatus()) != null ? tmp : "");
-                        unencodedHtml.append("<li><b>Time stamp:</b> ");
-                        unencodedHtml.append(convertMillisToDate(currentOTATime, dateFormat));
-                        unencodedHtml.append("</ul><p>");
+                    if (fuse != null) {
+                        if (fuse.getLatestStatus() != null) {
+                            currentOTATime = convertDateToMillis(fuse.getLatestStatus().getDateTimestamp());
+                            unencodedHtml.append("<b>Latest status</b><ul>");
+                            unencodedHtml.append("<li><b>Aggregate:</b> ");
+                            unencodedHtml.append((tmp = fuse.getLatestStatus().getAggregateStatus()) != null ? tmp : "");
+                            unencodedHtml.append("<li><b>Detailed:</b> ");
+                            unencodedHtml.append((tmp = fuse.getLatestStatus().getDetailedStatus()) != null ? tmp : "");
+                            unencodedHtml.append("<li><b>Time stamp:</b> ");
+                            unencodedHtml.append(convertMillisToDate(currentOTATime, dateFormat));
+                            unencodedHtml.append("</ul><p>");
+                        }
+                        unencodedHtml.append("<b>Other info</b><ul>");
+                        unencodedHtml.append("<li><b>CorrelationID:</b> ");
+                        unencodedHtml.append(((tmp = fuse.getOemCorrelationId()) != null ? tmp : ""));
+                        unencodedHtml.append("<li><b>Deployment</b>");
+                        unencodedHtml.append("    <ul><li><b>Created:</b> ");
+                        unencodedHtml.append(convertDate(fuse.getDeploymentCreationDate(), dateFormat));
+                        unencodedHtml.append("    <li><b>Expires:</b> ");
+                        unencodedHtml.append(convertDate(fuse.getDeploymentExpirationTime(), dateFormat));
+                        unencodedHtml.append("</ul><li><b>Communication priority:</b> ");
+                        unencodedHtml.append(((tmp = fuse.getCommunicationPriority()) != null ? tmp : ""));
+                        unencodedHtml.append("<li><b>Type:</b> ");
+                        unencodedHtml.append(((tmp = fuse.getType()) != null ? tmp : ""));
+                        unencodedHtml.append("<li><b>Final action:</b> \"");
+                        unencodedHtml.append(((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : ""));
+                        unencodedHtml.append("\"</ul><hr>");
+                    } else {
+                        unencodedHtml.append("<b>No specific information found</b><p>");
                     }
-                    unencodedHtml.append("<b>Other info</b><ul>");
-                    unencodedHtml.append("<li><b>CorrelationID:</b> ");
-                    unencodedHtml.append(((tmp = fuse.getOemCorrelationId()) != null ? tmp : ""));
-                    unencodedHtml.append("<li><b>Deployment</b>");
-                    unencodedHtml.append("    <ul><li><b>Created:</b> ");
-                    unencodedHtml.append(convertDate(fuse.getDeploymentCreationDate(), dateFormat));
-                    unencodedHtml.append("    <li><b>Expires:</b> ");
-                    unencodedHtml.append(convertDate(fuse.getDeploymentExpirationTime(), dateFormat));
-                    unencodedHtml.append("</ul><li><b>Communication priority:</b> ");
-                    unencodedHtml.append(((tmp = fuse.getCommunicationPriority()) != null ? tmp : ""));
-                    unencodedHtml.append("<li><b>Type:</b> ");
-                    unencodedHtml.append(((tmp = fuse.getType()) != null ? tmp : ""));
-                    unencodedHtml.append("<li><b>Final action:</b> \"");
-                    unencodedHtml.append(((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : ""));
-                    unencodedHtml.append("\"</ul><hr>");
                 }
                 String description = ota.getDescription();
                 if (description != null) {

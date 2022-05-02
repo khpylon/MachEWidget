@@ -78,28 +78,15 @@ public class NetworkCalls {
     private static Intent getAccessToken(Context context, String username, String password) {
         Intent data = new Intent();
         String nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
-        int stage;
+        int stage = 1;
         UserInfoDao userDao = UserInfoDatabase.getInstance(context).userInfoDao();
         UserInfo userInfo = new UserInfo();
         String userId = null;
         String token = null;
-        String country = null;
 
-        if (username != null) {
-            stage = 1;
-        } else {
-            stage = 3;
-            userId = Constants.TEMP_ACCOUNT;
-            userInfo = userDao.findUserInfo(userId);
-            if(userInfo == null) {
-                data.putExtra("action", nextState);
-                return data;
-            }
-            token = userInfo.getAccessToken();
-            country = userInfo.getCountry();
-        }
-
-        if (MainActivity.checkInternetConnection(context)) {
+        if (username == null) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "NetworkCalls.getAccessToken() called with null username?");
+        } else if (MainActivity.checkInternetConnection(context)) {
             AccessTokenService fordClient = NetworkServiceGenerators.createIBMCloudService(AccessTokenService.class, context);
             APIMPSService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
 
