@@ -1,5 +1,4 @@
 import java.text.SimpleDateFormat
-import java.util.TimeZone
 
 plugins {
     id 'com.android.application'
@@ -14,7 +13,7 @@ android {
         minSdk 28
         targetSdk 31
         versionCode 3
-        versionName "2022.04.29"
+        versionName "2022.05.02"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -31,8 +30,8 @@ android {
     }
     task versionTxt { task ->
         doLast {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss z");
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss z")
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
             new File(projectDir, "VERSION.txt").text =
 """Version: ${defaultConfig.versionName}
 Commit: ${grgit.head().abbreviatedId}
