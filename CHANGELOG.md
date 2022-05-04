@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 2022.05.02
+### Changed
+- Changed the "Update App" menu selection to "Check For Update", and make it immediately check for an update  If one is found, a notification is created.
+
 ### Fixed
 - Numerous null pointer checks and additional log output from crash logcats.
 - Fix timing issue when switching between vehicle profiles.

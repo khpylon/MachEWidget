@@ -50,19 +50,19 @@ As listed above, this app
 If you discover something which doesn't work the way you expect, check first on the forums to see whether someone else has
 reported a similar problem (or whether the app is actual working properly).  Also search under
 ["Issues"](https://github.com/khpylon/MachEWidget/issues) on GitHub to see if it's been reported.  If not, you will need to gather
-some data to create a new bug report.  As of Version 2022.03.02 the app has some built-in support for gathering log information:
+some data to create a new bug report.  
+
+The app has some built-in support for gathering log information:
 
 1. Under "Settings", activate "Enable logging"
 2. Perform any actions you think will demonstrate the issue
-3. Under the three-dot menu, select "Save logfile"; this will save a file named *mache_logfile.txt* or something similar in the *Downloads* folder of your
+3. Under the three-dot menu, select "Save logfile"; this will save a file named *mache_logfile-<datetime>.txt* or something similar in the *Downloads* folder of your
 external storage
 4. Deactive "Enable logging"
 5. Create/append to an Issue and upload the file as an attachment
 
-If the bug is something more serious that it isn't captured in these logs, you may need to capture some logcat output. 
-A good summary of ways to get logcat output is
-[described here](https://www.xda-developers.com/how-to-take-logs-android/).  Since most likely only crash information 
-will be in the logcat, you most likely will want to run the logcat using the "-b crash" option.
+A serious bug that causes the app to crash will dump some information to logcat.  The app will check for this the next time it is run
+and write it to a file named *machewidget-logcat-<datetime>.txt* in your *Downloads* folder.  You can then post this with a new issue on GitHub.
 
 ## Frequently Asked Questions
 
