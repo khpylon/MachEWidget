@@ -138,9 +138,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <service android:name=".CarStatusWidgetIntent"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <receiver
             android:name=".CarStatusWidget"
             android:exported="true">
