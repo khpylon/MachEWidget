@@ -21,5 +21,12 @@ public abstract class UserInfoDatabase extends RoomDatabase {
         return instance;
     }
 
+    public static void closeInstance() {
+        if (instance != null) {
+            instance.close();
+            instance = null;
+        }
+    }
+
     public abstract UserInfoDao userInfoDao();
 }

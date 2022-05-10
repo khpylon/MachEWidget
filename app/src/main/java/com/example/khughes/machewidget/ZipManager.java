@@ -5,8 +5,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.widget.Toast;
 
-import org.commonmark.node.StrongEmphasis;
+import com.example.khughes.machewidget.db.UserInfoDatabase;
+import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -16,8 +18,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -36,7 +36,7 @@ public class ZipManager {
         String unmodifiedFilePath = folder.getPath();
         String relativePath = unmodifiedFilePath
                 .substring(basePathLength);
-        ZipEntry entry = new ZipEntry(relativePath+"/");
+        ZipEntry entry = new ZipEntry(relativePath + "/");
         out.putNextEntry(entry);
         out.closeEntry();
         File[] fileList = folder.listFiles();
@@ -68,9 +68,9 @@ public class ZipManager {
         File zipFile = File.createTempFile("temp", ".zip");
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
         File sourceDir = new File(context.getDataDir(), Constants.SHAREDPREFS_FOLDER);
-        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length()+1);
+        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length() + 1);
         sourceDir = new File(context.getDataDir(), Constants.DATABASES_FOLDER);
-        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length()+1);
+        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length() + 1);
         out.setComment(Constants.FSVERSION_1);
         out.close();
         return zipFile;
@@ -78,6 +78,10 @@ public class ZipManager {
 
     public static void unzip(Context context, Uri zipFile) throws IOException, SettingFileException {
         File fromDir = context.getDataDir();
+
+        // Close databases before we overwrite them
+        VehicleInfoDatabase.closeInstance();
+        UserInfoDatabase.closeInstance();
 
         InputStream inStream = context.getContentResolver().openInputStream(zipFile);
         File tmpfile = File.createTempFile("temp", ".zip");
@@ -99,6 +103,7 @@ public class ZipManager {
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 String path = fromDir + File.separator + entry.getName();
+                path.replace(Constants.OLDAPPNAME, context.getPackageName());
 
                 File unzipFile = new File(path);
 
@@ -107,7 +112,7 @@ public class ZipManager {
                         unzipFile.mkdirs();
                     }
                 } else {
-                    if(unzipFile.exists()) {
+                    if (unzipFile.exists()) {
                         unzipFile.delete();
                     }
                     FileOutputStream fout = new FileOutputStream(path, false);
@@ -124,7 +129,9 @@ public class ZipManager {
                     unzipFile.setLastModified(entry.getLastModifiedTime().toMillis());
                 }
             }
+            Toast.makeText(context, "Settings restored.", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
+            Toast.makeText(context, "Unable to restore settings.", Toast.LENGTH_SHORT).show();
             LogFile.e(context, MainActivity.CHANNEL_ID, "Exception in ZipManager.unzipStuff()", e);
         } finally {
             zin.close();

@@ -24,5 +24,12 @@ public abstract class VehicleInfoDatabase extends RoomDatabase {
         return instance;
     }
 
+    public static void closeInstance() {
+        if (instance != null) {
+            instance.close();
+            instance = null;
+        }
+    }
+
     public abstract VehicleInfoDao vehicleInfoDao();
 }
