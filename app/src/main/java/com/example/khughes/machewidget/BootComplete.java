@@ -2,8 +2,8 @@ package com.example.khughes.machewidget;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.text.format.DateUtils;
 
@@ -23,16 +23,13 @@ public class BootComplete extends BroadcastReceiver {
             alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.SECOND_IN_MILLIS * 15,
                     DateUtils.SECOND_IN_MILLIS, pendingIntent);
 
-            // Check for a new version of the app sometime soon
-            intent = new Intent(context, UpdateReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-            alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.HOUR_IN_MILLIS, pendingIntent);
-            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.MINUTE_IN_MILLIS, pendingIntent);
+            // Check for updates (github version only).
+            UpdateReceiver.createIntent(context);
         }
         if (action.equalsIgnoreCase(Intent.ACTION_MY_PACKAGE_REPLACED)) {
-            UpdateActivity.removeAPK(context);
+            LogFile.d(context, MainActivity.CHANNEL_ID, "running action");
+            Utils.removeAPK(context);
+            LogFile.d(context, MainActivity.CHANNEL_ID, "running action again");
             MainActivity.performUpdates(context);
             MainActivity.updateWidget(context);
         }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.khughes.machewidget">
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/mache_launcher_icon"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MacheWidget">
+        <activity
+            android:name=".UpdateActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:label="@string/update_info" />
+        <receiver android:name=".UpdateReceiver" />
+    </application>
+
+</manifest>

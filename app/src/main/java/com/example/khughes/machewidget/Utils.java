@@ -3,27 +3,56 @@ package com.example.khughes.machewidget;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.icu.text.MessageFormat;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
+import android.util.JsonReader;
 import android.util.Log;
+import android.widget.ShareActionProvider;
 import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
+
+import com.example.khughes.machewidget.db.UserInfoDatabase;
+import com.example.khughes.machewidget.db.VehicleInfoDatabase;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class Utils {
     public static final String WIDGETMODE_MACHE = "ModeMachE";
@@ -131,9 +160,10 @@ public class Utils {
     public static boolean isMachE(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
         String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return  WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) ||
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) ||
                 (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV) && macheLineSeries.contains(lineSeries));
     }
+
     private static final Set<String> f150RegularCabsLineSeries;
 
     static {
@@ -187,7 +217,7 @@ public class Utils {
     public static boolean isF150(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK) &&
-                (isF150RegularCab(VIN) || isF150SuperCab(VIN) || isF150SuperCrew( VIN) || isF150Raptor(VIN));
+                (isF150RegularCab(VIN) || isF150SuperCab(VIN) || isF150SuperCrew(VIN) || isF150Raptor(VIN));
     }
 
     private static final Set<String> explorerLineSeries;
@@ -438,11 +468,9 @@ public class Utils {
                 } else if (isF150Raptor(VIN)) {
                     return raptorDrawables;
                 }
-            }
-            else if (isBronco(VIN)) {
+            } else if (isBronco(VIN)) {
                 return broncobase4x4Drawables;
-            }
-            else if (isExplorer(VIN) ) {
+            } else if (isExplorer(VIN)) {
                 return explorerSTDrawables;
             }
         }
@@ -453,11 +481,9 @@ public class Utils {
         if (VIN != null && !VIN.equals("")) {
             if (isF150(VIN)) {
                 return R.layout.f150_widget;
-            }
-            else if (isBronco(VIN)) {
+            } else if (isBronco(VIN)) {
                 return R.layout.bronco_widget;
-            }
-            else if (isExplorer(VIN)) {
+            } else if (isExplorer(VIN)) {
                 return R.layout.explorer_widget;
             }
         }
@@ -490,11 +516,11 @@ public class Utils {
     public static int getModelYear(String VIN) {
         String vehicleYearCode = VIN.substring(MODEL_YEAR_START_INDEX, MODEL_YEAR_END_INDEX);
         Integer year = modelYears.get(vehicleYearCode);
-        if(year != null) {
+        if (year != null) {
             return year;
         }
         return 0;
-     }
+    }
 
     // Mapping from long state/territory names to abbreviations
     public static final Map<String, String> states;
@@ -607,18 +633,18 @@ public class Utils {
                     fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                 }
                 LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-                String crashFile =  "machewidget-logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+                String crashFile = "fsw_logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
                 InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(MediaStore.Downloads.DISPLAY_NAME, crashFile);
-                contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/plain");
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
                 ContentResolver resolver = context.getContentResolver();
                 Uri uri = resolver.insert(fileCollection, contentValues);
                 if (uri == null) {
                     throw new IOException("Couldn't create MediaStore Entry");
                 }
                 OutputStream outStream = resolver.openOutputStream(uri);
-                copyStreams(inStream,outStream);
+                copyStreams(inStream, outStream);
                 outStream.close();
 
                 // Clear the crash log.
@@ -629,8 +655,202 @@ public class Utils {
         }
     }
 
-    public static boolean OTASupportCheck (String alertStatus) {
+    public static boolean OTASupportCheck(String alertStatus) {
         return alertStatus != null && !alertStatus.toLowerCase().replaceAll("[^a-z0-9]", "").contains("doesntsupport");
     }
 
+    public static File removeAPK(Context context) {
+        File apkFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "app-release.apk");
+        apkFile.delete();
+        return apkFile;
+    }
+
+    private static final int JSON_SETTINGS_VERSION = 1;
+
+    public static void savePrefs(Context context) {
+
+        Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle = msg.getData();
+                String jsonOutput = bundle.getString("json");
+
+                Uri fileCollection = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                }
+
+                try {
+                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+                    String settingsFile = "fsw_settings-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+                    InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MediaStore.Downloads.DISPLAY_NAME, settingsFile);
+                    contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.APPLICATION_JSON);
+                    ContentResolver resolver = context.getContentResolver();
+                    Uri uri = resolver.insert(fileCollection, contentValues);
+
+                    OutputStream outStream = resolver.openOutputStream(uri);
+                    copyStreams(inStream, outStream);
+                    outStream.close();
+                    Toast.makeText(context, MessageFormat.format("Settings file \"{0}\" written to output folder.", settingsFile), Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(context, "Unable to save settings.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        new Thread(() -> {
+            LinkedHashMap<String, Object> jsonData = new LinkedHashMap<>();
+            jsonData.put("version", JSON_SETTINGS_VERSION);
+            Map<String, ?> prefs = PreferenceManager.getDefaultSharedPreferences(context).getAll();
+            LinkedHashMap<String, Object> prefData = new LinkedHashMap<>();
+
+            for (String key : prefs.keySet()) {
+                Object value = prefs.get(key);
+                if (value instanceof String) {
+                    prefData.put(key, new String[]{"String", value.toString()});
+                } else {
+                    prefData.put(key, new String[]{"Boolean", value.toString()});
+                }
+            }
+            jsonData.put("prefs", prefData.clone());
+            prefData.clear();
+
+            prefs = context.getSharedPreferences(StoredData.TAG, MODE_PRIVATE).getAll();
+            for (String key : prefs.keySet()) {
+                Object value = prefs.get(key);
+                if (value instanceof String) {
+                    prefData.put(key, new String[]{"String", value.toString()});
+                } else if (value instanceof Long) {
+                    prefData.put(key, new String[]{"Long", value.toString()});
+                } else if (value instanceof Integer) {
+                    prefData.put(key, new String[]{"Integer", value.toString()});
+                } else {
+                    prefData.put(key, new String[]{"Boolean", value.toString()});
+                }
+            }
+            jsonData.put(StoredData.TAG, prefData.clone());
+            prefData.clear();
+
+            jsonData.put("users", UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo());
+            jsonData.put("vehicles", VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo());
+
+            Bundle bundle = new Bundle();
+            bundle.putString("json", new GsonBuilder().create().toJson(jsonData));
+            Message m = Message.obtain();
+            m.setData(bundle);
+            handler.sendMessage(m);
+        }).start();
+    }
+
+    public static void restorePrefs(Context context, Uri jsonFile) throws IOException {
+        InputStream inStream = context.getContentResolver().openInputStream(jsonFile);
+        StringBuilder json = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            json.append(line);
+        }
+
+        final JsonObject jsonObject = JsonParser.parseString(json.toString()).getAsJsonObject();
+
+        Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                Toast.makeText(context, "Settings restored.", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        new Thread(() -> {
+            Gson gson = new GsonBuilder().create();
+
+            // Get the current set of user IDs and VINs
+            ArrayList<String> userIds = new ArrayList<>();
+            for (UserInfo info : UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
+                userIds.add(info.getUserId());
+            }
+            ArrayList<String> VINs = new ArrayList<>();
+            for (VehicleInfo info : VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {
+                VINs.add(info.getVIN());
+            }
+
+            // Insert missing users into the database, and remove all IDs from the current list
+            JsonArray users = jsonObject.getAsJsonArray("users");
+            for (JsonElement items : users) {
+                UserInfo info = gson.fromJson(items.toString(), new TypeToken<UserInfo>() {
+                }.getType());
+                UserInfo current = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
+                if (current == null) {
+                    UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info);
+                }
+                userIds.remove(info.getUserId());
+            }
+
+            String newVIN = "";
+            // Insert missing VINs into the database, and remove all VINs from the current list
+            JsonArray vehicles = jsonObject.getAsJsonArray("vehicles");
+            for (JsonElement items : vehicles) {
+                VehicleInfo info = gson.fromJson(items.toString(), new TypeToken<VehicleInfo>() {
+                }.getType());
+                // Save a valid VIN in case we need to change the current VIN
+                newVIN = info.getVIN();
+                VehicleInfo current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(info.getVIN());
+                if (current == null) {
+                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().insertVehicleInfo(info);
+                }
+                VINs.remove(info.getVIN());
+            }
+
+            // If the current VIN is still in the current list, change it to one of the "good" VINs
+            String VINkey = context.getResources().getString(R.string.VIN_key);
+            String currentVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "");
+            if(VINs.contains(currentVIN)) {
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(VINkey, newVIN).apply();
+            }
+
+            // Any user IDs or VINs which weren't restored get deleted
+            for (String VIN: VINs) {
+                VehicleInfoDatabase.getInstance(context).vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
+            }
+            for (String user: userIds) {
+                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user);
+            }
+
+            // Update all the default preferences
+            SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+            JsonObject prefs = jsonObject.getAsJsonObject("prefs");
+            for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
+                String key = item.getKey();
+                JsonArray value = item.getValue().getAsJsonArray();
+                if (value.get(0).getAsString().equals("String")) {
+                    edit.putString(key, value.get(1).getAsString()).commit();
+                } else {
+                    edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+                }
+            }
+
+            // Update all the shared preferences
+            edit = context.getSharedPreferences(StoredData.TAG, MODE_PRIVATE).edit();
+            prefs = jsonObject.getAsJsonObject(StoredData.TAG);
+            for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
+                String key = item.getKey();
+                JsonArray value = item.getValue().getAsJsonArray();
+                if (value.get(0).getAsString().equals("String")) {
+                    edit.putString(key, value.get(1).getAsString()).commit();
+                } else if (value.get(0).getAsString().equals("Long")) {
+                    edit.putLong(key, value.get(1).getAsLong()).commit();
+                } else if (value.get(0).getAsString().equals("Integer")) {
+                    edit.putInt(key, value.get(1).getAsInt()).commit();
+                } else {
+                    edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+                }
+            }
+
+            // Tell the widget to update
+            MainActivity.updateWidget(context);
+            handler.sendEmptyMessage(0);
+        }).start();
+    }
 }

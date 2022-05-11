@@ -15,6 +15,9 @@ public interface VehicleInfoDao {
     @Insert
     void insertVehicleInfo(VehicleInfo info);
 
+    @Query("SELECT * FROM vehicle_info")
+    List<VehicleInfo> findVehicleInfo();
+
     @Query("SELECT * FROM vehicle_info WHERE vin LIKE :VIN")
     VehicleInfo findVehicleInfoByVIN(String VIN);
 

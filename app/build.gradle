@@ -41,6 +41,26 @@ Application-name: com.example.khughes.machewidget
         }
     }
 
+    flavorDimensions "none"
+    productFlavors {
+        playstore {
+            dimension "none"
+//            applicationIdSuffix '.playstore'
+            applicationId 'org.khpylon.machewidget'
+        }
+        github {
+            dimension "none"
+        }
+    }
+
+    sourceSets {
+        playstore {
+            java {
+                exclude "**/UpdateActivity.java"
+            }
+        }
+    }
+
     preBuild.dependsOn versionTxt
 
     compileOptions {
@@ -61,11 +81,11 @@ configurations {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.3.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.navigation:navigation-fragment:2.3.5'
-    implementation 'androidx.navigation:navigation-ui:2.3.5'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.navigation:navigation-fragment:2.4.2'
+    implementation 'androidx.navigation:navigation-ui:2.4.2'
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.2'
     implementation 'com.google.code.gson:gson:2.8.9'
@@ -77,28 +97,27 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3'
-    implementation 'com.google.android.libraries.places:places:2.5.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    implementation 'androidx.databinding:databinding-runtime:7.0.4'
-    implementation 'com.google.android.libraries.places:places:2.5.0'
+    implementation 'com.google.android.libraries.places:places:2.6.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.databinding:databinding-runtime:7.1.3'
+    implementation 'com.google.android.libraries.places:places:2.6.0'
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.activity:activity:1.4.0'
     implementation 'androidx.activity:activity-compose:1.4.0'
     implementation 'androidx.activity:activity-ktx:1.4.0'
-    implementation 'androidx.fragment:fragment:1.4.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.fragment:fragment:1.4.1'
+    implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.webkit:webkit:1.4.0'
     implementation 'androidx.core:core:1.7.0'
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'org.commonmark:commonmark:0.18.2'
     implementation 'androidx.room:room-runtime:2.5.0-alpha01'
-    implementation 'androidx.room:room-compiler:2.5.0-alpha01'
 
-    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.0.0'
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.4.1'
     annotationProcessor 'androidx.room:room-compiler:2.5.0-alpha01'
 
     testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }

@@ -1,11 +1,5 @@
 package com.example.khughes.machewidget;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-import androidx.webkit.WebSettingsCompat;
-import androidx.webkit.WebViewFeature;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -19,6 +13,12 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.webkit.WebSettingsCompat;
+import androidx.webkit.WebViewFeature;
 
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -169,7 +169,7 @@ public class UpdateActivity extends AppCompatActivity {
             File apkFile;
             HttpURLConnection urlConnection = null;
             try {
-                apkFile = removeAPK(context);
+                apkFile = Utils.removeAPK(context);
                 apkFile.createNewFile();
                 URL url = new URL(urls[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -218,11 +218,5 @@ public class UpdateActivity extends AppCompatActivity {
                 context.startActivity(intent);
             }
         }
-    }
-
-    public static File removeAPK(Context context) {
-        File apkFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "app-release.apk");
-        apkFile.delete();
-        return apkFile;
     }
 }

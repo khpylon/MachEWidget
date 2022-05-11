@@ -15,6 +15,9 @@ public interface UserInfoDao {
     @Insert
     void insertUserInfo(UserInfo info);
 
+    @Query("SELECT * FROM user_info")
+    List<UserInfo> findUserInfo();
+
     @Query("SELECT * FROM user_info WHERE userId LIKE :userId")
     UserInfo findUserInfo(String userId);
 

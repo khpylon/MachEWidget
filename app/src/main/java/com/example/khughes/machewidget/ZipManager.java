@@ -26,55 +26,55 @@ import java.util.zip.ZipOutputStream;
 // Copied from https://mobikul.com/zip-unzip-file-folder-android-programmatically/
 
 public class ZipManager {
-    private static final int BUFFER_SIZE = 6 * 1024;
+//    private static final int BUFFER_SIZE = 6 * 1024;
+//
+//    private static void zipSubFolder(ZipOutputStream out, File folder,
+//                                     int basePathLength) throws IOException {
+//
+//        final int BUFFER = 2048;
+//
+//        String unmodifiedFilePath = folder.getPath();
+//        String relativePath = unmodifiedFilePath
+//                .substring(basePathLength);
+//        ZipEntry entry = new ZipEntry(relativePath + "/");
+//        out.putNextEntry(entry);
+//        out.closeEntry();
+//        File[] fileList = folder.listFiles();
+//        BufferedInputStream origin;
+//        for (File file : fileList) {
+//            unmodifiedFilePath = file.getPath();
+//            relativePath = unmodifiedFilePath
+//                    .substring(basePathLength);
+//            if (file.isDirectory()) {
+//                zipSubFolder(out, file, basePathLength);
+//            } else {
+//                byte[] data = new byte[BUFFER];
+//                FileInputStream fi = new FileInputStream(unmodifiedFilePath);
+//                origin = new BufferedInputStream(fi, BUFFER);
+//                entry = new ZipEntry(relativePath);
+//                entry.setTime(file.lastModified()); // to keep modification time after unzipping
+//                out.putNextEntry(entry);
+//                int count;
+//                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+//                    out.write(data, 0, count);
+//                }
+//                origin.close();
+//            }
+//        }
+//
+//    }
 
-    private static void zipSubFolder(ZipOutputStream out, File folder,
-                                     int basePathLength) throws IOException {
-
-        final int BUFFER = 2048;
-
-        String unmodifiedFilePath = folder.getPath();
-        String relativePath = unmodifiedFilePath
-                .substring(basePathLength);
-        ZipEntry entry = new ZipEntry(relativePath + "/");
-        out.putNextEntry(entry);
-        out.closeEntry();
-        File[] fileList = folder.listFiles();
-        BufferedInputStream origin;
-        for (File file : fileList) {
-            unmodifiedFilePath = file.getPath();
-            relativePath = unmodifiedFilePath
-                    .substring(basePathLength);
-            if (file.isDirectory()) {
-                zipSubFolder(out, file, basePathLength);
-            } else {
-                byte[] data = new byte[BUFFER];
-                FileInputStream fi = new FileInputStream(unmodifiedFilePath);
-                origin = new BufferedInputStream(fi, BUFFER);
-                entry = new ZipEntry(relativePath);
-                entry.setTime(file.lastModified()); // to keep modification time after unzipping
-                out.putNextEntry(entry);
-                int count;
-                while ((count = origin.read(data, 0, BUFFER)) != -1) {
-                    out.write(data, 0, count);
-                }
-                origin.close();
-            }
-        }
-
-    }
-
-    public static File zipSharedPrefs(Context context) throws IOException {
-        File zipFile = File.createTempFile("temp", ".zip");
-        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
-        File sourceDir = new File(context.getDataDir(), Constants.SHAREDPREFS_FOLDER);
-        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length() + 1);
-        sourceDir = new File(context.getDataDir(), Constants.DATABASES_FOLDER);
-        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length() + 1);
-        out.setComment(Constants.FSVERSION_1);
-        out.close();
-        return zipFile;
-    }
+//    public static File zipSharedPrefs(Context context) throws IOException {
+//        File zipFile = File.createTempFile("temp", ".zip");
+//        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
+//        File sourceDir = new File(context.getDataDir(), Constants.SHAREDPREFS_FOLDER);
+//        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length() + 1);
+//        sourceDir = new File(context.getDataDir(), Constants.DATABASES_FOLDER);
+//        zipSubFolder(out, sourceDir, sourceDir.getParentFile().getAbsolutePath().length() + 1);
+//        out.setComment(Constants.FSVERSION_1);
+//        out.close();
+//        return zipFile;
+//    }
 
     public static void unzip(Context context, Uri zipFile) throws IOException, SettingFileException {
         File fromDir = context.getDataDir();
@@ -143,36 +143,36 @@ public class ZipManager {
 
     }
 
-    public static void zipStuff(Context context) {
-        File zipFile = null;
-        try {
-            zipFile = zipSharedPrefs(context);
-            InputStream inputStream = new FileInputStream(zipFile);
-            Uri fileCollection = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-            }
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.Downloads.DISPLAY_NAME, "prefs.zip");
-            contentValues.put(MediaStore.Downloads.MIME_TYPE, "application/zip");
-            ContentResolver resolver = context.getContentResolver();
-
-            Uri uri = resolver.insert(fileCollection, contentValues);
-            OutputStream outStream = resolver.openOutputStream(uri);
-            int len;
-            byte[] buffer = new byte[65536];
-            while ((len = inputStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, len);
-            }
-            inputStream.close();
-            outStream.close();
-        } catch (Exception e) {
-            LogFile.e(context, MainActivity.CHANNEL_ID, "Exception in ZipManager.zipStuff()", e);
-        } finally {
-            if (zipFile != null) {
-                zipFile.delete();
-            }
-        }
-    }
+//    public static void zipStuff(Context context) {
+//        File zipFile = null;
+//        try {
+//            zipFile = zipSharedPrefs(context);
+//            InputStream inputStream = new FileInputStream(zipFile);
+//            Uri fileCollection = null;
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+//                fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+//            }
+//            ContentValues contentValues = new ContentValues();
+//            contentValues.put(MediaStore.Downloads.DISPLAY_NAME, "prefs.zip");
+//            contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.APPLICATION_ZIP);
+//            ContentResolver resolver = context.getContentResolver();
+//
+//            Uri uri = resolver.insert(fileCollection, contentValues);
+//            OutputStream outStream = resolver.openOutputStream(uri);
+//            int len;
+//            byte[] buffer = new byte[65536];
+//            while ((len = inputStream.read(buffer)) != -1) {
+//                outStream.write(buffer, 0, len);
+//            }
+//            inputStream.close();
+//            outStream.close();
+//        } catch (Exception e) {
+//            LogFile.e(context, MainActivity.CHANNEL_ID, "Exception in ZipManager.zipStuff()", e);
+//        } finally {
+//            if (zipFile != null) {
+//                zipFile.delete();
+//            }
+//        }
+//    }
 
 }

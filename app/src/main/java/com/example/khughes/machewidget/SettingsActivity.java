@@ -143,7 +143,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             // Set app version info
             Preference version = findPreference(this.getResources().getString(R.string.version_key));
-            version.setSummary(BuildConfig.VERSION_NAME);
+            version.setSummary(BuildConfig.VERSION_NAME + " " + BuildConfig.FLAVOR);
             version.setOnPreferenceClickListener(preference -> {
                 LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
                 long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();

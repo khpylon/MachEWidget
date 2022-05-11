@@ -97,15 +97,6 @@
         app:key="@string/battery_opt_key"
         app:title="@string/battery_opt"/>
 
-    <!--
-    <SwitchPreferenceCompat
-        app:defaultValue="false"
-        app:key="@string/f150_mode_key"
-        app:singleLineTitle="false"
-        app:summary="Make the widget appearance and app name reflect an F-150 vehicle"
-        app:title="@string/f150_mode" />
-    -->
-
     <PreferenceCategory
         app:title="Developer options">
         <SwitchPreferenceCompat

@@ -27,7 +27,7 @@ import java.util.Locale;
 
 public class LogFile {
 
-    private static final String LOGFILENAME = "mache_logfile";
+    private static final String LOGFILENAME = "fsw_logfile";
     private static final String BACKUPLOGFILENAME = LOGFILENAME + ".0";
 
     private static final int LOGFILE_SIZE = 750000;
@@ -102,7 +102,7 @@ public class LogFile {
             String logFilename = LOGFILENAME + "-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.Downloads.DISPLAY_NAME, logFilename);
-            contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/plain");
+            contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
             ContentResolver resolver = context.getContentResolver();
             Uri uri = resolver.insert(fileCollection, contentValues);
             if (uri == null) {

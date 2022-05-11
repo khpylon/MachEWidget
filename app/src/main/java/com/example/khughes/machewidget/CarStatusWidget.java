@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -43,15 +42,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class CarStatusWidget extends AppWidgetProvider {
     public static final String WIDGET_IDS_KEY = BuildConfig.APPLICATION_ID + ".CARSTATUSWIDGET";
@@ -498,12 +492,14 @@ public class CarStatusWidget extends AppWidgetProvider {
                     vehicleDao.updateVehicleInfo(vehicleInfo);
                 } else {
                     fuelLevel = vehicleInfo.getLastFuelLevel();
-                    if (fuelLevel == null) {
-                        fuelLevel = -1.0;
-                    } else if (fuelLevel > 100.0) {
-                        fuelLevel = 100.0;
-                    }
                 }
+
+                if (fuelLevel == null) {
+                    fuelLevel = -1.0;
+                } else if (fuelLevel > 100.0) {
+                    fuelLevel = 100.0;
+                }
+
                 views.setProgressBar(R.id.fuelLevelProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
                 views.setTextViewText(R.id.fuelLevelPercent,
                         MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
@@ -584,12 +580,12 @@ public class CarStatusWidget extends AppWidgetProvider {
             // OTA status
             OTAStatus otaStatus = vehicleInfo.toOTAStatus();
             boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(context.getResources().getString(R.string.show_OTA_key), true);
+                    .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
 
             views.setViewVisibility(R.id.ota_container, displayOTA ? View.VISIBLE : View.GONE);
             if (displayOTA && otaStatus != null) {
                 // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
-                if (vehicleInfo.isSupportsOTA() && Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
+                if (Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
                     views.setTextViewText(R.id.ota_line1, "OTA Status:");
                     String OTArefresh;
                     long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context, timeFormat);
@@ -748,7 +744,6 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setImageViewResource(R.id.leftappbutton, R.drawable.filler);
             views.setImageViewResource(R.id.rightappbutton, R.drawable.filler);
         }
-//        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
 
     private Handler getHandler(Context context) {
@@ -776,72 +771,16 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void lock(Context context) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         NetworkCalls.lockDoors(getHandler(context), context);
     }
 
     private void unlock(Context context) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         NetworkCalls.unlockDoors(getHandler(context), context);
-    }
-
-    // Make the app widget and icon match the VIN
-    private void matchWidgetWithVin(Context context, String VIN) {
-        StoredData appInfo = new StoredData(context);
-
-        // Get the current widget mode
-        String mode = appInfo.getWidgetMode();
-
-        // Get the mode for this VIN
-        String newMode = Utils.getWMI(VIN);
-
-        // If the widget doesn't match the VIN, switch modes
-        if (!mode.equals(newMode)) {
-            appInfo.setWidgetMode(newMode);
-            PackageManager manager = context.getPackageManager();
-            String packageName = context.getPackageName();
-
-            Callable<Boolean> macheCheck = () -> {
-                return Utils.isMachE(VIN);
-            };
-            Callable<Boolean> f150Check = () -> {
-                return Utils.isF150(VIN);
-            };
-            Callable<Boolean> broncoCheck = () -> {
-                return Utils.isBronco(VIN);
-            };
-            Callable<Boolean> explorerCheck = () -> {
-                return Utils.isExplorer(VIN);
-            };
-            ExecutorService service = Executors.newSingleThreadExecutor();
-            Map<String, Future<Boolean>> results = new HashMap<>();
-            results.put(".MainActivity", service.submit(macheCheck));
-            results.put(".F150MainActivity", service.submit(f150Check));
-            results.put(".BroncoMainActivity", service.submit(broncoCheck));
-            results.put(".ExplorerMainActivity", service.submit(explorerCheck));
-            try {
-                for (String activity : results.keySet()) {
-                    manager.setComponentEnabledSetting(new ComponentName(packageName, packageName + activity),
-                            results.get(activity).get() ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                            PackageManager.DONT_KILL_APP);
-                }
-                // Give the OS some time to finish reconfiguring things
-                Thread.sleep(1500);
-            } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.matchWidgetWithVin()" + e);
-            }
-        }
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-//        StoredData appInfo = new StoredData(context);
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
-        if (!VIN.equals("")) {
-            matchWidgetWithVin(context, VIN);
-        }
 
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
@@ -933,21 +872,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             ProfileManager.changeProfile(context);
             return;
         } else if (action.equals(WIDGET_CLICK)) {
-            String activity;
-            switch (new StoredData(context).getWidgetMode()) {
-                case Utils.WIDGETMODE_BRONCO:
-                    activity = ".BroncoMainActivity";
-                    break;
-                case Utils.WIDGETMODE_F150:
-                    activity = ".F150MainActivity";
-                    break;
-                case Utils.WIDGETMODE_EXPLORER:
-                    activity = ".ExplorerMainActivity";
-                    break;
-                default:
-                    activity = ".MainActivity";
-                    break;
-            }
+            String activity = ".MainActivity";
             intent = new Intent();
             intent.setComponent(new ComponentName(context.getPackageName(), context.getPackageName() + activity));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1001,7 +926,6 @@ public class CarStatusWidget extends AppWidgetProvider {
                 }
                 VehicleInfo vehInfo = gson.fromJson(bundle.getString("vehicle"), VehicleInfo.class);
                 UserInfo userInfo = gson.fromJson(bundle.getString("user"), UserInfo.class);
-                Intent newIntent;
                 if (action.equals(LOCK_CLICK)) {
                     // Avoid performing the action on a single press (in case the widget is accidentally
                     // touched): require two presses within 500 ms of one another to activate.

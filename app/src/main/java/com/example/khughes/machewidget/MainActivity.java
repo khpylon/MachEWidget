@@ -1,25 +1,15 @@
 package com.example.khughes.machewidget;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
-import androidx.webkit.WebSettingsCompat;
-import androidx.webkit.WebViewAssetLoader;
-import androidx.webkit.WebViewClientCompat;
-import androidx.webkit.WebViewFeature;
-
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -32,10 +22,23 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.MimeTypeMap;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+import androidx.webkit.WebSettingsCompat;
+import androidx.webkit.WebViewAssetLoader;
+import androidx.webkit.WebViewClientCompat;
+import androidx.webkit.WebViewFeature;
 
 import com.example.khughes.machewidget.db.UserInfoDatabase;
 import com.example.khughes.machewidget.db.VehicleInfoDatabase;
@@ -43,6 +46,9 @@ import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
@@ -126,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
         // See if we need to upgrade anything since the last version
         if (BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
+            LogFile.i(context, CHANNEL_ID, "running updates");
 
             // Add operations here
 
@@ -153,6 +160,31 @@ public class MainActivity extends AppCompatActivity {
             // Replace sharedpreference files with databases
             if (lastVersion.compareTo("2022.04.29") < 0) {
                 migrateToDatabases(context);
+            }
+
+            // Make sure MainActivity is enabled
+            if (lastVersion.compareTo("2022.05.11") < 0) {
+
+                PackageManager manager = context.getPackageManager();
+                String packageName = context.getPackageName();
+
+                Map<String, Boolean> results = new HashMap<>();
+                results.put(".MainActivity", true);
+                results.put(".F150MainActivity", false);
+                results.put(".BroncoMainActivity", false);
+                results.put(".ExplorerMainActivity", false);
+                try {
+                    for (String activity : results.keySet()) {
+                        manager.setComponentEnabledSetting(new ComponentName(packageName, packageName + activity),
+                                results.get(activity) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                                PackageManager.DONT_KILL_APP);
+                    }
+                    // Give the OS some time to finish reconfiguring things
+                    Thread.sleep(1500);
+                } catch (Exception e) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.matchWidgetWithVin()" + e);
+                }
             }
 
             // Update internally
@@ -236,11 +268,11 @@ public class MainActivity extends AppCompatActivity {
                                 Handler h = new Handler(Looper.getMainLooper()) {
                                     @Override
                                     public void handleMessage(Message msg) {
-                                        LogFile.i(context, MainActivity.CHANNEL_ID, "handler returned "+VIN);
+                                        LogFile.i(context, MainActivity.CHANNEL_ID, "handler returned " + VIN);
                                     }
                                 };
                                 NetworkCalls.getUserVehicles(h, context, userId);
-                                LogFile.i(context, MainActivity.CHANNEL_ID, "processing VIN "+VIN);
+                                LogFile.i(context, MainActivity.CHANNEL_ID, "processing VIN " + VIN);
                                 appInfo.removeProfile(VIN);
                             }
                         }
@@ -292,6 +324,11 @@ public class MainActivity extends AppCompatActivity {
                 .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         menu.findItem(R.id.action_chooseapp).setEnabled(showAppLinks);
 
+        // THe PlayStore version doesn't do all the update stuff
+        if (com.example.khughes.machewidget.BuildConfig.FLAVOR.equals("playstore")) {
+            menu.findItem(R.id.action_update).setVisible(false);
+        }
+
         return true;
     }
 
@@ -306,9 +343,13 @@ public class MainActivity extends AppCompatActivity {
                         if (data != null) {
                             Uri uri = data.getData();
                             if (uri != null) {
+                                String type = context.getContentResolver().getType(uri);
                                 try {
-                                    ZipManager.unzip(context, uri);
-                                    Toast.makeText(context, "Settings restored.", Toast.LENGTH_SHORT).show();
+                                    if (type.equals(Constants.APPLICATION_ZIP)) {
+                                        ZipManager.unzip(context, uri);
+                                    } else {
+                                        Utils.restorePrefs(context, uri);
+                                    }
                                     Intent intent = new Intent(context, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
@@ -363,8 +404,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_backup) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                ZipManager.zipStuff(context);
-                Toast.makeText(context, "Settings saved.", Toast.LENGTH_SHORT).show();
+                Utils.savePrefs(context);
             } else {
                 Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
             }
@@ -374,7 +414,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("application/*");
-                String[] mimeTypes = new String[]{"application/zip"};
+                String[] mimeTypes = new String[]{Constants.APPLICATION_JSON, Constants.APPLICATION_ZIP};
                 intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
                 restoreSettingsLauncher.launch(intent);
             } else {

@@ -204,7 +204,7 @@ public class OTAViewActivity extends AppCompatActivity {
 
             String encodedHtml = Base64.encodeToString(unencodedHtml.toString().getBytes(),
                     Base64.NO_PADDING);
-            mWebView.get().loadData(encodedHtml, "text/html", "base64");
+            mWebView.get().loadData(encodedHtml, Constants.TEXT_HTML, "base64");
 
             clear.setEnabled(currentOTATime > lastOTATime);
 

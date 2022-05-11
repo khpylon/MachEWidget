@@ -42,8 +42,6 @@ public class Notifications extends BroadcastReceiver {
 
     public static void checkLVBStatus(Context context, CarStatus carStatus, String VIN) {
         new Thread(() -> {
-//            StoredData appInfo = new StoredData(context);
-//            String lastHVBStatus = appInfo.getHVBStatus(VIN);
             VehicleInfoDao dao = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao();
             VehicleInfo vehInfo = dao.findVehicleInfoByVIN(VIN);
@@ -51,7 +49,6 @@ public class Notifications extends BroadcastReceiver {
             String currentLVBStatus = carStatus.getLVBStatus();
             if (currentLVBStatus != null && !currentLVBStatus.equals(lastLVBStatus)) {
                 // Save the current status
-//                appInfo.setHVBStatus(VIN, currentLVBStatus);
                 vehInfo.setLastLVBStatus(currentLVBStatus);
                 dao.updateVehicleInfo(vehInfo);
 
@@ -92,8 +89,6 @@ public class Notifications extends BroadcastReceiver {
 
     public static void checkTPMSStatus(Context context, CarStatus carStatus, String VIN) {
         new Thread(() -> {
-//        StoredData appInfo = new StoredData(context);
-//        String lastTPMSStatus = appInfo.getTPMSStatus(VIN);
             VehicleInfoDao dao = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao();
             VehicleInfo vehInfo = dao.findVehicleInfoByVIN(VIN);
@@ -119,7 +114,6 @@ public class Notifications extends BroadcastReceiver {
 
             if (lastTPMSStatus != null && !lastTPMSStatus.equals(badTire)) {
                 // Save the current status
-//                appInfo.setTPMSStatus(VIN, badTire);
                 vehInfo.setLastTPMSStatus(badTire);
                 dao.updateVehicleInfo(vehInfo);
 
@@ -145,24 +139,6 @@ public class Notifications extends BroadcastReceiver {
                 }
             }
         }).start();
-    }
-
-    private static final int APP_NOTIFICATION = 938;
-
-    public static void newApp(Context context) {
-        Intent intent = new Intent(context, UpdateActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("App update")
-                .setContentText("A new app version was found.")
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(APP_NOTIFICATION, builder.build());
     }
 
     @Override

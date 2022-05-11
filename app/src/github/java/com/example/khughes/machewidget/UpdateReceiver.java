@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.format.DateUtils;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -78,7 +81,7 @@ public class UpdateReceiver extends BroadcastReceiver {
                     if (newVersion.compareTo(BuildConfig.VERSION_NAME) > 0 &&
                             newVersion.compareTo(latestVersion) > 0) {
                         appInfo.setLatestVersion(newVersion);
-                        Notifications.newApp(context);
+                        newApp(context);
                         LogFile.e(context, MainActivity.CHANNEL_ID, "UpdateReceiver.onPostExecute(): launching notification");
                         return;
                     }
@@ -86,6 +89,26 @@ public class UpdateReceiver extends BroadcastReceiver {
             }
         }
     }
+
+    private static final int APP_NOTIFICATION = 938;
+
+    private static void newApp(Context context) {
+        Intent intent = new Intent(context, UpdateActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("App update")
+                .setContentText("A new app version was found.")
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(APP_NOTIFICATION, builder.build());
+    }
+
+
 
     private static Intent getIntent(Context context) {
         return new Intent(context, UpdateReceiver.class).setAction("UpdateReceiver");
@@ -110,5 +133,15 @@ public class UpdateReceiver extends BroadcastReceiver {
                 getIntent(context), PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
             nextAlarm(context);
         }
+    }
+
+    // Check for a new version of the app sometime soon
+    public static void createIntent(Context context) {
+        Intent intent = new Intent(context, UpdateReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.HOUR_IN_MILLIS, pendingIntent);
+        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.MINUTE_IN_MILLIS, pendingIntent);
     }
 }

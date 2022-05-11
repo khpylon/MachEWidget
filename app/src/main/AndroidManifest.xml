@@ -5,7 +5,6 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/mache_launcher_icon"
         android:supportsRtl="true"
@@ -21,9 +20,6 @@
 
         <activity-alias
             android:name=".F150MainActivity"
-            android:roundIcon="@mipmap/f150_icon_round"
-            android:label="@string/f150_app_name"
-            android:icon="@mipmap/f150_icon"
             android:enabled="false"
             android:exported="true"
             android:targetActivity=".MainActivity">
@@ -35,9 +31,6 @@
 
         <activity-alias
             android:name=".BroncoMainActivity"
-            android:roundIcon="@mipmap/bronco_icon_round"
-            android:label="@string/bronco_app_name"
-            android:icon="@mipmap/bronco_icon"
             android:enabled="false"
             android:exported="true"
             android:targetActivity=".MainActivity">
@@ -49,9 +42,6 @@
 
         <activity-alias
             android:name=".ExplorerMainActivity"
-            android:roundIcon="@mipmap/explorer_icon_round"
-            android:label="@string/explorer_app_name"
-            android:icon="@mipmap/explorer_icon"
             android:enabled="false"
             android:exported="true"
             android:targetActivity=".MainActivity">
@@ -65,11 +55,6 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/action_settings" />
-        <activity
-            android:name=".UpdateActivity"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:label="@string/update_info" />
         <activity
             android:name=".ChooseApp"
             android:exported="false"
@@ -101,32 +86,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity-alias
-            android:name=".BroncoMainActivity"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/bronco_icon"
-            android:label="@string/bronco_app_name"
-            android:roundIcon="@mipmap/bronco_icon_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".F150MainActivity"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/f150_icon"
-            android:label="@string/f150_app_name"
-            android:roundIcon="@mipmap/f150_icon_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -150,7 +109,6 @@
         </receiver>
         <receiver android:name=".StatusReceiver" />
         <receiver android:name=".Notifications" />
-        <receiver android:name=".UpdateReceiver" />
         <receiver
             android:name=".BootComplete"
             android:enabled="true"
