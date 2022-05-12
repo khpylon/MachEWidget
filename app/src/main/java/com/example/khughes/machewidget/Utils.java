@@ -765,6 +765,10 @@ public class Utils {
 
         new Thread(() -> {
             Gson gson = new GsonBuilder().create();
+            final File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+            if (!imageDir.exists()) {
+                imageDir.mkdir();
+            }
 
             // Get the current set of user IDs and VINs
             ArrayList<String> userIds = new ArrayList<>();
@@ -800,6 +804,11 @@ public class Utils {
                 if (current == null) {
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().insertVehicleInfo(info);
                 }
+                File image = new File(imageDir, newVIN + ".png");
+                if (!image.exists()) {
+                    UserInfo user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
+                    NetworkCalls.getVehicleImage(context,user.getAccessToken(), newVIN,user.getCountry(), image.toPath());
+                }
                 VINs.remove(info.getVIN());
             }
 
@@ -813,6 +822,10 @@ public class Utils {
             // Any user IDs or VINs which weren't restored get deleted
             for (String VIN: VINs) {
                 VehicleInfoDatabase.getInstance(context).vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
+                File image = new File(imageDir, VIN + ".png");
+                if (image.exists()) {
+                    image.delete();
+                }
             }
             for (String user: userIds) {
                 UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user);
