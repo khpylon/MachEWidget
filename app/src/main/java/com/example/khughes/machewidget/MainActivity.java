@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Make sure MainActivity is enabled
-            if (lastVersion.compareTo("2022.05.11") < 0) {
+            if (lastVersion.compareTo("2022.05.12") < 0) {
 
                 PackageManager manager = context.getPackageManager();
                 String packageName = context.getPackageName();
