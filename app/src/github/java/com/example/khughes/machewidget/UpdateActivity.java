@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 public class UpdateActivity extends AppCompatActivity {
 
     private static final String CHANGELOG_URL = "https://raw.githubusercontent.com/khpylon/MachEWidget/master/CHANGELOG.md";
-    private static final String appUrl = "https://github.com/khpylon/MachEWidget/blob/master/app/release/app-release.apk?raw=true";
+    private static final String appUrl = "https://github.com/khpylon/MachEWidget/blob/master/app/github/release/app-release.apk?raw=true";
 
     private static final int progressIntervals = 20;
 
