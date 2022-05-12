@@ -17,3 +17,9 @@
 .cxx
 local.properties
 output-metadata.json
+/app/schemas/com.example.khughes.machewidget.CarStatusDatabase/1.json
+/app/schemas/com.example.khughes.machewidget.db.CarStatusDatabase/1.json
+/app/schemas/com.example.khughes.machewidget.db.OTAStatusDatabase/1.json
+/app/schemas/com.example.khughes.machewidget.db.UserInfoDatabase/1.json
+/app/schemas/com.example.khughes.machewidget.db.VehicleInfoDatabase/1.json
+/app/schemas/com.example.khughes.machewidget.OTAStatusDatabase/1.json
