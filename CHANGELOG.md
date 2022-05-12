@@ -5,9 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.05.12
+### Changed
+- The app has been renamed to "Ford Status Widget" in preparation for its eventual release on the Google Play store.
+- The app no longer changes icons to reflect the vehicle model.  Supporting this raised a few issues.  If there is interest, I may add a "Settings" option 
+  to allow the user to select the icon.
+- Saved settings now use a JSON file instead of a ZIP file. You can still restore from a ZIP file for the time
+being, but as I believe there are reliability issues when overwriting files this functionality will be removed in the
+  near future.  If you use this feature, I highly recommend saving your settings now and removing the older ZIP files.
+- The settings, logs, and logcat filenames all start with *fsw_* for consistency, and include the date/time.
+
 ## 2022.05.02
 ### Changed
-- Changed the "Update App" menu selection to "Check For Update", and make it immediately check for an update  If one is found, a notification is created.
+- Changed the "Update App" menu selection to "Check For Update", and make it immediately check for an update.  If one is found, a notification is created.
 
 ### Fixed
 - Numerous null pointer checks and additional log output from crash logcats.
@@ -22,7 +32,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 - If the app crashes, the logcat output for the crash is automatically saved to your Download folder when you restart the app.
 - You can view/change the battery optimization settings from the Settings menu.
 
-### Changes
+### Changed
 - The ZIP file created when storing user data now contains versioning information.  When significant changes are made to the app, it may not be possible to restore 
   user data from older versions; this is true for this release.
 - Log files now have a maximum size limit of 1.5MB.  This is accomplished by using a primary and backup log file of max size 750KB each.  When you save the log file
@@ -46,7 +56,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 - If a VIN is not recognized upon log-in, the app will display a notice that things may not work correctly and encourage the user to upload data
   to a new Issue on GitHub.
   
-### Changes
+### Changed
 - Related to the addition of Explorer support, more of the code was changed for recognizing information about each vehicle from its VIN.  Heads up; if you 
 notice something not right, *open an issue on GitHub*.
 
@@ -60,7 +70,7 @@ notification, an activity will start that lets you read the change log and lets 
   from the three-bar menu (note that this will *not* check Github for a new update, only reflect information already found there).  The frequency of checking for updates
   has also be changed to once an hour.
 
-### Changes
+### Changed
 - Various changes in the networking code to handle retries and log less information for known exceptions.
 
 ### Fixed
@@ -70,7 +80,7 @@ notification, an activity will start that lets you read the change log and lets 
 ### Added
 - Remote stop command is supported now.  Double-tap on the ignition icon to start or stop.  Once remote start is initiated, the ignition icon will turn yellow to indicate this.
 
-### Changes
+### Changed
 - Commands (lock/unlock and remote start/stop) now poll to determine whether the command was completed successfully
 - Internal changes for tracking status of Ford server connection.  Hopefully these will improve the performance of automatic updates for the vehicle's status.
 
@@ -78,7 +88,7 @@ notification, an activity will start that lets you read the change log and lets 
 - Fuel levels capped at 100%.
 
 ## 2022.03.10
-### Changes
+### Changed
 - Make the odometer output match the value reported by FordPass.
 
 ### Fixed
@@ -92,7 +102,7 @@ notification, an activity will start that lets you read the change log and lets 
   fingerprint biometrics.
 - Additional support for Bronco SUVs.
 
-### Changes
+### Changed
 - Reorganized the content of the OTA Info page.
 - Try storing/reusing distance-to-empty and fuel level values on F-150s and Broncos when the status reports invalid numbers (experimental).
 
@@ -107,22 +117,22 @@ notification, an activity will start that lets you read the change log and lets 
 - Initial support for Bronco SUVs.  This is very beta; while there is an image of the vehicle, it does
   not yet update correctly.
 
-### Changes
+### Changed
 - Use the technique for drawing the F-150 images with the Mach-E.
 
 ## 2022.03.02
-### Changes
+### Changed
 - Change the way F-150 images are drawn, and use SVG drawables instead PNG images.
 
 ## 2022.02.28
-### Changes
+### Changed
 - Added support for Android 9 devices.  This has not been thoroughly tested.
 
 ### Fixed
 - Crash on fresh install when checking VIN.
 
 ## 2022.02.26
-### Changes
+### Changed
 - Automatically determine which widget and icon to display (Mach-E or F-150) on the current VIN.
 - After issuing a command (lock, unlock, or remote start), attempt to update the car's status after a few seconds.
 - Include specific drawables for F-150 SuperCab, SuperCrew, and Raptor.
@@ -135,17 +145,17 @@ notification, an activity will start that lets you read the change log and lets 
 - Add a developer's option for generating verbose HTTP information to log files.  This should only be used when
   gathering debugging info to the developers; this output may contains usernames and password for your FordPass account.
 
-### Changes
+### Changed
 - Add a toggle switch for storing credentials to the log-in screen.
 
 ## 2022.02.17
-### Changes
+### Changed
 - Add an option (under "Settings") to store FordPass login credentials (username and password). These are
   stored encrypted, and are only used if the access token is lost and the app needs to log into the Ford
   servers again.  When this option is disabled, they are removed from the stored files.
 
 ## 2022.02.11
-### Changes
+### Changed
 - Adjust size of assets in the widget to make it fit better on the screen.
 
 ### Fixed
