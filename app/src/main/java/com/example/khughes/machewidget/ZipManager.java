@@ -102,31 +102,35 @@ public class ZipManager {
         try {
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
-                String path = fromDir + File.separator + entry.getName();
-                path.replace(Constants.OLDAPPNAME, context.getPackageName());
+                File f = new File(fromDir, entry.getName());
+                String canonicalPath = f.getCanonicalPath();
+                if (canonicalPath.startsWith(fromDir.getAbsolutePath())) {
+                    String path = fromDir + File.separator + entry.getName();
+                    path.replace(Constants.OLDAPPNAME, context.getPackageName());
 
-                File unzipFile = new File(path);
+                    File unzipFile = new File(path);
 
-                if (entry.isDirectory()) {
-                    if (!unzipFile.isDirectory()) {
-                        unzipFile.mkdirs();
-                    }
-                } else {
-                    if (unzipFile.exists()) {
-                        unzipFile.delete();
-                    }
-                    FileOutputStream fout = new FileOutputStream(path, false);
-                    try {
-                        byte[] buffer = new byte[65536];
-                        int len;
-                        while ((len = zin.read(buffer)) != -1) {
-                            fout.write(buffer, 0, len);
+                    if (entry.isDirectory()) {
+                        if (!unzipFile.isDirectory()) {
+                            unzipFile.mkdirs();
                         }
-                        zin.closeEntry();
-                    } finally {
-                        fout.close();
+                    } else {
+                        if (unzipFile.exists()) {
+                            unzipFile.delete();
+                        }
+                        FileOutputStream fout = new FileOutputStream(path, false);
+                        try {
+                            byte[] buffer = new byte[65536];
+                            int len;
+                            while ((len = zin.read(buffer)) != -1) {
+                                fout.write(buffer, 0, len);
+                            }
+                            zin.closeEntry();
+                        } finally {
+                            fout.close();
+                        }
+                        unzipFile.setLastModified(entry.getLastModifiedTime().toMillis());
                     }
-                    unzipFile.setLastModified(entry.getLastModifiedTime().toMillis());
                 }
             }
             Toast.makeText(context, "Settings restored.", Toast.LENGTH_SHORT).show();
