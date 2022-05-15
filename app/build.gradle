@@ -12,8 +12,8 @@ android {
         applicationId "com.example.khughes.machewidget"
         minSdk 28
         targetSdk 31
-        versionCode 4
-        versionName "2022.05.12"
+        versionCode 6
+        versionName "2022.05.14"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -24,8 +24,11 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
     task versionTxt { task ->
@@ -46,7 +49,7 @@ Application-name: com.example.khughes.machewidget
         playstore {
             dimension "none"
 //            applicationIdSuffix '.playstore'
-            applicationId 'org.khpylon.machewidget'
+            applicationId 'org.khpylon.fswidget'
         }
         github {
             dimension "none"
@@ -59,7 +62,6 @@ Application-name: com.example.khughes.machewidget
             }
         }
     }
-
     sourceSets {
         playstore {
             java {

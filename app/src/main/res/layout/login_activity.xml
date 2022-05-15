@@ -65,7 +65,7 @@
         <Switch
             android:id="@+id/storeCredentials"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:checked="false"
             android:text="@string/save_credentials" />
 
