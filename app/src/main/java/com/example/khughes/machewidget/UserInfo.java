@@ -1,16 +1,15 @@
 package com.example.khughes.machewidget;
 
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "user_info")
 public class UserInfo {
 
-    @PrimaryKey
-    @NonNull
-    private String userId;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
 
+    private String userId;
     private String username;
     private String password;
 
@@ -26,6 +25,10 @@ public class UserInfo {
     private String uomPressure;
 
     private String lastModified;
+
+    public int getId() { return id; }
+
+    public void setId(int id) { this.id = id; }
 
     public String getCountry() {
         return country;
@@ -130,4 +133,36 @@ public class UserInfo {
     public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
     }
+
+    private String sparetext1;
+    private String sparetext2;
+    private String sparetext3;
+    private Integer spareint1;
+    private Integer spareint2;
+    private Integer spareint3;
+
+    public String getSparetext1() { return sparetext1; }
+
+    public void setSparetext1(String sparetext) { this.sparetext1 = sparetext; }
+
+    public String getSparetext2() { return sparetext2; }
+
+    public void setSparetext2(String sparetext) { this.sparetext2 = sparetext; }
+
+    public String getSparetext3() { return sparetext3; }
+
+    public void setSparetext3(String sparetext) { this.sparetext3 = sparetext; }
+
+    public void setSpareint1(Integer spareint) { this.spareint1 = spareint; }
+
+    public Integer getSpareint1() { return spareint1; }
+
+    public void setSpareint2(Integer spareint) { this.spareint2 = spareint; }
+
+    public Integer getSpareint2() { return spareint2; }
+
+    public void setSpareint3(Integer spareint) { this.spareint3 = spareint; }
+
+    public Integer getSpareint3() { return spareint3; }
+
 }

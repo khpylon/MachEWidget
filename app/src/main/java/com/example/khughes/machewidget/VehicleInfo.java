@@ -20,8 +20,9 @@ import java.util.ArrayList;
 @Entity(tableName = "vehicle_info")
 public class VehicleInfo {
 
-    @PrimaryKey
-    @NonNull
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
     private String VIN;
 
     private String userId;
@@ -42,6 +43,8 @@ public class VehicleInfo {
 
     private boolean supportsOTA;
 
+    private Boolean enabled;
+
     public VehicleInfo() {
         lastRefreshTime = 0;
         lastUpdateTime = 0;
@@ -50,6 +53,7 @@ public class VehicleInfo {
         lastDTE = 0.0;
         lastFuelLevel = 0.0;
         supportsOTA = true;
+        enabled = true;
     }
 
     @Embedded(prefix = "car_")
@@ -68,6 +72,14 @@ public class VehicleInfo {
 
     @Embedded(prefix = "ota_")
     private LanguageText languageText;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getUserId() {
         return userId;
@@ -224,6 +236,14 @@ public class VehicleInfo {
         this.supportsOTA = supportsOTA;
     }
 
+    public Boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Entity
     public class CarStatusInfo {
         @PrimaryKey
@@ -250,4 +270,36 @@ public class VehicleInfo {
             this.carStatus = carStatus;
         }
     }
+
+    private String sparetext1;
+    private String sparetext2;
+    private String sparetext3;
+    private Integer spareint1;
+    private Integer spareint2;
+    private Integer spareint3;
+
+    public String getSparetext1() { return sparetext1; }
+
+    public void setSparetext1(String sparetext) { this.sparetext1 = sparetext; }
+
+    public String getSparetext2() { return sparetext2; }
+
+    public void setSparetext2(String sparetext) { this.sparetext2 = sparetext; }
+
+    public String getSparetext3() { return sparetext3; }
+
+    public void setSparetext3(String sparetext) { this.sparetext3 = sparetext; }
+
+    public void setSpareint1(Integer spareint) { this.spareint1 = spareint; }
+
+    public Integer getSpareint1() { return spareint1; }
+
+    public void setSpareint2(Integer spareint) { this.spareint2 = spareint; }
+
+    public Integer getSpareint2() { return spareint2; }
+
+    public void setSpareint3(Integer spareint) { this.spareint3 = spareint; }
+
+    public Integer getSpareint3() { return spareint3; }
+
 }
