@@ -38,8 +38,6 @@ public abstract class UserInfoDatabase extends RoomDatabase {
             "`username` TEXT, `password` TEXT, `programState` TEXT, `accessToken` TEXT, `refreshToken` TEXT, " +
             "`expiresIn` INTEGER NOT NULL, `country` TEXT, `language` TEXT, `uomSpeed` TEXT, " +
             "`uomDistance` INTEGER NOT NULL, `uomPressure` TEXT, `lastModified` TEXT, " +
-            "`sparetext1` TEXT, `sparetext2` TEXT, `sparetext3` TEXT, " +
-            "`spareint1` INTEGER, `spareint2` INTEGER, `spareint3` INTEGER, " +
             "PRIMARY KEY(`id`)) ";
 
     private static final String fields = "`userId`, `username`, `password`, `programState`, `accessToken`, `refreshToken`, `expiresIn`, " +

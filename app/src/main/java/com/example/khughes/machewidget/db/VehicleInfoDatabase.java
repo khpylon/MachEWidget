@@ -50,9 +50,7 @@ public abstract class VehicleInfoDatabase extends RoomDatabase {
             "`ota_deploymentExpirationTime` TEXT, `ota_otaTriggerExpirationTime` TEXT, `ota_communicationPriority` TEXT, `ota_type` TEXT, `ota_triggerType` TEXT, " +
             "`ota_inhibitRequired` INTEGER, `ota_additionalConsentLevel` INTEGER, `ota_tmcEnvironment` TEXT, `ota_deploymentFinalConsumerAction` TEXT, " +
             "`ota_aggregateStatus` TEXT, `ota_detailedStatus` TEXT, `ota_dateTimestamp` TEXT, `ota_language` TEXT, `ota_languageCode` TEXT, " +
-            "`ota_languageCodeMobileApp` TEXT, `ota_text` TEXT, enabled INTEGER, " +
-            "`sparetext1` TEXT, `sparetext2` TEXT, `sparetext3` TEXT, " +
-            "`spareint1` INTEGER, `spareint2` INTEGER, `spareint3` INTEGER, " +
+            "`ota_languageCodeMobileApp` TEXT, `ota_text` TEXT, " +
             "PRIMARY KEY(`id`)) ";
 
     private static final String fields = "`VIN`, `userId`, `nickname`, `lastRefreshTime`, `lastUpdateTime`, " +
@@ -92,12 +90,13 @@ public abstract class VehicleInfoDatabase extends RoomDatabase {
             // Copy the data
             database.execSQL(
                     "INSERT INTO new_vehicle_info (" + fields + ") SELECT " + fields + " FROM vehicle_info");
-            database.execSQL(
-                    "UPDATE new_vehicle_info SET enabled = 1");
             // Remove the old table
             database.execSQL("DROP TABLE vehicle_info");
             // Change the table name to the correct one
             database.execSQL("ALTER TABLE new_vehicle_info RENAME TO vehicle_info");
+            // Add new column
+            database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN enabled INTEGER DEFAULT 1 NOT NULL");
         }
     };
 }

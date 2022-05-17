@@ -43,6 +43,8 @@ public class VehicleInfo {
 
     private boolean supportsOTA;
 
+    @ColumnInfo(defaultValue = "1")
+    @NonNull
     private Boolean enabled;
 
     public VehicleInfo() {
@@ -270,36 +272,4 @@ public class VehicleInfo {
             this.carStatus = carStatus;
         }
     }
-
-    private String sparetext1;
-    private String sparetext2;
-    private String sparetext3;
-    private Integer spareint1;
-    private Integer spareint2;
-    private Integer spareint3;
-
-    public String getSparetext1() { return sparetext1; }
-
-    public void setSparetext1(String sparetext) { this.sparetext1 = sparetext; }
-
-    public String getSparetext2() { return sparetext2; }
-
-    public void setSparetext2(String sparetext) { this.sparetext2 = sparetext; }
-
-    public String getSparetext3() { return sparetext3; }
-
-    public void setSparetext3(String sparetext) { this.sparetext3 = sparetext; }
-
-    public void setSpareint1(Integer spareint) { this.spareint1 = spareint; }
-
-    public Integer getSpareint1() { return spareint1; }
-
-    public void setSpareint2(Integer spareint) { this.spareint2 = spareint; }
-
-    public Integer getSpareint2() { return spareint2; }
-
-    public void setSpareint3(Integer spareint) { this.spareint3 = spareint; }
-
-    public Integer getSpareint3() { return spareint3; }
-
 }
