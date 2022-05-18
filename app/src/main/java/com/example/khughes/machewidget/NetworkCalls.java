@@ -436,6 +436,8 @@ public class NetworkCalls {
                                 LogFile.i(context, MainActivity.CHANNEL_ID, responseStatus.raw().toString());
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL.");
                             }
+                        } else {
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "OTA not supported: skipping check");
                         }
 
                         // If the vehicle info changed, commit
