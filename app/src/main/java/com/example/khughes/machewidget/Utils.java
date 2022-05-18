@@ -96,6 +96,12 @@ public class Utils {
     public static final String LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
     public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
 
+    public static final String LINE_SERIES_BRONCOSPORT_BASE_4x4 = "R9A";
+    public static final String LINE_SERIES_BRONCOSPORT_BIGBEND_4x4 = "R9B";
+    public static final String LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4 = "R9C";
+    public static final String LINE_SERIES_BRONCOSPORT_BADLANDS_4x4 = "R9D";
+    public static final String LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4 = "R9E";
+
     public static final String LINE_SERIES_EXPLORER_BASE_RWD = "K7B";
     public static final String LINE_SERIES_EXPLORER_XLT_RWD = "K7D";
     public static final String LINE_SERIES_EXPLORER_LIMITED_RWD = "K7F";
@@ -269,9 +275,27 @@ public class Utils {
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoLineSeries.contains(lineSeries);
     }
 
+    private static final Set<String> broncoSportLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_BRONCOSPORT_BASE_4x4);
+        tmpSet.add(LINE_SERIES_BRONCOSPORT_BIGBEND_4x4);
+        tmpSet.add(LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4);
+        tmpSet.add(LINE_SERIES_BRONCOSPORT_BADLANDS_4x4);
+        tmpSet.add(LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4);
+        broncoSportLineSeries = tmpSet;
+    }
+
+    public static boolean isBroncoSport(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoSportLineSeries.contains(lineSeries);
+    }
+
     // Check to see if we recognize a VIN in general
     public static boolean isVINRecognized(String VIN) {
-        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN);
+        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN);
     }
 
     private static final Set<String> fuelElectric;
@@ -314,7 +338,7 @@ public class Utils {
             return FUEL_ELECTRIC;
         }
         // Otherwise check the VIN
-        else if (isF150(VIN) || isBronco(VIN) || isExplorer(VIN)) {
+        else if (isF150(VIN) || isBronco(VIN) || isExplorer(VIN) || isBroncoSport(VIN)) {
             String fuelType = VIN.substring(FUEL_TYPE_START_INDEX, FUEL_TYPE_END_INDEX);
             if (fuelElectric.contains(fuelType)) {
                 return FUEL_ELECTRIC;
@@ -468,7 +492,7 @@ public class Utils {
                 } else if (isF150Raptor(VIN)) {
                     return raptorDrawables;
                 }
-            } else if (isBronco(VIN)) {
+            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
                 return broncobase4x4Drawables;
             } else if (isExplorer(VIN)) {
                 return explorerSTDrawables;
@@ -481,7 +505,7 @@ public class Utils {
         if (VIN != null && !VIN.equals("")) {
             if (isF150(VIN)) {
                 return R.layout.f150_widget;
-            } else if (isBronco(VIN)) {
+            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
                 return R.layout.bronco_widget;
             } else if (isExplorer(VIN)) {
                 return R.layout.explorer_widget;
@@ -787,7 +811,7 @@ public class Utils {
                 }.getType());
                 UserInfo current = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
                 if (current == null) {
-                    UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info);
+                    UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info); // BUG?
                 }
                 userIds.remove(info.getUserId());
             }
