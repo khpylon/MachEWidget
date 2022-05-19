@@ -23,6 +23,11 @@
         android:title="@string/action_chooseapp"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_vehicle"
+        android:orderInCategory="30"
+        android:title="@string/action_vehicle"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_backup"
         android:orderInCategory="30"
         android:title="@string/action_backup"

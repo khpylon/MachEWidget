@@ -14,6 +14,7 @@
     <string name="action_restore">Restore Settings</string>
     <string name="action_copylog">Save Logfile</string>
     <string name="action_update">Check For Update</string>
+    <string name="action_vehicle">Manage Vehicles</string>
     <string name="update_info">Update Information</string>
 
     <!-- Widget things -->
@@ -25,6 +26,9 @@
     <string name="last_ota_time">LastOTATime</string>
 
     <string name="profile_instructions">Click on a profile to log in with that VIN.  Click on an unused entry to create a login for a new vehicle.  Click on the "X" to delete a profile.</string>
+    <string name="vehicle_instructions">
+        Select which vehicles should be visible within the widget.  At least one vehicle must be selected.
+    </string>
 
     <!-- Preference Titles -->
     <string name="VIN">"Your vehicle's VIN"</string>

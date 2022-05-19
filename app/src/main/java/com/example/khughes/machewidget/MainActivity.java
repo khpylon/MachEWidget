@@ -386,6 +386,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ChooseApp.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_vehicle) {
+            Intent intent = new Intent(this, VehicleActivity.class);
+            startActivity(intent);
+            return true;
         } else if (id == R.id.action_ota_view) {
             Intent intent = new Intent(this, OTAViewActivity.class);
             startActivity(intent);
