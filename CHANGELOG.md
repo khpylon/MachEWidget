@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.05.20
+### Fixed
+- Widget should now show units of measure which match your FordPass settings.
+
 ## 2022.05.12
 ### Changed
 - The app has been renamed to "Ford Status Widget" in preparation for its eventual release on the Google Play store.
-- The app no longer changes icons to reflect the vehicle model.  Supporting this raised a few issues.  If there is interest, I may add a "Settings" option 
-  to allow the user to select the icon.
+- The app no longer changes icons to reflect the vehicle model.  Supporting this raised a few issues.  If there is interest, I may 
+  add a "Settings" option to allow the user to select the icon.
 - Saved settings now use a JSON file instead of a ZIP file. You can still restore from a ZIP file for the time
 being, but as I believe there are reliability issues when overwriting files this functionality will be removed in the
   near future.  If you use this feature, I highly recommend saving your settings now and removing the older ZIP files.
