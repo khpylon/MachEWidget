@@ -811,6 +811,7 @@ public class Utils {
                 }.getType());
                 UserInfo current = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
                 if (current == null) {
+                    info.setId(0);
                     UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info); // BUG?
                 }
                 userIds.remove(info.getUserId());
@@ -826,6 +827,7 @@ public class Utils {
                 newVIN = info.getVIN();
                 VehicleInfo current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(info.getVIN());
                 if (current == null) {
+                    info.setId(0);
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().insertVehicleInfo(info);
                 }
                 File image = new File(imageDir, newVIN + ".png");
