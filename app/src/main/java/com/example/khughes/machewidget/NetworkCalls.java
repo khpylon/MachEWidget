@@ -417,10 +417,10 @@ public class NetworkCalls {
                                 OTAStatus status = responseOTA.body();
 
                                 // Check to see if it looks like the vehicle support OTA updates
-                                if (status.getFuseResponse() == null || !Utils.OTASupportCheck(status.getOtaAlertStatus())) {
+                                if (!Utils.OTASupportCheck(status.getOtaAlertStatus())) {
                                     LogFile.i(context, MainActivity.CHANNEL_ID, "This vehicle doesn't support OTA updates.");
                                     info.setSupportsOTA(false);
-                                } else {
+                                } else if (status.getOtaAlertStatus() != null) {
                                     info.fromOTAStatus(status);
                                 }
                                 statusUpdated = true;
