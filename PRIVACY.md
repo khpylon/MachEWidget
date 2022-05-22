@@ -13,7 +13,8 @@ The terms used in this Privacy Policy have the same meanings as in the Terms and
 
 ### Information Collection and Use  
 In order to access information about your vehicle, we require you to provide your credentials (username and password) for your FordPass account.  This information is only stored on your device, in encrypted form, 
-if "Save log-in credentials" is enabled under "Settings".  The credentials are transmitted over the Internet using HTTPS/SSL connections.
+if "Save log-in credentials" is enabled under "Settings".  The credentials are transmitted over the Internet using HTTPS/SSL connections.  
+Credentials are deleted when "Save log-in credentials" is disabled.
 
 ### Cookies  
 The app does not use cookies.
