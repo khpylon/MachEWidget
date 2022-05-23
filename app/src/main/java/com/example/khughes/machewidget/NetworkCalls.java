@@ -29,7 +29,6 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -530,9 +529,9 @@ public class NetworkCalls {
             if (use_network) {
                 if (MainActivity.checkInternetConnection(context)) {
                     DigitalServicesService vehicleImageClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
+                    Integer angle = 1;
                     for (int retry = 2; retry >= 0; --retry) {
-                        final String angle = "1";
-                        Call<ResponseBody> call = vehicleImageClient.getVehicleImage(token, Constants.APID, VIN, modelYear, country, angle);
+                        Call<ResponseBody> call = vehicleImageClient.getVehicleImage(token, Constants.APID, VIN, modelYear, country, angle.toString());
                         try {
                             Response<ResponseBody> response = call.execute();
                             if (response.isSuccessful()) {
@@ -541,7 +540,14 @@ public class NetworkCalls {
                                 MainActivity.updateWidget(context);
                             } else {
                                 LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                                LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image UNSUCCESSFUL.");
+                                if (response.code() == Constants.HTTP_BAD_REQUEST && angle < 5) {
+                                    angle += 1;
+                                    retry += 1;
+                                    LogFile.i(context, MainActivity.CHANNEL_ID, " trying angle " + angle);
+                                    continue;
+                                } else {
+                                    LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image UNSUCCESSFUL.");
+                                }
                             }
                             break;
                         } catch (java.net.SocketTimeoutException ee) {
