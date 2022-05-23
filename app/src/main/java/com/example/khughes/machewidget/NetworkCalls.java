@@ -295,9 +295,6 @@ public class NetworkCalls {
                         String VIN = vehicle.getVin();
                         vehicleInfo.put(VIN, vehicle.getNickName());
                     }
-                    ArrayList<String> VINs = new ArrayList<>();
-                    VINs.addAll(VehicleInfoDatabase.getInstance(context)
-                            .vehicleInfoDao().findVINsByUserId(userInfo.getUserId()));
                     if (!vehicleInfo.isEmpty()) {
                         ProfileManager.updateProfile(context, userInfo, vehicleInfo);
                     }

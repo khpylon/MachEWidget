@@ -248,12 +248,17 @@ public class VehicleInfo {
 
     @Entity
     public class CarStatusInfo {
-        @PrimaryKey
-        @NonNull
+        @PrimaryKey(autoGenerate = true)
+        private int id;
+
         private String VIN;
 
         @Embedded
         private CarStatus carStatus;
+
+        public int getId() { return id; }
+
+        public void setId(int id) { this.id = id; }
 
         @NonNull
         public String getVIN() {
