@@ -11,6 +11,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.khughes.machewidget.VehicleInfo;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Database(entities = VehicleInfo.class, version = 2)
 public abstract class VehicleInfoDatabase extends RoomDatabase {
     private static VehicleInfoDatabase instance;
@@ -24,6 +27,10 @@ public abstract class VehicleInfoDatabase extends RoomDatabase {
         }
         return instance;
     }
+
+    private static final int NUMBER_OF_THREADS = 4;
+    public static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static void closeInstance() {
         if (instance != null) {
