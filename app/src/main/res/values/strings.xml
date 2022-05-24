@@ -66,6 +66,7 @@
     <string name="last_version_key">lastVersion</string>
     <string name="widget_mode_key">widget_mode</string>
     <string name="battery_opt_key">batteryOptimization</string>
+    <string name="userId_key">userId</string>
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>

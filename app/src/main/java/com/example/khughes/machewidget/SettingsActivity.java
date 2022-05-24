@@ -193,9 +193,11 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
 
-            // Hide the old version number
-            EditTextPreference oldVersion = findPreference(this.getResources().getString(R.string.last_version_key));
-            oldVersion.getParent().removePreference(oldVersion);
+            // Hide the old version number and user Id
+            for (int id : new int[]{R.string.last_version_key, R.string.userId_key}) {
+                EditTextPreference item = findPreference(this.getResources().getString(id));
+                item.getParent().removePreference(item);
+            }
         }
 
         @Override

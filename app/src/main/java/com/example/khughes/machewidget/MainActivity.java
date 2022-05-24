@@ -187,8 +187,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            // Re-enable OTA support on all vehicles
-            if (lastVersion.compareTo("2022.05.24") < 0) {
+            // Re-enable OTA support on all vehicles, adn add userId to settings.
+            if (lastVersion.compareTo("2022.05.25") < 0) {
+                PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
                 new Thread(() -> {
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateSupportOTA();
                 }).start();

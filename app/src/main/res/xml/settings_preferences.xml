@@ -6,6 +6,12 @@
         app:useSimpleSummaryProvider="true"
         app:enabled="false" />
 
+    <EditTextPreference
+        app:key="@string/userId_key"
+        app:defaultValue="0x0"
+        app:useSimpleSummaryProvider="true"
+        app:enabled="false" />
+
     <!--
     <ListPreference
         app:key="vintest"
