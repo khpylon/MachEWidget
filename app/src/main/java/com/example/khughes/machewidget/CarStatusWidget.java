@@ -771,8 +771,12 @@ public class CarStatusWidget extends AppWidgetProvider {
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                VehicleInfo vehicle;
-                UserInfo user;
+                UserInfo user = info[0].getUser();
+                if (user == null) {
+                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget.onUpdate(): no userinfo found");
+                    return;
+                }
+
                 String state = info[0].getUser().getProgramState();
 
                 // There may be multiple widgets active, so update all of them
