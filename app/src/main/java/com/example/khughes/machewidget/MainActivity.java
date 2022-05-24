@@ -187,6 +187,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            // Re-enable OTA support on all vehicles
+            if (lastVersion.compareTo("2022.05.24") < 0) {
+                new Thread(() -> {
+                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateSupportOTA();
+                }).start();
+            }
+
             // Update internally
             prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
         }
