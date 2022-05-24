@@ -45,6 +45,9 @@ public class Notifications extends BroadcastReceiver {
             VehicleInfoDao dao = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao();
             VehicleInfo vehInfo = dao.findVehicleInfoByVIN(VIN);
+            if (vehInfo == null) {
+                return;
+            }
             String lastLVBStatus = vehInfo.getLastLVBStatus();
             String currentLVBStatus = carStatus.getLVBStatus();
             if (currentLVBStatus != null && !currentLVBStatus.equals(lastLVBStatus)) {
@@ -92,6 +95,9 @@ public class Notifications extends BroadcastReceiver {
             VehicleInfoDao dao = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao();
             VehicleInfo vehInfo = dao.findVehicleInfoByVIN(VIN);
+            if (vehInfo == null) {
+                return;
+            }
             String lastTPMSStatus = vehInfo.getLastTPMSStatus();
 
             Map<String, String> currentTPMSStatus = new HashMap<String, String>();

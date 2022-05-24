@@ -22,6 +22,7 @@ public abstract class VehicleInfoDatabase extends RoomDatabase {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(), VehicleInfoDatabase.class, "vehicleinfo_db")
                     .addMigrations(MIGRATION_1_2)
+                    .fallbackToDestructiveMigration()
                     .setJournalMode(JournalMode.TRUNCATE)
                     .build();
         }

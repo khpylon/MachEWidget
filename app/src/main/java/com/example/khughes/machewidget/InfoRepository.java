@@ -19,9 +19,8 @@ public class InfoRepository {
     private final VehicleInfoDao mVehicleInfoDao;
     private final UserInfoDao mUserInfoDao;
     private final Context mContext;
-    private final String mVIN_key;
 
-    private List<VehicleInfo> mVehicleList;
+    private final List<VehicleInfo> mVehicleList;
     private VehicleInfo mVehicleInfo;
     private final List<UserInfo> mUserList;
     private UserInfo mUserInfo;
@@ -30,29 +29,26 @@ public class InfoRepository {
         mContext = context;
         mVehicleInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao();
         mUserInfoDao = UserInfoDatabase.getInstance(context).userInfoDao();
-        mVIN_key = context.getResources().getString(R.string.VIN_key);
 
         mVehicleList = mVehicleInfoDao.findVehicleInfo();
         mUserList = mUserInfoDao.findUserInfo();
 
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(mVIN_key, null);
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), null);
         mVehicleInfo = new VehicleInfo();
-        mUserInfo = new UserInfo();
         if (VIN != null) {
             mVehicleInfo = mVehicleInfoDao.findVehicleInfoByVIN(VIN);
-            if (mVehicleInfo != null) {
-                String userId = mVehicleInfo.getUserId();
-                if (userId != null) {
-                    mUserInfo = mUserInfoDao.findUserInfo(mVehicleInfo.getUserId());
-                } else {
-                    LogFile.e(context, MainActivity.CHANNEL_ID, "InfoRepository(): userId " + mVehicleInfo.getUserId() +
-                            " not found in database for VIN " + VIN);
-                    List<UserInfo> users = mUserInfoDao.findUserInfo();
-                    if (users.size() > 0) {
-                        mUserInfo = users.get(0);
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "InfoRepository(): fallback to userId " + mUserInfo.getUserId());
-                    }
-                }
+        }
+
+        String userId = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.userId_key), null);
+        mUserInfo = new UserInfo();
+        if (userId != null) {
+            mUserInfo = mUserInfoDao.findUserInfo(userId);
+        } else {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "InfoRepository(): default settings userId is null");
+            List<UserInfo> users = mUserInfoDao.findUserInfo();
+            if (users.size() > 0) {
+                mUserInfo = users.get(0);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "InfoRepository(): fallback to userId " + mUserInfo.getUserId());
             }
         }
     }
@@ -70,6 +66,20 @@ public class InfoRepository {
 
     public UserInfo getUser() {
         return mUserInfo;
+    }
+
+    public List<VehicleInfo> getVehicles() {
+        return mVehicleList;
+    }
+
+    public ArrayList<String> getVehiclesVINsByUserId(String userId) {
+        ArrayList<String> VINs = new ArrayList<>();
+        for(VehicleInfo vehicleInfo: mVehicleList) {
+            if(userId.equals(vehicleInfo.getUserId())) {
+                VINs.add(vehicleInfo.getVIN());
+            }
+        }
+        return VINs;
     }
 
 //    public void updateProfiles(String userId) {

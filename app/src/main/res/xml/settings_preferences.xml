@@ -8,7 +8,7 @@
 
     <EditTextPreference
         app:key="@string/userId_key"
-        app:defaultValue="0x0"
+        app:defaultValue=""
         app:useSimpleSummaryProvider="true"
         app:enabled="false" />
 

@@ -66,8 +66,6 @@ public class OTAViewActivity extends AppCompatActivity {
     }
 
     public static long getLastOTATimeInMillis(Context context, String format) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0");
         if (lastOTATime.contains(":")) {

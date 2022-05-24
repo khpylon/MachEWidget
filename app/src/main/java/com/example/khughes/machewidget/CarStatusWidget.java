@@ -29,9 +29,6 @@ import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
-import com.example.khughes.machewidget.db.UserInfoDatabase;
-import com.example.khughes.machewidget.db.VehicleInfoDao;
-import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -216,8 +213,6 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId, InfoRepository info) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
         RemoteViews views = getWidgetView(context);
 
         // Make sure the left side is visible depending on the widget width
@@ -230,21 +225,20 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Set background transparency
         setBackground(context, views);
 
+        VehicleInfo vehicleInfo = info.getVehicle();
+        UserInfo userInfo = info.getUser();
+        if (vehicleInfo == null || userInfo == null) {
+            return;
+        }
+
+        String VIN = vehicleInfo.getVIN();
+
         // If the vehicle image has been downloaded, update it
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
         File image = new File(imageDir, VIN + ".png");
         if (image.exists()) {
             String path = image.getPath();
             views.setImageViewBitmap(R.id.logo, BitmapFactory.decodeFile(path));
-        }
-
-        VehicleInfo vehicleInfo = info.getVehicle();
-        if (vehicleInfo == null) {
-            return;
-        }
-        UserInfo userInfo = info.getUser();
-        if (userInfo == null) {
-            return;
         }
 
         // Display the vehicle's nickname
@@ -320,7 +314,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.lastRefresh, refresh);
 
         // Get conversion factors for Metric vs Imperial measurement units
-        StoredData appInfo = new StoredData(context);
         int units = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(
                         context.getResources().getString(R.string.units_key),
@@ -627,9 +620,6 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId, InfoRepository info) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        int fuelType = Utils.getFuelType(VIN);
-
         RemoteViews views = getWidgetView(context);
 
         // Make sure the left side is visible depending on the widget width
@@ -641,10 +631,15 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Set background transparency
         setBackground(context, views);
 
+        String VIN;
         VehicleInfo vehInfo = info.getVehicle();
         if (vehInfo != null) {
             views.setTextViewText(R.id.profile, vehInfo.getNickname());
+            VIN = vehInfo.getVIN();
+        } else {
+            VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         }
+        int fuelType = Utils.getFuelType(VIN);
 
         // Reset everything else
         views.setTextViewText(R.id.lastRefresh, "Not logged in");
@@ -771,8 +766,6 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
         final InfoRepository[] info = {null};
 
         Handler handler = new Handler(Looper.getMainLooper()) {
@@ -898,7 +891,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         // The remaining actions need to wait for info from the databases
-        InfoRepository info[] = {null};
+        InfoRepository[] info = {null};
 
         final Gson gson = new Gson();
         Handler handler = new Handler(Looper.getMainLooper()) {
@@ -958,7 +951,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         };
 
         new Thread(() -> {
-            info[0] = new InfoRepository(context );
+            info[0] = new InfoRepository(context);
             handler.sendEmptyMessage(0);
         }).start();
 

@@ -27,6 +27,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -689,7 +690,7 @@ public class Utils {
         return apkFile;
     }
 
-    private static final int JSON_SETTINGS_VERSION = 1;
+    private static final int JSON_SETTINGS_VERSION = 2;
 
     public static void savePrefs(Context context) {
 
@@ -794,6 +795,9 @@ public class Utils {
                 imageDir.mkdir();
             }
 
+            JsonPrimitive versionItem = jsonObject.getAsJsonPrimitive("version");
+            int version = versionItem.getAsInt();
+
             // Get the current set of user IDs and VINs
             ArrayList<String> userIds = new ArrayList<>();
             for (UserInfo info : UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
@@ -818,6 +822,7 @@ public class Utils {
             }
 
             String newVIN = "";
+            String newUserId = "";
             // Insert missing VINs into the database, and remove all VINs from the current list
             JsonArray vehicles = jsonObject.getAsJsonArray("vehicles");
             for (JsonElement items : vehicles) {
@@ -825,6 +830,7 @@ public class Utils {
                 }.getType());
                 // Save a valid VIN in case we need to change the current VIN
                 newVIN = info.getVIN();
+                newUserId = info.getUserId();
                 VehicleInfo current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(info.getVIN());
                 if (current == null) {
                     info.setId(0);
@@ -843,6 +849,12 @@ public class Utils {
             String currentVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "");
             if(VINs.contains(currentVIN)) {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putString(VINkey, newVIN).apply();
+            }
+
+            // Version 1 preferences didn't include user Id
+            if(version == 1) {
+                String UserIdkey = context.getResources().getString(R.string.userId_key);
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(UserIdkey, newUserId).apply();
             }
 
             // Any user IDs or VINs which weren't restored get deleted

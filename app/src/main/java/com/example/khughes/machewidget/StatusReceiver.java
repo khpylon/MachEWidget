@@ -32,29 +32,25 @@ public class StatusReceiver extends BroadcastReceiver {
         mContext = context;
         nextAlarm(mContext);
 
-        String VIN = PreferenceManager.getDefaultSharedPreferences(mContext).getString(mContext.getResources().getString(R.string.VIN_key), "");
-        if (VIN.equals("")) {
-            LogFile.e(mContext, MainActivity.CHANNEL_ID, "StatusReceiver: VIN is empty!?");
-            return;
-        }
-
         StoredData appInfo = new StoredData(context);
-        InfoRepository info[] = {null};
+        InfoRepository[] info = {null};
 
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 UserInfo userInfo = info[0].getUser();
+                if (userInfo == null) {
+                    LogFile.d(mContext, MainActivity.CHANNEL_ID, "StatusReceiver: no userinfo found");
+                    return;
+                }
                 long timeout = userInfo.getExpiresIn();
                 LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
                 long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-                String token = userInfo.getAccessToken();
-                String userId = userInfo.getUserId();
-
                 // Store time when we run the update;
                 appInfo.setLastAlarmTime();
 
+                String userId = userInfo.getUserId();
                 String state = userInfo.getProgramState();
 
                 LogFile.d(mContext, MainActivity.CHANNEL_ID,
@@ -109,9 +105,7 @@ public class StatusReceiver extends BroadcastReceiver {
                             getRefresh(userId, userInfo.getRefreshToken());
                         } else {
                             LogFile.d(mContext, MainActivity.CHANNEL_ID, "Token good? Just grab info");
-                            String language = userInfo.getLanguage();
-                            String country = userInfo.getCountry();
-                            getStatus(token, language, country);
+                            getStatus(userId);
                         }
                         appInfo.incCounter(StoredData.STATUS_UPDATED);
                         break;
@@ -159,10 +153,8 @@ public class StatusReceiver extends BroadcastReceiver {
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Access: " + action);
                 if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
-                    String accessToken = bb.getString("access_token");
-                    String country= bb.getString("country");
-                    String language = bb.getString("language");
-                    getStatus(accessToken, language, country);
+                    String userId = bb.getString("access_token");
+                    getStatus(userId);
                 }
             }
         };
@@ -177,10 +169,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Refresh: " + action);
                 if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
-                    String accessToken = bb.getString("access_token");
-                    String country= bb.getString("country");
-                    String language = bb.getString("language");
-                    getStatus(accessToken, language, country);
+                    getStatus(userId);
                 } else if (action.equals(Constants.STATE_INITIAL_STATE)) {
                     String username = "";
                     String password = "";
@@ -203,19 +192,19 @@ public class StatusReceiver extends BroadcastReceiver {
         NetworkCalls.getUserVehicles(h, mContext, userId);
     }
 
-    private void getStatus(String token, String language, String country) {
+    private void getStatus(String userId) {
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Status: " + action);
-                if(action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     MainActivity.updateWidget(mContext);
                 }
             }
         };
-        NetworkCalls.getStatus(h, mContext, token, language, country);
+        NetworkCalls.getStatus(h, mContext, userId);
     }
 
     public static void nextAlarm(Context context) {

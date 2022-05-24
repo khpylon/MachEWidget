@@ -48,6 +48,7 @@ public class VehicleInfo {
     private Boolean enabled;
 
     public VehicleInfo() {
+        id = 0; // for new database entries, this will generate a new id
         lastRefreshTime = 0;
         lastUpdateTime = 0;
         lastLVBStatus = "STATUS_GOOD";

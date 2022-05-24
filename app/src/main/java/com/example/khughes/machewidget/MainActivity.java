@@ -79,16 +79,12 @@ public class MainActivity extends AppCompatActivity {
         context.sendBroadcast(updateIntent);
 
         // If app has been running OK, try to initiate status updates
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        if (!VIN.equals("")) {
+        String userId = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.userId_key), null);
+        if (userId != null) {
             new Thread(() -> {
-                VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
-                        .vehicleInfoDao().findVehicleInfoByVIN(VIN);
-                String userId = vehInfo.getUserId();
-                UserInfo userInfo = UserInfoDatabase.getInstance(context)
-                        .userInfoDao().findUserInfo(userId);
-                String state = userInfo.getProgramState();
-                if (state.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
+                InfoRepository info = new InfoRepository(context);
+                UserInfo userInfo = info.getUser();
+                if (userInfo != null && userInfo.getProgramState().equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     StatusReceiver.initateAlarm(context);
                 }
             }).start();
@@ -106,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
 
+        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         String indexPage = "https://appassets.androidplatform.net/assets/index_mache.html";
         if (!VIN.equals("")) {
             if (Utils.isBronco(VIN)) {
@@ -131,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         String lastVersion = prefs.getString(context.getResources().getString(R.string.last_version_key), "");
 
         // See if we need to upgrade anything since the last version
-        if (BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
+        if (!lastVersion.equals("") && BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
             LogFile.i(context, CHANNEL_ID, "running updates");
 
             // Add operations here
@@ -187,11 +184,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            // Re-enable OTA support on all vehicles, adn add userId to settings.
+            // Re-enable OTA support on all vehicles, and add userId to settings.
             if (lastVersion.compareTo("2022.05.25") < 0) {
                 PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+                String VIN = sharedPrefs.getString(context.getResources().getString(R.string.VIN_key), null);
+
                 new Thread(() -> {
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateSupportOTA();
+                    if (VIN != null) {
+                        VehicleInfo info = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(VIN);
+                        String userId = info.getUserId();
+                        if (userId != null) {
+                            sharedPrefs.edit().putString(context.getResources().getString(R.string.userId_key), userId).commit();
+                        }
+                    }
+
                 }).start();
             }
 
