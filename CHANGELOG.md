@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2022.05.2x
+## 2022.05.25
 ### Changed
+- Temporarily allow unsupported vehicles to be recognized by the app.  The widget will use the Mach-E silhouette for these vehicles.  If your vehicle isn't supported,
+  please upload logs showing car status and OTA information to GitHub.
+- Use different logic for determining when a vehicle doesn't support OTA updates.
 
 ### Fixed
+- Database bug which caused entries in the vehicle database to have missing information. 
+- Attempt to download alternative vehicles images if the first attempt returns an error.
 
 ## 2022.05.20
 ### Fixed
