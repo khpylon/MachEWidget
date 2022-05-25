@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -186,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
 
             // Re-enable OTA support on all vehicles, and add userId to settings.
             if (lastVersion.compareTo("2022.05.25") < 0) {
+                LogFile.d(context,MainActivity.CHANNEL_ID,"running 2022.05.25 updates");
+
                 PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
                 String VIN = sharedPrefs.getString(context.getResources().getString(R.string.VIN_key), null);
@@ -195,10 +198,22 @@ public class MainActivity extends AppCompatActivity {
                     if (VIN != null) {
                         VehicleInfo info = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(VIN);
                         String userId = info.getUserId();
-                        if (userId != null) {
-                            sharedPrefs.edit().putString(context.getResources().getString(R.string.userId_key), userId).commit();
+                        // Some vehicle entries had missing userID value.  If so, get the user ID from the first entry
+                        // of the user database and update all vehicles
+                        if (userId == null) {
+                            LogFile.d(context,MainActivity.CHANNEL_ID,"2022.05.25 update: adding user ID to vehicles");
+                            List<UserInfo> userInfo = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo();
+                            if(!userInfo.isEmpty()) {
+                                userId = userInfo.get(0).getUserId();
+                                for(VehicleInfo vehInfo: VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {
+                                    vehInfo.setUserId(userId);
+                                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateVehicleInfo(vehInfo);
+                                }
+                            }
                         }
+                        sharedPrefs.edit().putString(context.getResources().getString(R.string.userId_key), userId).commit();
                     }
+
 
                 }).start();
             }
