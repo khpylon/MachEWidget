@@ -281,27 +281,25 @@ public class NetworkCalls {
                     RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
                     Call<UserDetails> call = userDetailsClient.getUserDetails(token, Constants.APID, country, body);
                     Response<UserDetails> response = call.execute();
-                    if (!response.isSuccessful()) {
-                        LogFile.i(context, MainActivity.CHANNEL_ID, "getVehicles UNSUCCESSFUL.");
+                    if (response.isSuccessful()) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "getVehicles successful.");
+                        UserDetails userDetails = response.body();
+                        String lastModified = userDetails.getUserVehicles().getStatus().getLastModified();
+                        userDao.updateLastModified(lastModified, userId);
+                        Map<String, String> vehicleInfo = new HashMap<>();
+                        for (UserDetails.VehicleDetail vehicle : userDetails.getUserVehicles().getVehicleDetails()) {
+                            String VIN = vehicle.getVin();
+                            vehicleInfo.put(VIN, vehicle.getNickName());
+                        }
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "getVehicles " + vehicleInfo);
+                        if (!vehicleInfo.isEmpty()) {
+                            ProfileManager.updateProfile(context, userInfo, vehicleInfo);
+                        }
+                        nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                         break;
                     }
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "getVehicles successful.");
-
-                    UserDetails userDetails = response.body();
-                    String lastModified = userDetails.getUserVehicles().getStatus().getLastModified();
-                    userDao.updateLastModified(lastModified, userId);
-                    Map<String, String> vehicleInfo = new HashMap<>();
-                    for (UserDetails.VehicleDetail vehicle : userDetails.getUserVehicles().getVehicleDetails()) {
-                        String VIN = vehicle.getVin();
-                        vehicleInfo.put(VIN, vehicle.getNickName());
-                    }
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "getVehicles " + vehicleInfo);
-                    if (!vehicleInfo.isEmpty()) {
-                        ProfileManager.updateProfile(context, userInfo, vehicleInfo);
-                    }
-                    nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
-                    break;
-
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "getVehicles UNSUCCESSFUL.");
+                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
                 } catch (java.net.SocketTimeoutException ee) {
                     LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getUserVehicles");
                     LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
@@ -523,6 +521,10 @@ public class NetworkCalls {
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
         if (!imageDir.exists()) {
             imageDir.mkdir();
+        }
+        File image = new File(filePath.toString());
+        if(image.exists()) {
+            return;
         }
 
         Thread t = new Thread(() -> {
