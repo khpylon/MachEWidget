@@ -120,6 +120,23 @@ public class Utils {
     public static final String LINE_SERIES_EXPLORER_STLINE_4WD = "K8K";
     public static final String LINE_SERIES_EXPLORER_TIMBERLINE_4WD = "K8J";
 
+    public static final String LINE_SERIES_ESCAPE_S_RWD = "U0F";
+    public static final String LINE_SERIES_ESCAPE_SE_RWD = "U0G";
+    public static final String LINE_SERIES_ESCAPE_SEL_RWD = "U0H";
+    public static final String LINE_SERIES_ESCAPE_SE_FHEV_RWD = "U0B";
+    public static final String LINE_SERIES_ESCAPE_SEL_FHEV_RWD = "U0C";
+    public static final String LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD = "U0D";
+    public static final String LINE_SERIES_ESCAPE_SE_PHEV_RWD = "U0E";
+    public static final String LINE_SERIES_ESCAPE_SEL_PHEV_RWD = "U0K";
+    public static final String LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD = "U0L";
+    public static final String LINE_SERIES_ESCAPE_S_4WD = "U9F";
+    public static final String LINE_SERIES_ESCAPE_SE_4WD = "U9G";
+    public static final String LINE_SERIES_ESCAPE_SEL_4WD = "U9H";
+    public static final String LINE_SERIES_ESCAPE_TITANIUM_4WD = "U9J";
+    public static final String LINE_SERIES_ESCAPE_SE_FHEV_4WD = "U9B";
+    public static final String LINE_SERIES_ESCAPE_SEL_FHEV_4WD = "U9C";
+    public static final String LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD = "U9D";
+
     public static final int FUEL_TYPE_START_INDEX = 8 - 1;
     public static final int FUEL_TYPE_END_INDEX = 8;
     public static final String HYBRID_TRUCK_2_5_LITER = "3";
@@ -294,9 +311,39 @@ public class Utils {
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoSportLineSeries.contains(lineSeries);
     }
 
+    private static final Set<String> escapeLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_ESCAPE_S_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_FHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_FHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_PHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_PHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_S_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_FHEV_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_FHEV_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD);
+        escapeLineSeries = tmpSet;
+    }
+
+    public static boolean isEscape(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && escapeLineSeries.contains(lineSeries);
+    }
+
     // Check to see if we recognize a VIN in general
     public static boolean isVINRecognized(String VIN) {
-        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN);
+        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN)
+                | isEscape(VIN);
     }
 
     private static final Set<String> fuelElectric;
@@ -352,18 +399,6 @@ public class Utils {
             }
         } else {
             return FUEL_ELECTRIC;
-        }
-    }
-
-    public static String getWMI(String VIN) {
-        if (isF150(VIN)) {
-            return WIDGETMODE_F150;
-        } else if (isBronco(VIN)) {
-            return WIDGETMODE_BRONCO;
-        } else if (isExplorer(VIN)) {
-            return WIDGETMODE_EXPLORER;
-        } else {
-            return WIDGETMODE_MACHE;
         }
     }
 
@@ -480,7 +515,22 @@ public class Utils {
         explorerSTDrawables = tmpMap;
     }
 
-    // Get the set of drawables for a particular style of F-150
+    // Drawables for Escape
+    private static final Map<String, Integer> escapeDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe);
+        tmpMap.put(HOOD, R.drawable.mache_frunk);
+        tmpMap.put(TAILGATE, R.drawable.mache_hatch);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor);
+        escapeDrawables = tmpMap;
+    }
+
+    // Get the set of drawables for a particular style of vehicle
     public static Map<String, Integer> getVehicleDrawables(String VIN) {
         if (VIN != null && !VIN.equals("")) {
             if (isF150(VIN)) {
@@ -497,6 +547,8 @@ public class Utils {
                 return broncobase4x4Drawables;
             } else if (isExplorer(VIN)) {
                 return explorerSTDrawables;
+            } else if (isEscape(VIN)) {
+                return escapeDrawables;
             }
         }
         return macheDrawables;
@@ -510,6 +562,8 @@ public class Utils {
                 return R.layout.bronco_widget;
             } else if (isExplorer(VIN)) {
                 return R.layout.explorer_widget;
+            } else if (isEscape(VIN)) {
+                return R.layout.escape_widget;
             }
         }
         return R.layout.mache_widget;
