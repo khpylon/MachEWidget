@@ -152,9 +152,9 @@ public class StatusReceiver extends BroadcastReceiver {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Access: " + action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
-                    String userId = bb.getString("access_token");
-                    getStatus(userId);
+                if (action.equals(Constants.STATE_HAVE_TOKEN)) {
+                    String userId = bb.getString("usedId");
+                    getVehicleInfo(userId);
                 }
             }
         };
@@ -170,10 +170,6 @@ public class StatusReceiver extends BroadcastReceiver {
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Refresh: " + action);
                 if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     getStatus(userId);
-                } else if (action.equals(Constants.STATE_INITIAL_STATE)) {
-                    String username = "";
-                    String password = "";
-                    getAccess(username, password);
                 }
             }
         };
@@ -186,7 +182,10 @@ public class StatusReceiver extends BroadcastReceiver {
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 String action = bb.getString("action");
-                LogFile.i(mContext, MainActivity.CHANNEL_ID, "Status: " + action);
+                if(action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
+                    getStatus(userId);
+                }
+                LogFile.i(mContext, MainActivity.CHANNEL_ID, "VehicleInfo: " + action);
             }
         };
         NetworkCalls.getUserVehicles(h, mContext, userId);

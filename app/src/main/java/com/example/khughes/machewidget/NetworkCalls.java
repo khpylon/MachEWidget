@@ -60,16 +60,9 @@ public class NetworkCalls {
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
-            if (intent.hasExtra("userId")) {
-                getUserVehicles(context, intent.getStringExtra("userId"));
-            }
-        });
-        t.start();
-    }
-
-    public static void getUserVehicles(Handler handler, Context context, String userId) {
-        Thread t = new Thread(() -> {
-            NetworkCalls.getUserVehicles(context, userId);
+//            if (intent.hasExtra("userId")) {
+//                getUserVehicles(context, intent.getStringExtra("userId"));
+//            }
         });
         t.start();
     }
@@ -102,7 +95,7 @@ public class NetworkCalls {
                         call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
                         Response<AccessToken> response = call.execute();
                         if (!response.isSuccessful()) {
-                            break;
+                            continue;
                         }
                         accessToken = response.body();
                         token = accessToken.getAccessToken();
@@ -117,7 +110,7 @@ public class NetworkCalls {
                         call = OAuth2Client.getAccessToken(body);
                         Response<AccessToken> response = call.execute();
                         if (!response.isSuccessful()) {
-                            break;
+                            continue;
                         }
 
                         nextState = Constants.STATE_HAVE_TOKEN;
@@ -254,15 +247,28 @@ public class NetworkCalls {
         return data;
     }
 
-    private static void getUserVehicles(Context context, String userId) {
-        UserInfoDao userDao = UserInfoDatabase.getInstance(context).userInfoDao();
+    public static void getUserVehicles(Handler handler, Context context, String userId) {
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.getUserVehicles(context, userId);
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
+        });
+        t.start();
+    }
+
+    private static Intent getUserVehicles(Context context, String userId) {
+        Intent data = new Intent();
         String nextState = Constants.STATE_HAVE_TOKEN;
+
+        UserInfoDao userDao = UserInfoDatabase.getInstance(context).userInfoDao();
         UserInfo userInfo = userDao.findUserInfo(userId);
         if (userInfo == null) {
             LogFile.e(context, MainActivity.CHANNEL_ID, "NetworkCalls.getUserVehicles(): userInfo is null for userId " + userId);
-            userDao.updateProgramState(nextState, userId);
-            return;
+            data.putExtra("action", nextState);
+            return data;
         }
+
         String token = userInfo.getAccessToken();
         String country = userInfo.getCountry();
 
@@ -317,7 +323,8 @@ public class NetworkCalls {
             }
         }
         userDao.updateProgramState(nextState, userId);
-        return;
+        data.putExtra("action", nextState);
+        return data;
     }
 
     public static void getStatus(Handler handler, Context context, String userId) {
