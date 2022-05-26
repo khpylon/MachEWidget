@@ -271,6 +271,10 @@ public class LoginActivity extends AppCompatActivity {
 
                     Toast.makeText(getApplicationContext(), "Log-in successful; updating in 5 seconds.", Toast.LENGTH_SHORT).show();
                     StatusReceiver.nextAlarm(context,5);
+                    Intent data = new Intent();
+                    data.putExtra(VINIDENTIFIER, VIN);
+                    setResult(Activity.RESULT_OK, data);
+                    finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "Unable to login to server: check your username and/or password?", Toast.LENGTH_LONG).show();
                 }
