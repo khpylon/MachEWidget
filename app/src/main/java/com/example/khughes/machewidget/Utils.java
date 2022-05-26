@@ -12,9 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.util.JsonReader;
 import android.util.Log;
-import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
@@ -33,13 +31,10 @@ import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -48,7 +43,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -700,7 +694,7 @@ public class Utils {
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
             StringBuilder log = new StringBuilder();
-            String line = "";
+            String line;
             while ((line = bufferedReader.readLine()) != null) {
                 log.append(line + "\n");
             }
@@ -942,14 +936,19 @@ public class Utils {
             for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
                 String key = item.getKey();
                 JsonArray value = item.getValue().getAsJsonArray();
-                if (value.get(0).getAsString().equals("String")) {
-                    edit.putString(key, value.get(1).getAsString()).commit();
-                } else if (value.get(0).getAsString().equals("Long")) {
-                    edit.putLong(key, value.get(1).getAsLong()).commit();
-                } else if (value.get(0).getAsString().equals("Integer")) {
-                    edit.putInt(key, value.get(1).getAsInt()).commit();
-                } else {
-                    edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+                switch (value.get(0).getAsString()) {
+                    case "String":
+                        edit.putString(key, value.get(1).getAsString()).commit();
+                        break;
+                    case "Long":
+                        edit.putLong(key, value.get(1).getAsLong()).commit();
+                        break;
+                    case "Integer":
+                        edit.putInt(key, value.get(1).getAsInt()).commit();
+                        break;
+                    default:
+                        edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+                        break;
                 }
             }
 
