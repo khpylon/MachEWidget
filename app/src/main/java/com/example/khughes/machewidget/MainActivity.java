@@ -213,12 +213,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                         sharedPrefs.edit().putString(context.getResources().getString(R.string.userId_key), userId).commit();
                     }
-
-
                 }).start();
             }
 
-            // Update internally
+            // Re-enable OTA support on all vehicles, and add userId to settings.
+            if (lastVersion.compareTo("2022.05.xx") < 0) {
+                PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
+            }
+
+                // Update internally
             prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
         }
     }
