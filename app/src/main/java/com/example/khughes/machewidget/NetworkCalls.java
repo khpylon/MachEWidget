@@ -351,14 +351,29 @@ public class NetworkCalls {
         Intent data = new Intent();
         String nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
 
-        LogFile.d(context, MainActivity.CHANNEL_ID, "userId = "+userId);
+        LogFile.d(context, MainActivity.CHANNEL_ID, "userId = " + userId);
         LogFile.d(context, MainActivity.CHANNEL_ID, "getting status for " + infoDao.findVehicleInfoByUserId(userId).size() + " vehicles");
 
         for (VehicleInfo info : infoDao.findVehicleInfoByUserId(userId)) {
-            boolean statusUpdated = false;
-            boolean supportsOTA = info.isSupportsOTA();
             String VIN = info.getVIN();
             LogFile.i(context, MainActivity.CHANNEL_ID, "getting status for VIN " + VIN);
+
+            boolean forceUpdate = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.forceUpdate_key), false);
+
+            if(forceUpdate) {
+                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+                long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                long lasttime = info.getLastRefreshTime();
+
+                LogFile.d(context, MainActivity.CHANNEL_ID, "last refresh was " + (nowtime - lasttime) / (1000*60) + " min ago");
+
+                if ((nowtime - lasttime) / 1000 > 3 * 60 && info.getCarStatus() != null && !info.getCarStatus().getDeepSleep() && info.getCarStatus().getLVBVoltage() >= 13) {
+                    updateStatus(context, info.getVIN(), userInfo.getAccessToken());
+                }
+            }
+
+            boolean statusUpdated = false;
+            boolean supportsOTA = info.isSupportsOTA();
             if (MainActivity.checkInternetConnection(context)) {
                 USAPICVService statusClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
                 DigitalServicesService OTAstatusClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
@@ -393,8 +408,8 @@ public class NetworkCalls {
                                     info.setLastRefreshTime(currentRefreshTime);
                                     statusUpdated = true;
                                 }
-                                Notifications.checkLVBStatus(context, car, VIN);
-                                Notifications.checkTPMSStatus(context, car, VIN);
+                                Notifications.checkLVBStatus(context, car, info);
+                                Notifications.checkTPMSStatus(context, car, info);
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
                             } else {
                                 nextState = Constants.STATE_HAVE_TOKEN;
@@ -530,7 +545,7 @@ public class NetworkCalls {
             imageDir.mkdir();
         }
         File image = new File(filePath.toString());
-        if(image.exists()) {
+        if (image.exists()) {
             return;
         }
 
@@ -716,4 +731,88 @@ public class NetworkCalls {
             return COMMAND_EXCEPTION;
         }
     }
+
+    private static Intent updateStatus(Context context, String VIN, String token) {
+        Intent data = new Intent();
+
+        if (!MainActivity.checkInternetConnection(context)) {
+            data.putExtra("action", COMMAND_NO_NETWORK);
+        } else {
+            USAPICVService commandServiceClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
+            Call<CommandStatus> call;
+            call = commandServiceClient.putStatus(token, Constants.APID, VIN);
+            try {
+                Response<CommandStatus> response = call.execute();
+                if (response.isSuccessful()) {
+                    CommandStatus status = response.body();
+                    if (status.getStatus() == CMD_STATUS_SUCCESS) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send successful.");
+                        Looper.prepare();
+                        Toast.makeText(context, "Command transmitted.", Toast.LENGTH_SHORT).show();
+                        data.putExtra("action", pollStatus(context, token, VIN, status.getCommandId()));
+                    } else if (status.getStatus() == CMD_REMOTE_START_LIMIT) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.");
+                        data.putExtra("action", COMMAND_REMOTE_START_LIMIT);
+                    } else {
+                        data.putExtra("action", COMMAND_EXCEPTION);
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send unknown response.");
+                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                    }
+                } else {
+                    data.putExtra("action", COMMAND_FAILED);
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.");
+                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                }
+            } catch (Exception e) {
+                data.putExtra("action", COMMAND_EXCEPTION);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e);
+            }
+        }
+        return data;
+    }
+
+    private static String pollStatus(Context context, String token, String VIN, String idCode) {
+        // Delay 5 seconds before starting to check on status
+        try {
+            Thread.sleep(10 * 1000);
+        } catch (InterruptedException e) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e);
+        }
+
+        USAPICVService commandServiceClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
+        try {
+            for (int retries = 0; retries < 10; ++retries) {
+                Call<CarStatus> call = commandServiceClient.pollStatus(token, Constants.APID, VIN, idCode);
+                Response<CarStatus> response = call.execute();
+                if (response.isSuccessful()) {
+                    CarStatus status = response.body();
+                    switch (status.getStatus()) {
+                        case CMD_STATUS_SUCCESS:
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response successful.");
+                            return COMMAND_SUCCESSFUL;
+                        case CMD_STATUS_FAILED:
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response failed.");
+                            return COMMAND_FAILED;
+                        case CMD_STATUS_INPROGRESS:
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response waiting.");
+                            break;
+                        default:
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response unknown: status = " + status.getStatus());
+                            return COMMAND_FAILED;
+                    }
+                } else {
+                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                    LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response UNSUCCESSFUL.");
+                    return COMMAND_FAILED;
+                }
+                Thread.sleep(3 * 1000);
+            }
+            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD timeout?");
+            return COMMAND_FAILED;
+        } catch (Exception e) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e);
+            return COMMAND_EXCEPTION;
+        }
+    }
+
 }

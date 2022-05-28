@@ -67,6 +67,7 @@
     <string name="widget_mode_key">widget_mode</string>
     <string name="battery_opt_key">batteryOptimization</string>
     <string name="userId_key">userId</string>
+    <string name="forceUpdate_key">forceUpdate</string>
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>

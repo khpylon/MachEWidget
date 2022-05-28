@@ -851,9 +851,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             ProfileManager.changeProfile(context);
             return;
         } else if (action.equals(WIDGET_CLICK)) {
-            String activity = ".MainActivity";
-            intent = new Intent();
-            intent.setComponent(new ComponentName(context.getPackageName(), context.getPackageName() + activity));
+            intent = new Intent(context, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return;
