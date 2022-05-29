@@ -367,7 +367,7 @@ public class NetworkCalls {
 
                 LogFile.d(context, MainActivity.CHANNEL_ID, "last refresh was " + (nowtime - lasttime) / (1000*60) + " min ago");
 
-                if ((nowtime - lasttime) / 1000 > 3 * 60 && info.getCarStatus() != null && !info.getCarStatus().getDeepSleep() && info.getCarStatus().getLVBVoltage() >= 13) {
+                if ((nowtime - lasttime) / 1000 > 6 * 60 && info.getCarStatus() != null && !info.getCarStatus().getDeepSleep() && info.getCarStatus().getLVBVoltage() > 12) {
                     updateStatus(context, info.getVIN(), userInfo.getAccessToken());
                 }
             }
