@@ -116,9 +116,8 @@
             app:key="@string/forceUpdate_key"
             app:defaultValue="false"
             app:enabled="true"
-            app:title="Force updates"
-            app:summary="If vehicle data is more than 3 hours old, force an update.  WARNING: This may cause a drain on the 12V battery."/>
-
+            app:title="@string/force_updates"
+            app:summary="@string/force_updates_summary"/>
     </PreferenceCategory>
 
     <PreferenceCategory
