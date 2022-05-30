@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.icu.text.MessageFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -66,7 +67,10 @@ public class MainActivity extends AppCompatActivity {
         context = this.getApplicationContext();
 
         // First thing, check logcat for a crash and save if so
-        Utils.checkLogcat(context);
+        String crashMessage = Utils.checkLogcat(context);
+        if (crashMessage != null) {
+            Toast.makeText(context, crashMessage, Toast.LENGTH_SHORT).show();
+        }
 
         // Initialize preferences
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false);
@@ -138,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult( int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 1:
@@ -215,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Re-enable OTA support on all vehicles, and add userId to settings.
             if (lastVersion.compareTo("2022.05.25") < 0) {
-                LogFile.d(context,MainActivity.CHANNEL_ID,"running 2022.05.25 updates");
+                LogFile.d(context, MainActivity.CHANNEL_ID, "running 2022.05.25 updates");
 
                 PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -229,11 +233,11 @@ public class MainActivity extends AppCompatActivity {
                         // Some vehicle entries had missing userID value.  If so, get the user ID from the first entry
                         // of the user database and update all vehicles
                         if (userId == null) {
-                            LogFile.d(context,MainActivity.CHANNEL_ID,"2022.05.25 update: adding user ID to vehicles");
+                            LogFile.d(context, MainActivity.CHANNEL_ID, "2022.05.25 update: adding user ID to vehicles");
                             List<UserInfo> userInfo = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo();
-                            if(!userInfo.isEmpty()) {
+                            if (!userInfo.isEmpty()) {
                                 userId = userInfo.get(0).getUserId();
-                                for(VehicleInfo vehInfo: VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {
+                                for (VehicleInfo vehInfo : VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {
                                     vehInfo.setUserId(userId);
                                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateVehicleInfo(vehInfo);
                                 }
@@ -249,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
             }
 
-                // Update internally
+            // Update internally
             prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
         }
     }
@@ -458,14 +462,10 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_copylog) {
             String result = LogFile.copyLogFile(context);
-            if (result == null) {
-                Toast.makeText(context, "Log file copied to Download folder.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_backup) {
-                Utils.savePrefs(context);
+            Utils.savePrefs(context);
             return true;
         } else if (id == R.id.action_restore) {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);

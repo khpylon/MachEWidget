@@ -279,7 +279,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void getUserVehicles(String userId) {
         Context context = getApplicationContext();
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override

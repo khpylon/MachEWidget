@@ -687,8 +687,40 @@ public class Utils {
         }
     }
 
+    public static String writeExternalFile(Context context, InputStream inStream, String baseFilename, String extension) {
+        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+        String outputFilename = baseFilename + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+
+        try {
+            OutputStream outStream;
+            Uri fileCollection;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
+                ContentResolver resolver = context.getContentResolver();
+                Uri uri = resolver.insert(fileCollection, contentValues);
+                if (uri == null) {
+                    throw new IOException("Couldn't create MediaStore Entry");
+                }
+                outStream = resolver.openOutputStream(uri);
+            } else {
+                File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename + extension);
+                outputFile.delete();
+                outputFile.createNewFile();
+                outStream = new FileOutputStream(outputFile);
+            }
+            copyStreams(inStream, outStream);
+            outStream.close();
+        } catch (IOException e) {
+        }
+        return outputFilename;
+    }
+
+
     // See if there was a crash, and if so dump the logcat output to a file
-    public static void checkLogcat(Context context) {
+    public static String checkLogcat(Context context) {
         try {
             // Dump the crash buffer and exit
             Process process = Runtime.getRuntime().exec("logcat -d -b crash");
@@ -703,38 +735,43 @@ public class Utils {
             // If we find something, write to logcat.txt file
             if (log.length() > 0) {
                 InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
-                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-                String outputFilename = "fsw_logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
 
-                OutputStream outStream;
-                Uri fileCollection = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
-                    contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
-                    ContentResolver resolver = context.getContentResolver();
-                    Uri uri = resolver.insert(fileCollection, contentValues);
-                    if (uri == null) {
-                        throw new IOException("Couldn't create MediaStore Entry");
-                    }
-                    outStream = resolver.openOutputStream(uri);
-                } else {
-                    File outputFile = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename+".txt");
-                    outputFile.delete();
-                    outputFile.createNewFile();
-                    outStream = new FileOutputStream(outputFile);
-                }
+                String outputFilename = writeExternalFile(context, inStream, "fsw_logcat-", ".txt");
 
-                copyStreams(inStream, outStream);
-                outStream.close();
+//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+//                String outputFilename = "fsw_logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+//
+//                OutputStream outStream;
+//                Uri fileCollection = null;
+//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+//                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+//                    ContentValues contentValues = new ContentValues();
+//                    contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
+//                    contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
+//                    ContentResolver resolver = context.getContentResolver();
+//                    Uri uri = resolver.insert(fileCollection, contentValues);
+//                    if (uri == null) {
+//                        throw new IOException("Couldn't create MediaStore Entry");
+//                    }
+//                    outStream = resolver.openOutputStream(uri);
+//                } else {
+//                    File outputFile = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename+".txt");
+//                    outputFile.delete();
+//                    outputFile.createNewFile();
+//                    outStream = new FileOutputStream(outputFile);
+//                }
+//
+//                copyStreams(inStream, outStream);
+//                outStream.close();
 
                 // Clear the crash log.
                 Runtime.getRuntime().exec("logcat -c");
-                Toast.makeText(context, MessageFormat.format("logcat crash file \"{0}.txt\" copied to output folder.", outputFilename), Toast.LENGTH_SHORT).show();
+
+                return java.text.MessageFormat.format("Logcat crash file \"{0}.txt\" copied to Download folder.", outputFilename);
             }
         } catch (IOException e) {
         }
+        return null;
     }
 
     public static boolean OTASupportCheck(String alertStatus) {
@@ -756,38 +793,9 @@ public class Utils {
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
                 String jsonOutput = bundle.getString("json");
-                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-                String outputFilename = "fsw_settings-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
                 InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
-
-                try {
-                    OutputStream outStream;
-                    Uri fileCollection = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                        fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
-                        contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
-                        ContentResolver resolver = context.getContentResolver();
-                        Uri uri = resolver.insert(fileCollection, contentValues);
-                        if (uri == null) {
-                            throw new IOException("Couldn't create MediaStore Entry");
-                        }
-                        outStream = resolver.openOutputStream(uri);
-                    } else {
-                        File outputFile = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename+".json");
-                        outputFile.delete();
-                        outputFile.createNewFile();
-                        outStream = new FileOutputStream(outputFile);
-                    }
-
-                    copyStreams(inStream, outStream);
-                    outStream.close();
-                    Toast.makeText(context, MessageFormat.format("Settings file \"{0}.json\" written to output folder.", outputFilename), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Toast.makeText(context, "Unable to save settings.", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
+                String outputFilename = writeExternalFile(context, inStream, "fsw_settings-", ".json");
+                Toast.makeText(context, MessageFormat.format("Settings file \"{0}.txt\" copied to Download folder.", outputFilename), Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -904,7 +912,9 @@ public class Utils {
                 File image = new File(imageDir, newVIN + ".png");
                 if (!image.exists()) {
                     UserInfo user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
-                    NetworkCalls.getVehicleImage(context,user.getAccessToken(), newVIN,user.getCountry(), image.toPath());
+                    if (user != null) {
+                        NetworkCalls.getVehicleImage(context, user.getAccessToken(), newVIN, user.getCountry(), image.toPath());
+                    }
                 }
                 VINs.remove(info.getVIN());
             }
@@ -912,25 +922,25 @@ public class Utils {
             // If the current VIN is still in the current list, change it to one of the "good" VINs
             String VINkey = context.getResources().getString(R.string.VIN_key);
             String currentVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "");
-            if(VINs.contains(currentVIN)) {
+            if (VINs.contains(currentVIN)) {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putString(VINkey, newVIN).apply();
             }
 
             // Version 1 preferences didn't include user Id
-            if(version == 1) {
+            if (version == 1) {
                 String UserIdkey = context.getResources().getString(R.string.userId_key);
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putString(UserIdkey, newUserId).apply();
             }
 
             // Any user IDs or VINs which weren't restored get deleted
-            for (String VIN: VINs) {
+            for (String VIN : VINs) {
                 VehicleInfoDatabase.getInstance(context).vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
                 File image = new File(imageDir, VIN + ".png");
                 if (image.exists()) {
                     image.delete();
                 }
             }
-            for (String user: userIds) {
+            for (String user : userIds) {
                 UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user);
             }
 
