@@ -109,8 +109,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         String streetName = PADDING;
         String cityState = "";
 
-        views.setTextViewText(R.id.location_line1, "Location:");
-
         Geocoder mGeocoder = new Geocoder(context, Locale.getDefault());
         double lat = Double.parseDouble(latitude);
         double lon = Double.parseDouble(longitude);
@@ -118,8 +116,11 @@ public class CarStatusWidget extends AppWidgetProvider {
             addresses = mGeocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
             LogFile.e(context, MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget for Geocoder (this is normal)");
+            return;
         }
 
+        views.setTextViewText(R.id.location_line1, "Location:");
+        
         // If an address was found, go with the first entry
         if (addresses != null && addresses.size() > 0) {
             Address address = addresses.get(0);
