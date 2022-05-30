@@ -37,6 +37,10 @@ public class VehicleInfo {
 
     private String lastTPMSStatus;
 
+    @ColumnInfo(defaultValue = "''")
+    @NonNull
+    private String lastChargeStatus;
+
     private double lastDTE;
 
     private double lastFuelLevel;
@@ -57,6 +61,7 @@ public class VehicleInfo {
         lastFuelLevel = 0.0;
         supportsOTA = true;
         enabled = true;
+        lastChargeStatus = "''";
     }
 
     @Embedded(prefix = "car_")
@@ -245,6 +250,14 @@ public class VehicleInfo {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getLastChargeStatus() {
+        return lastChargeStatus;
+    }
+
+    public void setLastChargeStatus(String lastChargeStatus) {
+        this.lastChargeStatus = lastChargeStatus;
     }
 
     @Entity

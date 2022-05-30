@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import androidx.core.app.NotificationCompat;
@@ -55,6 +56,7 @@ public class Notifications extends BroadcastReceiver {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                         .setSmallIcon(R.mipmap.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
                         .setContentTitle("LVB Status")
                         .setContentText("The LVB's status is reporting \"low\".")
                         .setContentIntent(pendingIntent)
@@ -114,6 +116,7 @@ public class Notifications extends BroadcastReceiver {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                         .setSmallIcon(R.mipmap.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
                         .setContentTitle("TPMS Status")
                         .setContentText("The TPMS status on " + badTire + " abnormal.")
                         .setContentIntent(pendingIntent)
@@ -129,6 +132,32 @@ public class Notifications extends BroadcastReceiver {
         }
     }
 
+    private static final int CHARGE_STATUS = 938;
+    private static final String CHARGE_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.Charge";
+
+    private static Boolean ChargeNotificationVisible = false;
+
+    public static void chargeComplete(Context context) {
+        if(!ChargeNotificationVisible) {
+            Intent intent = new Intent(context, Notifications.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.setAction(LVB_NOTIFICATION);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
+                    .setContentTitle("Charge Status")
+                    .setContentText("Charging is complete.")
+                    .setContentIntent(pendingIntent)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            // notificationId is a unique int for each notification that you must define
+            notificationManager.notify(CHARGE_STATUS, builder.build());
+            ChargeNotificationVisible = true;
+        }
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
@@ -136,6 +165,8 @@ public class Notifications extends BroadcastReceiver {
             LVBNotificationVisible = false;
         } else if (action.equals(TPMS_NOTIFICATION)) {
             TPMSNotificationVisible = false;
+        } else if (action.equals(CHARGE_NOTIFICATION)) {
+            ChargeNotificationVisible = false;
         }
     }
 }

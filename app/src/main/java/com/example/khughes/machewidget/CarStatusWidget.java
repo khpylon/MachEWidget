@@ -416,6 +416,9 @@ public class CarStatusWidget extends AppWidgetProvider {
                 }
                 if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
                     rangeCharge += "Target Reached";
+                    if(!vehicleInfo.getLastChargeStatus().equals(CHARGING_STATUS_TARGET_REACHED)) {
+                        Notifications.chargeComplete(context);
+                    }
                 } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
                     rangeCharge += "Preconditioning";
                 } else {
@@ -443,6 +446,12 @@ public class CarStatusWidget extends AppWidgetProvider {
                     } catch (ParseException e) {
                         LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
                     }
+                }
+
+                // If status changed, save for future reference.
+                if(!vehicleInfo.getLastChargeStatus().equals(chargeStatus)) {
+                    vehicleInfo.setLastChargeStatus(chargeStatus);
+                    info.setVehicle(vehicleInfo);
                 }
             } else {
                 views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
