@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -55,7 +56,7 @@ public class LogFile {
     public static void appendToLogFile(Context context, String tag, String message) {
         boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.logging_key), false);
-        if (verbose && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+        if (verbose) {
             try {
                 File logFile = new File(context.getDataDir(), LOGFILENAME);
                 if (logFile.length() > LOGFILE_SIZE) {
@@ -94,21 +95,27 @@ public class LogFile {
 
     public static String copyLogFile(Context context) {
         try {
+            LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+            String outputFilename = LOGFILENAME + "-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+            OutputStream outStream;
             Uri fileCollection = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
+                ContentResolver resolver = context.getContentResolver();
+                Uri uri = resolver.insert(fileCollection, contentValues);
+                if (uri == null) {
+                    throw new IOException("Couldn't create MediaStore Entry");
+                }
+                outStream = resolver.openOutputStream(uri);
+            } else {
+                File outputFile = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename+".txt");
+                outputFile.delete();
+                outputFile.createNewFile();
+                outStream = new FileOutputStream(outputFile);
             }
-            LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-            String logFilename = LOGFILENAME + "-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.Downloads.DISPLAY_NAME, logFilename);
-            contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
-            ContentResolver resolver = context.getContentResolver();
-            Uri uri = resolver.insert(fileCollection, contentValues);
-            if (uri == null) {
-                throw new IOException("Couldn't create MediaStore Entry");
-            }
-            OutputStream outStream = resolver.openOutputStream(uri);
             File backupLogFile = new File(context.getDataDir(), BACKUPLOGFILENAME);
             if (backupLogFile.exists()) {
                 InputStream inputStream = new FileInputStream(backupLogFile);

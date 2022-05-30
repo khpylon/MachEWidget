@@ -31,6 +31,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -701,28 +702,36 @@ public class Utils {
 
             // If we find something, write to logcat.txt file
             if (log.length() > 0) {
+                InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
+                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+                String outputFilename = "fsw_logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+
+                OutputStream outStream;
                 Uri fileCollection = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                     fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
+                    contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
+                    ContentResolver resolver = context.getContentResolver();
+                    Uri uri = resolver.insert(fileCollection, contentValues);
+                    if (uri == null) {
+                        throw new IOException("Couldn't create MediaStore Entry");
+                    }
+                    outStream = resolver.openOutputStream(uri);
+                } else {
+                    File outputFile = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename+".txt");
+                    outputFile.delete();
+                    outputFile.createNewFile();
+                    outStream = new FileOutputStream(outputFile);
                 }
-                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-                String crashFile = "fsw_logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
-                InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, crashFile);
-                contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
-                ContentResolver resolver = context.getContentResolver();
-                Uri uri = resolver.insert(fileCollection, contentValues);
-                if (uri == null) {
-                    throw new IOException("Couldn't create MediaStore Entry");
-                }
-                OutputStream outStream = resolver.openOutputStream(uri);
+
                 copyStreams(inStream, outStream);
                 outStream.close();
 
                 // Clear the crash log.
                 Runtime.getRuntime().exec("logcat -c");
-                Toast.makeText(context, MessageFormat.format("logcat crash file \"{0}\" copied to output folder.", crashFile), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, MessageFormat.format("logcat crash file \"{0}.txt\" copied to output folder.", outputFilename), Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
         }
@@ -747,26 +756,34 @@ public class Utils {
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
                 String jsonOutput = bundle.getString("json");
-
-                Uri fileCollection = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                }
+                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+                String outputFilename = "fsw_settings-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+                InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
 
                 try {
-                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-                    String settingsFile = "fsw_settings-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
-                    InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MediaStore.Downloads.DISPLAY_NAME, settingsFile);
-                    contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.APPLICATION_JSON);
-                    ContentResolver resolver = context.getContentResolver();
-                    Uri uri = resolver.insert(fileCollection, contentValues);
+                    OutputStream outStream;
+                    Uri fileCollection = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                        fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
+                        contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
+                        ContentResolver resolver = context.getContentResolver();
+                        Uri uri = resolver.insert(fileCollection, contentValues);
+                        if (uri == null) {
+                            throw new IOException("Couldn't create MediaStore Entry");
+                        }
+                        outStream = resolver.openOutputStream(uri);
+                    } else {
+                        File outputFile = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename+".json");
+                        outputFile.delete();
+                        outputFile.createNewFile();
+                        outStream = new FileOutputStream(outputFile);
+                    }
 
-                    OutputStream outStream = resolver.openOutputStream(uri);
                     copyStreams(inStream, outStream);
                     outStream.close();
-                    Toast.makeText(context, MessageFormat.format("Settings file \"{0}\" written to output folder.", settingsFile), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, MessageFormat.format("Settings file \"{0}.json\" written to output folder.", outputFilename), Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(context, "Unable to save settings.", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();

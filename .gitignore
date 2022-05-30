@@ -26,3 +26,4 @@ output-metadata.json
 /app/playstore/production/app-playstore-production.aab
 /app/schemas/com.example.khughes.machewidget.db.VehicleInfoDatabase/2.json
 /.idea/gradle.xml
+/app/schemas/com.example.khughes.machewidget.db.VehicleInfoDatabase/3.json

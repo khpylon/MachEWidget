@@ -1,5 +1,6 @@
 package com.example.khughes.machewidget;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -34,6 +35,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewAssetLoader;
@@ -79,6 +82,17 @@ public class MainActivity extends AppCompatActivity {
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         context.sendBroadcast(updateIntent);
 
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }
+            }
+        }
+
         // If app has been running OK, try to initiate status updates
         String userId = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.userId_key), null);
         if (userId != null) {
@@ -121,6 +135,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Allow the app to display notifications
         createNotificationChannel();
+    }
+
+    @Override
+    public void onRequestPermissionsResult( int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                }
+        }
     }
 
     // This method is intended to bundle various changes from older versions to the most recent.
@@ -381,8 +409,12 @@ public class MainActivity extends AppCompatActivity {
                                 try {
                                     if (type.equals(Constants.APPLICATION_ZIP)) {
                                         ZipManager.unzip(context, uri);
-                                    } else {
+                                    } else if (type.equals(Constants.APPLICATION_JSON) ||
+                                            (type.equals(Constants.APPLICATION_OCTETSTREAM) &&
+                                                    uri.getPath().endsWith(".json"))) {
                                         Utils.restorePrefs(context, uri);
+                                    } else {
+                                        return;
                                     }
                                     Intent intent = new Intent(context, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -425,35 +457,24 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.action_copylog) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                String result = LogFile.copyLogFile(context);
-                if (result == null) {
-                    Toast.makeText(context, "Log file copied to Download folder.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
-                }
+            String result = LogFile.copyLogFile(context);
+            if (result == null) {
+                Toast.makeText(context, "Log file copied to Download folder.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(context, "Logging not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
             }
             return true;
         } else if (id == R.id.action_backup) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 Utils.savePrefs(context);
-            } else {
-                Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
-            }
             return true;
         } else if (id == R.id.action_restore) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("application/*");
-                String[] mimeTypes = new String[]{Constants.APPLICATION_JSON, Constants.APPLICATION_ZIP};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                restoreSettingsLauncher.launch(intent);
-            } else {
-                Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
-            }
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/*");
+            String[] mimeTypes = new String[]{Constants.APPLICATION_JSON, Constants.APPLICATION_OCTETSTREAM};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            restoreSettingsLauncher.launch(intent);
             return true;
         } else if (id == R.id.action_update) {
             Intent intent = new Intent(this, UpdateReceiver.class);
