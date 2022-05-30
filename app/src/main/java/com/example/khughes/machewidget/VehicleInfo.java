@@ -33,6 +33,10 @@ public class VehicleInfo {
 
     private long lastUpdateTime;
 
+    @ColumnInfo(defaultValue = "0")
+    @NonNull
+    private long lastOTATime;
+
     private String lastLVBStatus;
 
     private String lastTPMSStatus;
@@ -55,6 +59,7 @@ public class VehicleInfo {
         id = 0; // for new database entries, this will generate a new id
         lastRefreshTime = 0;
         lastUpdateTime = 0;
+        lastOTATime = 0;
         lastLVBStatus = "STATUS_GOOD";
         lastTPMSStatus = "Normal";
         lastDTE = 0.0;
@@ -256,9 +261,11 @@ public class VehicleInfo {
         return lastChargeStatus;
     }
 
-    public void setLastChargeStatus(String lastChargeStatus) {
-        this.lastChargeStatus = lastChargeStatus;
-    }
+    public void setLastChargeStatus(String lastChargeStatus) { this.lastChargeStatus = lastChargeStatus; }
+
+    public long getLastOTATime() { return lastOTATime; }
+
+    public void setLastOTATime(long lastOTATime) { this.lastOTATime = lastOTATime; }
 
     @Entity
     public class CarStatusInfo {

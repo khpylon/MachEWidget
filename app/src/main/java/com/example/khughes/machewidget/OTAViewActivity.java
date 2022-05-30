@@ -65,33 +65,34 @@ public class OTAViewActivity extends AppCompatActivity {
         return sdf.format(cal.getTime());
     }
 
-    public static long getLastOTATimeInMillis(Context context, String format) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0");
-        if (lastOTATime.contains(":")) {
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf;
-            // Determine the format of the date
-            if (lastOTATime.length() == Constants.OLDLOCALTIMEFORMAT.length()) {
-                sdf = new SimpleDateFormat(Constants.OLDLOCALTIMEFORMAT, Locale.ENGLISH);
-            } else {
-                sdf = new SimpleDateFormat(format, Locale.ENGLISH);
-            }
-            try {
-                cal.setTime(sdf.parse(lastOTATime));
-            } catch (ParseException e) {
-                Log.e(MainActivity.CHANNEL_ID, "exception in OTAViewActivity.getLastOTATimeInMillis: ", e);
-            }
-            return cal.toInstant().toEpochMilli();
-        } else {
-            return Long.parseLong(lastOTATime);
-        }
-    }
+//    public static long getLastOTATimeInMillis(Context context, String format) {
+//        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+//        String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0");
+//        if (lastOTATime.contains(":")) {
+//            Calendar cal = Calendar.getInstance();
+//            SimpleDateFormat sdf;
+//            // Determine the format of the date
+//            if (lastOTATime.length() == Constants.OLDLOCALTIMEFORMAT.length()) {
+//                sdf = new SimpleDateFormat(Constants.OLDLOCALTIMEFORMAT, Locale.ENGLISH);
+//            } else {
+//                sdf = new SimpleDateFormat(format, Locale.ENGLISH);
+//            }
+//            try {
+//                cal.setTime(sdf.parse(lastOTATime));
+//            } catch (ParseException e) {
+//                Log.e(MainActivity.CHANNEL_ID, "exception in OTAViewActivity.getLastOTATimeInMillis: ", e);
+//            }
+//            return cal.toInstant().toEpochMilli();
+//        } else {
+//            return Long.parseLong(lastOTATime);
+//        }
+//    }
 
     private static long currentOTATime = 0;
     private static long lastOTATime;
 
     private static Button clear;
+    private static InfoRepository info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +111,11 @@ public class OTAViewActivity extends AppCompatActivity {
         clear = findViewById(R.id.button);
         clear.setOnClickListener(view -> {
             if (currentOTATime > 0) {
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                sharedPref.edit().putString(context.getResources().getString(R.string.last_ota_time), Long.valueOf(currentOTATime).toString()).apply();
+//                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//                sharedPref.edit().putString(context.getResources().getString(R.string.last_ota_time), Long.valueOf(currentOTATime).toString()).apply();
+                VehicleInfo vehInfo = info.getVehicle();
+                vehInfo.setLastOTATime( currentOTATime );
+                info.setVehicle(vehInfo);
                 MainActivity.updateWidget(context);
                 clear.setEnabled(false);
             }
@@ -119,7 +123,7 @@ public class OTAViewActivity extends AppCompatActivity {
         new DownloadChangelog(context, mWebView).execute(VIN);
     }
 
-    private static class DownloadChangelog extends AsyncTask<String, String, OTAStatus> {
+    private static class DownloadChangelog extends AsyncTask<String, String, InfoRepository> {
 
         private final WeakReference<Context> mContext;
         private final WeakReference<WebView> mWebView;
@@ -131,26 +135,17 @@ public class OTAViewActivity extends AppCompatActivity {
         }
 
         @Override
-        protected OTAStatus doInBackground(String... VINs) {
-            Context context = mContext.get();
-
-            VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
-                    .vehicleInfoDao().findVehicleInfoByVIN(VINs[0]);
-            if (vehInfo == null) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "OTAViewActivity.DownloadChangelog(): vehicle info is null for VIN " + VINs[0]);
-                return null;
-            }
-            UserInfo userInfo = UserInfoDatabase.getInstance(context)
-                    .userInfoDao().findUserInfo(vehInfo.getUserId());
-
-            dateFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-            OTAStatus ota = vehInfo.toOTAStatus();
-
-            return ota;
+        protected InfoRepository doInBackground(String... VINs) {
+            info = new InfoRepository(mContext.get());
+            dateFormat = info.getUser().getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+            return info;
         }
 
-        protected void onPostExecute(OTAStatus ota) {
+        protected void onPostExecute(InfoRepository info) {
             Context context = mContext.get();
+
+            OTAStatus ota = info.getVehicle().toOTAStatus();
+            lastOTATime = info.getVehicle().getLastOTATime();
 
             StringBuilder unencodedHtml = new StringBuilder("<html><body>");
             if (ota != null && ota.getFuseResponse() != null) {
@@ -197,15 +192,12 @@ public class OTAViewActivity extends AppCompatActivity {
                 unencodedHtml.append("OTA Status is <i>unavailable</i>");
             }
             unencodedHtml.append("</body></html>");
-            lastOTATime = getLastOTATimeInMillis(context, dateFormat);
-
 
             String encodedHtml = Base64.encodeToString(unencodedHtml.toString().getBytes(),
                     Base64.NO_PADDING);
             mWebView.get().loadData(encodedHtml, Constants.TEXT_HTML, "base64");
 
             clear.setEnabled(currentOTATime > lastOTATime);
-
         }
     }
 

@@ -113,7 +113,9 @@ public abstract class VehicleInfoDatabase extends RoomDatabase {
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             // Add new column
             database.execSQL(
-                    "ALTER TABLE vehicle_info ADD COLUMN lastChargeStatus TEXT NOT NULL DEFAULT ''");
+                    "ALTER TABLE vehicle_info ADD COLUMN lastChargeStatus TEXT DEFAULT '' NOT NULL");
+            database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN lastOTATime INTEGER DEFAULT 0 NOT NULL");
         }
     };
 }

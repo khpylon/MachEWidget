@@ -586,7 +586,8 @@ public class CarStatusWidget extends AppWidgetProvider {
             if (Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
                 views.setTextViewText(R.id.ota_line1, "OTA Status:");
                 String OTArefresh;
-                long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context, timeFormat);
+//                long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context, timeFormat);
+                long lastOTATime = vehicleInfo.getLastOTATime();
                 String currentUTCOTATime = otaStatus.getOTADateTime();
                 if (currentUTCOTATime == null) {
                     OTArefresh = "Unknown";
