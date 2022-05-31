@@ -120,7 +120,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         views.setTextViewText(R.id.location_line1, "Location:");
-        
+
         // If an address was found, go with the first entry
         if (addresses != null && addresses.size() > 0) {
             Address address = addresses.get(0);
@@ -197,10 +197,12 @@ public class CarStatusWidget extends AppWidgetProvider {
         boolean enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.enable_commands_key), false);
         if (enableCommands) {
-            views.setOnClickPendingIntent(R.id.lock, getPendingSelfIntent(context, LOCK_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, LOCK_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, LOCK_CLICK));
             views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, IGNITION_CLICK));
         } else {
-            views.setOnClickPendingIntent(R.id.lock, getPendingSelfIntent(context, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, WIDGET_CLICK));
             views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, WIDGET_CLICK));
         }
         views.setOnClickPendingIntent(R.id.lastRefresh, getPendingSelfIntent(context, REFRESH_CLICK));
@@ -257,6 +259,11 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
         int fuelType = Utils.getFuelType(VIN);
+        views.setViewVisibility(R.id.lock_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.bottom_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.plug, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
 
         // Fill in the last update time
         Calendar lastUpdateTime = Calendar.getInstance();
@@ -346,7 +353,9 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Door locks
         String lockStatus = carStatus.getLock();
         if (lockStatus != null) {
-            views.setImageViewResource(R.id.lock, lockStatus.equals("LOCKED") ?
+            views.setImageViewResource(R.id.lock_electric, lockStatus.equals("LOCKED") ?
+                    R.drawable.locked_icon_green : R.drawable.unlocked_icon_red);
+            views.setImageViewResource(R.id.lock_gasoline, lockStatus.equals("LOCKED") ?
                     R.drawable.locked_icon_green : R.drawable.unlocked_icon_red);
         }
 
@@ -417,7 +426,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 }
                 if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
                     rangeCharge += "Target Reached";
-                    if(!vehicleInfo.getLastChargeStatus().equals(CHARGING_STATUS_TARGET_REACHED)) {
+                    if (!vehicleInfo.getLastChargeStatus().equals(CHARGING_STATUS_TARGET_REACHED)) {
                         Notifications.chargeComplete(context);
                     }
                 } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
@@ -450,7 +459,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 }
 
                 // If status changed, save for future reference.
-                if(!vehicleInfo.getLastChargeStatus().equals(chargeStatus)) {
+                if (!vehicleInfo.getLastChargeStatus().equals(chargeStatus)) {
                     vehicleInfo.setLastChargeStatus(chargeStatus);
                     info.setVehicle(vehicleInfo);
                 }
@@ -651,7 +660,12 @@ public class CarStatusWidget extends AppWidgetProvider {
         } else {
             VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         }
+
         int fuelType = Utils.getFuelType(VIN);
+        views.setViewVisibility(R.id.lock_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
 
         // Reset everything else
         views.setTextViewText(R.id.lastRefresh, "Not logged in");
@@ -669,7 +683,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.GOM, "N/A");
 
         views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_gray);
-        views.setImageViewResource(R.id.lock, R.drawable.locked_icon_gray);
+        views.setImageViewResource(R.id.lock_gasoline, R.drawable.locked_icon_gray);
+        views.setImageViewResource(R.id.lock_electric, R.drawable.locked_icon_gray);
         views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray);
 
         views.setImageViewResource(R.id.lfwindow, R.drawable.filler);

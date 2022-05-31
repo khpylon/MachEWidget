@@ -82,7 +82,7 @@
         android:src="@drawable/mache_wireframe" />
 
     <ImageView
-        android:id="@+id/lock"
+        android:id="@+id/lock_electric"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_below="@id/topfiller"

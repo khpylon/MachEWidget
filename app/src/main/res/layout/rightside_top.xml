@@ -8,7 +8,8 @@
         android:layout_gravity="center"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/ignition"
@@ -29,7 +30,17 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/plug_icon_gray"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/lock_gasoline"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/locked_icon_gray"
+            android:layout_weight="1"
+            android:visibility="visible"/>
+
 
     </LinearLayout>
 
