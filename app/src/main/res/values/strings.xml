@@ -34,7 +34,7 @@
     <string name="enable_app_launchers">Enable app launcher buttons</string>
     <string name="choose_apps_title">Allow any app to be linked to \"charger\" widget </string>
     <string name="transparent_back">Use transparent background</string>
-    <string name="last_refresh_time">Show time of last refresh instead of elaped time</string>
+    <string name="last_refresh_time">Show time of last refresh instead of elapsed time</string>
     <string name="show_location">Display location on widget</string>
     <string name="show_OTA">Display OTA info on widget</string>
     <string name="show_profiles">Enable multiple user profiles</string>
