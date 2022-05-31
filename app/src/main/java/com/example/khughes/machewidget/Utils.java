@@ -687,7 +687,7 @@ public class Utils {
         }
     }
 
-    public static String writeExternalFile(Context context, InputStream inStream, String baseFilename, String extension) {
+    public static String writeExternalFile(Context context, InputStream inStream, String baseFilename, String mimeType) {
         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
         String outputFilename = baseFilename + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
 
@@ -706,6 +706,21 @@ public class Utils {
                 }
                 outStream = resolver.openOutputStream(uri);
             } else {
+                String extension;
+                switch (mimeType) {
+                    case Constants.APPLICATION_JSON:
+                        extension = ".json";
+                        break;
+                    case Constants.APPLICATION_ZIP:
+                        extension = ".zip";
+                        break;
+                    case Constants.TEXT_HTML:
+                        extension = ".html";
+                        break;
+                    default:
+                        extension = ".txt";
+                        break;
+                }
                 File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename + extension);
                 outputFile.delete();
                 outputFile.createNewFile();
@@ -736,33 +751,7 @@ public class Utils {
             if (log.length() > 0) {
                 InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
 
-                String outputFilename = writeExternalFile(context, inStream, "fsw_logcat-", ".txt");
-
-//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-//                String outputFilename = "fsw_logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
-//
-//                OutputStream outStream;
-//                Uri fileCollection = null;
-//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-//                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-//                    ContentValues contentValues = new ContentValues();
-//                    contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
-//                    contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
-//                    ContentResolver resolver = context.getContentResolver();
-//                    Uri uri = resolver.insert(fileCollection, contentValues);
-//                    if (uri == null) {
-//                        throw new IOException("Couldn't create MediaStore Entry");
-//                    }
-//                    outStream = resolver.openOutputStream(uri);
-//                } else {
-//                    File outputFile = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename+".txt");
-//                    outputFile.delete();
-//                    outputFile.createNewFile();
-//                    outStream = new FileOutputStream(outputFile);
-//                }
-//
-//                copyStreams(inStream, outStream);
-//                outStream.close();
+                String outputFilename = writeExternalFile(context, inStream, "fsw_logcat-", Constants.TEXT_PLAINTEXT);
 
                 // Clear the crash log.
                 Runtime.getRuntime().exec("logcat -c");
@@ -794,8 +783,8 @@ public class Utils {
                 Bundle bundle = msg.getData();
                 String jsonOutput = bundle.getString("json");
                 InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
-                String outputFilename = writeExternalFile(context, inStream, "fsw_settings-", ".json");
-                Toast.makeText(context, MessageFormat.format("Settings file \"{0}.txt\" copied to Download folder.", outputFilename), Toast.LENGTH_SHORT).show();
+                String outputFilename = writeExternalFile(context, inStream, "fsw_settings-", Constants.APPLICATION_JSON);
+                Toast.makeText(context, MessageFormat.format("Settings file \"{0}.json\" copied to Download folder.", outputFilename), Toast.LENGTH_SHORT).show();
             }
         };
 

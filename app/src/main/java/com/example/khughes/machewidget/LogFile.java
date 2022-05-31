@@ -107,7 +107,7 @@ public class LogFile {
             outStream.close();
 
             // Copy the temp file to the output file, then get rid of the temp file.
-            String outputFilename = Utils.writeExternalFile (context,  new FileInputStream(tmpLogfile), LOGFILENAME+"-", ".txt");
+            String outputFilename = Utils.writeExternalFile (context,  new FileInputStream(tmpLogfile), LOGFILENAME+"-", Constants.TEXT_PLAINTEXT);
             tmpLogfile.delete();
 
             return MessageFormat.format("Log file \"{0}.txt\" copied to Download folder.", outputFilename);
