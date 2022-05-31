@@ -571,6 +571,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                 isDoorClosed(carStatus.getLeftRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_REAR_DOOR));
         views.setImageViewResource(R.id.rt_rr_door,
                 isDoorClosed(carStatus.getRightRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
+
         views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
 
         views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));

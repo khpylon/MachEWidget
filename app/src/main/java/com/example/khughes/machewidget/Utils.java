@@ -381,7 +381,7 @@ public class Utils {
             return FUEL_ELECTRIC;
         }
         // Otherwise check the VIN
-        else if (isF150(VIN) || isBronco(VIN) || isExplorer(VIN) || isBroncoSport(VIN)) {
+        else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN) || isEscape(VIN)) {
             String fuelType = VIN.substring(FUEL_TYPE_START_INDEX, FUEL_TYPE_END_INDEX);
             if (fuelElectric.contains(fuelType)) {
                 return FUEL_ELECTRIC;
@@ -515,13 +515,13 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe);
-        tmpMap.put(HOOD, R.drawable.mache_frunk);
-        tmpMap.put(TAILGATE, R.drawable.mache_hatch);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe);
+        tmpMap.put(HOOD, R.drawable.escape_hood);
+        tmpMap.put(TAILGATE, R.drawable.escape_hatch);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor);
         escapeDrawables = tmpMap;
     }
 

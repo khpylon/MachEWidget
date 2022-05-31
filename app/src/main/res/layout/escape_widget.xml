@@ -34,7 +34,7 @@
 
     <include layout="@layout/f150_top"/>
 
-    <include layout="@layout/f150_image"/>
+    <include layout="@layout/escape_image"/>
 
     <include layout="@layout/f150_bottom"/>
 
