@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Re-enable OTA support on all vehicles, and add userId to settings.
-            if (lastVersion.compareTo("2022.05.xx") < 0) {
+            if (lastVersion.compareTo("2022.05.31") < 0) {
                 PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
             }
 
