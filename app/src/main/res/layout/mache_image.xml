@@ -90,7 +90,7 @@
         android:layout_alignTop="@id/wireframe"
         android:layout_marginStart="33.3dp"
         android:layout_marginTop="110dp"
-        android:background="@drawable/locked_icon_gray" />
+        android:src="@drawable/locked_icon_gray" />
 
     <ImageView
         android:id="@+id/lfwindow"
