@@ -39,10 +39,17 @@ Download the [app-release.apk](https://github.com/khpylon/MachEWidget/blob/maste
 ## Known Issues & Limitations
 
 As listed above, this app
-- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own
 - does not include all the function of tonesto7's Apple/iOS widget
 - is not guaranteed to support accounts outside of the United States
-  
+
+## Contributing Help for Unsupported Vehicles
+
+If you would like to use the app but your vehicle is not currently supported, there are a few things you can do:
+
+1. Load the app onto your phone and gather log data about your vehicle.  See the "Bug Report" section for how to gather log data.  The two important pieces of data are JSON responses for car status and OTA status.
+2. Consider contributing the necessary graphics for your vehicle.  Free drawings would be great (provided they are usable and *actually free*), but chipping in a donation towards the purchase of SVG CAD drawings is also encouraged.
+3. Encourage fellow owners to do the same.
+
 ## Bug Reports
 
 If you discover something which doesn't work the way you expect, check first on the forums to see whether someone else has
@@ -56,7 +63,7 @@ The app has some built-in support for gathering log information:
 2. Perform any actions you think will demonstrate the issue
 3. Under the three-dot menu, select "Save logfile"; this will save a file named *fsw_logfile-<datetime>.txt* or something similar in the *Downloads* folder of your
 external storage
-4. Deactive "Enable logging"
+4. Deactivate "Enable logging"
 5. Create/append to an Issue and upload the file as an attachment
 
 A serious bug that causes the app to crash will dump some information to logcat.  The app will check for this the next time it is run
@@ -66,10 +73,6 @@ and write it to a file named *fsw_logcat-<datetime>.txt* in your *Downloads* fol
 
 Refer to the [FAQ](https://github.com/khpylon/MachEWidget/blob/master/FAQ.md) file.  It's a work in progress.  If your questions isn't there, ask on the forums or 
 send a message to suggest adding it.
-
-## To do
-
-- Display information using more graphics and less text where possible.
 
 ## Credits
 
