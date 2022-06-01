@@ -9,7 +9,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 ### Added
 - Ford Escape vehicles are now supported.
 - EVs/PHEVs will send a notification when charging is completed.
-- Support for reading and writing fo external storage in Android 9.
+- Support for reading and writing of external storage in Android 9.
 - Experimental "Force updates" feature (under Settings) which will force vehicles to send an update if the last
   refresh is 6 or more hours old, as long as the vehicle is not in deep sleep and the 12V battery is
   at 13V or higher.  NOTE: this may result in a drain on the 12V battery.

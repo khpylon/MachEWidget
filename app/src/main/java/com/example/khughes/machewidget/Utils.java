@@ -698,7 +698,7 @@ public class Utils {
                 fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
-                contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeType);
                 ContentResolver resolver = context.getContentResolver();
                 Uri uri = resolver.insert(fileCollection, contentValues);
                 if (uri == null) {
