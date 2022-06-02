@@ -411,9 +411,7 @@ public class MainActivity extends AppCompatActivity {
                             if (uri != null) {
                                 String type = context.getContentResolver().getType(uri);
                                 try {
-                                    if (type.equals(Constants.APPLICATION_ZIP)) {
-                                        ZipManager.unzip(context, uri);
-                                    } else if (type.equals(Constants.APPLICATION_JSON) ||
+                                    if (type.equals(Constants.APPLICATION_JSON) ||
                                             (type.equals(Constants.APPLICATION_OCTETSTREAM) &&
                                                     uri.getPath().endsWith(".json"))) {
                                         Utils.restorePrefs(context, uri);
@@ -423,8 +421,6 @@ public class MainActivity extends AppCompatActivity {
                                     Intent intent = new Intent(context, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
-                                } catch (ZipManager.SettingFileException e) {
-                                    Toast.makeText(context, "Error: Settings ZIP file version mismatch.", Toast.LENGTH_SHORT).show();
                                 } catch (IOException e2) {
                                     Log.e(MainActivity.CHANNEL_ID, "exception in MainActivity.restoreSettingsLauncher: ", e2);
                                 }
