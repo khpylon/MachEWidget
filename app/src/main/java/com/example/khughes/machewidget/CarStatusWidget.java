@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.speech.tts.UtteranceProgressListener;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -55,6 +56,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private static final String IGNITION_CLICK = "IgnitionButton";
     private static final String LOCK_CLICK = "LockButton";
     private static final String REFRESH_CLICK = "Refresh";
+    private static final String PHEVTOGGLE_CLICK = "PHEVToggle";
 
     private static final String PADDING = "   ";
     private static final String CHARGING_STATUS_NOT_READY = "NotReady";
@@ -169,43 +171,61 @@ public class CarStatusWidget extends AppWidgetProvider {
                 useTranparency ? R.color.transparent_black : R.color.black);
     }
 
-    protected PendingIntent getPendingSelfIntent(Context context, String action) {
+    protected PendingIntent getPendingSelfIntent(Context context, int id, String action) {
         Intent intent = new Intent(context, getClass());
+        intent.putExtra("appWidgetId", id);
         intent.setAction(action);
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
-    private void setCallbacks(Context context, RemoteViews views) {
+    private void setCallbacks(Context context, RemoteViews views, int id) {
         // Define actions for clicking on various icons, including the widget itself
-        views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, WIDGET_CLICK));
-        views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
+        views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, id, WIDGET_CLICK));
+        views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, id, SETTINGS_CLICK));
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, PROFILE_CLICK));
-        views.setOnClickPendingIntent(R.id.logo, getPendingSelfIntent(context, PROFILE_CLICK));
+        views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, id, PROFILE_CLICK));
+        views.setOnClickPendingIntent(R.id.logo, getPendingSelfIntent(context, id, PROFILE_CLICK));
 
         boolean showAppLinks = sharedPref.getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {
-            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, LEFT_BUTTON_CLICK));
-            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, RIGHT_BUTTON_CLICK));
+            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, id, LEFT_BUTTON_CLICK));
+            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, id, RIGHT_BUTTON_CLICK));
         } else {
-            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
-            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, id, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, id, WIDGET_CLICK));
         }
 
         boolean enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.enable_commands_key), false);
         if (enableCommands) {
-            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, LOCK_CLICK));
-            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, LOCK_CLICK));
-            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, IGNITION_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, id, LOCK_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, id, LOCK_CLICK));
+            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, id, IGNITION_CLICK));
         } else {
-            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, WIDGET_CLICK));
-            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, WIDGET_CLICK));
-            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, id, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, id, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, id, WIDGET_CLICK));
         }
-        views.setOnClickPendingIntent(R.id.lastRefresh, getPendingSelfIntent(context, REFRESH_CLICK));
+        views.setOnClickPendingIntent(R.id.lastRefresh, getPendingSelfIntent(context, id, REFRESH_CLICK));
+    }
+
+    private void setPHEVCallbacks(Context context, RemoteViews views, int fuelType, int id, String mode) {
+        if (fuelType != Utils.FUEL_PHEV) {
+            views.setOnClickPendingIntent(R.id.bottom_gasoline, getPendingSelfIntent(context, id, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.bottom_electric, getPendingSelfIntent(context, id, WIDGET_CLICK));
+        } else {
+            Intent intent = new Intent(context, getClass());
+            intent.putExtra("appWidgetId", id);
+            intent.putExtra("nextMode", mode);
+            intent.setAction(PHEVTOGGLE_CLICK);
+            views.setOnClickPendingIntent(R.id.bottom_gasoline,
+                    PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+            intent.setAction(PHEVTOGGLE_CLICK);
+            views.setOnClickPendingIntent(R.id.bottom_electric,
+                    PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+        }
     }
 
     // Based on the VIN, find the right widget layout
@@ -223,7 +243,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         onResize(appWidgetOptions, views);
 
         // Setup actions for specific widgets
-        setCallbacks(context, views);
+        setCallbacks(context, views, appWidgetId);
 
         // Set background transparency
         setBackground(context, views);
@@ -264,6 +284,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
         views.setViewVisibility(R.id.bottom_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
         views.setViewVisibility(R.id.plug, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
 
         // Fill in the last update time
         Calendar lastUpdateTime = Calendar.getInstance();
@@ -384,7 +405,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         String rangeCharge = "N/A";
-        if (fuelType == Utils.FUEL_ELECTRIC) {
+        if (fuelType == Utils.FUEL_ELECTRIC || fuelType == Utils.FUEL_PHEV) {
 
             // Estimated range
             Double range = carStatus.getElVehDTE();
@@ -476,7 +497,8 @@ public class CarStatusWidget extends AppWidgetProvider {
                         MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
                                 DecimalFormatSymbols.getInstance(Locale.US)).format(chargeLevel)));
             }
-        } else {
+        }
+        if (fuelType != Utils.FUEL_ELECTRIC ) {
             // Estimated range
             Double range = carStatus.getDistanceToEmpty();
             if (range != null && range >= 0) {
@@ -647,7 +669,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
         onResize(appWidgetOptions, views);
 
-        setCallbacks(context, views);
+        setCallbacks(context, views, appWidgetId);
 
         // Set background transparency
         setBackground(context, views);
@@ -916,6 +938,24 @@ public class CarStatusWidget extends AppWidgetProvider {
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }
             }
+            return;
+        } else if (action.equals(PHEVTOGGLE_CLICK)) {
+            int appWidgetId = intent.getIntExtra("appWidgetId", -1);
+            String mode = intent.getStringExtra("nextMode");
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            RemoteViews views = getWidgetView(context);
+            String nextMode;
+            if (mode.equals("showGasoline")) {
+                nextMode = "showElectric";
+                views.setViewVisibility(R.id.bottom_electric, View.GONE);
+                views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE);
+            } else {
+                nextMode = "showGasoline";
+                views.setViewVisibility(R.id.bottom_electric, View.VISIBLE);
+                views.setViewVisibility(R.id.bottom_gasoline, View.GONE);
+            }
+            setPHEVCallbacks(context, views, Utils.FUEL_PHEV, appWidgetId, nextMode);
+            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
             return;
         }
 
