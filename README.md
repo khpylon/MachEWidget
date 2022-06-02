@@ -1,6 +1,7 @@
 # Ford Status (formerly Mustang Mach-E) Widget for Android
 
-[![Donate](https://img.shields.io/badge/donate-paypal-green.svg?style=for-the-badge)](https://www.paypal.com/donate/?hosted_button_id=HULVHBSWXDU9S)
+[![Donate](https://img.shields.io/badge/donate-paypal-green.svg?style=for-the-badge)](https://www.paypal.com/donate/?hosted_button_id=HULVHBSWXDU9S) 
+[![Donate](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://www.buymeacoffee.com/khpylonca)
 
 ## Intro
 
@@ -73,6 +74,11 @@ and write it to a file named *fsw_logcat-<datetime>.txt* in your *Downloads* fol
 
 Refer to the [FAQ](https://github.com/khpylon/MachEWidget/blob/master/FAQ.md) file.  It's a work in progress.  If your questions isn't there, ask on the forums or 
 send a message to suggest adding it.
+
+## Donations
+
+This project is free to use and free for anyone to copy, but there occasionally are some costs for the content it uses.  If you are interested in supporting
+development, use the Paypal or BuyMeACoffee links at the top of the page.  Any funds not spent on the project will be donated to charity.
 
 ## Credits
 
