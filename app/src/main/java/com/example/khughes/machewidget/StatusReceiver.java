@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.text.MessageFormat;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
+import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,6 +20,7 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -96,6 +100,17 @@ public class StatusReceiver extends BroadcastReceiver {
                         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
                         int delayInMillis = Integer.parseInt(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
 
+                        // Find out when the list of vehicles was updated
+                        String lastModified = userInfo.getLastModified();
+                        Calendar cal = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+                        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        try {
+                            cal.setTime(sdf.parse(lastModified));
+                        } catch (ParseException e) {
+                        }
+                        long thenTime = cal.getTimeInMillis();
+
                         // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
                         // the next update.
                         long calculation = (timeout - delayInMillis - 5 * Millis) - nowtime;
@@ -103,6 +118,11 @@ public class StatusReceiver extends BroadcastReceiver {
                         if (timeout - delayInMillis - 5 * Millis < nowtime) {
                             LogFile.d(mContext, MainActivity.CHANNEL_ID, "Need to refresh token");
                             getRefresh(userId, userInfo.getRefreshToken());
+                        }
+                        // Checked the vehicle list every hour
+                        else if ((nowtime - thenTime) / (1000 * 60 * 60) > 1) {
+                            LogFile.d(mContext, MainActivity.CHANNEL_ID, "Going to check for vehicle changes");
+                            getVehicleInfo(userId);
                         } else {
                             LogFile.d(mContext, MainActivity.CHANNEL_ID, "Token good? Just grab info");
                             getStatus(userId);
@@ -182,7 +202,7 @@ public class StatusReceiver extends BroadcastReceiver {
             public void handleMessage(Message msg) {
                 bb = msg.getData();
                 String action = bb.getString("action");
-                if(action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     getStatus(userId);
                 }
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "VehicleInfo: " + action);
