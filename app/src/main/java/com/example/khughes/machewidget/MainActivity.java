@@ -121,17 +121,17 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
 
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         String indexPage = "https://appassets.androidplatform.net/assets/index_mache.html";
-        if (!VIN.equals("")) {
-            if (Utils.isBronco(VIN)) {
-                indexPage = "https://appassets.androidplatform.net/assets/index_bronco.html";
-            } else if (Utils.isF150(VIN)) {
-                indexPage = "https://appassets.androidplatform.net/assets/index_f150.html";
-            } else if (Utils.isExplorer(VIN)) {
-                indexPage = "https://appassets.androidplatform.net/assets/index_explorer.html";
-            }
-        }
+//        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+//        if (!VIN.equals("")) {
+//            if (Utils.isBronco(VIN)) {
+//                indexPage = "https://appassets.androidplatform.net/assets/index_bronco.html";
+//            } else if (Utils.isF150(VIN)) {
+//                indexPage = "https://appassets.androidplatform.net/assets/index_f150.html";
+//            } else if (Utils.isExplorer(VIN)) {
+//                indexPage = "https://appassets.androidplatform.net/assets/index_explorer.html";
+//            }
+//        }
         mWebView.loadUrl(indexPage);
 
         // Update the widget

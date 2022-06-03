@@ -4,7 +4,7 @@
 </head>
 <body>
 <h2>Introduction</h2>
-The widget provides a quick view of many aspects of your Mustang Mach-E.  Once you log in to your FordPass account through the
+The widget provides a quick view of many aspects of your Ford vehicle.  Once you log in to your FordPass account through the
 app and place the widget somewhere on your phone's screen, it will periodically update to show your car's status.<p>
 
 The widget is shown below. Remember: <b>You need to place the widget on your phone's screen </b>
@@ -24,28 +24,30 @@ The widget is shown below. Remember: <b>You need to place the widget on your pho
         enable "Save log-in credentials" in "Settings";
     the only other information retained from your account are your language and country settings, and the units of measure (distance, pressure, etc).
         Your VIN is stored as it is necessary to access information specific to your vehicle. This
-        can be viewed (and edited when profiles are not enabled) in "Settings" from the menu.</li>
+        can be viewed in "Settings" from the menu.</li>
     <li>Select "Refresh" to force a query of Ford's servers.</li>
     <li>Select "OTA Update Info" to see information for the most recent over-the-air (OTA) update.  If a change to the OTA status
         is noticed, the "Last OTA" portion of the widget will alert you to check here.</li>
     <li>Select "Change Linked Apps" to choose which apps can be launched from the widget (located to the right of the
         Settings ("gear") icon</li>
-    <li>Select "Save Settings" or "Restore Settings" to back-up or restore your personal data (useful when a the app must be removed prior to a new install)</li>
+    <li>Select "Save Settings" or "Restore Settings" to back-up or restore your personal data (useful when the app must be removed prior to a new install)</li>
     <li>Select "Settings" to change various application settings.  You can control among other things:
         <ul>
-            <li>change your vehicle's VIN here (without needing to log in again)</li>
             <li>set the frequency at which the widget updates</li>
             <li>enable commands for lock/unlock and remote start when pressing the icons</li>
-            <li>enable profiles, so you can sync the app with up to four vehicles</li>
+            <li>enable the location and OTA alerts (if applicable) on the widget</li>
         </ul>
     </ul>
 </p>
-<h2>Icon information</h2>
-<p>Red is normally used to indicate something unusual happening when you're not using the car.  The frunk, trunk, or doors will be highlighted
-    in red if they are not closed.  Similarly, if a window is not fully closed, a red icon will appear near the corresponding door --
+<h2>Icon Information</h2>
+<p>Red is normally used to indicate something unusual happening when you're not using the car.  The hood/frunk, trunk/hatch/tailgate, and doors will be highlighted
+    in red to indicate they are not closed.  Similarly, if a window is not fully closed, a red icon will appear near the corresponding door --
     <img src="/res/drawable/icons8_left_front_window_down_red.png" width="20">.</p>
 
-The charging status is indicated by icons for the charge plug
+<p>A gray ignition icon indicates the vehicle is off. A red alarm icon with a "Z" indicates the vehicle is in deep sleep.</p>
+
+<H2>Charging Information (for Plug-in Vehicles)</H2>
+<p>The charging status is indicated by icons for the charge plug
 <img src="/assets/plug_green.png" width="15">
 and the high-voltage battery (HVB)
 <img src="/assets/battery_charging.png" width="15">.
@@ -57,12 +59,24 @@ icon will indicate what is happening:
     <li>Charging -- <img src="/assets/battery_charging.png" width="15"></li>
     <li>Charge finished -- <img src="/assets/battery_full.png" width="15"></li>
 </ul>
-The ignition icon is gray when the vehicle is off and green when on.  When remote start is activated, it will appear yellow.  Double-tapping on it again will
-perform a remote stop.
+</p>
+<p>
+Owners of plug-in hybrids can switch between gas and electric status with a single tap on the progress bar below the vehicle status image.
+</p>
 
-<H2>Profiles</H2>
-<p>If you own more than one vehicle compatible with FordPass, each vehicle's status can be access from the widget.  Simply tap on the vehicle image in the widget's
+<h2>Using Remote Commands</h2>
+<p>Remote commands can be enabled under Settings.  When enabled, the ignition icon controls remote start/stop and the lock icon controls lock/unlock.  Double tap on the
+    icon to send the command to the vehicle; it may take up to 30 seconds for the vehicle to respond.  A yellow ignition icon indicates remote start is active.
+</p>
+
+<h2>Multiple Vehicles</h2>
+<p>If you own more than one vehicle compatible with FordPass, each vehicle's status can be accessed from the widget.  Single tap on the vehicle image in the widget's
     upper left corner to see the next vehicle.
+</p>
+
+<h2>FAQs and Other Information</h2>
+<p>See the <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">FAQ</a> on GitHub for other questions (feel free to submit suggestions for other questions).
+
 </p>
 </body>
 </html>
