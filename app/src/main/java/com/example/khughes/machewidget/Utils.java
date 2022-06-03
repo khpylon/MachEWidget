@@ -132,6 +132,11 @@ public class Utils {
     public static final String LINE_SERIES_ESCAPE_SEL_FHEV_4WD = "U9C";
     public static final String LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD = "U9D";
 
+    public static final String LINE_SERIES_EDGE_ST_AWD = "K4A";
+    public static final String LINE_SERIES_EDGE_SE_AWD = "K4G";
+    public static final String LINE_SERIES_EDGE_SEL_AWD = "K4J";
+    public static final String LINE_SERIES_EDGE_TITANIUM_AWD = "K4K";
+
     public static final int FUEL_TYPE_START_INDEX = 8 - 1;
     public static final int FUEL_TYPE_END_INDEX = 8;
     public static final String HYBRID_TRUCK_2_5_LITER = "3";
@@ -335,10 +340,27 @@ public class Utils {
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && escapeLineSeries.contains(lineSeries);
     }
 
+    private static final Set<String> edgeLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_EDGE_ST_AWD);
+        tmpSet.add(LINE_SERIES_EDGE_SE_AWD);
+        tmpSet.add(LINE_SERIES_EDGE_SEL_AWD);
+        tmpSet.add(LINE_SERIES_EDGE_TITANIUM_AWD);
+        edgeLineSeries = tmpSet;
+    }
+
+    public static boolean isEdge(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && edgeLineSeries.contains(lineSeries);
+    }
+
     // Check to see if we recognize a VIN in general
     public static boolean isVINRecognized(String VIN) {
         return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN)
-                | isEscape(VIN);
+                | isEscape(VIN) | isEdge(VIN);
     }
 
     private static final Set<String> fuelElectric;
@@ -381,7 +403,7 @@ public class Utils {
             return FUEL_ELECTRIC;
         }
         // Otherwise check the VIN
-        else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN) || isEscape(VIN)) {
+        else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN) || isEscape(VIN) || isEdge(VIN)) {
             String fuelType = VIN.substring(FUEL_TYPE_START_INDEX, FUEL_TYPE_END_INDEX);
             if (fuelElectric.contains(fuelType)) {
                 return FUEL_ELECTRIC;
@@ -525,6 +547,21 @@ public class Utils {
         escapeDrawables = tmpMap;
     }
 
+    // Drawables for Escape
+    private static final Map<String, Integer> edgeDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe);
+        tmpMap.put(HOOD, R.drawable.escape_hood);
+        tmpMap.put(TAILGATE, R.drawable.escape_hatch);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor);
+        edgeDrawables = tmpMap;
+    }
+
     // Get the set of drawables for a particular style of vehicle
     public static Map<String, Integer> getVehicleDrawables(String VIN) {
         if (VIN != null && !VIN.equals("")) {
@@ -544,6 +581,8 @@ public class Utils {
                 return explorerSTDrawables;
             } else if (isEscape(VIN)) {
                 return escapeDrawables;
+            } else if (isEdge(VIN)) {
+                return edgeDrawables;
             }
         }
         return macheDrawables;
@@ -558,6 +597,8 @@ public class Utils {
             } else if (isExplorer(VIN)) {
                 return R.layout.explorer_widget;
             } else if (isEscape(VIN)) {
+                return R.layout.escape_widget;
+            } else if (isEdge(VIN)) {
                 return R.layout.escape_widget;
             }
         }
