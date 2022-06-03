@@ -4,7 +4,7 @@
         android:id="@+id/topfiller"
         android:layout_width="171.6dp"
         android:layout_height="8dp"
-        android:layout_below="@id/box1"
+        android:layout_below="@id/right_top_icons"
         android:layout_alignParentEnd="true"
         android:background="@drawable/filler" />
 
@@ -79,6 +79,17 @@
         android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
         android:src="@drawable/escape_wireframe" />
+
+    <ImageView
+        android:id="@+id/lock_electric"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_below="@id/topfiller"
+        android:layout_alignStart="@id/wireframe"
+        android:layout_alignTop="@id/wireframe"
+        android:layout_marginStart="33.3dp"
+        android:layout_marginTop="110dp"
+        android:src="@drawable/locked_icon_gray" />
 
     <ImageView
         android:id="@+id/lfwindow"

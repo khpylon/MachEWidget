@@ -33,10 +33,10 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/f150_top"/>
+    <include layout="@layout/rightside_top"/>
 
     <include layout="@layout/bronco_image"/>
 
-    <include layout="@layout/f150_bottom"/>
+    <include layout="@layout/rightside_bottom"/>
 
 </RelativeLayout>

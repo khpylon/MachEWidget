@@ -32,10 +32,10 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/mache_top"/>
+    <include layout="@layout/rightside_top"/>
 
     <include layout="@layout/mache_image"/>
 
-    <include layout="@layout/mache_bottom"/>
+    <include layout="@layout/rightside_bottom"/>
 
 </RelativeLayout>
