@@ -127,7 +127,7 @@ public class OTAViewActivity extends AppCompatActivity {
 
         private final WeakReference<Context> mContext;
         private final WeakReference<WebView> mWebView;
-        private String dateFormat;
+        private String dateFormat = Constants.LOCALTIMEFORMAT;
 
         public DownloadChangelog(Context context, WebView webView) {
             mContext = new WeakReference<>(context);
@@ -137,7 +137,9 @@ public class OTAViewActivity extends AppCompatActivity {
         @Override
         protected InfoRepository doInBackground(String... VINs) {
             info = new InfoRepository(mContext.get());
-            dateFormat = info.getUser().getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+            if(info.getUser() != null ) {
+                dateFormat = info.getUser().getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+            }
             return info;
         }
 
