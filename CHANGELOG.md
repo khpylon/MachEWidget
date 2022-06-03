@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.06.03
+### Added
+- Added better support for PHEVs in the widget.  You can switch between charge or fuel info with a single tap on the progress bar below the status image.
+- Refresh the list of vehicles from the Ford account list every hour.
+
+### Changed
+- Create a generic instruction page for all vehicles, including a link to FAQ.
+- Remove support for ZIP files with settings.
+
+### Fixed
+- Various typos in instructions 
+
 ## 2022.05.31
 ### Added
 - Ford Escape vehicles are now supported.
