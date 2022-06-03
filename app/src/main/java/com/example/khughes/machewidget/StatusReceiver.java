@@ -103,7 +103,7 @@ public class StatusReceiver extends BroadcastReceiver {
                         // Find out when the list of vehicles was updated
                         String lastModified = userInfo.getLastModified();
                         Calendar cal = Calendar.getInstance();
-                        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+                        SimpleDateFormat sdf = new SimpleDateFormat(Constants.LASTMODIFIEDFORMAT, Locale.ENGLISH);
                         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
                         try {
                             cal.setTime(sdf.parse(lastModified));
