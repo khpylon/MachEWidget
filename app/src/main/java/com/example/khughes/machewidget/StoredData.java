@@ -39,6 +39,7 @@ public class StoredData {
     private static final String WIDGETMODE = "widgetmode";
 
     private static final String LATESTVERSION = "LatestVersion";
+    private static final String BATTERYNOTIFICATION = "BatteryOptNotificationTime";
 
     public static final String GOOD = "Good";
     public static final String BAD = "Bad";
@@ -254,6 +255,15 @@ public class StoredData {
 
     public long getLastAlarmTime() {
         return mContext.getSharedPreferences(TAG, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
+    }
+
+    public void setBatteryNotification(long time) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
+        commitWait(edit.putLong(BATTERYNOTIFICATION, time));
+    }
+
+    public long getBatteryNotification() {
+        return mContext.getSharedPreferences(TAG, MODE_PRIVATE).getLong(BATTERYNOTIFICATION, 0);
     }
 
     public int getCounter(String key) {

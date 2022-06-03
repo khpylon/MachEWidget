@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static Preference battery;
 
     private static void displayOptimizationMessage(Context context) {
-        if (MainActivity.checkBatteryOptimizations(context)) {
+        if (MainActivity.ignoringBatteryOptimizations(context)) {
             battery.setSummary("Off (recommended)");
         } else {
             battery.setSummary("On (may cause issues)");

@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         // Initiate check for a new app version
         UpdateReceiver.initiateAlarm(context);
 
+        // See if we need to notify user about battery optimizations
+        Notifications.batteryOptimization(context);
+
         // Initiate update of the widget
         Intent updateIntent = new Intent();
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -500,7 +503,7 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.createNotificationChannel(channel);
     }
 
-    public static Boolean checkBatteryOptimizations(Context context) {
+    public static Boolean ignoringBatteryOptimizations(Context context) {
         String packageName = context.getPackageName();
         PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
         return pm.isIgnoringBatteryOptimizations(packageName);

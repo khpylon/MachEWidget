@@ -36,6 +36,8 @@ public class StatusReceiver extends BroadcastReceiver {
         mContext = context;
         nextAlarm(mContext);
 
+        Notifications.batteryOptimization(context);
+
         StoredData appInfo = new StoredData(context);
         InfoRepository[] info = {null};
 
@@ -59,7 +61,7 @@ public class StatusReceiver extends BroadcastReceiver {
 
                 LogFile.d(mContext, MainActivity.CHANNEL_ID,
                         MessageFormat.format("StatusReceiver: time({0}), state({1}), battery optimization({2})",
-                                (timeout - nowtime) / Millis, state, MainActivity.checkBatteryOptimizations(context)));
+                                (timeout - nowtime) / Millis, state, MainActivity.ignoringBatteryOptimizations(context)));
 
                 // Check whether credentials are being saved
                 boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
