@@ -46,7 +46,7 @@
     <string name="github_summary">Link to the code repository</string>
     <string name="battery_opt">Battery optimization</string>
     <string name="force_updates">Force updates</string>
-    <string name="force_updates_summary">If vehicle data is more than 3 hours old, force an update.  WARNING: This may cause a drain on the 12V battery.</string>
+    <string name="force_updates_summary">If vehicle data is more than 6 hours old, force an update.  WARNING: This may cause a drain on the 12V battery.</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
