@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.06.04
+### Added
+- If battery optimization is on, a notification will appear prompting you to turn them off.
+- Ford Edge VINs are now recognized (no silhouette yet).
+
+### Fixed
+- The "Force updates" feature was incorrectly calculating using minutes instead of hours; this would really
+have the potential to drain your 12V battery.
+
 ## 2022.06.03
 ### Added
 - Added better support for PHEVs in the widget.  You can switch between charge or fuel info with a single tap on the progress bar below the status image.
