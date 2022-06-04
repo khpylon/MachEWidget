@@ -7,7 +7,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 
 ## 2022.06.04
 ### Added
-- If battery optimization is on, a notification will appear prompting you to turn them off.
+- If battery optimization is on, a notification will appear prompting you to turn it off.
 - Ford Edge VINs are now recognized (no silhouette yet).
 
 ### Fixed
