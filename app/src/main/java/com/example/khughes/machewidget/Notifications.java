@@ -9,6 +9,7 @@ import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
@@ -163,7 +164,9 @@ public class Notifications extends BroadcastReceiver {
 
     public static void batteryOptimization(Context context) {
         StoredData appInfo = new StoredData(context);
-        if (!MainActivity.ignoringBatteryOptimizations(context)) {
+        boolean batteryNotification = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.batteryNotification_key), true);
+
+        if (batteryNotification && !MainActivity.ignoringBatteryOptimizations(context)) {
             long lastBatteryNotification = appInfo.getBatteryNotification();
             LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
             long nowTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
@@ -186,13 +189,13 @@ public class Notifications extends BroadcastReceiver {
 
                 // If this was the first notification, notify again in one more day
                 if (lastBatteryNotification == 0) {
-                    time.plusDays(1);
+                    nowTime += 1000 * 60 * 60 * 24;
                 }
                 // Otherwise, don't bother for a long time
                 else {
-                    time.plusYears(25);
+                    nowTime = Long.MAX_VALUE;
                 }
-                appInfo.setBatteryNotification(time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                appInfo.setBatteryNotification(nowTime);
             }
         } else {
             appInfo.setBatteryNotification(0);

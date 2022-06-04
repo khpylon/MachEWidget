@@ -40,6 +40,11 @@
         app:title="@string/save_credentials" />
 
     <SwitchPreferenceCompat
+        app:key="@string/batteryNotification_key"
+        app:defaultValue="true"
+        app:title="@string/battery_notification_title" />
+
+    <SwitchPreferenceCompat
         app:key="@string/last_refresh_time_key"
         app:defaultValue="false"
         app:singleLineTitle="false"
