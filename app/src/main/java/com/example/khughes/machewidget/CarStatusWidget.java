@@ -845,7 +845,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }).start();
     }
 
-    private void onResize(Bundle newOptions, RemoteViews views) {
+    public void onResize(Bundle newOptions, RemoteViews views) {
         int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
 //        Toast.makeText(context, "width = " + minWidth, Toast.LENGTH_SHORT).show();
         if (minWidth < 250) {
@@ -859,7 +859,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
         RemoteViews views = getWidgetView(context);
         onResize(newOptions, views);
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
 
     @Override
@@ -896,6 +896,10 @@ public class CarStatusWidget extends AppWidgetProvider {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
             onUpdate(context, AppWidgetManager.getInstance(context), ids);
             return;
+//        } else if (action.equals(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED) && intent.hasExtra(WIDGET_IDS_KEY)) {
+//                int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
+//                onUpdate(context, AppWidgetManager.getInstance(context), ids);
+//                return;
         } else if (action.equals(PROFILE_CLICK)) {
             ProfileManager.changeProfile(context);
             return;
@@ -1023,6 +1027,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             info[0] = new InfoRepository(context);
             handler.sendEmptyMessage(0);
         }).start();
+        super.onReceive(context, intent);
 
     }
 }
