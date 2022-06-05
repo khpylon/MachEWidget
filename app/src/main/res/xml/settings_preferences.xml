@@ -42,6 +42,7 @@
     <SwitchPreferenceCompat
         app:key="@string/batteryNotification_key"
         app:defaultValue="true"
+        app:singleLineTitle="false"
         app:title="@string/battery_notification_title" />
 
     <SwitchPreferenceCompat
