@@ -2,6 +2,20 @@
 
 As I find time, more questions and answers will be added here.
 
+#### Q: The "Last refresh" time shown on widget changes randomly; the value I set for the time between widget updates has no effect.  What's happening?
+
+The time shown in "Last refresh" is based on a specific value read from the servers.  It corresponds (I believe) to the last time the vehicle
+uploaded data.  The time between widget updates controls when the app attempts to read from the servers.  Sometimes, frustratingly, the last upload
+occurs as you open doors to get out of the vehicle.
+
+If you want to confirm that the app *is* doing something, triple-tap on "Last refresh".  It will display the time it read the last update and the time 
+of the last alarm (when it requested an update).  If the last alarm time doesn't match your time between widget updates, you likely have battery 
+optimizations turned on.  If the last update time is different from the last alarm time, then the app may have lost sync with the servers and you'll 
+need to log back into your Ford account.
+
+Note: the time between widget updates and battery optimization settings affect the app's draw on your phone's battery.  Since the widget is only active
+when it does an update, using the 5 or 10 minute settings should not significantly impact your battery level.
+
 #### Q:  Why does the app seems to update for a while, then stop?
 
 My theory is that this is caused by Android's battery optimization settings; alarms are used to signal when to update, and Android sometimes will ignore these when the device is idle.  
