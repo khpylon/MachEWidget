@@ -89,5 +89,4 @@ vehicle; if I do, please consider paying it forward for others.
 #### Q: Why don't you charge for the app?
 
 There are a number of reasons, but the primary one is I started doing this for myself as a hobby.   I only request donations to offset my expenses needed to expand the app; as of 
-June 2022 I've spent about $130 to purchase graphic content and a developer's account on Google Play.  Since I'm not a non-profit (!), my intention is to evnetually donate any unused
-funds to charities.
+June 2022 I've spent about $130 to purchase graphic content and a developer's account on Google Play.  Eventually any unused funds will be donated to charities.
