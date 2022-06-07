@@ -303,6 +303,13 @@ public class NetworkCalls {
                         }
                         nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                         break;
+                    } else {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "getVehicles UNSUCCESSFUL.");
+                        // For either of these client errors, we probably need to refresh the access token
+                        if (response.code() == Constants.HTTP_BAD_REQUEST || response.code() == Constants.HTTP_UNAUTHORIZED) {
+                            nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN;
+                        }
                     }
                     LogFile.i(context, MainActivity.CHANNEL_ID, "getVehicles UNSUCCESSFUL.");
                     LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
