@@ -31,6 +31,7 @@ import java.io.File;
 public class VehicleActivity extends AppCompatActivity {
 
     private VehicleViewModel mVehicleViewModel;
+    private int vehiclecount = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +96,8 @@ public class VehicleActivity extends AppCompatActivity {
 
     public class VehicleListAdapter extends ListAdapter<VehicleIds, VehicleViewHolder> {
 
+        private boolean changing;
+
         public VehicleListAdapter(@NonNull DiffUtil.ItemCallback<VehicleIds> diffCallback) {
             super(diffCallback);
         }
@@ -102,7 +105,17 @@ public class VehicleActivity extends AppCompatActivity {
         @NonNull
         @Override
         public VehicleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return VehicleViewHolder.create(parent);
+            VehicleViewHolder tmp = VehicleViewHolder.create(parent);
+            tmp.enabledView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if(!changing) {
+                    VehicleIds vehicle = this.getItem(tmp.getAdapterPosition());
+                    String VIN = vehicle.getVIN();
+                    mVehicleViewModel.setEnable(VIN,isChecked);
+                    vehicle.setEnabled(isChecked);
+                    notifyDataSetChanged();
+                }
+            });
+            return tmp;
         }
 
         @Override
@@ -118,7 +131,6 @@ public class VehicleActivity extends AppCompatActivity {
             holder.VINItemView.setText(text);
 
             holder.nicknameItemView.setText(current.getNickname());
-            holder.enabledView.setChecked(current.isEnabled());
             File imageDir = new File(getApplicationContext().getDataDir(), Constants.IMAGES_FOLDER);
             File image = new File(imageDir, VIN + ".png");
             if(image.exists()) {
@@ -128,14 +140,11 @@ public class VehicleActivity extends AppCompatActivity {
                 holder.imageView.setVisibility(View.GONE);
             }
 
-            holder.enabledView.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (mVehicleViewModel.countEnabledVehicle() > 1 || isChecked) {
-                    mVehicleViewModel.setEnable(VIN, isChecked);
-                } else {
-                    buttonView.setChecked(true);
-                    Toast.makeText(getApplicationContext(),"At least one vehicle must be enabled.",Toast.LENGTH_SHORT).show();
-                }
-            });
+            changing = true;
+            holder.enabledView.setChecked(current.isEnabled());
+            holder.enabledView.setEnabled(!current.isEnabled() || mVehicleViewModel.countEnabledVehicle() > 1);
+            changing = false;
+
         }
     }
 

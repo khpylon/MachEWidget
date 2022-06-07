@@ -198,22 +198,39 @@ public class ProfileManager extends AppCompatActivity {
     public static void changeProfile(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        InfoRepository info[] = {null};
+        InfoRepository[] info = {null};
 
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 final String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
                 final String userId = sharedPref.getString(context.getResources().getString(R.string.userId_key), "");
-                ArrayList<String> VINs = info[0].getVehiclesVINsByUserId(userId);
-                int index = VINs.indexOf(VIN);
-                // If there's only one VIN; nothing to do
-                if (VINs.size() > 1 && index >= 0) {
-                    index = (index + 1) % VINs.size();
-                    String newVIN = VINs.get(index);
-                    sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), newVIN).apply();
-                    MainActivity.updateWidget(context);
+                List<VehicleInfo> vehicles = new ArrayList<>();
+
+                // Get all vehicles owned by the user
+                int index = 0;
+                for (VehicleInfo tmp : info[0].getVehicles()) {
+                    if (tmp.getUserId().equals(userId)) {
+                        if (tmp.getVIN().equals(VIN)) {
+                            index = vehicles.size();
+                        }
+                        vehicles.add(tmp);
+                    }
                 }
+
+                // If there's more than one VIN, look through the list for the next enabled one
+                if (vehicles.size() > 1) {
+                    do {
+                        index = (index + 1) % vehicles.size();
+                    } while (!vehicles.get(index).isEnabled());
+                    String newVIN = vehicles.get(index).getVIN();
+                    // If the VIN is new, apply changes.
+                    if(!VIN.equals(newVIN)) {
+                        sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), newVIN).apply();
+                        MainActivity.updateWidget(context);
+                    }
+                }
+
             }
         };
 
@@ -319,7 +336,7 @@ public class ProfileManager extends AppCompatActivity {
                 info.setUserId(userId);
                 infoDao.insertVehicleInfo(info);
             }
-            LogFile.d(context,MainActivity.CHANNEL_ID,"info is "+info+", info.userId = " + info.getUserId());
+            LogFile.d(context, MainActivity.CHANNEL_ID, "info is " + info + ", info.userId = " + info.getUserId());
         }
 
         MainActivity.updateWidget(context);

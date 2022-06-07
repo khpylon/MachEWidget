@@ -16,6 +16,9 @@
         android:id="@+id/credentials"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4sp"
+        android:justificationMode="none"
+        android:textColor="?android:textColorPrimary"
         android:text="@string/vehicle_instructions"/>
 
     <androidx.recyclerview.widget.RecyclerView
