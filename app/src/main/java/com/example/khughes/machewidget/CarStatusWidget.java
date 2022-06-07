@@ -3,7 +3,6 @@ package com.example.khughes.machewidget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,7 +20,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.speech.tts.UtteranceProgressListener;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -370,27 +368,6 @@ public class CarStatusWidget extends AppWidgetProvider {
             pressureConversion = 1.0;
             pressureUnits = "kPa";
         }
-            double distanceConversion;
-            String distanceUnits;
-            if ((units == Constants.UNITS_SYSTEM && userInfo.getUomSpeed().equals("MPH")) || units == Constants.UNITS_IMPERIAL) {
-                distanceConversion = Constants.KMTOMILES;
-                distanceUnits = "miles";
-            } else {
-                distanceConversion = 1.0;
-                distanceUnits = "km";
-            }
-            double pressureConversion;
-            String pressureUnits;
-            if ((units == Constants.UNITS_SYSTEM && userInfo.getUomPressure().equals("PSI")) || units == Constants.UNITS_IMPERIAL) {
-                pressureConversion = Constants.KPATOPSI;
-                pressureUnits = "psi";
-            } else if (units == Constants.UNITS_SYSTEM && userInfo.getUomPressure().equals("BAR")) {
-                pressureConversion = Constants.KPATOBAR;
-                pressureUnits = "bar";
-            } else {
-                pressureConversion = 1.0;
-                pressureUnits = "kPa";
-            }
 
         // Door locks
         String lockStatus = carStatus.getLock();
