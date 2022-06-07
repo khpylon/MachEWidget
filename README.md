@@ -1,14 +1,15 @@
 # Ford Status (formerly Mustang Mach-E) Widget for Android
 
-[![Donate](https://img.shields.io/badge/donate-paypal-green.svg?style=for-the-badge)](https://www.paypal.com/donate/?hosted_button_id=HULVHBSWXDU9S)
+[![Donate](https://img.shields.io/badge/donate-paypal-green.svg?style=for-the-badge)](https://www.paypal.com/donate/?hosted_button_id=HULVHBSWXDU9S) 
+[![Donate](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://www.buymeacoffee.com/khpylonca)
 
 ## Intro
 
 This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/tonesto7), which is in turn based on the earlier work of 
 [David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps](https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
 .  It is not a complete implementation of the functionality of their widgets, as it:
-- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own.  As of Feb 2022 I'm extending capabilities to support F-150, Bronco, and
-  Explorer owners as well (feedback needed) 
+- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own (capabilities have been extended to support 
+  F-150/Bronco/Bronco Sport/Explorer/Escape owners as well, but feedback is encouraged)
 - does not include all the function of tonesto7's Apple/iOS widget
 - does not currently support accounts outside of the United States, although it may still work
 
@@ -39,10 +40,17 @@ Download the [app-release.apk](https://github.com/khpylon/MachEWidget/blob/maste
 ## Known Issues & Limitations
 
 As listed above, this app
-- is only intended for the Ford Mustang Mach-E, as that's the only Ford I own
 - does not include all the function of tonesto7's Apple/iOS widget
 - is not guaranteed to support accounts outside of the United States
-  
+
+## Contributing Help for Unsupported Vehicles
+
+If you would like to use the app but your vehicle is not currently supported, there are a few things you can do:
+
+1. Load the app onto your phone and gather log data about your vehicle.  See the "Bug Report" section for how to gather log data.  The two important pieces of data are JSON responses for car status and OTA status.
+2. Consider contributing the necessary graphics for your vehicle.  Free drawings would be great (provided they are usable and *actually free*), but chipping in a donation towards the purchase of SVG CAD drawings is also encouraged.
+3. Encourage fellow owners to do the same.
+
 ## Bug Reports
 
 If you discover something which doesn't work the way you expect, check first on the forums to see whether someone else has
@@ -56,7 +64,7 @@ The app has some built-in support for gathering log information:
 2. Perform any actions you think will demonstrate the issue
 3. Under the three-dot menu, select "Save logfile"; this will save a file named *fsw_logfile-<datetime>.txt* or something similar in the *Downloads* folder of your
 external storage
-4. Deactive "Enable logging"
+4. Deactivate "Enable logging"
 5. Create/append to an Issue and upload the file as an attachment
 
 A serious bug that causes the app to crash will dump some information to logcat.  The app will check for this the next time it is run
@@ -67,9 +75,10 @@ and write it to a file named *fsw_logcat-<datetime>.txt* in your *Downloads* fol
 Refer to the [FAQ](https://github.com/khpylon/MachEWidget/blob/master/FAQ.md) file.  It's a work in progress.  If your questions isn't there, ask on the forums or 
 send a message to suggest adding it.
 
-## To do
+## Donations
 
-- Display information using more graphics and less text where possible.
+This project is free to use and free for anyone to copy, but there occasionally are some costs for the content it uses.  If you are interested in supporting
+development, use the Paypal or BuyMeACoffee links at the top of the page.  Any funds not spent on the project will be donated to charity.
 
 ## Credits
 

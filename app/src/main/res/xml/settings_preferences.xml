@@ -6,6 +6,12 @@
         app:useSimpleSummaryProvider="true"
         app:enabled="false" />
 
+    <EditTextPreference
+        app:key="@string/userId_key"
+        app:defaultValue=""
+        app:useSimpleSummaryProvider="true"
+        app:enabled="false" />
+
     <!--
     <ListPreference
         app:key="vintest"
@@ -32,6 +38,12 @@
         app:key="@string/save_credentials_key"
         app:defaultValue="false"
         app:title="@string/save_credentials" />
+
+    <SwitchPreferenceCompat
+        app:key="@string/batteryNotification_key"
+        app:defaultValue="true"
+        app:singleLineTitle="false"
+        app:title="@string/battery_notification_title" />
 
     <SwitchPreferenceCompat
         app:key="@string/last_refresh_time_key"
@@ -105,6 +117,13 @@
             app:singleLineTitle="false"
             app:title="@string/logging"
             app:summary="@string/logging_summary"/>
+
+        <SwitchPreferenceCompat
+            app:key="@string/forceUpdate_key"
+            app:defaultValue="false"
+            app:enabled="true"
+            app:title="@string/force_updates"
+            app:summary="@string/force_updates_summary"/>
     </PreferenceCategory>
 
     <PreferenceCategory

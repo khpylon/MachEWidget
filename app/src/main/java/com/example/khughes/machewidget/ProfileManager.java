@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,43 +197,30 @@ public class ProfileManager extends AppCompatActivity {
 
     public static void changeProfile(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        final String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
+
+        InfoRepository info[] = {null};
 
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                if (bundle.containsKey("VINs")) {
-                    ArrayList<String> VINs = bundle.getStringArrayList("VINs");
-                    int index = VINs.indexOf(VIN);
-                    // If there's only one VIN; nothing to do
-                    if (VINs.size() > 1 && index >= 0) {
-                        index = (index + 1) % VINs.size();
-                        String newVIN = VINs.get(index);
-                        sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), newVIN).apply();
-                        MainActivity.updateWidget(context);
-                    }
+                final String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
+                final String userId = sharedPref.getString(context.getResources().getString(R.string.userId_key), "");
+                ArrayList<String> VINs = info[0].getVehiclesVINsByUserId(userId);
+                int index = VINs.indexOf(VIN);
+                // If there's only one VIN; nothing to do
+                if (VINs.size() > 1 && index >= 0) {
+                    index = (index + 1) % VINs.size();
+                    String newVIN = VINs.get(index);
+                    sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), newVIN).apply();
+                    MainActivity.updateWidget(context);
                 }
             }
         };
 
         new Thread(() -> {
-            VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
-                    .vehicleInfoDao().findVehicleInfoByVIN(VIN);
-            if (vehInfo != null) {
-                Bundle bundle = new Bundle();
-                UserInfo userInfo = UserInfoDatabase.getInstance(context)
-                        .userInfoDao().findUserInfo(vehInfo.getUserId());
-                Message m = Message.obtain();
-                ArrayList<String> VINs = new ArrayList<>();
-                VINs.addAll(VehicleInfoDatabase.getInstance(context)
-                        .vehicleInfoDao().findVINsByUserId(userInfo.getUserId()));
-                bundle.putStringArrayList("VINs", VINs);
-                m.setData(bundle);
-                handler.sendMessage(m);
-            }
+            info[0] = new InfoRepository(context);
+            handler.sendEmptyMessage(0);
         }).start();
-
     }
 
     // After a successful login, make any changes necessary to the associated VINs
@@ -254,12 +242,12 @@ public class ProfileManager extends AppCompatActivity {
                 unknownVINs.add(VIN);
             }
         }
-        if (!unknownVINs.isEmpty()) {
-            LogFile.i(context, MainActivity.CHANNEL_ID, "ProfileManager.updateProfile(): " + unknownVINs.size() + " unrecognized VINs removed.");
-            for (String VIN : unknownVINs) {
-                vehicles.remove(VIN);
-            }
-        }
+//        if (!unknownVINs.isEmpty()) {
+//            LogFile.i(context, MainActivity.CHANNEL_ID, "ProfileManager.updateProfile(): " + unknownVINs.size() + " unrecognized VINs removed.");
+//            for (String VIN : unknownVINs) {
+//                vehicles.remove(VIN);
+//            }
+//        }
 
         // If the current VIN is defined but isn't in the list of new VINs, handle it
         if (!currentVIN.equals("") && !vehicles.isEmpty() && !vehicles.containsKey(currentVIN)) {
@@ -285,8 +273,9 @@ public class ProfileManager extends AppCompatActivity {
             }
 
             // If the user ID is also different, delete the user too
-            if (!info.getUserId().equals(userId)) {
-                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(info.getUserId());
+            String thisUserId = info.getUserId();
+            if (thisUserId != null && !thisUserId.equals(userId)) {
+                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(thisUserId);
             }
         }
 
@@ -316,18 +305,21 @@ public class ProfileManager extends AppCompatActivity {
                 if (info.getUserId().equals(Constants.TEMP_ACCOUNT)) {
                     UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(info.getUserId());
                 }
+                // update all the other stuff
+                info.setNickname(nickname);
+                info.setUserId(userId);
+                infoDao.updateVehicleInfo(info);
             }
             // If the vehicle is new, set the VIN and insert into the database
             else {
                 info = new VehicleInfo();
+                // Fill in the important fields and update
                 info.setVIN(VIN);
+                info.setNickname(nickname);
+                info.setUserId(userId);
                 infoDao.insertVehicleInfo(info);
             }
-
-            // Fill in the important fields and update
-            info.setNickname(nickname);
-            info.setUserId(userId);
-            infoDao.updateVehicleInfo(info);
+            LogFile.d(context,MainActivity.CHANNEL_ID,"info is "+info+", info.userId = " + info.getUserId());
         }
 
         MainActivity.updateWidget(context);

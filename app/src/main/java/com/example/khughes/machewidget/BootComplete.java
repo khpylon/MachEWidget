@@ -27,9 +27,8 @@ public class BootComplete extends BroadcastReceiver {
             UpdateReceiver.createIntent(context);
         }
         if (action.equalsIgnoreCase(Intent.ACTION_MY_PACKAGE_REPLACED)) {
-            LogFile.d(context, MainActivity.CHANNEL_ID, "running action");
+            LogFile.d(context, MainActivity.CHANNEL_ID, "BootComplete: running package updates");
             Utils.removeAPK(context);
-            LogFile.d(context, MainActivity.CHANNEL_ID, "running action again");
             MainActivity.performUpdates(context);
             MainActivity.updateWidget(context);
         }

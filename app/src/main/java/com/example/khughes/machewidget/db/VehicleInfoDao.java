@@ -38,6 +38,9 @@ public interface VehicleInfoDao {
     @Query("DELETE FROM vehicle_info WHERE userId LIKE :userId")
     void deleteVehicleInfoByUserId(String userId);
 
+    @Query("UPDATE vehicle_info SET supportsOTA = 1")
+    void updateSupportOTA();
+
     @Query("UPDATE vehicle_info SET enabled = :value WHERE vin = :VIN")
     void updateEnable(String VIN, boolean value);
 

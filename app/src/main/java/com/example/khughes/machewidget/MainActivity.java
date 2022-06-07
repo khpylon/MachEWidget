@@ -1,5 +1,6 @@
 package com.example.khughes.machewidget;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.icu.text.MessageFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -34,6 +36,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewAssetLoader;
@@ -47,6 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -62,7 +67,10 @@ public class MainActivity extends AppCompatActivity {
         context = this.getApplicationContext();
 
         // First thing, check logcat for a crash and save if so
-        Utils.checkLogcat(context);
+        String crashMessage = Utils.checkLogcat(context);
+        if (crashMessage != null) {
+            Toast.makeText(context, crashMessage, Toast.LENGTH_SHORT).show();
+        }
 
         // Initialize preferences
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false);
@@ -73,22 +81,32 @@ public class MainActivity extends AppCompatActivity {
         // Initiate check for a new app version
         UpdateReceiver.initiateAlarm(context);
 
+        // See if we need to notify user about battery optimizations
+        Notifications.batteryOptimization(context);
+
         // Initiate update of the widget
         Intent updateIntent = new Intent();
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         context.sendBroadcast(updateIntent);
 
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }
+            }
+        }
+
         // If app has been running OK, try to initiate status updates
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        if (!VIN.equals("")) {
+        String userId = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.userId_key), null);
+        if (userId != null) {
             new Thread(() -> {
-                VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
-                        .vehicleInfoDao().findVehicleInfoByVIN(VIN);
-                String userId = vehInfo.getUserId();
-                UserInfo userInfo = UserInfoDatabase.getInstance(context)
-                        .userInfoDao().findUserInfo(userId);
-                String state = userInfo.getProgramState();
-                if (state.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
+                InfoRepository info = new InfoRepository(context);
+                UserInfo userInfo = info.getUser();
+                if (userInfo != null && userInfo.getProgramState().equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     StatusReceiver.initateAlarm(context);
                 }
             }).start();
@@ -107,15 +125,16 @@ public class MainActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
 
         String indexPage = "https://appassets.androidplatform.net/assets/index_mache.html";
-        if (!VIN.equals("")) {
-            if (Utils.isBronco(VIN)) {
-                indexPage = "https://appassets.androidplatform.net/assets/index_bronco.html";
-            } else if (Utils.isF150(VIN)) {
-                indexPage = "https://appassets.androidplatform.net/assets/index_f150.html";
-            } else if (Utils.isExplorer(VIN)) {
-                indexPage = "https://appassets.androidplatform.net/assets/index_explorer.html";
-            }
-        }
+//        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+//        if (!VIN.equals("")) {
+//            if (Utils.isBronco(VIN)) {
+//                indexPage = "https://appassets.androidplatform.net/assets/index_bronco.html";
+//            } else if (Utils.isF150(VIN)) {
+//                indexPage = "https://appassets.androidplatform.net/assets/index_f150.html";
+//            } else if (Utils.isExplorer(VIN)) {
+//                indexPage = "https://appassets.androidplatform.net/assets/index_explorer.html";
+//            }
+//        }
         mWebView.loadUrl(indexPage);
 
         // Update the widget
@@ -125,13 +144,27 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
     // This method is intended to bundle various changes from older versions to the most recent.
     public static void performUpdates(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String lastVersion = prefs.getString(context.getResources().getString(R.string.last_version_key), "");
 
         // See if we need to upgrade anything since the last version
-        if (BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
+        if (!lastVersion.equals("") && BuildConfig.VERSION_NAME.compareTo(lastVersion) > 0) {
             LogFile.i(context, CHANNEL_ID, "running updates");
 
             // Add operations here
@@ -187,9 +220,45 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            // Update internally
-            prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
+            // Re-enable OTA support on all vehicles, and add userId to settings.
+            if (lastVersion.compareTo("2022.05.25") < 0) {
+                LogFile.d(context, MainActivity.CHANNEL_ID, "running 2022.05.25 updates");
+
+                PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+                String VIN = sharedPrefs.getString(context.getResources().getString(R.string.VIN_key), null);
+
+                new Thread(() -> {
+                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateSupportOTA();
+                    if (VIN != null) {
+                        VehicleInfo info = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(VIN);
+                        String userId = info.getUserId();
+                        // Some vehicle entries had missing userID value.  If so, get the user ID from the first entry
+                        // of the user database and update all vehicles
+                        if (userId == null) {
+                            LogFile.d(context, MainActivity.CHANNEL_ID, "2022.05.25 update: adding user ID to vehicles");
+                            List<UserInfo> userInfo = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo();
+                            if (!userInfo.isEmpty()) {
+                                userId = userInfo.get(0).getUserId();
+                                for (VehicleInfo vehInfo : VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {
+                                    vehInfo.setUserId(userId);
+                                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateVehicleInfo(vehInfo);
+                                }
+                            }
+                        }
+                        sharedPrefs.edit().putString(context.getResources().getString(R.string.userId_key), userId).commit();
+                    }
+                }).start();
+            }
+
+            // Re-enable OTA support on all vehicles, and add userId to settings.
+            if (lastVersion.compareTo("2022.05.31") < 0 || lastVersion.compareTo("2022.06.04a") < 0 ) {
+                PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
+            }
         }
+
+        // Update internally
+        prefs.edit().putString(context.getResources().getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit();
     }
 
     private static void migrateToDatabases(Context context) {
@@ -345,16 +414,16 @@ public class MainActivity extends AppCompatActivity {
                             if (uri != null) {
                                 String type = context.getContentResolver().getType(uri);
                                 try {
-                                    if (type.equals(Constants.APPLICATION_ZIP)) {
-                                        ZipManager.unzip(context, uri);
-                                    } else {
+                                    if (type.equals(Constants.APPLICATION_JSON) ||
+                                            (type.equals(Constants.APPLICATION_OCTETSTREAM) &&
+                                                    uri.getPath().endsWith(".json"))) {
                                         Utils.restorePrefs(context, uri);
+                                    } else {
+                                        return;
                                     }
                                     Intent intent = new Intent(context, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
-                                } catch (ZipManager.SettingFileException e) {
-                                    Toast.makeText(context, "Error: Settings ZIP file version mismatch.", Toast.LENGTH_SHORT).show();
                                 } catch (IOException e2) {
                                     Log.e(MainActivity.CHANNEL_ID, "exception in MainActivity.restoreSettingsLauncher: ", e2);
                                 }
@@ -395,35 +464,20 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.action_copylog) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                String result = LogFile.copyLogFile(context);
-                if (result == null) {
-                    Toast.makeText(context, "Log file copied to Download folder.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(context, "Logging not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
-            }
+            String result = LogFile.copyLogFile(context);
+            Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_backup) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                Utils.savePrefs(context);
-            } else {
-                Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
-            }
+            Utils.savePrefs(context);
             return true;
         } else if (id == R.id.action_restore) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("application/*");
-                String[] mimeTypes = new String[]{Constants.APPLICATION_JSON, Constants.APPLICATION_ZIP};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                restoreSettingsLauncher.launch(intent);
-            } else {
-                Toast.makeText(context, "Settings backup not implemented for this version of Android.", Toast.LENGTH_SHORT).show();
-            }
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/*");
+            String[] mimeTypes = new String[]{Constants.APPLICATION_JSON, Constants.APPLICATION_OCTETSTREAM};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            restoreSettingsLauncher.launch(intent);
             return true;
         } else if (id == R.id.action_update) {
             Intent intent = new Intent(this, UpdateReceiver.class);
@@ -453,7 +507,7 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.createNotificationChannel(channel);
     }
 
-    public static Boolean checkBatteryOptimizations(Context context) {
+    public static Boolean ignoringBatteryOptimizations(Context context) {
         String packageName = context.getPackageName();
         PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
         return pm.isIgnoringBatteryOptimizations(packageName);

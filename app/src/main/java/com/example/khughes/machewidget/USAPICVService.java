@@ -14,11 +14,28 @@ public interface USAPICVService {
     @Headers({"Accept: application/json",
             "Accept-Encoding: gzip, deflate, br",
             "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110"})
-    @GET("vehicles/v4/{VIN}/status")
+    @GET("vehicles/v5/{VIN}/status")
     Call<CarStatus> getStatus(@Header("auth-token") String token,
                               @Header("Accept-Language") String language,
                               @Header("Application-Id") String APID,
                               @Path("VIN") String VIN);
+
+    @Headers({"Accept: application/json",
+            "Accept-Encoding: gzip, deflate, br",
+            "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110"})
+    @PUT("vehicles/v5/{VIN}/status")
+    Call<CommandStatus> putStatus(@Header("auth-token") String token,
+                                       @Header("Application-Id") String APID,
+                                       @Path("VIN") String VIN);
+
+    @Headers({"Accept: application/json",
+            "Accept-Encoding: gzip, deflate, br",
+            "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110"})
+    @GET("vehicles/v5/{VIN}/statusrefresh/{CommandId}")
+    Call<CarStatus> pollStatus(@Header("auth-token") String token,
+                               @Header("Application-Id") String APID,
+                               @Path("VIN") String VIN,
+                               @Path("CommandId") String commandId);
 
     @Headers({"Content-Type: application/json",
             "Accept-Encoding: gzip, deflate, br",
@@ -66,9 +83,10 @@ public interface USAPICVService {
             "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
             "Referer: https://ford.com",
             "Origin: https://ford.com'"})
-    @GET("users/vehicles/{VIN}/detail") // ?lrdt=01-01-1970%2000:00:00"
+    @GET("users/vehicles/{VIN}/detail")
+        // ?lrdt=01-01-1970%2000:00:00"
     Call<VehicleInfo> getVehicleInfo(@Header("auth-token") String token,
-                                           @Header("Application-Id") String APID,
-                                           @Path("VIN") String VIN
+                                     @Header("Application-Id") String APID,
+                                     @Path("VIN") String VIN
     );
 }

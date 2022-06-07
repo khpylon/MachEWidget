@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.speech.tts.UtteranceProgressListener;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -29,9 +30,6 @@ import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
-import com.example.khughes.machewidget.db.UserInfoDatabase;
-import com.example.khughes.machewidget.db.VehicleInfoDao;
-import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -58,6 +56,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     private static final String IGNITION_CLICK = "IgnitionButton";
     private static final String LOCK_CLICK = "LockButton";
     private static final String REFRESH_CLICK = "Refresh";
+    private static final String PHEVTOGGLE_CLICK = "PHEVToggle";
 
     private static final String PADDING = "   ";
     private static final String CHARGING_STATUS_NOT_READY = "NotReady";
@@ -112,16 +111,17 @@ public class CarStatusWidget extends AppWidgetProvider {
         String streetName = PADDING;
         String cityState = "";
 
-        views.setTextViewText(R.id.location_line1, "Location:");
-
         Geocoder mGeocoder = new Geocoder(context, Locale.getDefault());
         double lat = Double.parseDouble(latitude);
         double lon = Double.parseDouble(longitude);
         try {
             addresses = mGeocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
-            LogFile.e(context, MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget (normal)");
+            LogFile.e(context, MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget for Geocoder (this is normal)");
+            return;
         }
+
+        views.setTextViewText(R.id.location_line1, "Location:");
 
         // If an address was found, go with the first entry
         if (addresses != null && addresses.size() > 0) {
@@ -171,41 +171,61 @@ public class CarStatusWidget extends AppWidgetProvider {
                 useTranparency ? R.color.transparent_black : R.color.black);
     }
 
-    protected PendingIntent getPendingSelfIntent(Context context, String action) {
+    protected PendingIntent getPendingSelfIntent(Context context, int id, String action) {
         Intent intent = new Intent(context, getClass());
+        intent.putExtra("appWidgetId", id);
         intent.setAction(action);
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
-    private void setCallbacks(Context context, RemoteViews views) {
+    private void setCallbacks(Context context, RemoteViews views, int id) {
         // Define actions for clicking on various icons, including the widget itself
-        views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, WIDGET_CLICK));
-        views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, SETTINGS_CLICK));
+        views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, id, WIDGET_CLICK));
+        views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, id, SETTINGS_CLICK));
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, PROFILE_CLICK));
-        views.setOnClickPendingIntent(R.id.logo, getPendingSelfIntent(context, PROFILE_CLICK));
+        views.setOnClickPendingIntent(R.id.profile, getPendingSelfIntent(context, id, PROFILE_CLICK));
+        views.setOnClickPendingIntent(R.id.logo, getPendingSelfIntent(context, id, PROFILE_CLICK));
 
         boolean showAppLinks = sharedPref.getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {
-            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, LEFT_BUTTON_CLICK));
-            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, RIGHT_BUTTON_CLICK));
+            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, id, LEFT_BUTTON_CLICK));
+            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, id, RIGHT_BUTTON_CLICK));
         } else {
-            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
-            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, id, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, id, WIDGET_CLICK));
         }
 
         boolean enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.enable_commands_key), false);
         if (enableCommands) {
-            views.setOnClickPendingIntent(R.id.lock, getPendingSelfIntent(context, LOCK_CLICK));
-            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, IGNITION_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, id, LOCK_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, id, LOCK_CLICK));
+            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, id, IGNITION_CLICK));
         } else {
-            views.setOnClickPendingIntent(R.id.lock, getPendingSelfIntent(context, WIDGET_CLICK));
-            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, id, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, id, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, id, WIDGET_CLICK));
         }
-        views.setOnClickPendingIntent(R.id.lastRefresh, getPendingSelfIntent(context, REFRESH_CLICK));
+        views.setOnClickPendingIntent(R.id.lastRefresh, getPendingSelfIntent(context, id, REFRESH_CLICK));
+    }
+
+    private void setPHEVCallbacks(Context context, RemoteViews views, int fuelType, int id, String mode) {
+        if (fuelType != Utils.FUEL_PHEV) {
+            views.setOnClickPendingIntent(R.id.bottom_gasoline, getPendingSelfIntent(context, id, WIDGET_CLICK));
+            views.setOnClickPendingIntent(R.id.bottom_electric, getPendingSelfIntent(context, id, WIDGET_CLICK));
+        } else {
+            Intent intent = new Intent(context, getClass());
+            intent.putExtra("appWidgetId", id);
+            intent.putExtra("nextMode", mode);
+            intent.setAction(PHEVTOGGLE_CLICK);
+            views.setOnClickPendingIntent(R.id.bottom_gasoline,
+                    PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+            intent.setAction(PHEVTOGGLE_CLICK);
+            views.setOnClickPendingIntent(R.id.bottom_electric,
+                    PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+        }
     }
 
     // Based on the VIN, find the right widget layout
@@ -215,9 +235,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                 int appWidgetId) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-
+                                 int appWidgetId, InfoRepository info) {
         RemoteViews views = getWidgetView(context);
 
         // Make sure the left side is visible depending on the widget width
@@ -225,10 +243,18 @@ public class CarStatusWidget extends AppWidgetProvider {
         onResize(appWidgetOptions, views);
 
         // Setup actions for specific widgets
-        setCallbacks(context, views);
+        setCallbacks(context, views, appWidgetId);
 
         // Set background transparency
         setBackground(context, views);
+
+        VehicleInfo vehicleInfo = info.getVehicle();
+        UserInfo userInfo = info.getUser();
+        if (vehicleInfo == null || userInfo == null) {
+            return;
+        }
+
+        String VIN = vehicleInfo.getVIN();
 
         // If the vehicle image has been downloaded, update it
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
@@ -239,99 +265,111 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         // Display the vehicle's nickname
-        new Thread(() -> {
-            VehicleInfoDao vehicleDao = VehicleInfoDatabase.getInstance(context)
-                    .vehicleInfoDao();
-            VehicleInfo vehicleInfo = vehicleDao.findVehicleInfoByVIN(VIN);
-            if (vehicleInfo == null) {
-                return;
-            }
-            String userId = vehicleInfo.getUserId();
-            UserInfo userInfo = UserInfoDatabase.getInstance(context)
-                    .userInfoDao().findUserInfo(userId);
-            if (userInfo == null) {
-                return;
-            }
+        views.setTextViewText(R.id.profile, vehicleInfo.getNickname());
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
 
-            views.setTextViewText(R.id.profile, vehicleInfo.getNickname());
-            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+        // If no status information, print something generic and return
+        // TODO: also refresh the icons as if we're logged out?
+        CarStatus carStatus = vehicleInfo.getCarStatus();
+        if (carStatus == null || carStatus.getVehiclestatus() == null) {
+            views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.");
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+            return;
+        }
 
-            // If no status information, print something generic and return
-            // TODO: also refresh the icons as if we're logged out?
-            CarStatus carStatus = vehicleInfo.getCarStatus();
-            if (carStatus == null || carStatus.getVehiclestatus() == null) {
-                views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.");
-                appWidgetManager.updateAppWidget(appWidgetId, views);
-                return;
-            }
+        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+        int fuelType = Utils.getFuelType(VIN);
+        views.setViewVisibility(R.id.lock_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.bottom_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.plug, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
 
-            String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-            int fuelType = Utils.getFuelType(VIN);
+        // Fill in the last update time
+        Calendar lastUpdateTime = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            lastUpdateTime.setTime(sdf.parse(carStatus.getLastRefresh()));// all done
+        } catch (ParseException e) {
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+        }
+        Calendar currentTime = Calendar.getInstance();
+        long minutes = (Duration.between(lastUpdateTime.toInstant(), currentTime.toInstant()).getSeconds() + 30) / 60;
+        LogFile.i(context, MainActivity.CHANNEL_ID, "updateAppWidget(): last vehicle update was " + minutes + " minutes ago.");
 
-            // Fill in the last update time
-            Calendar lastUpdateTime = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            try {
-                lastUpdateTime.setTime(sdf.parse(carStatus.getLastRefresh()));// all done
-            } catch (ParseException e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
-            }
-            Calendar currentTime = Calendar.getInstance();
-            long minutes = (Duration.between(lastUpdateTime.toInstant(), currentTime.toInstant()).getSeconds() + 30) / 60;
-            LogFile.i(context, MainActivity.CHANNEL_ID, "updateAppWidget(): last vehicle update was " + minutes + " minutes ago.");
-
-            String refresh = "Last refresh:\n  ";
-            boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(context.getResources().getString(R.string.last_refresh_time_key), false);
-            if (displayTime) {
-                sdf = new SimpleDateFormat(timeFormat, Locale.ENGLISH);
-                refresh += sdf.format(lastUpdateTime.getTime());
-            } else {
-                // less than 1 minute
-                if (minutes < 1) {
-                    refresh += "just now";
-                    // less than an hour
-                } else if (minutes < 60) {
-                    refresh += minutes + " min ago";
-                    // less than a day
-                } else if (minutes / 60 < 24) {
-                    refresh += (minutes / 60) + " hr";
-                    // right on the hour
-                    if ((minutes % 60) == 0) {
-                        if (minutes == 60) {
-                            refresh += " ago";
-                        } else {
-                            refresh += "s ago";
-                        }
-                        // hours and minutes
+        String refresh = "Last refresh:\n  ";
+        boolean displayTime = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.last_refresh_time_key), false);
+        if (displayTime) {
+            sdf = new SimpleDateFormat(timeFormat, Locale.ENGLISH);
+            refresh += sdf.format(lastUpdateTime.getTime());
+        } else {
+            // less than 1 minute
+            if (minutes < 1) {
+                refresh += "just now";
+                // less than an hour
+            } else if (minutes < 60) {
+                refresh += minutes + " min ago";
+                // less than a day
+            } else if (minutes / 60 < 24) {
+                refresh += (minutes / 60) + " hr";
+                // right on the hour
+                if ((minutes % 60) == 0) {
+                    if (minutes == 60) {
+                        refresh += " ago";
                     } else {
-                        if (minutes >= 120) {
-                            refresh += "s";
-                        }
-                        refresh += ", " + (minutes % 60) + " min ago";
+                        refresh += "s ago";
                     }
+                    // hours and minutes
                 } else {
-                    long days = minutes / (24 * 60);
-                    // one day
-                    if (days == 1) {
-                        refresh += " 1 day ago";
-                        // multiple days
-                    } else {
-                        refresh += days + " days ago";
+                    if (minutes >= 120) {
+                        refresh += "s";
                     }
+                    refresh += ", " + (minutes % 60) + " min ago";
+                }
+            } else {
+                long days = minutes / (24 * 60);
+                // one day
+                if (days == 1) {
+                    refresh += " 1 day ago";
+                    // multiple days
+                } else {
+                    refresh += days + " days ago";
                 }
             }
-            views.setTextViewText(R.id.lastRefresh, refresh);
+        }
+        views.setTextViewText(R.id.lastRefresh, refresh);
 
-            // Get conversion factors for Metric vs Imperial measurement units
-            StoredData appInfo = new StoredData(context);
-            int units = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(
-                            context.getResources().getString(R.string.units_key),
-                            context.getResources().getString(R.string.units_system)
-                    ));
+        // Get conversion factors for Metric vs Imperial measurement units
+        int units = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(
+                        context.getResources().getString(R.string.units_key),
+                        context.getResources().getString(R.string.units_system)
+                ));
 
+        double distanceConversion;
+        String distanceUnits;
+        if ((units == Constants.UNITS_SYSTEM && userInfo.getUomSpeed().equals("MPH")) || units == Constants.UNITS_IMPERIAL) {
+            distanceConversion = Constants.KMTOMILES;
+            distanceUnits = "miles";
+        } else {
+            distanceConversion = 1.0;
+            distanceUnits = "km";
+        }
+        double pressureConversion;
+        String pressureUnits;
+        if ((units == Constants.UNITS_SYSTEM && userInfo.getUomPressure().equals("PSI")) || units == Constants.UNITS_IMPERIAL) {
+            pressureConversion = Constants.KPATOPSI;
+            pressureUnits = "psi";
+        } else if (units == Constants.UNITS_SYSTEM && userInfo.getUomPressure().equals("BAR")) {
+            pressureConversion = Constants.KPATOBAR;
+            pressureUnits = "bar";
+        } else {
+            pressureConversion = 1.0;
+            pressureUnits = "kPa";
+        }
             double distanceConversion;
             String distanceUnits;
             if ((units == Constants.UNITS_SYSTEM && userInfo.getUomSpeed().equals("MPH")) || units == Constants.UNITS_IMPERIAL) {
@@ -354,306 +392,323 @@ public class CarStatusWidget extends AppWidgetProvider {
                 pressureUnits = "kPa";
             }
 
-            // Door locks
-            String lockStatus = carStatus.getLock();
-            if (lockStatus != null) {
-                views.setImageViewResource(R.id.lock, lockStatus.equals("LOCKED") ?
-                        R.drawable.locked_icon_green : R.drawable.unlocked_icon_red);
-            }
+        // Door locks
+        String lockStatus = carStatus.getLock();
+        if (lockStatus != null) {
+            views.setImageViewResource(R.id.lock_electric, lockStatus.equals("LOCKED") ?
+                    R.drawable.locked_icon_green : R.drawable.unlocked_icon_red);
+            views.setImageViewResource(R.id.lock_gasoline, lockStatus.equals("LOCKED") ?
+                    R.drawable.locked_icon_green : R.drawable.unlocked_icon_red);
+        }
 
-            // Ignition and remote start
-            String ignition = carStatus.getIgnition();
-            Boolean remote = carStatus.getRemoteStartStatus();
-            if (remote != null && remote) {
-                views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow);
-            } else if (ignition != null) {
-                views.setImageViewResource(R.id.ignition, ignition.equals("Off") ?
-                        R.drawable.ignition_icon_gray : R.drawable.ignition_icon_green);
-            }
+        // Ignition and remote start
+        String ignition = carStatus.getIgnition();
+        Boolean remote = carStatus.getRemoteStartStatus();
+        if (remote != null && remote) {
+            views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow);
+        } else if (ignition != null) {
+            views.setImageViewResource(R.id.ignition, ignition.equals("Off") ?
+                    R.drawable.ignition_icon_gray : R.drawable.ignition_icon_green);
+        }
 
-            // Motion alarm and deep sleep state
-            String alarm = carStatus.getAlarm();
-            Boolean sleep = carStatus.getDeepSleep();
-            if (sleep != null && sleep) {
-                views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_zzz_red);
+        // Motion alarm and deep sleep state
+        String alarm = carStatus.getAlarm();
+        Boolean sleep = carStatus.getDeepSleep();
+        if (sleep != null && sleep) {
+            views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_zzz_red);
+        } else {
+            if (alarm != null) {
+                views.setImageViewResource(R.id.alarm, alarm.equals("NOTSET") ?
+                        R.drawable.bell_icon_red : R.drawable.bell_icon_green);
             } else {
-                if (alarm != null) {
-                    views.setImageViewResource(R.id.alarm, alarm.equals("NOTSET") ?
-                            R.drawable.bell_icon_red : R.drawable.bell_icon_green);
-                } else {
-                    views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray);
-                }
+                views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray);
             }
+        }
 
-            String rangeCharge = "N/A";
-            if (fuelType == Utils.FUEL_ELECTRIC) {
+        String rangeCharge = "N/A";
+        if (fuelType == Utils.FUEL_ELECTRIC || fuelType == Utils.FUEL_PHEV) {
 
-                // Estimated range
-                Double range = carStatus.getElVehDTE();
-                if (range != null && range > 0) {
-                    rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
-                }
-
-                // Charging port
-                Boolean pluggedIn = carStatus.getPlugStatus();
-                views.setImageViewResource(R.id.plug, pluggedIn ?
-                        R.drawable.plug_icon_green : R.drawable.plug_icon_gray);
-
-                // High-voltage battery
-                if (pluggedIn) {
-                    String chargeStatus = carStatus.getChargingStatus();
-                    switch (chargeStatus) {
-                        case CHARGING_STATUS_NOT_READY:
-                            views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_red);
-                            break;
-                        case CHARGING_STATUS_CHARGING_AC:
-                        case CHARGING_STATUS_CHARGING_DC:
-                            views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_charging);
-                            break;
-                        case CHARGING_STATUS_TARGET_REACHED:
-                        case CHARGING_STATUS_PRECONDITION:
-                            views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_charged_green);
-                            break;
-                        case CHARGING_STATUS_PAUSED:
-                            views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_yellow);
-                            break;
-                        default:
-                            views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
-                            break;
-                    }
-
-                    // Normally there will be something from the GOM; if so, display this info below it
-                    if (!rangeCharge.equals("")) {
-                        rangeCharge += "\n";
-                    }
-                    if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
-                        rangeCharge += "Target Reached";
-                    } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
-                        rangeCharge += "Preconditioning";
-                    } else {
-                        sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
-                        Calendar endChargeTime = Calendar.getInstance();
-                        try {
-                            endChargeTime.setTime(sdf.parse(carStatus.getVehiclestatus().getChargeEndTime().getValue()));
-
-                            Calendar nowTime = Calendar.getInstance();
-                            long min = Duration.between(nowTime.toInstant(), endChargeTime.toInstant()).getSeconds() / 60;
-                            if (min > 0) {
-                                int hours = (int) min / 60;
-                                min %= 60;
-                                if (hours > 0) {
-                                    rangeCharge += hours + " hr";
-                                    if (min > 0) {
-                                        rangeCharge += ", ";
-                                    }
-                                }
-                                if (min > 0) {
-                                    rangeCharge += (int) min + " min";
-                                }
-                                rangeCharge += " left";
-                            }
-                        } catch (ParseException e) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
-                        }
-                    }
-                } else {
-                    views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
-                }
-                views.setTextViewText(R.id.GOM, rangeCharge);
-
-                // High-voltage battery charge levels
-                Double chargeLevel = carStatus.getHVBFillLevel();
-                if (chargeLevel != null) {
-                    views.setProgressBar(R.id.HBVChargeProgress, 100, (int) Math.round(chargeLevel + 0.5), false);
-                    views.setTextViewText(R.id.HVBChargePercent,
-                            MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
-                                    DecimalFormatSymbols.getInstance(Locale.US)).format(chargeLevel)));
-                }
-            } else {
-                // Estimated range
-                Double range = carStatus.getDistanceToEmpty();
-                if (range != null && range >= 0) {
-                    vehicleInfo.setLastDTE(range);
-                    vehicleDao.updateVehicleInfo(vehicleInfo);
-                } else {
-                    range = vehicleInfo.getLastDTE();
-                    if (range == null) {
-                        range = -1.0;
-                        distanceConversion = 1.0;
-                    }
-                }
+            // Estimated range
+            Double range = carStatus.getElVehDTE();
+            if (range != null && range > 0) {
                 rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
-                views.setTextViewText(R.id.distanceToEmpty, rangeCharge);
+            }
 
-                // Fuel tank level
-                Double fuelLevel = carStatus.getFuelLevel();
-                if (fuelLevel != null && fuelLevel >= 0) {
-                    vehicleInfo.setLastFuelLevel(fuelLevel);
-                    vehicleDao.updateVehicleInfo(vehicleInfo);
-                } else {
-                    fuelLevel = vehicleInfo.getLastFuelLevel();
+            // Charging port
+            Boolean pluggedIn = carStatus.getPlugStatus();
+            views.setImageViewResource(R.id.plug, pluggedIn ?
+                    R.drawable.plug_icon_green : R.drawable.plug_icon_gray);
+
+            // High-voltage battery
+            if (pluggedIn) {
+                String chargeStatus = carStatus.getChargingStatus();
+                switch (chargeStatus) {
+                    case CHARGING_STATUS_NOT_READY:
+                        views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_red);
+                        break;
+                    case CHARGING_STATUS_CHARGING_AC:
+                    case CHARGING_STATUS_CHARGING_DC:
+                        views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_charging);
+                        break;
+                    case CHARGING_STATUS_TARGET_REACHED:
+                    case CHARGING_STATUS_PRECONDITION:
+                        views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_charged_green);
+                        break;
+                    case CHARGING_STATUS_PAUSED:
+                        views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_yellow);
+                        break;
+                    default:
+                        views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
+                        break;
                 }
 
-                if (fuelLevel == null) {
-                    fuelLevel = -1.0;
-                } else if (fuelLevel > 100.0) {
-                    fuelLevel = 100.0;
+                // Normally there will be something from the GOM; if so, display this info below it
+                if (!rangeCharge.equals("")) {
+                    rangeCharge += "\n";
                 }
-
-                views.setProgressBar(R.id.fuelLevelProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
-                views.setTextViewText(R.id.fuelLevelPercent,
-                        MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
-                                DecimalFormatSymbols.getInstance(Locale.US)).format(fuelLevel)));
-
-                if (carStatus.getVehiclestatus() == null) {
-                    Toast.makeText(context, "carStatus.getVehiclestatus() is null", Toast.LENGTH_SHORT).show();
-                } else if (carStatus.getVehiclestatus().getFuel() == null) {
-                    Toast.makeText(context, "carStatus.getVehiclestatus().getFuel() is null", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (carStatus.getVehiclestatus().getFuel().getDistanceToEmpty() == null) {
-                        Toast.makeText(context, "carStatus.getVehiclestatus().getFuel().getDistanceToEmpty() is null", Toast.LENGTH_SHORT).show();
+                if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
+                    rangeCharge += "Target Reached";
+                    if (!vehicleInfo.getLastChargeStatus().equals(CHARGING_STATUS_TARGET_REACHED)) {
+                        Notifications.chargeComplete(context);
                     }
-                    if (carStatus.getVehiclestatus().getFuel().getFuelLevel() == null) {
-                        Toast.makeText(context, "carStatus.getVehiclestatus().getFuel().getFuelLevel() is null", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
+                } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
+                    rangeCharge += "Preconditioning";
+                } else {
+                    sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
+                    Calendar endChargeTime = Calendar.getInstance();
+                    try {
+                        endChargeTime.setTime(sdf.parse(carStatus.getVehiclestatus().getChargeEndTime().getValue()));
 
-            // 12 volt battery status
-            Integer LVBLevel = carStatus.getLVBVoltage();
-            String LVBStatus = carStatus.getLVBStatus();
-            if (LVBLevel != null && LVBStatus != null) {
-                views.setTextColor(R.id.LVBVoltage,
-                        context.getColor(LVBStatus.equals("STATUS_GOOD") ? R.color.white : R.color.red));
-                views.setTextViewText(R.id.LVBVoltage, MessageFormat.format("LVB Volts: {0}V", LVBLevel));
-            } else {
-                views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
-                views.setTextViewText(R.id.LVBVoltage, MessageFormat.format("LVB Volts: N/A", LVBLevel));
-            }
-
-            // Current Odometer reading
-            Double odometer = carStatus.getOdometer();
-            if (odometer != null && odometer > 0) {
-                // FordPass truncates; go figure.
-                views.setTextViewText(R.id.odometer,
-                        MessageFormat.format("Odo: {0} {1}", Double.valueOf(odometer * distanceConversion).intValue(), distanceUnits));
-            } else {
-                views.setTextViewText(R.id.odometer, "Odo: ---");
-            }
-
-            // Tire pressures
-            updateTire(views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
-                    pressureUnits, pressureConversion, R.id.lftire);
-            updateTire(views, carStatus.getRightFrontTirePressure(), carStatus.getRightFrontTireStatus(),
-                    pressureUnits, pressureConversion, R.id.rftire);
-            updateTire(views, carStatus.getLeftRearTirePressure(), carStatus.getLeftRearTireStatus(),
-                    pressureUnits, pressureConversion, R.id.lrtire);
-            updateTire(views, carStatus.getRightRearTirePressure(), carStatus.getRightRearTireStatus(),
-                    pressureUnits, pressureConversion, R.id.rrtire);
-
-            // Window statuses
-            updateWindow(views, carStatus.getDriverWindow(), R.id.lfwindow, R.drawable.icons8_left_front_window_down_red);
-            updateWindow(views, carStatus.getPassengerWindow(), R.id.rfwindow, R.drawable.icons8_right_front_window_down_red);
-            updateWindow(views, carStatus.getLeftRearWindow(), R.id.lrwindow, R.drawable.icons8_left_rear_window_down_red);
-            updateWindow(views, carStatus.getRightRearWindow(), R.id.rrwindow, R.drawable.icons8_right_rear_window_down_red);
-
-            // Get the right images to use for this vehicle
-            Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(VIN);
-
-            // Hood, tailgate, and door statuses
-            views.setImageViewResource(R.id.hood,
-                    isDoorClosed(carStatus.getFrunk()) ? R.drawable.filler : vehicleImages.get(Utils.HOOD));
-            views.setImageViewResource(R.id.tailgate,
-                    isDoorClosed(carStatus.getTailgate()) ? R.drawable.filler : vehicleImages.get(Utils.TAILGATE));
-            views.setImageViewResource(R.id.lt_ft_door,
-                    isDoorClosed(carStatus.getDriverDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
-            views.setImageViewResource(R.id.rt_ft_door,
-                    isDoorClosed(carStatus.getPassengerDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_FRONT_DOOR));
-            views.setImageViewResource(R.id.lt_rr_door,
-                    isDoorClosed(carStatus.getLeftRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_REAR_DOOR));
-            views.setImageViewResource(R.id.rt_rr_door,
-                    isDoorClosed(carStatus.getRightRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
-            views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
-
-            views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
-
-            // OTA status
-            OTAStatus otaStatus = vehicleInfo.toOTAStatus();
-            boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
-
-            views.setViewVisibility(R.id.ota_container, displayOTA ? View.VISIBLE : View.GONE);
-            if (displayOTA && otaStatus != null) {
-                // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
-                if (Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
-                    views.setTextViewText(R.id.ota_line1, "OTA Status:");
-                    String OTArefresh;
-                    long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context, timeFormat);
-                    String currentUTCOTATime = otaStatus.getOTADateTime();
-                    if (currentUTCOTATime == null) {
-                        OTArefresh = "Unknown";
-                    } else {
-                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
-
-                        // If there's new information, display that data/time in a different color
-                        if (currentOTATime > lastOTATime) {
-                            // if OTA failed, show it in red (that means something bad)
-                            String OTAResult = otaStatus.getOTAAggregateStatus();
-                            if (OTAResult != null && OTAResult.equals("failure")) {
-                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
-                            } else {
-                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
+                        Calendar nowTime = Calendar.getInstance();
+                        long min = Duration.between(nowTime.toInstant(), endChargeTime.toInstant()).getSeconds() / 60;
+                        if (min > 0) {
+                            int hours = (int) min / 60;
+                            min %= 60;
+                            if (hours > 0) {
+                                rangeCharge += hours + " hr";
+                                if (min > 0) {
+                                    rangeCharge += ", ";
+                                }
                             }
-                            OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
-                            Notifications.newOTA(context);
-                        } else {
-                            OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
+                            if (min > 0) {
+                                rangeCharge += (int) min + " min";
+                            }
+                            rangeCharge += " left";
                         }
+                    } catch (ParseException e) {
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
                     }
-                    views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
                 }
 
-            }
-
-            // Location
-            if (PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(context.getResources().getString(R.string.show_location_key), true)) {
-                views.setViewVisibility(R.id.location_container, View.VISIBLE);
-                updateLocation(context, views, carStatus.getLatitude(), carStatus.getLongitude());
+                // If status changed, save for future reference.
+                if (!vehicleInfo.getLastChargeStatus().equals(chargeStatus)) {
+                    vehicleInfo.setLastChargeStatus(chargeStatus);
+                    info.setVehicle(vehicleInfo);
+                }
             } else {
-                views.setViewVisibility(R.id.location_container, View.GONE);
+                views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
+            }
+            views.setTextViewText(R.id.GOM, rangeCharge);
+
+            // High-voltage battery charge levels
+            Double chargeLevel = carStatus.getHVBFillLevel();
+            if (chargeLevel != null) {
+                views.setProgressBar(R.id.HBVChargeProgress, 100, (int) Math.round(chargeLevel + 0.5), false);
+                views.setTextViewText(R.id.HVBChargePercent,
+                        MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
+                                DecimalFormatSymbols.getInstance(Locale.US)).format(chargeLevel)));
+            }
+        }
+        if (fuelType != Utils.FUEL_ELECTRIC ) {
+            // Estimated range
+            Double range = carStatus.getDistanceToEmpty();
+            if (range != null && range >= 0) {
+                vehicleInfo.setLastDTE(range);
+                info.setVehicle(vehicleInfo);
+            } else {
+                range = vehicleInfo.getLastDTE();
+                if (range == null) {
+                    range = -1.0;
+                    distanceConversion = 1.0;
+                }
+            }
+            rangeCharge = MessageFormat.format("{0} {1}", Math.round(range * distanceConversion), distanceUnits);
+            views.setTextViewText(R.id.distanceToEmpty, rangeCharge);
+
+            // Fuel tank level
+            Double fuelLevel = carStatus.getFuelLevel();
+            if (fuelLevel != null && fuelLevel >= 0) {
+                vehicleInfo.setLastFuelLevel(fuelLevel);
+                info.setVehicle(vehicleInfo);
+            } else {
+                fuelLevel = vehicleInfo.getLastFuelLevel();
             }
 
-            updateLinkedApps(context, views);
+            if (fuelLevel == null) {
+                fuelLevel = -1.0;
+            } else if (fuelLevel > 100.0) {
+                fuelLevel = 100.0;
+            }
 
-            // Instruct the widget manager to update the widget
-            appWidgetManager.updateAppWidget(appWidgetId, views);
+            views.setProgressBar(R.id.fuelLevelProgress, 100, (int) Math.round(fuelLevel + 0.5), false);
+            views.setTextViewText(R.id.fuelLevelPercent,
+                    MessageFormat.format("{0}%", new DecimalFormat("#.0", // "#.0",
+                            DecimalFormatSymbols.getInstance(Locale.US)).format(fuelLevel)));
 
-        }).start();
+            if (carStatus.getVehiclestatus() == null) {
+                Toast.makeText(context, "carStatus.getVehiclestatus() is null", Toast.LENGTH_SHORT).show();
+            } else if (carStatus.getVehiclestatus().getFuel() == null) {
+                Toast.makeText(context, "carStatus.getVehiclestatus().getFuel() is null", Toast.LENGTH_SHORT).show();
+            } else {
+                if (carStatus.getVehiclestatus().getFuel().getDistanceToEmpty() == null) {
+                    Toast.makeText(context, "carStatus.getVehiclestatus().getFuel().getDistanceToEmpty() is null", Toast.LENGTH_SHORT).show();
+                }
+                if (carStatus.getVehiclestatus().getFuel().getFuelLevel() == null) {
+                    Toast.makeText(context, "carStatus.getVehiclestatus().getFuel().getFuelLevel() is null", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        // 12 volt battery status
+        Integer LVBLevel = carStatus.getLVBVoltage();
+        String LVBStatus = carStatus.getLVBStatus();
+        if (LVBLevel != null && LVBStatus != null) {
+            views.setTextColor(R.id.LVBVoltage,
+                    context.getColor(LVBStatus.equals("STATUS_GOOD") ? R.color.white : R.color.red));
+            views.setTextViewText(R.id.LVBVoltage, MessageFormat.format("LVB Volts: {0}V", LVBLevel));
+        } else {
+            views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
+            views.setTextViewText(R.id.LVBVoltage, MessageFormat.format("LVB Volts: N/A", LVBLevel));
+        }
+
+        // Current Odometer reading
+        Double odometer = carStatus.getOdometer();
+        if (odometer != null && odometer > 0) {
+            // FordPass truncates; go figure.
+            views.setTextViewText(R.id.odometer,
+                    MessageFormat.format("Odo: {0} {1}", Double.valueOf(odometer * distanceConversion).intValue(), distanceUnits));
+        } else {
+            views.setTextViewText(R.id.odometer, "Odo: ---");
+        }
+
+        // Tire pressures
+        updateTire(views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
+                pressureUnits, pressureConversion, R.id.lftire);
+        updateTire(views, carStatus.getRightFrontTirePressure(), carStatus.getRightFrontTireStatus(),
+                pressureUnits, pressureConversion, R.id.rftire);
+        updateTire(views, carStatus.getLeftRearTirePressure(), carStatus.getLeftRearTireStatus(),
+                pressureUnits, pressureConversion, R.id.lrtire);
+        updateTire(views, carStatus.getRightRearTirePressure(), carStatus.getRightRearTireStatus(),
+                pressureUnits, pressureConversion, R.id.rrtire);
+
+        // Window statuses
+        updateWindow(views, carStatus.getDriverWindow(), R.id.lfwindow, R.drawable.icons8_left_front_window_down_red);
+        updateWindow(views, carStatus.getPassengerWindow(), R.id.rfwindow, R.drawable.icons8_right_front_window_down_red);
+        updateWindow(views, carStatus.getLeftRearWindow(), R.id.lrwindow, R.drawable.icons8_left_rear_window_down_red);
+        updateWindow(views, carStatus.getRightRearWindow(), R.id.rrwindow, R.drawable.icons8_right_rear_window_down_red);
+
+        // Get the right images to use for this vehicle
+        Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(VIN);
+
+        // Hood, tailgate, and door statuses
+        views.setImageViewResource(R.id.hood,
+                isDoorClosed(carStatus.getFrunk()) ? R.drawable.filler : vehicleImages.get(Utils.HOOD));
+        views.setImageViewResource(R.id.tailgate,
+                isDoorClosed(carStatus.getTailgate()) ? R.drawable.filler : vehicleImages.get(Utils.TAILGATE));
+        views.setImageViewResource(R.id.lt_ft_door,
+                isDoorClosed(carStatus.getDriverDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
+        views.setImageViewResource(R.id.rt_ft_door,
+                isDoorClosed(carStatus.getPassengerDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_FRONT_DOOR));
+        views.setImageViewResource(R.id.lt_rr_door,
+                isDoorClosed(carStatus.getLeftRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_REAR_DOOR));
+        views.setImageViewResource(R.id.rt_rr_door,
+                isDoorClosed(carStatus.getRightRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
+
+        views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
+
+        views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
+
+        // OTA status
+        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
+        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
+
+        views.setViewVisibility(R.id.ota_container, displayOTA ? View.VISIBLE : View.GONE);
+        if (displayOTA && otaStatus != null) {
+            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
+            if (Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
+                views.setTextViewText(R.id.ota_line1, "OTA Status:");
+                String OTArefresh;
+//                long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context, timeFormat);
+                long lastOTATime = vehicleInfo.getLastOTATime();
+                String currentUTCOTATime = otaStatus.getOTADateTime();
+                if (currentUTCOTATime == null) {
+                    OTArefresh = "Unknown";
+                } else {
+                    long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+
+                    // If there's new information, display that data/time in a different color
+                    if (currentOTATime > lastOTATime) {
+                        // if OTA failed, show it in red (that means something bad)
+                        String OTAResult = otaStatus.getOTAAggregateStatus();
+                        if (OTAResult != null && OTAResult.equals("failure")) {
+                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
+                        } else {
+                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
+                        }
+                        OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
+                        Notifications.newOTA(context);
+                    } else {
+                        OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
+                    }
+                }
+                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
+            }
+
+        }
+
+        // Location
+        if (PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.show_location_key), true)) {
+            views.setViewVisibility(R.id.location_container, View.VISIBLE);
+            updateLocation(context, views, carStatus.getLatitude(), carStatus.getLongitude());
+        } else {
+            views.setViewVisibility(R.id.location_container, View.GONE);
+        }
+
+        updateLinkedApps(context, views);
+
+        // Instruct the widget manager to update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+
     }
 
-    private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        int fuelType = Utils.getFuelType(VIN);
-
+    private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId, InfoRepository info) {
         RemoteViews views = getWidgetView(context);
 
         // Make sure the left side is visible depending on the widget width
         Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
         onResize(appWidgetOptions, views);
 
-        setCallbacks(context, views);
+        setCallbacks(context, views, appWidgetId);
 
         // Set background transparency
         setBackground(context, views);
 
-        new Thread(() -> {
-            VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
-                    .vehicleInfoDao().findVehicleInfoByVIN(VIN);
-            if (vehInfo != null) {
-                views.setTextViewText(R.id.profile, vehInfo.getNickname());
-            }
-        }).start();
+        String VIN;
+        VehicleInfo vehInfo = info.getVehicle();
+        if (vehInfo != null) {
+            views.setTextViewText(R.id.profile, vehInfo.getNickname());
+            VIN = vehInfo.getVIN();
+        } else {
+            VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        }
+
+        int fuelType = Utils.getFuelType(VIN);
+        views.setViewVisibility(R.id.lock_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
 
         // Reset everything else
         views.setTextViewText(R.id.lastRefresh, "Not logged in");
@@ -671,7 +726,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.GOM, "N/A");
 
         views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_gray);
-        views.setImageViewResource(R.id.lock, R.drawable.locked_icon_gray);
+        views.setImageViewResource(R.id.lock_gasoline, R.drawable.locked_icon_gray);
+        views.setImageViewResource(R.id.lock_electric, R.drawable.locked_icon_gray);
         views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray);
 
         views.setImageViewResource(R.id.lfwindow, R.drawable.filler);
@@ -780,44 +836,37 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        final InfoRepository[] info = {null};
 
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                String state = bundle.getString("state");
+                UserInfo user = info[0].getUser();
+                if (user == null) {
+                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget.onUpdate(): no userinfo found");
+                    return;
+                }
+
+                String state = info[0].getUser().getProgramState();
 
                 // There may be multiple widgets active, so update all of them
                 for (int appWidgetId : appWidgetIds) {
                     if (!state.equals(Constants.STATE_INITIAL_STATE)) {
-                        updateAppWidget(context, appWidgetManager, appWidgetId);
+                        updateAppWidget(context, appWidgetManager, appWidgetId, info[0]);
                     } else {
-                        updateAppLogout(context, appWidgetManager, appWidgetId);
+                        updateAppLogout(context, appWidgetManager, appWidgetId, info[0]);
                     }
                 }
             }
         };
 
         new Thread(() -> {
-
-            LogFile.i(context, MainActivity.CHANNEL_ID, "CarStatusWidget:onUpdate() running for " + VIN);
-            //            String state = appInfo.getProgramState(VIN);
-            VehicleInfo vehicleInfo = VehicleInfoDatabase.getInstance(context)
-                    .vehicleInfoDao().findVehicleInfoByVIN(VIN);
-            UserInfo userInfo = UserInfoDatabase.getInstance(context)
-                    .userInfoDao().findUserInfo(vehicleInfo.getUserId());
-            String state = userInfo.getProgramState();
-
-            Bundle bundle = new Bundle();
-            bundle.putString("state", state);
-            Message m = Message.obtain();
-            m.setData(bundle);
-            handler.sendMessage(m);
+            info[0] = new InfoRepository(context);
+            handler.sendEmptyMessage(0);
         }).start();
     }
 
-    private void onResize(Bundle newOptions, RemoteViews views) {
+    public void onResize(Bundle newOptions, RemoteViews views) {
         int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
 //        Toast.makeText(context, "width = " + minWidth, Toast.LENGTH_SHORT).show();
         if (minWidth < 250) {
@@ -831,7 +880,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
         RemoteViews views = getWidgetView(context);
         onResize(newOptions, views);
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
     }
 
     @Override
@@ -868,13 +917,15 @@ public class CarStatusWidget extends AppWidgetProvider {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
             onUpdate(context, AppWidgetManager.getInstance(context), ids);
             return;
+//        } else if (action.equals(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED) && intent.hasExtra(WIDGET_IDS_KEY)) {
+//                int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
+//                onUpdate(context, AppWidgetManager.getInstance(context), ids);
+//                return;
         } else if (action.equals(PROFILE_CLICK)) {
             ProfileManager.changeProfile(context);
             return;
         } else if (action.equals(WIDGET_CLICK)) {
-            String activity = ".MainActivity";
-            intent = new Intent();
-            intent.setComponent(new ComponentName(context.getPackageName(), context.getPackageName() + activity));
+            intent = new Intent(context, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return;
@@ -913,19 +964,36 @@ public class CarStatusWidget extends AppWidgetProvider {
                 }
             }
             return;
+        } else if (action.equals(PHEVTOGGLE_CLICK)) {
+            int appWidgetId = intent.getIntExtra("appWidgetId", -1);
+            String mode = intent.getStringExtra("nextMode");
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            RemoteViews views = getWidgetView(context);
+            String nextMode;
+            if (mode.equals("showGasoline")) {
+                nextMode = "showElectric";
+                views.setViewVisibility(R.id.bottom_electric, View.GONE);
+                views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE);
+            } else {
+                nextMode = "showGasoline";
+                views.setViewVisibility(R.id.bottom_electric, View.VISIBLE);
+                views.setViewVisibility(R.id.bottom_gasoline, View.GONE);
+            }
+            setPHEVCallbacks(context, views, Utils.FUEL_PHEV, appWidgetId, nextMode);
+            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+            return;
         }
 
         // The remaining actions need to wait for info from the databases
+        InfoRepository[] info = {null};
+
         final Gson gson = new Gson();
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                if (!bundle.containsKey("vehicle")) {
-                    return;
-                }
-                VehicleInfo vehInfo = gson.fromJson(bundle.getString("vehicle"), VehicleInfo.class);
-                UserInfo userInfo = gson.fromJson(bundle.getString("user"), UserInfo.class);
+
+                VehicleInfo vehInfo = info[0].getVehicle();
+                UserInfo userInfo = info[0].getUser();
                 if (action.equals(LOCK_CLICK)) {
                     // Avoid performing the action on a single press (in case the widget is accidentally
                     // touched): require two presses within 500 ms of one another to activate.
@@ -977,19 +1045,10 @@ public class CarStatusWidget extends AppWidgetProvider {
         };
 
         new Thread(() -> {
-            VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
-                    .vehicleInfoDao().findVehicleInfoByVIN(VIN);
-            if (vehInfo != null) {
-                Bundle bundle = new Bundle();
-                bundle.putString("vehicle", gson.toJson(vehInfo));
-                UserInfo userInfo = UserInfoDatabase.getInstance(context)
-                        .userInfoDao().findUserInfo(vehInfo.getUserId());
-                bundle.putString("user", gson.toJson(userInfo));
-                Message m = Message.obtain();
-                m.setData(bundle);
-                handler.sendMessage(m);
-            }
+            info[0] = new InfoRepository(context);
+            handler.sendEmptyMessage(0);
         }).start();
+        super.onReceive(context, intent);
 
     }
 }

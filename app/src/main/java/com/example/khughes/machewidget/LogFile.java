@@ -1,10 +1,6 @@
 package com.example.khughes.machewidget;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
@@ -13,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -55,7 +50,7 @@ public class LogFile {
     public static void appendToLogFile(Context context, String tag, String message) {
         boolean verbose = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.logging_key), false);
-        if (verbose && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+        if (verbose) {
             try {
                 File logFile = new File(context.getDataDir(), LOGFILENAME);
                 if (logFile.length() > LOGFILE_SIZE) {
@@ -94,21 +89,11 @@ public class LogFile {
 
     public static String copyLogFile(Context context) {
         try {
-            Uri fileCollection = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-            }
             LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-            String logFilename = LOGFILENAME + "-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.Downloads.DISPLAY_NAME, logFilename);
-            contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
-            ContentResolver resolver = context.getContentResolver();
-            Uri uri = resolver.insert(fileCollection, contentValues);
-            if (uri == null) {
-                throw new IOException("Couldn't create MediaStore Entry");
-            }
-            OutputStream outStream = resolver.openOutputStream(uri);
+
+            // Copy all logfile contents to a temporary file
+            File tmpLogfile = File.createTempFile("temp", ".zip");
+            OutputStream outStream = new FileOutputStream(tmpLogfile);
             File backupLogFile = new File(context.getDataDir(), BACKUPLOGFILENAME);
             if (backupLogFile.exists()) {
                 InputStream inputStream = new FileInputStream(backupLogFile);
@@ -120,8 +105,12 @@ public class LogFile {
             Utils.copyStreams(inputStream, outStream);
             inputStream.close();
             outStream.close();
-            clearLogFile(context, true);
-            return null;
+
+            // Copy the temp file to the output file, then get rid of the temp file.
+            String outputFilename = Utils.writeExternalFile (context,  new FileInputStream(tmpLogfile), LOGFILENAME+"-", Constants.TEXT_PLAINTEXT);
+            tmpLogfile.delete();
+
+            return MessageFormat.format("Log file \"{0}.txt\" copied to Download folder.", outputFilename);
         } catch (FileNotFoundException e) {
             Log.e(MainActivity.CHANNEL_ID, "exception in LogFile.copyLogFile()", e);
             return "The log file doesn't exist.";

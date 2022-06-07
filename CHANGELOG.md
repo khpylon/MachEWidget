@@ -5,11 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.06.05
+### Fixed
+- Disabled battery notification
+
+## 2022.06.04
+### Added
+- If battery optimization is on, a notification will appear prompting you to turn it off.
+- Ford Edge VINs are now recognized (no silhouette yet).
+
+### Fixed
+- The "Force updates" feature was incorrectly calculating using minutes instead of hours; this would really
+have the potential to drain your 12V battery.
+
+## 2022.06.03
+### Added
+- Added better support for PHEVs in the widget.  You can switch between charge or fuel info with a single tap on the progress bar below the status image.
+- Refresh the list of vehicles from the Ford account list every hour.
+
+### Changed
+- Create a generic instruction page for all vehicles, including a link to FAQ.
+- Remove support for ZIP files with settings.
+
+### Fixed
+- Various typos in instructions 
+
+## 2022.05.31
+### Added
+- Ford Escape vehicles are now supported.
+- EVs/PHEVs will send a notification when charging is completed.
+- Support for reading and writing of external storage in Android 9.
+- Experimental "Force updates" feature (under Settings) which will force vehicles to send an update if the last
+  refresh is 6 or more hours old, as long as the vehicle is not in deep sleep and the 12V battery is
+  at 13V or higher.  NOTE: this may result in a drain on the 12V battery.
+
+### Changed
+- The colors used in the app's theme were changed to blue from purple.
+- An internal change to the how internal states interact on log-in.
+
+### Fixed
+- Correct a typo in Settings description (thanks @mikebaz).
+
+## 2022.05.25
+### Changed
+- Temporarily allow unsupported vehicles to be recognized by the app.  The widget will use the Mach-E silhouette for these vehicles.  If your vehicle isn't supported,
+  please upload logs showing car status and OTA information to GitHub.
+- Use different logic for determining when a vehicle doesn't support OTA updates.
+
+### Fixed
+- Database bug which caused entries in the vehicle database to have missing information. 
+- Attempt to download alternative vehicles images if the first attempt returns an error.
+
+## 2022.05.20
+### Fixed
+- Widget should now show units of measure which match your FordPass settings.
+
 ## 2022.05.12
 ### Changed
 - The app has been renamed to "Ford Status Widget" in preparation for its eventual release on the Google Play store.
-- The app no longer changes icons to reflect the vehicle model.  Supporting this raised a few issues.  If there is interest, I may add a "Settings" option 
-  to allow the user to select the icon.
+- The app no longer changes icons to reflect the vehicle model.  Supporting this raised a few issues.  If there is interest, I may 
+  add a "Settings" option to allow the user to select the icon.
 - Saved settings now use a JSON file instead of a ZIP file. You can still restore from a ZIP file for the time
 being, but as I believe there are reliability issues when overwriting files this functionality will be removed in the
   near future.  If you use this feature, I highly recommend saving your settings now and removing the older ZIP files.

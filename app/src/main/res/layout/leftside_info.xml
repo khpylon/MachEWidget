@@ -142,7 +142,7 @@
         android:layout_height="60dp"
         android:layout_below="@id/logo"
         android:layout_marginTop="153dp"
-        android:layout_toLeftOf="@id/box1"
+        android:layout_toLeftOf="@id/right_top_icons"
         android:background="@drawable/filler"
         android:gravity="bottom" />
 

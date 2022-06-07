@@ -23,3 +23,7 @@ output-metadata.json
 /app/schemas/com.example.khughes.machewidget.db.UserInfoDatabase/1.json
 /app/schemas/com.example.khughes.machewidget.db.VehicleInfoDatabase/1.json
 /app/schemas/com.example.khughes.machewidget.OTAStatusDatabase/1.json
+/app/playstore/production/app-playstore-production.aab
+/app/schemas/com.example.khughes.machewidget.db.VehicleInfoDatabase/2.json
+/.idea/gradle.xml
+/app/schemas/com.example.khughes.machewidget.db.VehicleInfoDatabase/3.json

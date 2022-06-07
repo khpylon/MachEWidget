@@ -176,12 +176,11 @@ public class LoginActivity extends AppCompatActivity {
                         };
 
                         new Thread(() -> {
-                            VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
-                                    .vehicleInfoDao().findVehicleInfoByVIN(VIN);
-                            if (vehInfo != null) {
+                            String userId = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.userId_key), null);
+                            if (userId != null) {
                                 Bundle bundle = new Bundle();
                                 UserInfo userInfo = UserInfoDatabase.getInstance(context)
-                                        .userInfoDao().findUserInfo(vehInfo.getUserId());
+                                        .userInfoDao().findUserInfo(userId);
                                 bundle.putString("username", userInfo.getUsername());
                                 bundle.putString("password", userInfo.getPassword());
                                 Message m = Message.obtain();
@@ -247,33 +246,29 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private Bundle bb = new Bundle();
-
     private void getAccess(String username, String password) {
         Context context = getApplicationContext();
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                bb = msg.getData();
+                Bundle bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Access: " + action);
-//                appInfo.setProgramState(VIN, action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN) ||
-                        action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
+                if (action.equals(Constants.STATE_HAVE_TOKEN)) {
+
+                    // Log in was successful, so update global userId key
+                    String userId = bb.getString("userId");
+                    sharedPref.edit().putString(context.getResources().getString(R.string.userId_key), userId).apply();
 
                     // If profiles are not being used, update the VIN list.
                     if (!profilesActive) {
                         new StoredData(getApplicationContext()).addProfile(VIN, alias);
                     }
 
-                    String accessToken = bb.getString("access_token");
-                    String country= bb.getString("country");
-                    String language = bb.getString("language");
-                    Toast.makeText(getApplicationContext(), "Log-in successful; attempting to get status.", Toast.LENGTH_SHORT).show();
-                    getStatus(accessToken, language, country);
+                    Toast.makeText(getApplicationContext(), "Log-in successful; requesting vehicle list.", Toast.LENGTH_SHORT).show();
+                    getUserVehicles(userId);
                 } else {
                     Toast.makeText(getApplicationContext(), "Unable to login to server: check your username and/or password?", Toast.LENGTH_LONG).show();
                 }
@@ -282,31 +277,27 @@ public class LoginActivity extends AppCompatActivity {
         NetworkCalls.getAccessToken(h, getApplicationContext(), username, password);
     }
 
-    private void getStatus(String accessToken, String language, String country) {
+    private void getUserVehicles(String userId) {
         Context context = getApplicationContext();
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
 
         Handler h = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                bb = msg.getData();
+                Bundle bb = msg.getData();
                 String action = bb.getString("action");
-                LogFile.i(context, MainActivity.CHANNEL_ID, "Status: " + action);
-//                appInfo.setProgramState(VIN, action);
+                LogFile.i(context, MainActivity.CHANNEL_ID, "UserVehicles: " + action);
                 if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
-                    MainActivity.updateWidget(getApplicationContext());
-                    StatusReceiver.nextAlarm(getApplicationContext());
-                    Toast.makeText(getApplicationContext(), "Status retrieved successfully.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Vehicles list obtained; updating in 5 seconds.", Toast.LENGTH_SHORT).show();
+                    StatusReceiver.nextAlarm(context,5);
                     Intent data = new Intent();
                     data.putExtra(VINIDENTIFIER, VIN);
-                    if (profilesActive && aliasWidget != null && aliasWidget.getEditText() != null) {
-                        data.putExtra(PROFILENAME, aliasWidget.getEditText().getText().toString());
-                    }
                     setResult(Activity.RESULT_OK, data);
                     finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Unable to get vehicles; will attempt again on next refresh.", Toast.LENGTH_LONG).show();
                 }
             }
         };
-        NetworkCalls.getStatus(h, getApplicationContext(), accessToken, language, country);
+        NetworkCalls.getUserVehicles(h, getApplicationContext(), userId);
     }
 }

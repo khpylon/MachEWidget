@@ -12,9 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.util.JsonReader;
 import android.util.Log;
-import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
@@ -27,18 +25,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -47,7 +44,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -118,6 +114,28 @@ public class Utils {
     public static final String LINE_SERIES_EXPLORER_KING_4WD = "K8L";
     public static final String LINE_SERIES_EXPLORER_STLINE_4WD = "K8K";
     public static final String LINE_SERIES_EXPLORER_TIMBERLINE_4WD = "K8J";
+
+    public static final String LINE_SERIES_ESCAPE_S_RWD = "U0F";
+    public static final String LINE_SERIES_ESCAPE_SE_RWD = "U0G";
+    public static final String LINE_SERIES_ESCAPE_SEL_RWD = "U0H";
+    public static final String LINE_SERIES_ESCAPE_SE_FHEV_RWD = "U0B";
+    public static final String LINE_SERIES_ESCAPE_SEL_FHEV_RWD = "U0C";
+    public static final String LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD = "U0D";
+    public static final String LINE_SERIES_ESCAPE_SE_PHEV_RWD = "U0E";
+    public static final String LINE_SERIES_ESCAPE_SEL_PHEV_RWD = "U0K";
+    public static final String LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD = "U0L";
+    public static final String LINE_SERIES_ESCAPE_S_4WD = "U9F";
+    public static final String LINE_SERIES_ESCAPE_SE_4WD = "U9G";
+    public static final String LINE_SERIES_ESCAPE_SEL_4WD = "U9H";
+    public static final String LINE_SERIES_ESCAPE_TITANIUM_4WD = "U9J";
+    public static final String LINE_SERIES_ESCAPE_SE_FHEV_4WD = "U9B";
+    public static final String LINE_SERIES_ESCAPE_SEL_FHEV_4WD = "U9C";
+    public static final String LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD = "U9D";
+
+    public static final String LINE_SERIES_EDGE_ST_AWD = "K4A";
+    public static final String LINE_SERIES_EDGE_SE_AWD = "K4G";
+    public static final String LINE_SERIES_EDGE_SEL_AWD = "K4J";
+    public static final String LINE_SERIES_EDGE_TITANIUM_AWD = "K4K";
 
     public static final int FUEL_TYPE_START_INDEX = 8 - 1;
     public static final int FUEL_TYPE_END_INDEX = 8;
@@ -293,9 +311,56 @@ public class Utils {
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoSportLineSeries.contains(lineSeries);
     }
 
+    private static final Set<String> escapeLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_ESCAPE_S_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_FHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_FHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_PHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_PHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD);
+        tmpSet.add(LINE_SERIES_ESCAPE_S_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SE_FHEV_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_SEL_FHEV_4WD);
+        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD);
+        escapeLineSeries = tmpSet;
+    }
+
+    public static boolean isEscape(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && escapeLineSeries.contains(lineSeries);
+    }
+
+    private static final Set<String> edgeLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_EDGE_ST_AWD);
+        tmpSet.add(LINE_SERIES_EDGE_SE_AWD);
+        tmpSet.add(LINE_SERIES_EDGE_SEL_AWD);
+        tmpSet.add(LINE_SERIES_EDGE_TITANIUM_AWD);
+        edgeLineSeries = tmpSet;
+    }
+
+    public static boolean isEdge(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && edgeLineSeries.contains(lineSeries);
+    }
+
     // Check to see if we recognize a VIN in general
     public static boolean isVINRecognized(String VIN) {
-        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN);
+        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN)
+                | isEscape(VIN) | isEdge(VIN);
     }
 
     private static final Set<String> fuelElectric;
@@ -338,7 +403,7 @@ public class Utils {
             return FUEL_ELECTRIC;
         }
         // Otherwise check the VIN
-        else if (isF150(VIN) || isBronco(VIN) || isExplorer(VIN) || isBroncoSport(VIN)) {
+        else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN) || isEscape(VIN) || isEdge(VIN)) {
             String fuelType = VIN.substring(FUEL_TYPE_START_INDEX, FUEL_TYPE_END_INDEX);
             if (fuelElectric.contains(fuelType)) {
                 return FUEL_ELECTRIC;
@@ -351,18 +416,6 @@ public class Utils {
             }
         } else {
             return FUEL_ELECTRIC;
-        }
-    }
-
-    public static String getWMI(String VIN) {
-        if (isF150(VIN)) {
-            return WIDGETMODE_F150;
-        } else if (isBronco(VIN)) {
-            return WIDGETMODE_BRONCO;
-        } else if (isExplorer(VIN)) {
-            return WIDGETMODE_EXPLORER;
-        } else {
-            return WIDGETMODE_MACHE;
         }
     }
 
@@ -479,7 +532,37 @@ public class Utils {
         explorerSTDrawables = tmpMap;
     }
 
-    // Get the set of drawables for a particular style of F-150
+    // Drawables for Escape
+    private static final Map<String, Integer> escapeDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe);
+        tmpMap.put(HOOD, R.drawable.escape_hood);
+        tmpMap.put(TAILGATE, R.drawable.escape_hatch);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor);
+        escapeDrawables = tmpMap;
+    }
+
+    // Drawables for Escape
+    private static final Map<String, Integer> edgeDrawables;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe);
+        tmpMap.put(HOOD, R.drawable.escape_hood);
+        tmpMap.put(TAILGATE, R.drawable.escape_hatch);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor);
+        edgeDrawables = tmpMap;
+    }
+
+    // Get the set of drawables for a particular style of vehicle
     public static Map<String, Integer> getVehicleDrawables(String VIN) {
         if (VIN != null && !VIN.equals("")) {
             if (isF150(VIN)) {
@@ -496,6 +579,10 @@ public class Utils {
                 return broncobase4x4Drawables;
             } else if (isExplorer(VIN)) {
                 return explorerSTDrawables;
+            } else if (isEscape(VIN)) {
+                return escapeDrawables;
+            } else if (isEdge(VIN)) {
+                return edgeDrawables;
             }
         }
         return macheDrawables;
@@ -509,6 +596,10 @@ public class Utils {
                 return R.layout.bronco_widget;
             } else if (isExplorer(VIN)) {
                 return R.layout.explorer_widget;
+            } else if (isEscape(VIN)) {
+                return R.layout.escape_widget;
+            } else if (isEdge(VIN)) {
+                return R.layout.escape_widget;
             }
         }
         return R.layout.mache_widget;
@@ -637,50 +728,84 @@ public class Utils {
         }
     }
 
+    public static String writeExternalFile(Context context, InputStream inStream, String baseFilename, String mimeType) {
+        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+        String outputFilename = baseFilename + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+
+        try {
+            OutputStream outStream;
+            Uri fileCollection;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeType);
+                ContentResolver resolver = context.getContentResolver();
+                Uri uri = resolver.insert(fileCollection, contentValues);
+                if (uri == null) {
+                    throw new IOException("Couldn't create MediaStore Entry");
+                }
+                outStream = resolver.openOutputStream(uri);
+            } else {
+                String extension;
+                switch (mimeType) {
+                    case Constants.APPLICATION_JSON:
+                        extension = ".json";
+                        break;
+                    case Constants.APPLICATION_ZIP:
+                        extension = ".zip";
+                        break;
+                    case Constants.TEXT_HTML:
+                        extension = ".html";
+                        break;
+                    default:
+                        extension = ".txt";
+                        break;
+                }
+                File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename + extension);
+                outputFile.delete();
+                outputFile.createNewFile();
+                outStream = new FileOutputStream(outputFile);
+            }
+            copyStreams(inStream, outStream);
+            outStream.close();
+        } catch (IOException e) {
+        }
+        return outputFilename;
+    }
+
+
     // See if there was a crash, and if so dump the logcat output to a file
-    public static void checkLogcat(Context context) {
+    public static String checkLogcat(Context context) {
         try {
             // Dump the crash buffer and exit
             Process process = Runtime.getRuntime().exec("logcat -d -b crash");
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
             StringBuilder log = new StringBuilder();
-            String line = "";
+            String line;
             while ((line = bufferedReader.readLine()) != null) {
                 log.append(line + "\n");
             }
 
             // If we find something, write to logcat.txt file
             if (log.length() > 0) {
-                Uri fileCollection = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                }
-                LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-                String crashFile = "fsw_logcat-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
                 InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, crashFile);
-                contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.TEXT_PLAINTEXT);
-                ContentResolver resolver = context.getContentResolver();
-                Uri uri = resolver.insert(fileCollection, contentValues);
-                if (uri == null) {
-                    throw new IOException("Couldn't create MediaStore Entry");
-                }
-                OutputStream outStream = resolver.openOutputStream(uri);
-                copyStreams(inStream, outStream);
-                outStream.close();
+
+                String outputFilename = writeExternalFile(context, inStream, "fsw_logcat-", Constants.TEXT_PLAINTEXT);
 
                 // Clear the crash log.
                 Runtime.getRuntime().exec("logcat -c");
-                Toast.makeText(context, MessageFormat.format("logcat crash file \"{0}\" copied to output folder.", crashFile), Toast.LENGTH_SHORT).show();
+
+                return java.text.MessageFormat.format("Logcat crash file \"{0}.txt\" copied to Download folder.", outputFilename);
             }
         } catch (IOException e) {
         }
+        return null;
     }
 
     public static boolean OTASupportCheck(String alertStatus) {
-        return alertStatus != null && !alertStatus.toLowerCase().replaceAll("[^a-z0-9]", "").contains("doesntsupport");
+        return alertStatus == null || !alertStatus.toLowerCase().replaceAll("[^a-z0-9]", "").contains("doesntsupport");
     }
 
     public static File removeAPK(Context context) {
@@ -689,7 +814,7 @@ public class Utils {
         return apkFile;
     }
 
-    private static final int JSON_SETTINGS_VERSION = 1;
+    private static final int JSON_SETTINGS_VERSION = 2;
 
     public static void savePrefs(Context context) {
 
@@ -698,30 +823,9 @@ public class Utils {
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
                 String jsonOutput = bundle.getString("json");
-
-                Uri fileCollection = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                }
-
-                try {
-                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-                    String settingsFile = "fsw_settings-" + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
-                    InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MediaStore.Downloads.DISPLAY_NAME, settingsFile);
-                    contentValues.put(MediaStore.Downloads.MIME_TYPE, Constants.APPLICATION_JSON);
-                    ContentResolver resolver = context.getContentResolver();
-                    Uri uri = resolver.insert(fileCollection, contentValues);
-
-                    OutputStream outStream = resolver.openOutputStream(uri);
-                    copyStreams(inStream, outStream);
-                    outStream.close();
-                    Toast.makeText(context, MessageFormat.format("Settings file \"{0}\" written to output folder.", settingsFile), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Toast.makeText(context, "Unable to save settings.", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
+                InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
+                String outputFilename = writeExternalFile(context, inStream, "fsw_settings-", Constants.APPLICATION_JSON);
+                Toast.makeText(context, MessageFormat.format("Settings file \"{0}.json\" copied to Download folder.", outputFilename), Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -794,6 +898,9 @@ public class Utils {
                 imageDir.mkdir();
             }
 
+            JsonPrimitive versionItem = jsonObject.getAsJsonPrimitive("version");
+            int version = versionItem.getAsInt();
+
             // Get the current set of user IDs and VINs
             ArrayList<String> userIds = new ArrayList<>();
             for (UserInfo info : UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
@@ -811,12 +918,14 @@ public class Utils {
                 }.getType());
                 UserInfo current = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
                 if (current == null) {
+                    info.setId(0);
                     UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info); // BUG?
                 }
                 userIds.remove(info.getUserId());
             }
 
             String newVIN = "";
+            String newUserId = "";
             // Insert missing VINs into the database, and remove all VINs from the current list
             JsonArray vehicles = jsonObject.getAsJsonArray("vehicles");
             for (JsonElement items : vehicles) {
@@ -824,14 +933,18 @@ public class Utils {
                 }.getType());
                 // Save a valid VIN in case we need to change the current VIN
                 newVIN = info.getVIN();
+                newUserId = info.getUserId();
                 VehicleInfo current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(info.getVIN());
                 if (current == null) {
+                    info.setId(0);
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().insertVehicleInfo(info);
                 }
                 File image = new File(imageDir, newVIN + ".png");
                 if (!image.exists()) {
                     UserInfo user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
-                    NetworkCalls.getVehicleImage(context,user.getAccessToken(), newVIN,user.getCountry(), image.toPath());
+                    if (user != null) {
+                        NetworkCalls.getVehicleImage(context, user.getAccessToken(), newVIN, user.getCountry(), image.toPath());
+                    }
                 }
                 VINs.remove(info.getVIN());
             }
@@ -839,19 +952,25 @@ public class Utils {
             // If the current VIN is still in the current list, change it to one of the "good" VINs
             String VINkey = context.getResources().getString(R.string.VIN_key);
             String currentVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "");
-            if(VINs.contains(currentVIN)) {
+            if (VINs.contains(currentVIN)) {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putString(VINkey, newVIN).apply();
             }
 
+            // Version 1 preferences didn't include user Id
+            if (version == 1) {
+                String UserIdkey = context.getResources().getString(R.string.userId_key);
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(UserIdkey, newUserId).apply();
+            }
+
             // Any user IDs or VINs which weren't restored get deleted
-            for (String VIN: VINs) {
+            for (String VIN : VINs) {
                 VehicleInfoDatabase.getInstance(context).vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
                 File image = new File(imageDir, VIN + ".png");
                 if (image.exists()) {
                     image.delete();
                 }
             }
-            for (String user: userIds) {
+            for (String user : userIds) {
                 UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user);
             }
 
@@ -874,14 +993,19 @@ public class Utils {
             for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
                 String key = item.getKey();
                 JsonArray value = item.getValue().getAsJsonArray();
-                if (value.get(0).getAsString().equals("String")) {
-                    edit.putString(key, value.get(1).getAsString()).commit();
-                } else if (value.get(0).getAsString().equals("Long")) {
-                    edit.putLong(key, value.get(1).getAsLong()).commit();
-                } else if (value.get(0).getAsString().equals("Integer")) {
-                    edit.putInt(key, value.get(1).getAsInt()).commit();
-                } else {
-                    edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+                switch (value.get(0).getAsString()) {
+                    case "String":
+                        edit.putString(key, value.get(1).getAsString()).commit();
+                        break;
+                    case "Long":
+                        edit.putLong(key, value.get(1).getAsLong()).commit();
+                        break;
+                    case "Integer":
+                        edit.putInt(key, value.get(1).getAsInt()).commit();
+                        break;
+                    default:
+                        edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+                        break;
                 }
             }
 
