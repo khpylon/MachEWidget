@@ -6,13 +6,11 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.icu.text.MessageFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -24,7 +22,6 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.MimeTypeMap;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -34,7 +31,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -53,12 +50,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
 
     private Context context;
+    private int vehicleCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // If app has been running OK, try to initiate status updates
+        // If app has been running OK, try to initiate status updates and count number of vehicles in the database
         String userId = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.userId_key), null);
         if (userId != null) {
             new Thread(() -> {
@@ -109,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 if (userInfo != null && userInfo.getProgramState().equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     StatusReceiver.initateAlarm(context);
                 }
+                vehicleCount = info.getVehicles().size();
             }).start();
         }
 
@@ -123,18 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))
                 .build();
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
-
         String indexPage = "https://appassets.androidplatform.net/assets/index_mache.html";
-//        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-//        if (!VIN.equals("")) {
-//            if (Utils.isBronco(VIN)) {
-//                indexPage = "https://appassets.androidplatform.net/assets/index_bronco.html";
-//            } else if (Utils.isF150(VIN)) {
-//                indexPage = "https://appassets.androidplatform.net/assets/index_f150.html";
-//            } else if (Utils.isExplorer(VIN)) {
-//                indexPage = "https://appassets.androidplatform.net/assets/index_explorer.html";
-//            }
-//        }
         mWebView.loadUrl(indexPage);
 
         // Update the widget
@@ -145,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 1:
@@ -252,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Re-enable OTA support on all vehicles, and add userId to settings.
-            if (lastVersion.compareTo("2022.05.31") < 0 || lastVersion.compareTo("2022.06.04a") < 0 ) {
+            if (lastVersion.compareTo("2022.05.31") < 0 || lastVersion.compareTo("2022.06.04a") < 0) {
                 PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
             }
         }
@@ -369,7 +356,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        @RequiresApi(21)
         public WebResourceResponse shouldInterceptRequest(WebView view,
                                                           WebResourceRequest request) {
             return mAssetLoader.shouldInterceptRequest(request.getUrl());
@@ -384,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
@@ -393,9 +379,14 @@ public class MainActivity extends AppCompatActivity {
                 .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         menu.findItem(R.id.action_chooseapp).setEnabled(showAppLinks);
 
-        // THe PlayStore version doesn't do all the update stuff
+        // The PlayStore version doesn't do all the update stuff
         if (com.example.khughes.machewidget.BuildConfig.FLAVOR.equals("playstore")) {
             menu.findItem(R.id.action_update).setVisible(false);
+        }
+
+        // If there aren't multiple vehicles, don't display manage vehicles option.
+        if (vehicleCount < 2) {
+            menu.findItem(R.id.action_vehicle).setVisible(false);
         }
 
         return true;
