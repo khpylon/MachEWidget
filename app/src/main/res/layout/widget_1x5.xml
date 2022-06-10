@@ -1,0 +1,289 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.MacheWidget.AppWidget.Container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:theme="@style/Theme.MacheWidget.AppWidgetContainer"
+    android:background="@color/black"
+    android:id="@+id/thewidget">
+
+
+    <LinearLayout
+        android:id="@+id/icons"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:layout_weight="2"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/ignition"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ignition_icon_gray"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/alarm"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/bell_icon_green"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/plug"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/plug_icon_gray"
+            android:layout_weight="1"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/lock_gasoline"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/locked_icon_green"
+            android:layout_weight="1"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="64dp"
+        android:layout_weight="2"
+        android:layout_gravity="center"
+        android:layout_below="@id/icons"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:id="@+id/bottom_gasoline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/distanceToEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:text="200 miles"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_below="@id/distanceToEmpty"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:id="@+id/fuelLevelProgress"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:max="100"
+                    android:progress="5"
+                    android:progressBackgroundTint="@color/quantum_yellow"
+                    android:progressTint="@color/bright_green"
+                    android:scaleY="4" />
+
+                <TextView
+                    android:id="@+id/fuelLevelPercent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="N/A"
+                    android:textColor="@color/white"
+                    android:textSize="10sp" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/bottom_electric"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rightfiller"
+            android:layout_alignParentEnd="true"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/GOM"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:text="200 miles"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/GOM"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/HVBIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:src="@drawable/battery_icon_gray" />
+
+                <ProgressBar
+                    android:id="@+id/HBVChargeProgress"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/HVBIcon"
+                    android:gravity="center_vertical"
+                    android:max="100"
+                    android:progress="85"
+                    android:progressBackgroundTint="@color/quantum_yellow"
+                    android:progressTint="@color/bright_green"
+                    android:scaleY="4" />
+
+                <TextView
+                    android:id="@+id/HVBChargePercent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/HVBIcon"
+                    android:gravity="center"
+                    android:text="85%"
+                    android:textColor="@color/white"
+                    android:textSize="10sp" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/lock_electric"
+        android:layout_width="24dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:layout_marginLeft="75dp"
+        android:src="@drawable/locked_icon_green"
+        android:layout_weight="1"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/frunk"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_frunk_horz"/>
+
+    <ImageView
+        android:id="@+id/hatch"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_hatch_horz"/>
+
+    <ImageView
+        android:id="@+id/lt_ft_door"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_lfdoor_horz"/>
+
+    <ImageView
+        android:id="@+id/lt_ft_window"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_lfwindow_horz"/>
+
+    <ImageView
+        android:id="@+id/rt_ft_door"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_rfdoor_horz"/>
+
+    <ImageView
+        android:id="@+id/rt_ft_window"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_rfwindow_horz"/>
+
+    <ImageView
+        android:id="@+id/lt_rr_door"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_lrdoor_horz"/>
+
+    <ImageView
+        android:id="@+id/lt_rr_window"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_lrwindow_horz"/>
+
+    <ImageView
+        android:id="@+id/rt_rr_door"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_rrdoor_horz"/>
+
+    <ImageView
+        android:id="@+id/rt_rr_window"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_rrwindow_horz"/>
+
+    <ImageView
+        android:id="@+id/wireframe"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:src="@drawable/mache_wireframe_horz" />
+
+    <TextView
+        android:id="@+id/rftire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="145dp"
+        android:background="@drawable/pressure_oval_red_solid"
+        android:gravity="center"
+        android:text="34 psi"
+        android:textColor="@color/white"
+        android:textSize="8sp" />
+
+</RelativeLayout>
