@@ -1,14 +1,11 @@
 package com.example.khughes.machewidget;
 
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
 import android.icu.text.MessageFormat;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -20,10 +17,8 @@ import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 
 /**
  * Implementation of App Widget functionality.
@@ -65,8 +60,6 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
     private void setCallbacks(Context context, RemoteViews views, int id) {
         // Define actions for clicking on various icons, including the widget itself
         views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, id, WIDGET_CLICK));
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         views.setOnClickPendingIntent(R.id.wireframe, getPendingSelfIntent(context, id, PROFILE_CLICK));
         views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, id, SETTINGS_CLICK));
@@ -146,13 +139,13 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
             return;
         }
 
-        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
         int fuelType = Utils.getFuelType(VIN);
-        views.setViewVisibility(R.id.lock_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.bottom_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.bottom_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.plug, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
+        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.bottom_electric, hasEngine ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.plug, hasEngine ? View.GONE : View.VISIBLE);
         setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
 
         // Ingition, alarm/sleep, plug icons
@@ -172,21 +165,20 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
         updateTire(views, carStatus.getRightRearTirePressure(), carStatus.getRightRearTireStatus(),
                 pressureUnits, pressureConversion, R.id.rt_rr_tire);
 
+        // Get the right images to use for this vehicle
+        Map<String, Integer> vehicleImages = Utils.getVehicleDrawables_1x5(VIN);
+
+        views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
+
         // Window statuses
-        updateWindow(views, carStatus.getDriverWindow(), R.id.lt_ft_window, R.drawable.mache_lfwindow_horz);
-        updateWindow(views, carStatus.getPassengerWindow(), R.id.rt_ft_window, R.drawable.mache_rfwindow_horz);
-        updateWindow(views, carStatus.getLeftRearWindow(), R.id.lt_rr_window, R.drawable.mache_lrwindow_horz);
-        updateWindow(views, carStatus.getRightRearWindow(), R.id.rt_rr_window, R.drawable.mache_rrwindow_horz);
-
-        Map<String, Integer> vehicleImages = new HashMap<>();
-
-        vehicleImages.put(Utils.WIREFRAME, R.drawable.mache_wireframe_horz);
-        vehicleImages.put(Utils.HOOD, R.drawable.mache_frunk_horz);
-        vehicleImages.put(Utils.TAILGATE, R.drawable.mache_hatch_horz);
-        vehicleImages.put(Utils.LEFT_FRONT_DOOR, R.drawable.mache_lfdoor_horz);
-        vehicleImages.put(Utils.RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor_horz);
-        vehicleImages.put(Utils.LEFT_REAR_DOOR, R.drawable.mache_lrdoor_horz);
-        vehicleImages.put(Utils.RIGHT_REAR_DOOR, R.drawable.mache_rrdoor_horz);
+        views.setImageViewResource(R.id.lt_ft_window,
+                isWindowClosed(carStatus.getDriverWindow()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_FRONT_WINDOW));
+        views.setImageViewResource(R.id.rt_ft_window,
+                isWindowClosed(carStatus.getPassengerWindow()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_FRONT_WINDOW));
+        views.setImageViewResource(R.id.lt_rr_window,
+                isWindowClosed(carStatus.getLeftRearWindow()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_REAR_WINDOW));
+        views.setImageViewResource(R.id.rt_rr_window,
+                isWindowClosed(carStatus.getRightRearWindow()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_WINDOW));
 
         // Hood, tailgate, and door statuses
         views.setImageViewResource(R.id.hood,
@@ -201,8 +193,6 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
                 isDoorClosed(carStatus.getLeftRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_REAR_DOOR));
         views.setImageViewResource(R.id.rt_rr_door,
                 isDoorClosed(carStatus.getRightRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
-
-        views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -372,7 +362,6 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
                         synchronized (this) {
                             wait(500);
                         }
-                        Message m = Message.obtain();
                         handler.sendEmptyMessage(0);
                     } catch (InterruptedException ex) {
                     }

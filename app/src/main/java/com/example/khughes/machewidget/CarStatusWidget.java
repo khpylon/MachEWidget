@@ -64,15 +64,6 @@ public class CarStatusWidget extends AppWidgetProvider {
     protected static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
     protected static final String CHARGING_STATUS_PAUSED = "EvsePaused";
 
-    protected void updateWindow(RemoteViews views, String window, int id, int drawable) {
-        // If we can't confirm the window is open, draw nothing.
-        if (window == null || window.toLowerCase().replaceAll("[^a-z0-9]", "").contains("fullyclosed")
-                || window.toLowerCase().contains("undefined")) {
-            drawable = R.drawable.filler;
-        }
-        views.setImageViewResource(id, drawable);
-    }
-
     private void updateTire(RemoteViews views, String pressure, String status,
                             String units, Double conversion, int id) {
         // Set the textview background color based on the status
@@ -154,6 +145,12 @@ public class CarStatusWidget extends AppWidgetProvider {
 //        cityState = PADDING + "Fremont, CA";
         views.setTextViewText(R.id.location_line2, streetName);
         views.setTextViewText(R.id.location_line3, cityState);
+    }
+
+    // Check if a window is open or closed.  Undefined defaults to closed.
+    protected boolean isWindowClosed(String status) {
+        return (status == null || status.toLowerCase().replaceAll("[^a-z0-9]", "").contains("fullyclosed")
+                || status.toLowerCase().contains("undefined"));
     }
 
     // Check if a door is open or closed.  Undefined defaults to closed.
@@ -473,11 +470,12 @@ public class CarStatusWidget extends AppWidgetProvider {
 
         String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
         int fuelType = Utils.getFuelType(VIN);
-        views.setViewVisibility(R.id.lock_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.bottom_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.bottom_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.plug, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
+        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.bottom_electric, hasEngine ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.plug, hasEngine ? View.GONE : View.VISIBLE);
         setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
 
         // Fill in the last update time
@@ -591,10 +589,14 @@ public class CarStatusWidget extends AppWidgetProvider {
                 pressureUnits, pressureConversion, R.id.rrtire);
 
         // Window statuses
-        updateWindow(views, carStatus.getDriverWindow(), R.id.lfwindow, R.drawable.icons8_left_front_window_down_red);
-        updateWindow(views, carStatus.getPassengerWindow(), R.id.rfwindow, R.drawable.icons8_right_front_window_down_red);
-        updateWindow(views, carStatus.getLeftRearWindow(), R.id.lrwindow, R.drawable.icons8_left_rear_window_down_red);
-        updateWindow(views, carStatus.getRightRearWindow(), R.id.rrwindow, R.drawable.icons8_right_rear_window_down_red);
+        views.setImageViewResource(R.id.lt_ft_window,
+                isWindowClosed(carStatus.getDriverWindow()) ? R.drawable.filler : R.drawable.icons8_left_front_window_down_red);
+        views.setImageViewResource(R.id.lt_ft_window,
+                isWindowClosed(carStatus.getPassengerWindow()) ? R.drawable.filler : R.drawable.icons8_right_front_window_down_red);
+        views.setImageViewResource(R.id.lt_ft_window,
+                isWindowClosed(carStatus.getLeftRearWindow()) ? R.drawable.filler : R.drawable.icons8_left_rear_window_down_red);
+        views.setImageViewResource(R.id.lt_ft_window,
+                isWindowClosed(carStatus.getRightRearWindow()) ? R.drawable.filler : R.drawable.icons8_right_rear_window_down_red);
 
         // Get the right images to use for this vehicle
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(VIN);
@@ -694,10 +696,11 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         int fuelType = Utils.getFuelType(VIN);
-        views.setViewVisibility(R.id.lock_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.bottom_gasoline, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.lock_electric, (fuelType == Utils.FUEL_GAS | fuelType == Utils.FUEL_HYBRID) ? View.GONE : View.VISIBLE);
+        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
+        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.lock_electric, hasEngine? View.GONE : View.VISIBLE);
 
         // Reset everything else
         views.setTextViewText(R.id.lastRefresh, "Not logged in");
