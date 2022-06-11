@@ -530,5 +530,11 @@ public class MainActivity extends AppCompatActivity {
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         updateIntent.putExtra(CarStatusWidget.WIDGET_IDS_KEY, ids);
         context.sendBroadcast(updateIntent);
+
+        ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_1x5.class));
+        updateIntent = new Intent();
+        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        updateIntent.putExtra(CarStatusWidget_1x5.WIDGET_IDS_KEY, ids);
+        context.sendBroadcast(updateIntent);
     }
 }

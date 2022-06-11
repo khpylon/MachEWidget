@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.khughes.machewidget.db.UserInfoDatabase;
 import com.example.khughes.machewidget.db.VehicleInfoDao;
@@ -227,10 +228,10 @@ public class ProfileManager extends AppCompatActivity {
                     // If the VIN is new, apply changes.
                     if(!VIN.equals(newVIN)) {
                         sharedPref.edit().putString(context.getResources().getString(R.string.VIN_key), newVIN).apply();
+                        Toast.makeText(context, vehicles.get(index).getNickname(), Toast.LENGTH_SHORT).show();
                         MainActivity.updateWidget(context);
                     }
                 }
-
             }
         };
 

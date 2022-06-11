@@ -46,25 +46,25 @@ import java.util.TimeZone;
 public class CarStatusWidget extends AppWidgetProvider {
     public static final String WIDGET_IDS_KEY = BuildConfig.APPLICATION_ID + ".CARSTATUSWIDGET";
 
-    private static final String PROFILE_CLICK = "Profile";
-    private static final String WIDGET_CLICK = "Widget";
-    private static final String SETTINGS_CLICK = "SettingsButton";
-    private static final String LEFT_BUTTON_CLICK = "FordPassButton";
-    private static final String RIGHT_BUTTON_CLICK = "ChargerButton";
-    private static final String IGNITION_CLICK = "IgnitionButton";
-    private static final String LOCK_CLICK = "LockButton";
-    private static final String REFRESH_CLICK = "Refresh";
-    private static final String PHEVTOGGLE_CLICK = "PHEVToggle";
+    protected static final String PROFILE_CLICK = "Profile";
+    protected static final String WIDGET_CLICK = "Widget";
+    protected static final String SETTINGS_CLICK = "SettingsButton";
+    protected static final String LEFT_BUTTON_CLICK = "FordPassButton";
+    protected static final String RIGHT_BUTTON_CLICK = "ChargerButton";
+    protected static final String IGNITION_CLICK = "IgnitionButton";
+    protected static final String LOCK_CLICK = "LockButton";
+    protected static final String REFRESH_CLICK = "Refresh";
+    protected static final String PHEVTOGGLE_CLICK = "PHEVToggle";
 
-    private static final String PADDING = "   ";
-    private static final String CHARGING_STATUS_NOT_READY = "NotReady";
-    private static final String CHARGING_STATUS_CHARGING_AC = "ChargingAC";
-    private static final String CHARGING_STATUS_CHARGING_DC = "ChargingDC";
-    private static final String CHARGING_STATUS_TARGET_REACHED = "ChargeTargetReached";
-    private static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
-    private static final String CHARGING_STATUS_PAUSED = "EvsePaused";
+    protected static final String PADDING = "   ";
+    protected static final String CHARGING_STATUS_NOT_READY = "NotReady";
+    protected static final String CHARGING_STATUS_CHARGING_AC = "ChargingAC";
+    protected static final String CHARGING_STATUS_CHARGING_DC = "ChargingDC";
+    protected static final String CHARGING_STATUS_TARGET_REACHED = "ChargeTargetReached";
+    protected static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
+    protected static final String CHARGING_STATUS_PAUSED = "EvsePaused";
 
-    private void updateWindow(RemoteViews views, String window, int id, int drawable) {
+    protected void updateWindow(RemoteViews views, String window, int id, int drawable) {
         // If we can't confirm the window is open, draw nothing.
         if (window == null || window.toLowerCase().replaceAll("[^a-z0-9]", "").contains("fullyclosed")
                 || window.toLowerCase().contains("undefined")) {
@@ -157,12 +157,12 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     // Check if a door is open or closed.  Undefined defaults to closed.
-    private Boolean isDoorClosed(String status) {
+    protected Boolean isDoorClosed(String status) {
         return (status == null || status.toLowerCase().contains("closed"));
     }
 
     // Set background transparency
-    private void setBackground(Context context, RemoteViews views) {
+    protected void setBackground(Context context, RemoteViews views) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean useTranparency = sharedPref.getBoolean(context.getResources().getString(R.string.transp_bg_key), false);
         views.setInt(R.id.thewidget, "setBackgroundResource",
@@ -173,7 +173,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         Intent intent = new Intent(context, getClass());
         intent.putExtra("appWidgetId", id);
         intent.setAction(action);
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void setCallbacks(Context context, RemoteViews views, int id) {
@@ -209,7 +209,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.lastRefresh, getPendingSelfIntent(context, id, REFRESH_CLICK));
     }
 
-    private void setPHEVCallbacks(Context context, RemoteViews views, int fuelType, int id, String mode) {
+    protected void setPHEVCallbacks(Context context, RemoteViews views, int fuelType, int id, String mode) {
         if (fuelType != Utils.FUEL_PHEV) {
             views.setOnClickPendingIntent(R.id.bottom_gasoline, getPendingSelfIntent(context, id, WIDGET_CLICK));
             views.setOnClickPendingIntent(R.id.bottom_electric, getPendingSelfIntent(context, id, WIDGET_CLICK));
@@ -807,19 +807,19 @@ public class CarStatusWidget extends AppWidgetProvider {
         };
     }
 
-    private void remoteStart(Context context) {
+    protected void remoteStart(Context context) {
         NetworkCalls.remoteStart(getHandler(context), context);
     }
 
-    private void remoteStop(Context context) {
+    protected void remoteStop(Context context) {
         NetworkCalls.remoteStop(getHandler(context), context);
     }
 
-    private void lock(Context context) {
+    protected void lock(Context context) {
         NetworkCalls.lockDoors(getHandler(context), context);
     }
 
-    private void unlock(Context context) {
+    protected void unlock(Context context) {
         NetworkCalls.unlockDoors(getHandler(context), context);
     }
 

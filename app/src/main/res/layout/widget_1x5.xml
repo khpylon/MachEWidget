@@ -8,7 +8,6 @@
     android:background="@color/black"
     android:id="@+id/thewidget">
 
-
     <LinearLayout
         android:id="@+id/icons"
         android:layout_width="100dp"
@@ -115,7 +114,6 @@
             android:id="@+id/bottom_electric"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/rightfiller"
             android:layout_alignParentEnd="true"
             android:visibility="visible">
 
@@ -185,7 +183,7 @@
         android:visibility="visible"/>
 
     <ImageView
-        android:id="@+id/frunk"
+        android:id="@+id/hood"
         android:layout_width="200dp"
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
@@ -193,7 +191,7 @@
         android:src="@drawable/mache_frunk_horz"/>
 
     <ImageView
-        android:id="@+id/hatch"
+        android:id="@+id/tailgate"
         android:layout_width="200dp"
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
@@ -273,7 +271,7 @@
         android:src="@drawable/mache_wireframe_horz" />
 
     <TextView
-        android:id="@+id/rftire"
+        android:id="@+id/lt_ft_tire"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -285,5 +283,55 @@
         android:text="34 psi"
         android:textColor="@color/white"
         android:textSize="8sp" />
+
+    <TextView
+        android:id="@+id/rt_ft_tire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="145dp"
+        android:background="@drawable/pressure_oval_red_solid"
+        android:gravity="center"
+        android:text="34 psi"
+        android:textColor="@color/white"
+        android:textSize="8sp" />
+
+    <TextView
+        android:id="@+id/lt_rr_tire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="15dp"
+        android:background="@drawable/pressure_oval_red_solid"
+        android:gravity="center"
+        android:text="34 psi"
+        android:textColor="@color/white"
+        android:textSize="8sp" />
+
+    <TextView
+        android:id="@+id/rt_rr_tire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="15dp"
+        android:background="@drawable/pressure_oval_red_solid"
+        android:gravity="center"
+        android:text="34 psi"
+        android:textColor="@color/white"
+        android:textSize="8sp" />
+
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@id/wireframe"
+        android:layout_alignRight="@id/wireframe"
+        android:src="@drawable/settings" />
 
 </RelativeLayout>
