@@ -426,6 +426,12 @@ public class Utils {
     public static final String RIGHT_FRONT_DOOR = "rfdoor_open";
     public static final String LEFT_REAR_DOOR = "lrdoor_open";
     public static final String RIGHT_REAR_DOOR = "rrdoor_open";
+    public static final String LEFT_FRONT_WINDOW = "lfwindow_open";
+    public static final String RIGHT_FRONT_WINDOW = "rfwindow_open";
+    public static final String LEFT_REAR_WINDOW = "lrwindow_open";
+    public static final String RIGHT_REAR_WINDOW = "rrwindow_open";
+
+    // Drawables for original widget
 
     // Drawables for Mach-E
     private static final Map<String, Integer> macheDrawables;
@@ -603,6 +609,205 @@ public class Utils {
             }
         }
         return R.layout.mache_widget;
+    }
+
+    // Drawables for 1x5 widget
+
+    // Drawables for Mach-E
+    private static final Map<String, Integer> macheDrawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.mache_frunk_horz);
+        tmpMap.put(TAILGATE, R.drawable.mache_hatch_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.mache_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.mache_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.mache_lrwindow_horz);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.mache_rrwindow_horz);
+        macheDrawables_1x5 = tmpMap;
+    }
+
+    // Drawables for Regular Cab (two door) F-150
+    private static final Map<String, Integer> regcabDrawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.regularcab_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.regularcab_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.regularcab_tailgate_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.regularcab_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.regularcab_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.filler);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.filler);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.regularcab_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.regularcab_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.filler);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.filler);
+        regcabDrawables_1x5 = tmpMap;
+    }
+
+    // Drawables for SuperCab F-150
+    private static final Map<String, Integer> supercabDrawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.supercab_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.supercab_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.supercab_tailgate_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercab_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercab_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercab_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercab_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.supercab_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.supercab_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.filler);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.filler);
+        supercabDrawables_1x5 = tmpMap;
+    }
+
+    // Drawables for SuperCrew F-150
+    private static final Map<String, Integer> supercrewDrawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.supercrew_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.supercrew_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.supercrew_tailgate_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercrew_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercrew_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercrew_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercrew_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.supercrew_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.supercrew_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.supercrew_lrwindow_horz);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.supercrew_rrwindow_horz);
+        supercrewDrawables_1x5 = tmpMap;
+    }
+
+    // Drawables for F-150 Raptor
+    private static final Map<String, Integer> raptorDrawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.raptor_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.raptor_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.raptor_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.raptor_lrwindow_horz);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.raptor_rrwindow_horz);
+        raptorDrawables_1x5 = tmpMap;
+    }
+
+    // Drawables for Bronco Base 4x4
+    private static final Map<String, Integer> broncobase4x4Drawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.bronco_base_4x4_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.bronco_base_4x4_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.bronco_base_4x4_tailgate_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.bronco_base_4x4_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.bronco_base_4x4_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.bronco_base_4x4_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.bronco_base_4x4_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.bronco_base_4x4_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.bronco_base_4x4_lrwindow_horz);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.bronco_base_4x4_rrwindow_horz);
+        broncobase4x4Drawables_1x5 = tmpMap;
+    }
+
+    // Drawables for Explorer ST
+    private static final Map<String, Integer> explorerSTDrawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.explorer_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.explorer_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.explorer_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.explorer_lrwindow_horz);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.explorer_rrwindow_horz);
+        explorerSTDrawables_1x5 = tmpMap;
+    }
+
+    // Drawables for Escape
+    private static final Map<String, Integer> escapeDrawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.escape_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.escape_hatch_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.escape_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.escape_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.escape_lrwindow_horz);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.escape_rrwindow_horz);
+        escapeDrawables_1x5 = tmpMap;
+    }
+
+    // Drawables for Edge
+    private static final Map<String, Integer> edgeDrawables_1x5;
+
+    static {
+        Map<String, Integer> tmpMap = new HashMap<>();
+        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.escape_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.escape_hatch_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.escape_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.escape_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.escape_lrwindow_horz);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.escape_rrwindow_horz);
+        edgeDrawables_1x5 = tmpMap;
+    }
+
+    // Get the set of drawables for a particular style of vehicle
+    public static Map<String, Integer> getVehicleDrawables_1x5(String VIN) {
+        if (VIN != null && !VIN.equals("")) {
+            if (isF150(VIN)) {
+                if (isF150RegularCab(VIN)) {
+                    return regcabDrawables_1x5;
+                } else if (isF150SuperCab(VIN)) {
+                    return supercabDrawables_1x5;
+                } else if (isF150SuperCrew(VIN)) {
+                    return supercrewDrawables_1x5;
+                } else if (isF150Raptor(VIN)) {
+                    return raptorDrawables_1x5;
+                }
+            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
+                return broncobase4x4Drawables_1x5;
+            } else if (isExplorer(VIN)) {
+                return explorerSTDrawables_1x5;
+            } else if (isEscape(VIN)) {
+                return escapeDrawables_1x5;
+            } else if (isEdge(VIN)) {
+                return edgeDrawables_1x5;
+            }
+        }
+        return macheDrawables_1x5;
     }
 
     // Model year decoder
