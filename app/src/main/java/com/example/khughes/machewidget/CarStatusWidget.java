@@ -95,7 +95,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextViewText(id, pressure);
     }
 
-    private void updateLocation(Context context, RemoteViews views, String latitude, String longitude) {
+    protected void updateLocation(Context context, RemoteViews views, String latitude, String longitude) {
         List<Address> addresses = null;
         String streetName = PADDING;
         String cityState = "";
@@ -266,7 +266,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     protected void drawRangeFuel(Context context, RemoteViews views, CarStatus carStatus,
                                  InfoRepository info, VehicleInfo vehicleInfo, int fuelType,
-                                 double distanceConversion, String distanceUnits) {
+                                 double distanceConversion, String distanceUnits, boolean twoLines) {
         String rangeCharge = "N/A";
         if (fuelType == Utils.FUEL_ELECTRIC || fuelType == Utils.FUEL_PHEV) {
 
@@ -304,9 +304,9 @@ public class CarStatusWidget extends AppWidgetProvider {
                         break;
                 }
 
-                // Normally there will be something from the GOM; if so, display this info below it
+                // Normally there will be something from the GOM; if so, display this info with it
                 if (!rangeCharge.equals("")) {
-                    rangeCharge += "\n";
+                    rangeCharge += twoLines ? "\n" : " - ";
                 }
                 if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
                     rangeCharge += "Target Reached";
@@ -422,63 +422,10 @@ public class CarStatusWidget extends AppWidgetProvider {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
             views.setTextViewText(R.id.LVBVoltage, MessageFormat.format("LVB Volts: N/A", LVBLevel));
         }
-
     }
 
-    private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                 int appWidgetId, InfoRepository info) {
-        RemoteViews views = getWidgetView(context);
-
-        // Make sure the left side is visible depending on the widget width
-        Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
-        onResize(appWidgetOptions, views);
-
-        // Setup actions for specific widgets
-        setCallbacks(context, views, appWidgetId);
-
-        // Set background transparency
-        setBackground(context, views);
-
-        VehicleInfo vehicleInfo = info.getVehicle();
-        UserInfo userInfo = info.getUser();
-        if (vehicleInfo == null || userInfo == null) {
-            return;
-        }
-
-        String VIN = vehicleInfo.getVIN();
-
-        // If the vehicle image has been downloaded, update it
-        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
-        File image = new File(imageDir, VIN + ".png");
-        if (image.exists()) {
-            String path = image.getPath();
-            views.setImageViewBitmap(R.id.logo, BitmapFactory.decodeFile(path));
-        }
-
-        // Display the vehicle's nickname
-        views.setTextViewText(R.id.profile, vehicleInfo.getNickname());
-        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
-
-        // If no status information, print something generic and return
-        // TODO: also refresh the icons as if we're logged out?
-        CarStatus carStatus = vehicleInfo.getCarStatus();
-        if (carStatus == null || carStatus.getVehiclestatus() == null) {
-            views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.");
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-            return;
-        }
-
-        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-        int fuelType = Utils.getFuelType(VIN);
-        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
-        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.bottom_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.plug, hasEngine ? View.GONE : View.VISIBLE);
-        setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
-
-        // Fill in the last update time
+    protected void drawLastRefresh(Context context, RemoteViews views, CarStatus carStatus, String timeFormat) {
+                // Fill in the last update time
         Calendar lastUpdateTime = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -533,6 +480,111 @@ public class CarStatusWidget extends AppWidgetProvider {
             }
         }
         views.setTextViewText(R.id.lastRefresh, refresh);
+    }
+
+    protected void drawOdometer (RemoteViews views, CarStatus carStatus, double distanceConversion, String distanceUnits)    {
+        Double odometer = carStatus.getOdometer();
+        if (odometer != null && odometer > 0) {
+            // FordPass truncates; go figure.
+            views.setTextViewText(R.id.odometer,
+                    MessageFormat.format("Odo: {0} {1}", Double.valueOf(odometer * distanceConversion).intValue(), distanceUnits));
+        } else {
+            views.setTextViewText(R.id.odometer, "Odo: ---");
+        }
+
+    }
+
+    // OTA status
+    protected void drawOTAInfo (Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat)  {
+        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
+        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
+
+        views.setViewVisibility(R.id.ota_container, displayOTA ? View.VISIBLE : View.GONE);
+        if (displayOTA && otaStatus != null) {
+            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
+            if (Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
+                views.setTextViewText(R.id.ota_line1, "OTA Status:");
+                String OTArefresh;
+                long lastOTATime = vehicleInfo.getLastOTATime();
+                String currentUTCOTATime = otaStatus.getOTADateTime();
+                if (currentUTCOTATime == null) {
+                    OTArefresh = "Unknown";
+                } else {
+                    long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+
+                    // If there's new information, display that data/time in a different color
+                    if (currentOTATime > lastOTATime) {
+                        // if OTA failed, show it in red (that means something bad)
+                        String OTAResult = otaStatus.getOTAAggregateStatus();
+                        if (OTAResult != null && OTAResult.equals("failure")) {
+                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
+                        } else {
+                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
+                        }
+                        OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
+                        Notifications.newOTA(context);
+                    } else {
+                        OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
+                    }
+                }
+                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
+            }
+        }
+    }
+
+    private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                 int appWidgetId, InfoRepository info) {
+        RemoteViews views = getWidgetView(context);
+
+        // Make sure the left side is visible depending on the widget width
+        Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        onResize(appWidgetOptions, views);
+
+        // Setup actions for specific widgets
+        setCallbacks(context, views, appWidgetId);
+
+        // Set background transparency
+        setBackground(context, views);
+
+        VehicleInfo vehicleInfo = info.getVehicle();
+        UserInfo userInfo = info.getUser();
+        if (vehicleInfo == null || userInfo == null) {
+            return;
+        }
+
+        String VIN = vehicleInfo.getVIN();
+
+        // If the vehicle image has been downloaded, update it
+        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+        File image = new File(imageDir, VIN + ".png");
+        if (image.exists()) {
+            String path = image.getPath();
+            views.setImageViewBitmap(R.id.logo, BitmapFactory.decodeFile(path));
+        }
+
+        // Display the vehicle's nickname
+        views.setTextViewText(R.id.profile, vehicleInfo.getNickname());
+//        views.setTextViewText(R.id.profile, "My Mach-E");
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+
+        // If no status information, print something generic and return
+        // TODO: also refresh the icons as if we're logged out?
+        CarStatus carStatus = vehicleInfo.getCarStatus();
+        if (carStatus == null || carStatus.getVehiclestatus() == null) {
+            views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.");
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+            return;
+        }
+
+        int fuelType = Utils.getFuelType(VIN);
+        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
+        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.bottom_electric, hasEngine ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.plug, hasEngine ? View.GONE : View.VISIBLE);
+        setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
 
         // Get conversion factors for Metric vs Imperial measurement units
         int units = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context)
@@ -563,10 +615,18 @@ public class CarStatusWidget extends AppWidgetProvider {
             pressureUnits = "kPa";
         }
 
+        // Show last refresh, odometer
+        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+        drawLastRefresh(context, views, carStatus, timeFormat);
+        drawOdometer ( views,carStatus, distanceConversion, distanceUnits);
+
+            // Ignition, alarm/sleep, plug icons
         drawIcons(views, carStatus);
 
-        drawRangeFuel(context, views, carStatus,
-                info, vehicleInfo, fuelType, distanceConversion, distanceUnits);
+        // Draw range and fuel/gas stuff
+        boolean twoLines = true;
+        drawRangeFuel(context, views, carStatus, info, vehicleInfo, fuelType,
+                distanceConversion, distanceUnits, twoLines);
 
         // Current Odometer reading
         Double odometer = carStatus.getOdometer();
@@ -620,43 +680,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
 
         // OTA status
-        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
-        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
-
-        views.setViewVisibility(R.id.ota_container, displayOTA ? View.VISIBLE : View.GONE);
-        if (displayOTA && otaStatus != null) {
-            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
-            if (Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
-                views.setTextViewText(R.id.ota_line1, "OTA Status:");
-                String OTArefresh;
-//                long lastOTATime = OTAViewActivity.getLastOTATimeInMillis(context, timeFormat);
-                long lastOTATime = vehicleInfo.getLastOTATime();
-                String currentUTCOTATime = otaStatus.getOTADateTime();
-                if (currentUTCOTATime == null) {
-                    OTArefresh = "Unknown";
-                } else {
-                    long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
-
-                    // If there's new information, display that data/time in a different color
-                    if (currentOTATime > lastOTATime) {
-                        // if OTA failed, show it in red (that means something bad)
-                        String OTAResult = otaStatus.getOTAAggregateStatus();
-                        if (OTAResult != null && OTAResult.equals("failure")) {
-                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
-                        } else {
-                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
-                        }
-                        OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
-                        Notifications.newOTA(context);
-                    } else {
-                        OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
-                    }
-                }
-                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
-            }
-
-        }
+        drawOTAInfo ( context, views, vehicleInfo, timeFormat);
 
         // Location
         if (PreferenceManager.getDefaultSharedPreferences(context)
@@ -782,7 +806,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
     }
 
-    private void updateLinkedApps(Context context, RemoteViews views) {
+    protected void updateLinkedApps(Context context, RemoteViews views) {
 
         boolean showAppLinks = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         if (showAppLinks) {

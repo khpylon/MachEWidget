@@ -17,8 +17,12 @@ import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Implementation of App Widget functionality.
@@ -152,8 +156,9 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
         drawIcons(views, carStatus);
 
         // Draw range and fuel/gas stuff
+        boolean twoLines = true;
         drawRangeFuel(context, views, carStatus, info, vehicleInfo, fuelType,
-                distanceConversion, distanceUnits);
+                distanceConversion, distanceUnits, twoLines);
 
         // Tire pressures
         updateTire(views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
@@ -256,15 +261,25 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
                 public void handleMessage(Message msg) {
                     int clickCount = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getInt(action, 0);
                     if (clickCount > 2) {
-                            VehicleInfo vehInfo = info[0].getVehicle();
-                            UserInfo userInfo = info[0].getUser();
-                            long lastUpdateInMillis = vehInfo.getLastUpdateTime();
-                            String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-                            String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
-                            Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
-                            long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
-                            String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
-                            Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
+                        VehicleInfo vehInfo = info[0].getVehicle();
+                        UserInfo userInfo = info[0].getUser();
+                        long lastUpdateInMillis = vehInfo.getLastUpdateTime();
+                        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+                        String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
+                        Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
+                        long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
+                        String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
+                        Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
+                        Calendar lastUpdateTime = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
+                        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        try {
+                            lastUpdateTime.setTime(sdf.parse(vehInfo.getCarStatus().getLastRefresh()));// all done
+                        } catch (ParseException e) {
+                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+                        }
+                        String lastRefresh = OTAViewActivity.convertMillisToDate(lastUpdateTime.toInstant().toEpochMilli(), timeFormat);
+                        Toast.makeText(context, "Last refresh at " + lastRefresh, Toast.LENGTH_SHORT).show();
                     } else if (clickCount > 1) {
                         ProfileManager.changeProfile(context);
                     } else {

@@ -19,7 +19,7 @@
 
     <!-- Widget things -->
     <string name="add_widget">Add widget</string>
-    <string name="app_widget_description">Display status info for Mach-E</string>
+    <string name="app_widget_description">Display status info for Ford vehicles</string>
 
     <!-- Default value for last known OTA update time-->
     <string name="unknown_OTA_time">Unknown</string>

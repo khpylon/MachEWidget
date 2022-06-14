@@ -123,6 +123,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         } else {
             VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         }
+//        views.setTextViewText(R.id.profile, "My Mach-E");
 
         // Get conversion factors for Metric vs Imperial measurement units
         int units = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context)
@@ -187,7 +188,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         drawIcons(views, carStatus);
 
         // Draw range and fuel/gas stuff
-        boolean twoLines = true;
+        boolean twoLines = false;
         drawRangeFuel(context, views, carStatus, info, vehicleInfo, fuelType,
                 distanceConversion, distanceUnits, twoLines);
 

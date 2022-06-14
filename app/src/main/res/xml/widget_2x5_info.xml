@@ -5,9 +5,9 @@
     android:initialLayout="@layout/widget_2x5"
     android:minWidth="200dp"
     android:minHeight="100dp"
-    android:previewImage="@drawable/widget_1x5_preview"
+    android:previewImage="@drawable/widget_2x4_preview"
 
-    android:previewLayout="@layout/widget_1x5"
+    android:previewLayout="@layout/widget_2x5"
     android:targetCellWidth="4"
     android:targetCellHeight="2"
     android:updatePeriodMillis="86400000"
