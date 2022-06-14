@@ -2,6 +2,10 @@
 
 As I find time, more questions and answers will be added here.
 
+#### Q: What's the difference between the Google Play and GitHub versions of the app?
+
+Very little; the GitHub version has a "Check for Updates" option in the three-dot menu.  That's about it.
+
 #### Q: The "Last refresh" time shown on widget changes randomly; the value I set for the time between widget updates has no effect.  What's happening?
 
 The time shown in "Last refresh" is based on a specific value read from the servers.  It corresponds (I believe) to the last time the vehicle
@@ -62,7 +66,7 @@ Ford stores the odometer reading as an integer, in kilometers.  When it's conver
 
 These are short-cut links you can assign to other apps.  To do so, select **Choose Linked Apps** in the three-dot menu, then select which app you'd like to link   to which button.  If you don't see the app you want listed, go into **Setting** and enable **Allow any app to be linked to the "charger" widget**.
 
-#### Q: Why does the app require permission to "install unknown apps" (applicable to GitHub version only)?
+#### Q: Why does the GitHub version of the app require permission to "install unknown apps"?
 
 Google's Play Store vets the apps you download to prevent malware from being installed on your phone which might compromise your personal data.
 As such, a non Play Store app needs your permission to perform an installation.  This app only downloads the *app-release.apk* file from the
