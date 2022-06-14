@@ -270,15 +270,17 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
                         long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
                         String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
                         Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
+
                         Calendar lastUpdateTime = Calendar.getInstance();
                         SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
                         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        String lastRefresh  = vehInfo.getCarStatus().getLastRefresh();
                         try {
-                            lastUpdateTime.setTime(sdf.parse(vehInfo.getCarStatus().getLastRefresh()));// all done
+                            lastUpdateTime.setTime(sdf.parse(lastRefresh));// all done
                         } catch (ParseException e) {
                             LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
                         }
-                        String lastRefresh = OTAViewActivity.convertMillisToDate(lastUpdateTime.toInstant().toEpochMilli(), timeFormat);
+                        lastRefresh = OTAViewActivity.convertMillisToDate(lastUpdateTime.toInstant().toEpochMilli(), timeFormat);
                         Toast.makeText(context, "Last refresh at " + lastRefresh, Toast.LENGTH_SHORT).show();
                     } else if (clickCount > 1) {
                         ProfileManager.changeProfile(context);
