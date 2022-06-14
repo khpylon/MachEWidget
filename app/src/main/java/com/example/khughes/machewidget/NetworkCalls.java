@@ -356,14 +356,19 @@ public class NetworkCalls {
         final String country = userInfo.getCountry();
 
         Intent data = new Intent();
-        String nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
+        String nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN;
 
         LogFile.d(context, MainActivity.CHANNEL_ID, "userId = " + userId);
         LogFile.d(context, MainActivity.CHANNEL_ID, "getting status for " + infoDao.findVehicleInfoByUserId(userId).size() + " vehicles");
 
         for (VehicleInfo info : infoDao.findVehicleInfoByUserId(userId)) {
             String VIN = info.getVIN();
-            LogFile.i(context, MainActivity.CHANNEL_ID, "getting status for VIN " + VIN);
+            if(!info.isEnabled()) {
+                LogFile.i(context, MainActivity.CHANNEL_ID, VIN + " is disabled: skipping");
+                continue;
+            } else {
+                LogFile.i(context, MainActivity.CHANNEL_ID, "getting status for VIN " + VIN);
+            }
 
             boolean forceUpdate = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.forceUpdate_key), false);
 
@@ -419,6 +424,7 @@ public class NetworkCalls {
                                 Notifications.checkLVBStatus(context, car, info);
                                 Notifications.checkTPMSStatus(context, car, info);
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
+                                nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                             } else {
                                 nextState = Constants.STATE_HAVE_TOKEN;
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle status is null");
@@ -427,7 +433,8 @@ public class NetworkCalls {
                             LogFile.i(context, MainActivity.CHANNEL_ID, responseStatus.raw().toString());
                             LogFile.i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.");
                             // For either of these client errors, we probably need to refresh the access token
-                            if (responseStatus.code() == Constants.HTTP_BAD_REQUEST || responseStatus.code() == Constants.HTTP_UNAUTHORIZED) {
+                            if (responseStatus.code() == Constants.HTTP_BAD_REQUEST ) {
+//                            if (responseStatus.code() == Constants.HTTP_BAD_REQUEST || responseStatus.code() == Constants.HTTP_UNAUTHORIZED) {
                                 nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN;
                             }
                         }

@@ -220,9 +220,8 @@ public class StatusReceiver extends BroadcastReceiver {
                 bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Status: " + action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
-                    MainActivity.updateWidget(mContext);
-                }
+                // Update the widgets, no mattery what.
+                MainActivity.updateWidget(mContext);
             }
         };
         NetworkCalls.getStatus(h, mContext, userId);
