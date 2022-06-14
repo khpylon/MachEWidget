@@ -10,7 +10,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 - Per user requests, there are now two smaller fixed-size widgets.  Due to their smaller sizes,
   some of the touch/tap interaction has changed.  See the instructions for details.
 - There is a new "Manage Vehicles" activity under the three-got menu for users with multiple vehicles.  This
-  allows you to control which vehicles are displayedap.
+  allows you to control which vehicles are displayed.
 
 ### Changed
 - Vehicles built before 2018 are disabled by default, since that's roughly
