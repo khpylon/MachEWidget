@@ -330,8 +330,8 @@ public class ProfileManager extends AppCompatActivity {
                 info.setNickname(nickname);
                 info.setUserId(userId);
                 infoDao.insertVehicleInfo(info);
-                // Disable earlier vehicles which likely don't have FordPass Connect
-                info.setEnabled(Utils.getModelYear(VIN) >= 2018);
+                // Disable extra earlier vehicles which likely don't have FordPass Connect
+                info.setEnabled(vehicles.size() == 1 || Utils.getModelYear(VIN) >= 2018);
             }
             LogFile.d(context, MainActivity.CHANNEL_ID, "info is " + info + ", info.userId = " + info.getUserId());
         }
