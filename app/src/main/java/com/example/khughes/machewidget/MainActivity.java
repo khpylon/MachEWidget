@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))
                 .build();
         mWebView.setWebViewClient(new LocalContentWebViewClient(assetLoader));
-        String indexPage = "https://appassets.androidplatform.net/assets/index_mache.html";
+        String indexPage = "https://appassets.androidplatform.net/assets/index_page.html";
         mWebView.loadUrl(indexPage);
 
         // Update the widget
@@ -536,5 +536,12 @@ public class MainActivity extends AppCompatActivity {
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         updateIntent.putExtra(CarStatusWidget_1x5.WIDGET_IDS_KEY, ids);
         context.sendBroadcast(updateIntent);
+
+        ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_2x5.class));
+        updateIntent = new Intent();
+        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        updateIntent.putExtra(CarStatusWidget_2x5.WIDGET_IDS_KEY, ids);
+        context.sendBroadcast(updateIntent);
+
     }
 }
