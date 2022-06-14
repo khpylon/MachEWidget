@@ -145,6 +145,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invalidateOptionsMenu();
+        return;
+    }
+
     // This method is intended to bundle various changes from older versions to the most recent.
     public static void performUpdates(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -379,6 +386,11 @@ public class MainActivity extends AppCompatActivity {
                 .getBoolean(context.getResources().getString(R.string.show_app_links_key), true);
         menu.findItem(R.id.action_chooseapp).setEnabled(showAppLinks);
 
+        // Only enable "Save Logfile" if logging is enabled,
+        boolean loggingEnabled = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(context.getResources().getString(R.string.logging_key), true);
+        menu.findItem(R.id.action_copylog).setEnabled(loggingEnabled);
+
         // The PlayStore version doesn't do all the update stuff
         if (com.example.khughes.machewidget.BuildConfig.FLAVOR.equals("playstore")) {
             menu.findItem(R.id.action_update).setVisible(false);
@@ -542,6 +554,5 @@ public class MainActivity extends AppCompatActivity {
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         updateIntent.putExtra(CarStatusWidget_2x5.WIDGET_IDS_KEY, ids);
         context.sendBroadcast(updateIntent);
-
     }
 }
