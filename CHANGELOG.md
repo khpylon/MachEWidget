@@ -5,11 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.06.16
+### Changed
+- Allow smaller widgets to be resized so they will look correct on your screen.
+- Reduce the size (in bytes) of some vector assets to take up less storage.
+
 ## 2022.06.14
 ### Added
 - Per user requests, there are now two smaller fixed-size widgets.  Due to their smaller sizes,
   some of the touch/tap interaction has changed.  See the instructions for details.
-- There is a new "Manage Vehicles" activity under the three-got menu for users with multiple vehicles.  This
+- There is a new "Manage Vehicles" activity under the three-dot menu for users with multiple vehicles.  This
   allows you to control which vehicles are displayed.
 
 ### Changed
