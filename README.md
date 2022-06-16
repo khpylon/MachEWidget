@@ -13,10 +13,9 @@ This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/
 - does not include all the function of tonesto7's Apple/iOS widget
 - does not currently support accounts outside of the United States, although it may still work
 
-  <img src="app/src/main/assets/appwidget_sample.png" alt="Mach-E widget example" width="300" />
-  <img src="app/src/main/assets/appwidget_sample_f150.png" alt="F-150 widget example" width="300" />
-  <img src="app/src/main/assets/appwidget_sample_bronco.png" alt="Bronco widget example" width="300" />
-  <img src="app/src/main/assets/appwidget_sample_explorer.png" alt="Explorer widget example" width="300" />
+  <img src="app/src/main/assets/appwidget_sample.png" alt="Large widget example" width="300" />
+  <img src="app/src/main/assets/widget_2x4_preview.png" alt="Medium widget example" width="255" />
+  <img src="app/src/main/assets/widget_1x5_preview.png" alt="Small widget example" width="255" />
 
 My purpose for hosting this code on GitHub under the GPL v3 license is to provide a starting point for anyone who wants to extend its functionality.
 
