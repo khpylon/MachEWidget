@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private Boolean profilesActive;
     private Boolean savingCredentials;
 
-    private String VIN;
+//    private String VIN;
     private String alias;
 
     private void updateDisclamer(TextView view, boolean saved) {
@@ -112,9 +112,9 @@ public class LoginActivity extends AppCompatActivity {
             if (aliasWidget != null && aliasWidget.getEditText() != null) {
                 aliasWidget.getEditText().setText(alias);
             }
-            VIN = getIntent().getStringExtra(VINIDENTIFIER);
+//            VIN = getIntent().getStringExtra(VINIDENTIFIER);
         } else {
-            VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+//            VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         }
 
         // If the user has stored credentials, allow to reuse if they have registered a fingerprint
@@ -216,25 +216,25 @@ public class LoginActivity extends AppCompatActivity {
             String password = passwordWidget.getEditText().getText().toString();
 
             // Only allow no alias if there are no profiles or the only profile matches this VIN
-            if (profilesActive && aliasWidget != null && aliasWidget.getEditText() != null) {
-                String alias = aliasWidget.getEditText().getText().toString();
-                if (alias.length() == 0) {
-                    // 1) there are no profiles
-                    if ((profiles.size() == 1 && !profiles.get(0).getVIN().equals(VIN)) || profiles.size() > 1) {
-                        Toast.makeText(getApplicationContext(), "Please enter a profile name.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-
-                // Check if alias exists with a different profile
-                if (alias.length() > 0) {
-                    Profile match = profiles.stream().filter(s -> s.getProfileName().equals(alias) && !s.getVIN().equals(VIN)).findAny().orElse(null);
-                    if (match != null) {
-                        Toast.makeText(getApplicationContext(), "The profile name is already in use.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-            }
+//            if (profilesActive && aliasWidget != null && aliasWidget.getEditText() != null) {
+//                String alias = aliasWidget.getEditText().getText().toString();
+//                if (alias.length() == 0) {
+//                    // 1) there are no profiles
+//                    if ((profiles.size() == 1 && !profiles.get(0).getVIN().equals(VIN)) || profiles.size() > 1) {
+//                        Toast.makeText(getApplicationContext(), "Please enter a profile name.", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+//                }
+//
+//                // Check if alias exists with a different profile
+//                if (alias.length() > 0) {
+//                    Profile match = profiles.stream().filter(s -> s.getProfileName().equals(alias) && !s.getVIN().equals(VIN)).findAny().orElse(null);
+//                    if (match != null) {
+//                        Toast.makeText(getApplicationContext(), "The profile name is already in use.", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+//                }
+//            }
 
             if (username.length() == 0) {
                 Toast.makeText(getApplicationContext(), "Please enter a username.", Toast.LENGTH_SHORT).show();
@@ -263,9 +263,9 @@ public class LoginActivity extends AppCompatActivity {
                     sharedPref.edit().putString(context.getResources().getString(R.string.userId_key), userId).apply();
 
                     // If profiles are not being used, update the VIN list.
-                    if (!profilesActive) {
-                        new StoredData(getApplicationContext()).addProfile(VIN, alias);
-                    }
+//                    if (!profilesActive) {
+//                        new StoredData(getApplicationContext()).addProfile(VIN, alias);
+//                    }
 
                     Toast.makeText(getApplicationContext(), "Log-in successful; requesting vehicle list.", Toast.LENGTH_SHORT).show();
                     getUserVehicles(userId);
@@ -290,7 +290,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Vehicles list obtained; updating in 5 seconds.", Toast.LENGTH_SHORT).show();
                     StatusReceiver.nextAlarm(context,5);
                     Intent data = new Intent();
-                    data.putExtra(VINIDENTIFIER, VIN);
+//                    data.putExtra(VINIDENTIFIER, VIN);
                     setResult(Activity.RESULT_OK, data);
                     finish();
                 } else {

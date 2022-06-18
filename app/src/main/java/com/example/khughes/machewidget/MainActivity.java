@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                     // Give the OS some time to finish reconfiguring things
                     Thread.sleep(1500);
                 } catch (Exception e) {
-                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.matchWidgetWithVin()" + e);
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget_5x5.matchWidgetWithVin()" + e);
                 }
             }
 
@@ -447,12 +447,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.action_refresh) {
-            if (new StoredData(context).getLastUpdateElapsedTime() > 5 * 60 * 1000) {
-                StatusReceiver.nextAlarm(context, 5);
-                Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "An update occurred within the past 5 minutes.", Toast.LENGTH_SHORT).show();
-            }
+            StatusReceiver.nextAlarm(context, 5);
+            Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_chooseapp) {
             Intent intent = new Intent(this, ChooseApp.class);
@@ -537,10 +533,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static void updateWidget(Context context) {
         AppWidgetManager man = AppWidgetManager.getInstance(context);
-        int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget.class));
+        int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_5x5.class));
         Intent updateIntent = new Intent();
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        updateIntent.putExtra(CarStatusWidget.WIDGET_IDS_KEY, ids);
+        updateIntent.putExtra(CarStatusWidget_5x5.WIDGET_IDS_KEY, ids);
         context.sendBroadcast(updateIntent);
 
         ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_1x5.class));

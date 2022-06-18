@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Implementation of App Widget functionality.
  */
-public class CarStatusWidget_2x5 extends CarStatusWidget {
+public class CarStatusWidget_2x5 extends CarStatusWidget_5x5 {
     public static final String WIDGET_IDS_KEY = BuildConfig.APPLICATION_ID + ".CARSTATUSWIDGET2x5";
 
     private void updateTire(RemoteViews views, String pressure, String status,
@@ -109,20 +109,18 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         // Set background transparency
         setBackground(context, views);
 
-        VehicleInfo vehicleInfo = info.getVehicle();
+        //TODO remove
+        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
+        VehicleInfo vehicleInfo = info.getVehicleByVIN(tmpVIN);
         UserInfo userInfo = info.getUser();
         if (vehicleInfo == null || userInfo == null) {
             return;
         }
 
         String VIN = vehicleInfo.getVIN();
-        VehicleInfo vehInfo = info.getVehicle();
-        if (vehInfo != null) {
-            views.setTextViewText(R.id.profile, vehInfo.getNickname());
-            VIN = vehInfo.getVIN();
-        } else {
-            VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        }
+        views.setTextViewText(R.id.profile, vehicleInfo.getNickname());
+        VIN = vehicleInfo.getVIN();
 //        views.setTextViewText(R.id.profile, "My Mach-E");
 
         // Get conversion factors for Metric vs Imperial measurement units
@@ -252,7 +250,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
             public void handleMessage(Message msg) {
                 UserInfo user = info[0].getUser();
                 if (user == null) {
-                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget.onUpdate(): no userinfo found");
+                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget_5x5.onUpdate(): no userinfo found");
                     return;
                 }
 
@@ -283,6 +281,8 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
     public void onReceive(Context context, Intent intent) {
         // Handle the actions which don't require info about the vehicle or user
         String action = intent.getAction();
+        String widget_action = action+"_"+intent.getStringExtra("appWidgetId");
+
         if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE) && intent.hasExtra(WIDGET_IDS_KEY)) {
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
             onUpdate(context, AppWidgetManager.getInstance(context), ids);
@@ -331,17 +331,21 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
                 public void handleMessage(Message msg) {
                     int clickCount = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getInt(action, 0);
                     if (clickCount > 2) {
-                            VehicleInfo vehInfo = info[0].getVehicle();
-                            UserInfo userInfo = info[0].getUser();
-                            long lastUpdateInMillis = vehInfo.getLastUpdateTime();
-                            String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-                            String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
-                            Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
-                            long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
-                            String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
-                            Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
+                        //TODO remove
+                        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+                        VehicleInfo vehInfo = info[0].getVehicleByVIN(tmpVIN);
+                        UserInfo userInfo = info[0].getUser();
+                        long lastUpdateInMillis = vehInfo.getLastUpdateTime();
+                        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+                        String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
+                        Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
+                        long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
+                        String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
+                        Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
                     } else if (clickCount > 1) {
-                        ProfileManager.changeProfile(context);
+                        //TODO
+                        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+                        ProfileManager.changeProfile(context, tmpVIN);
                     } else {
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -398,7 +402,9 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
                 public void handleMessage(Message msg) {
                     int clickCount = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getInt(action, 0);
                     if (clickCount > 1) {
-                        VehicleInfo vehInfo = info[0].getVehicle();
+                        //TODO remove
+                        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+                        VehicleInfo vehInfo = info[0].getVehicleByVIN(tmpVIN);
                         if (vehInfo != null) {
                             CarStatus carStatus = vehInfo.getCarStatus();
                             if (carStatus != null) {

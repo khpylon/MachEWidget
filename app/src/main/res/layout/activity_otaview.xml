@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/Theme.MacheWidget"
     tools:context=".OTAViewActivity">
 
     <LinearLayout
@@ -15,6 +16,12 @@
         android:orientation="vertical"
         android:padding="@dimen/widget_margin">
 
+        <Spinner
+            android:id = "@+id/spinner"
+            android:layout_width = "match_parent"
+            android:layout_height = "wrap_content"
+            android:prompt = "@string/app_name"
+            android:layout_weight="5" />
 
         <WebView
             android:id="@+id/ota_webview"

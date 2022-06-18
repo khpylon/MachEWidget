@@ -43,7 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class CarStatusWidget extends AppWidgetProvider {
+public class CarStatusWidget_5x5 extends AppWidgetProvider {
     public static final String WIDGET_IDS_KEY = BuildConfig.APPLICATION_ID + ".CARSTATUSWIDGET";
 
     protected static final String PROFILE_CLICK = "Profile";
@@ -106,7 +106,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             addresses = mGeocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
-            LogFile.e(context, MainActivity.CHANNEL_ID, "IOException in CarStatusWidget.updateAppWidget for Geocoder (this is normal)");
+            LogFile.e(context, MainActivity.CHANNEL_ID, "IOException in CarStatusWidget_5x5.updateAppWidget for Geocoder (this is normal)");
             return;
         }
 
@@ -168,7 +168,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     protected PendingIntent getPendingSelfIntent(Context context, int id, String action) {
         Intent intent = new Intent(context, getClass());
-        intent.putExtra("appWidgetId", id);
+        intent.putExtra("appWidgetId", "widget_"+id);
         intent.setAction(action);
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -338,7 +338,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                             rangeCharge += " left";
                         }
                     } catch (ParseException e) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget_5x5.updateAppWidget: ", e);
                     }
                 }
 
@@ -432,7 +432,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         try {
             lastUpdateTime.setTime(sdf.parse(carStatus.getLastRefresh()));// all done
         } catch (ParseException e) {
-            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget.updateAppWidget: ", e);
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget_5x5.updateAppWidget: ", e);
         }
         Calendar currentTime = Calendar.getInstance();
         long minutes = (Duration.between(lastUpdateTime.toInstant(), currentTime.toInstant()).getSeconds() + 30) / 60;
@@ -547,7 +547,10 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Set background transparency
         setBackground(context, views);
 
-        VehicleInfo vehicleInfo = info.getVehicle();
+        //TODO remove
+        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
+        VehicleInfo vehicleInfo = info.getVehicleByVIN(tmpVIN);
         UserInfo userInfo = info.getUser();
         if (vehicleInfo == null || userInfo == null) {
             return;
@@ -710,8 +713,11 @@ public class CarStatusWidget extends AppWidgetProvider {
         // Set background transparency
         setBackground(context, views);
 
+        //TODO remove
+        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+
         String VIN;
-        VehicleInfo vehInfo = info.getVehicle();
+        VehicleInfo vehInfo = info.getVehicleByVIN(tmpVIN);
         if (vehInfo != null) {
             views.setTextViewText(R.id.profile, vehInfo.getNickname());
             VIN = vehInfo.getVIN();
@@ -835,19 +841,27 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     protected void remoteStart(Context context) {
-        NetworkCalls.remoteStart(getHandler(context), context);
+        //TODO
+        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        NetworkCalls.remoteStart(getHandler(context), context, tmpVIN );
     }
 
     protected void remoteStop(Context context) {
-        NetworkCalls.remoteStop(getHandler(context), context);
+        //TODO
+        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        NetworkCalls.remoteStop(getHandler(context), context, tmpVIN );
     }
 
     protected void lock(Context context) {
-        NetworkCalls.lockDoors(getHandler(context), context);
+        //TODO
+        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        NetworkCalls.lockDoors(getHandler(context), context, tmpVIN );
     }
 
     protected void unlock(Context context) {
-        NetworkCalls.unlockDoors(getHandler(context), context);
+        //TODO
+        String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        NetworkCalls.unlockDoors(getHandler(context), context, tmpVIN);
     }
 
     @Override
@@ -859,7 +873,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             public void handleMessage(Message msg) {
                 UserInfo user = info[0].getUser();
                 if (user == null) {
-                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget.onUpdate(): no userinfo found");
+                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget_5x5.onUpdate(): no userinfo found");
                     return;
                 }
 
@@ -938,7 +952,9 @@ public class CarStatusWidget extends AppWidgetProvider {
 //                onUpdate(context, AppWidgetManager.getInstance(context), ids);
 //                return;
         } else if (action.equals(PROFILE_CLICK)) {
-            ProfileManager.changeProfile(context);
+            //TODO
+            String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+            ProfileManager.changeProfile(context, tmpVIN);
             return;
         } else if (action.equals(WIDGET_CLICK)) {
             intent = new Intent(context, MainActivity.class);
@@ -1007,8 +1023,10 @@ public class CarStatusWidget extends AppWidgetProvider {
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
+                //TODO remove
+                String tmpVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+                VehicleInfo vehInfo = info[0].getVehicleByVIN(tmpVIN);
 
-                VehicleInfo vehInfo = info[0].getVehicle();
                 UserInfo userInfo = info[0].getUser();
                 if (action.equals(LOCK_CLICK)) {
                     // Avoid performing the action on a single press (in case the widget is accidentally

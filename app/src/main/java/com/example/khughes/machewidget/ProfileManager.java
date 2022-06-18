@@ -196,7 +196,7 @@ public class ProfileManager extends AppCompatActivity {
 //    }
 
 
-    public static void changeProfile(Context context) {
+    public static void changeProfile(Context context, String VIN) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         InfoRepository[] info = {null};
@@ -204,7 +204,6 @@ public class ProfileManager extends AppCompatActivity {
         Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                final String VIN = sharedPref.getString(context.getResources().getString(R.string.VIN_key), "");
                 final String userId = sharedPref.getString(context.getResources().getString(R.string.userId_key), "");
                 List<VehicleInfo> vehicles = new ArrayList<>();
 

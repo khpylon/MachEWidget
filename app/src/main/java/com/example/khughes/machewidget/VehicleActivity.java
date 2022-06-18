@@ -31,7 +31,6 @@ import java.io.File;
 public class VehicleActivity extends AppCompatActivity {
 
     private VehicleViewModel mVehicleViewModel;
-    private int vehiclecount = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

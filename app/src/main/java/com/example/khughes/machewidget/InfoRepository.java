@@ -33,12 +33,6 @@ public class InfoRepository {
         mVehicleList = mVehicleInfoDao.findVehicleInfo();
         mUserList = mUserInfoDao.findUserInfo();
 
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), null);
-        mVehicleInfo = new VehicleInfo();
-        if (VIN != null) {
-            mVehicleInfo = mVehicleInfoDao.findVehicleInfoByVIN(VIN);
-        }
-
         String userId = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.userId_key), null);
         mUserInfo = new UserInfo();
         if (userId != null) {
@@ -53,8 +47,14 @@ public class InfoRepository {
         }
     }
 
-    public VehicleInfo getVehicle() {
-        return mVehicleInfo;
+    public VehicleInfo getVehicleByVIN(String VIN) {
+        ArrayList<String> VINs = new ArrayList<>();
+        for(VehicleInfo vehicleInfo: mVehicleList) {
+            if(VIN.equals(vehicleInfo.getVIN())) {
+                return vehicleInfo;
+            }
+        }
+        return null;
     }
 
     public void setVehicle(VehicleInfo info) {
