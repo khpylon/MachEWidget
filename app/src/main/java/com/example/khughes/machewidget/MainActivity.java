@@ -47,11 +47,9 @@ import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
@@ -151,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
-        return;
     }
 
     // This method is intended to bundle various changes from older versions to the most recent.
@@ -534,34 +531,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void updateWidget(Context context) {
-        AppWidgetManager man = AppWidgetManager.getInstance(context);
-//        int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_5x5.class));
         Intent updateIntent = new Intent();
         updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//        updateIntent.putExtra(CarStatusWidget_5x5.WIDGET_IDS_KEY, ids);
-//        context.sendBroadcast(updateIntent);
-
-//        int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_1x5.class));
-//        updateIntent = new Intent();
-//        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//        updateIntent.putExtra(CarStatusWidget_1x5.WIDGET_IDS_KEY, ids);
-//        context.sendBroadcast(updateIntent);
-
-//        int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_2x5.class));
-//        updateIntent = new Intent();
-//        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//        updateIntent.putExtra(CarStatusWidget_2x5.WIDGET_IDS_KEY, ids);
         context.sendBroadcast(updateIntent);
-
-//        AppWidgetManager man = AppWidgetManager.getInstance(context);
-//        man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_5x5.class));
-//        ArrayList<Integer> integerArray = (ArrayList<Integer>) Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_5x5.class))).boxed().collect(Collectors.toList());
-//        integerArray.addAll (Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_1x5.class))).boxed().collect(Collectors.toList()));
-//        integerArray.addAll (Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_2x5.class))).boxed().collect(Collectors.toList()));
-
-
-        return;
-
-
     }
 }
