@@ -198,7 +198,7 @@ public class ProfileManager extends AppCompatActivity {
 
     public static String changeProfile(Context context, String widget_VIN) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String VIN = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getString(widget_VIN, null);
+        String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
 
         InfoRepository[] info = {null};
 
@@ -227,7 +227,7 @@ public class ProfileManager extends AppCompatActivity {
                     String newVIN = vehicles.get(index).getVIN();
                     // If the VIN is new, apply changes.
                     if (!VIN.equals(newVIN)) {
-                        context.getSharedPreferences("widget", Context.MODE_PRIVATE).edit().putString(widget_VIN, newVIN).commit();
+                        context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putString(widget_VIN, newVIN).commit();
                         Toast.makeText(context, vehicles.get(index).getNickname(), Toast.LENGTH_SHORT).show();
                         MainActivity.updateWidget(context);
                     }
