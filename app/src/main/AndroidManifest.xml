@@ -112,7 +112,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/mache_widget_info" />
+                android:resource="@xml/widget_5x5_info" />
         </receiver>
         <receiver
             android:name=".CarStatusWidget_1x5"
