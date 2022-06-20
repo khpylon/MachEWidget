@@ -3,7 +3,9 @@ package com.example.khughes.machewidget;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,7 +26,10 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class StatusReceiver extends BroadcastReceiver {
     private Context mContext;
@@ -155,7 +160,6 @@ public class StatusReceiver extends BroadcastReceiver {
                                 StoredData.STATUS_VEHICLE_INFO, appInfo.getCounter(StoredData.STATUS_VEHICLE_INFO),
                                 StoredData.STATUS_UNKNOWN, appInfo.getCounter(StoredData.STATUS_UNKNOWN)
                         ));
-
             }
         };
 
@@ -163,6 +167,23 @@ public class StatusReceiver extends BroadcastReceiver {
             info[0] = new InfoRepository(context);
             handler.sendEmptyMessage(0);
         }).start();
+
+        // Gather the app widget Iss for every widget
+        AppWidgetManager man = AppWidgetManager.getInstance(context);
+        ArrayList<Integer> appIds = new ArrayList<>();
+        appIds.addAll (Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_1x5.class))).boxed().collect(Collectors.toList()));
+        appIds.addAll (Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_2x5.class))).boxed().collect(Collectors.toList()));
+        appIds.addAll (Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_5x5.class))).boxed().collect(Collectors.toList()));
+
+        // If any widgets have been removed, delete their VIN entry
+        for( String key: context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getAll().keySet() ) {
+            if(key.startsWith(Constants.VIN_KEY)) {
+                int appWidgetId = Integer.parseInt(key.replace(Constants.VIN_KEY, ""));
+                if(!appIds.contains(appWidgetId)) {
+                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(key).apply();
+                }
+            }
+        }
     }
 
     private Bundle bb = new Bundle();

@@ -34,12 +34,12 @@ public class Constants {
     public static final String FSVERSION_1 = "FSVERSION_1";
 
     public static final String SHAREDPREFS_FOLDER = "shared_prefs";
-    public static final String DATABASES_FOLDER = "databases";
     public static final String IMAGES_FOLDER = SHAREDPREFS_FOLDER + File.separator + "images";
+    public static final String WIDGET_FILE = "widget";
+    public static final String VIN_KEY = "VIN_";
+
 
     public static final String TEMP_ACCOUNT = "temporary";
-
-    public static final String OLDAPPNAME = "com.example.khughes.machewidget";
 
     public static final String APPLICATION_JSON = "application/json";
     public static final String APPLICATION_ZIP = "application/zip";

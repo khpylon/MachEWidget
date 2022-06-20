@@ -12,8 +12,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.khughes.machewidget.OTAStatus.FuseResponse;
 import com.example.khughes.machewidget.OTAStatus.FuseResponseList;
@@ -25,7 +30,9 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -93,12 +100,15 @@ public class OTAViewActivity extends AppCompatActivity {
 
     private static Button clear;
     private static InfoRepository info;
+    private static VehicleInfo vehicleInfo;
+
+    private ArrayList<String> arrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otaview);
-        String VIN = PreferenceManager.getDefaultSharedPreferences(this).getString(this.getResources().getString(R.string.VIN_key), "");
+//        String VIN = PreferenceManager.getDefaultSharedPreferences(this).getString(this.getResources().getString(R.string.VIN_key), "");
 
         Context context = getApplicationContext();
 
@@ -111,19 +121,47 @@ public class OTAViewActivity extends AppCompatActivity {
         clear = findViewById(R.id.button);
         clear.setOnClickListener(view -> {
             if (currentOTATime > 0) {
-//                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//                sharedPref.edit().putString(context.getResources().getString(R.string.last_ota_time), Long.valueOf(currentOTATime).toString()).apply();
-                VehicleInfo vehInfo = info.getVehicle();
-                vehInfo.setLastOTATime( currentOTATime );
-                info.setVehicle(vehInfo);
+                vehicleInfo.setLastOTATime( currentOTATime );
+                info.setVehicle(vehicleInfo);
                 MainActivity.updateWidget(context);
                 clear.setEnabled(false);
             }
         });
-        new DownloadChangelog(context, mWebView).execute(VIN);
+
+        Spinner spinner = findViewById(R.id.spinner);
+        arrayList = new ArrayList<>();
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arrayList);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        new Thread(()-> {
+            info = new InfoRepository(context);
+            List<VehicleInfo> vehicles= info.getVehicles();
+            if(vehicles.size() == 1) {
+                spinner.setVisibility(View.GONE);
+                new DownloadChangelog(context, mWebView).execute(info.getVehicles().get(0).getVIN());
+            } else {
+                arrayList.clear();
+                for (VehicleInfo vehicle : vehicles) {
+                    arrayList.add(vehicle.getVIN());
+                }
+                spinner.setAdapter(arrayAdapter);
+            }
+        }).start();
+
+        spinner.setAdapter(arrayAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String VIN = parent.getItemAtPosition(position).toString();
+                new DownloadChangelog(context, mWebView).execute(VIN);
+            }
+            @Override
+            public void onNothingSelected(AdapterView <?> parent) {
+            }
+        });
+//        new DownloadChangelog(context, mWebView).execute(VIN);
     }
 
-    private static class DownloadChangelog extends AsyncTask<String, String, InfoRepository> {
+    private static class DownloadChangelog extends AsyncTask<String, String, VehicleInfo> {
 
         private final WeakReference<Context> mContext;
         private final WeakReference<WebView> mWebView;
@@ -135,19 +173,19 @@ public class OTAViewActivity extends AppCompatActivity {
         }
 
         @Override
-        protected InfoRepository doInBackground(String... VINs) {
+        protected VehicleInfo doInBackground(String... VINs) {
             info = new InfoRepository(mContext.get());
             if(info.getUser() != null ) {
                 dateFormat = info.getUser().getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
             }
-            return info;
+            return info.getVehicleByVIN(VINs[0]);
         }
 
-        protected void onPostExecute(InfoRepository info) {
+        protected void onPostExecute(VehicleInfo vehicleInfo) {
             Context context = mContext.get();
 
-            OTAStatus ota = info.getVehicle().toOTAStatus();
-            lastOTATime = info.getVehicle().getLastOTATime();
+            OTAStatus ota = vehicleInfo.toOTAStatus();
+            lastOTATime = vehicleInfo.getLastOTATime();
 
             StringBuilder unencodedHtml = new StringBuilder("<html><body>");
             if (ota != null && ota.getFuseResponse() != null) {

@@ -1,6 +1,7 @@
 package com.example.khughes.machewidget;
 
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,13 +21,15 @@ import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 /**
  * Implementation of App Widget functionality.
  */
-public class CarStatusWidget_2x5 extends CarStatusWidget {
+public class CarStatusWidget_2x5 extends CarStatusWidget_5x5 {
     public static final String WIDGET_IDS_KEY = BuildConfig.APPLICATION_ID + ".CARSTATUSWIDGET2x5";
 
     private void updateTire(RemoteViews views, String pressure, String status,
@@ -109,20 +112,19 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         // Set background transparency
         setBackground(context, views);
 
-        VehicleInfo vehicleInfo = info.getVehicle();
+        // Find which user is active.
         UserInfo userInfo = info.getUser();
-        if (vehicleInfo == null || userInfo == null) {
+        if (userInfo == null) {
             return;
         }
 
-        String VIN = vehicleInfo.getVIN();
-        VehicleInfo vehInfo = info.getVehicle();
-        if (vehInfo != null) {
-            views.setTextViewText(R.id.profile, vehInfo.getNickname());
-            VIN = vehInfo.getVIN();
-        } else {
-            VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+        // Find the vehicle for this widget
+        VehicleInfo vehicleInfo = getVehicleInfo(context, info, appWidgetId);
+        if (vehicleInfo == null) {
+            return;
         }
+
+        views.setTextViewText(R.id.profile, vehicleInfo.getNickname());
 //        views.setTextViewText(R.id.profile, "My Mach-E");
 
         // Get conversion factors for Metric vs Imperial measurement units
@@ -160,7 +162,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
             return;
         }
 
-        int fuelType = Utils.getFuelType(VIN);
+        int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
         boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
         views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
         views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
@@ -172,8 +174,8 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         // Show last refresh, odometer, OTA status
         String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
         drawLastRefresh(context, views, carStatus, timeFormat);
-        drawOdometer ( views,carStatus, distanceConversion, distanceUnits);
-        drawOTAInfo ( context, views, vehicleInfo, timeFormat);
+        drawOdometer(views, carStatus, distanceConversion, distanceUnits);
+        drawOTAInfo(context, views, vehicleInfo, timeFormat);
 
         // Location
         if (PreferenceManager.getDefaultSharedPreferences(context)
@@ -203,7 +205,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
                 pressureUnits, pressureConversion, R.id.rt_rr_tire);
 
         // Get the right images to use for this vehicle
-        Map<String, Integer> vehicleImages = Utils.getVehicleDrawables_1x5(VIN);
+        Map<String, Integer> vehicleImages = Utils.getVehicleDrawables_1x5(vehicleInfo.getVIN());
 
         views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
 
@@ -252,7 +254,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
             public void handleMessage(Message msg) {
                 UserInfo user = info[0].getUser();
                 if (user == null) {
-                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget.onUpdate(): no userinfo found");
+                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget_5x5.onUpdate(): no userinfo found");
                     return;
                 }
 
@@ -277,15 +279,27 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
 
     @Override
     public void onDisabled(Context context) {
+        AppWidgetManager man = AppWidgetManager.getInstance(context);
+        int[] ids = man.getAppWidgetIds(new ComponentName(context, this.getClass()));
+        return;
         // Enter relevant functionality for when the last widget is disabled
     }
 
     public void onReceive(Context context, Intent intent) {
         // Handle the actions which don't require info about the vehicle or user
         String action = intent.getAction();
-        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE) && intent.hasExtra(WIDGET_IDS_KEY)) {
-            int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
+        int appWidgetId = intent.getIntExtra(APPWIDGETID, -1);
+        String widget_action = action + "_" + appWidgetId;
+        String widget_VIN = Constants.VIN_KEY + appWidgetId;
+
+        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+            AppWidgetManager man = AppWidgetManager.getInstance(context);
+            int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_2x5.class));
             onUpdate(context, AppWidgetManager.getInstance(context), ids);
+//            if (intent.hasExtra(WIDGET_IDS_KEY)) {
+//                int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
+//                onUpdate(context, AppWidgetManager.getInstance(context), ids);
+//            }
             return;
         } else if (action.equals(WIDGET_CLICK)) {
             intent = new Intent(context, MainActivity.class);
@@ -324,30 +338,31 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
             return;
         } else if (action.equals(PROFILE_CLICK)) {
             InfoRepository[] info = {null};
-            int clickCount = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getInt(action, 0);
-            context.getSharedPreferences("widget", Context.MODE_PRIVATE).edit().putInt(action, ++clickCount).commit();
+            int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
+            context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, ++clickCount).commit();
             final Handler handler = new Handler(Looper.getMainLooper()) {
                 @Override
                 public void handleMessage(Message msg) {
-                    int clickCount = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getInt(action, 0);
+                    int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
                     if (clickCount > 2) {
-                            VehicleInfo vehInfo = info[0].getVehicle();
-                            UserInfo userInfo = info[0].getUser();
-                            long lastUpdateInMillis = vehInfo.getLastUpdateTime();
-                            String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-                            String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
-                            Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
-                            long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
-                            String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
-                            Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
+                        String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
+                        VehicleInfo vehInfo = info[0].getVehicleByVIN(VIN);
+                        UserInfo userInfo = info[0].getUser();
+                        long lastUpdateInMillis = vehInfo.getLastUpdateTime();
+                        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+                        String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
+                        Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
+                        long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
+                        String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
+                        Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
                     } else if (clickCount > 1) {
-                        ProfileManager.changeProfile(context);
+                        ProfileManager.changeProfile(context, widget_VIN);
                     } else {
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                     }
-                    context.getSharedPreferences("widget", Context.MODE_PRIVATE).edit().putInt(action, 0).commit();
+                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
                 }
             };
             if (clickCount == 1) {
@@ -364,6 +379,8 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
                         }
                     }
                 }.start();
+            } else if (clickCount > 3) {
+                context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
             }
             return;
         } else if (action.equals(SETTINGS_CLICK)) {
@@ -372,7 +389,6 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
             context.startActivity(intent);
             return;
         } else if (action.equals(PHEVTOGGLE_CLICK)) {
-            int appWidgetId = intent.getIntExtra("appWidgetId", -1);
             String mode = intent.getStringExtra("nextMode");
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             RemoteViews views = getWidgetView(context);
@@ -391,14 +407,15 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
             return;
         } else if (action.equals(IGNITION_CLICK) || action.equals(LOCK_CLICK)) {
             InfoRepository[] info = {null};
-            int clickCount = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getInt(action, 0);
-            context.getSharedPreferences("widget", Context.MODE_PRIVATE).edit().putInt(action, ++clickCount).commit();
+            int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
+            context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, ++clickCount).commit();
             final Handler handler = new Handler(Looper.getMainLooper()) {
                 @Override
                 public void handleMessage(Message msg) {
-                    int clickCount = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getInt(action, 0);
+                    int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
                     if (clickCount > 1) {
-                        VehicleInfo vehInfo = info[0].getVehicle();
+                        String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
+                        VehicleInfo vehInfo = info[0].getVehicleByVIN(VIN);
                         if (vehInfo != null) {
                             CarStatus carStatus = vehInfo.getCarStatus();
                             if (carStatus != null) {
@@ -407,18 +424,18 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
                                         if (carStatus.getRemoteStartStatus() != null
                                                 && carStatus.getIgnition() != null && carStatus.getIgnition().equals("Off")) {
                                             if (!carStatus.getRemoteStartStatus()) {
-                                                remoteStart(context);
+                                                remoteStart(context, VIN);
                                             } else {
-                                                remoteStop(context);
+                                                remoteStop(context, VIN);
                                             }
                                         }
                                         break;
                                     case LOCK_CLICK:
                                         if (carStatus.getLock() != null) {
                                             if (carStatus.getLock().equals("LOCKED")) {
-                                                unlock(context);
+                                                unlock(context, VIN);
                                             } else {
-                                                lock(context);
+                                                lock(context, VIN);
                                             }
                                         }
                                         break;
@@ -426,22 +443,29 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
                             }
                         }
                     }
-                    context.getSharedPreferences("widget", Context.MODE_PRIVATE).edit().putInt(action, 0).commit();
+                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, 0).commit();
                 }
             };
-            if (clickCount == 1) new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        info[0] = new InfoRepository(context);
-                        synchronized (this) {
-                            wait(500);
+            if (clickCount == 1) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            info[0] = new InfoRepository(context);
+                            synchronized (this) {
+                                wait(500);
+                            }
+                            handler.sendEmptyMessage(0);
+                        } catch (InterruptedException ex) {
                         }
-                        handler.sendEmptyMessage(0);
-                    } catch (InterruptedException ex) {
                     }
-                }
-            }.start();
+                }.start();
+            } else if (clickCount > 3) {
+                context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
+            }
+            return;
+        } else {
+            super.onReceive(context, intent);
         }
     }
 }

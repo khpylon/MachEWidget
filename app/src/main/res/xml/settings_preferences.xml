@@ -4,7 +4,8 @@
         app:key="@string/VIN_key"
         app:title="@string/VIN"
         app:useSimpleSummaryProvider="true"
-        app:enabled="false" />
+        app:enabled="false"
+        app:isPreferenceVisible="false"/>
 
     <EditTextPreference
         app:key="@string/userId_key"

@@ -618,9 +618,9 @@ public class NetworkCalls {
         t.start();
     }
 
-    public static void remoteStart(Handler handler, Context context) {
+    public static void remoteStart(Handler handler, Context context, String VIN ) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.execCommand(context, "v5", "engine", "start", "put");
+            Intent intent = NetworkCalls.execCommand(context, VIN, "v5", "engine", "start", "put");
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -628,9 +628,9 @@ public class NetworkCalls {
         t.start();
     }
 
-    public static void remoteStop(Handler handler, Context context) {
+    public static void remoteStop(Handler handler, Context context, String VIN ) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.execCommand(context, "v5", "engine", "start", "delete");
+            Intent intent = NetworkCalls.execCommand(context, VIN, "v5", "engine", "start", "delete");
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -638,9 +638,9 @@ public class NetworkCalls {
         t.start();
     }
 
-    public static void lockDoors(Handler handler, Context context) {
+    public static void lockDoors(Handler handler, Context context, String VIN ) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.execCommand(context, "v2", "doors", "lock", "put");
+            Intent intent = NetworkCalls.execCommand(context, VIN, "v2", "doors", "lock", "put");
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -648,9 +648,9 @@ public class NetworkCalls {
         t.start();
     }
 
-    public static void unlockDoors(Handler handler, Context context) {
+    public static void unlockDoors(Handler handler, Context context, String VIN) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.execCommand(context, "v2", "doors", "lock", "delete");
+            Intent intent = NetworkCalls.execCommand(context,  VIN,"v2", "doors", "lock", "delete");
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -658,8 +658,7 @@ public class NetworkCalls {
         t.start();
     }
 
-    private static Intent execCommand(Context context, String version, String component, String operation, String request) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+    private static Intent execCommand(Context context, String VIN, String version, String component, String operation, String request) {
         VehicleInfo vehInfo = VehicleInfoDatabase.getInstance(context)
                 .vehicleInfoDao().findVehicleInfoByVIN(VIN);
         UserInfo userInfo = UserInfoDatabase.getInstance(context)
