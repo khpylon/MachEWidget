@@ -103,10 +103,10 @@ public class NetworkCalls {
                         stage = 2;
                     }
 
-                    // Next, try to get the user's data
+                    // Next, try to get the actual token
                     if (stage == 2) {
                         jsonParams = new ArrayMap<>();
-                        jsonParams.put("code", token);
+                        jsonParams.put("ciToken", token);
                         body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
                         call = OAuth2Client.getAccessToken(body);
                         Response<AccessToken> response = call.execute();
@@ -117,20 +117,33 @@ public class NetworkCalls {
                         nextState = Constants.STATE_HAVE_TOKEN;
                         accessToken = response.body();
                         token = accessToken.getAccessToken();
-                        userId = UUID.nameUUIDFromBytes(accessToken.getUserId().getBytes()).toString();
-                        userDao.deleteUserInfoByUserId(userId);
-
-                        userInfo.setUserId(userId);
                         userInfo.setAccessToken(token);
                         userInfo.setRefreshToken(accessToken.getRefreshToken());
                         LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(accessToken.getExpiresIn());
                         long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                         userInfo.setExpiresIn(nextTime);
-                        userInfo.setLanguage(accessToken.getUserProfile().getLanguage());
-                        userInfo.setCountry(accessToken.getUserProfile().getCountry());
-                        userInfo.setUomPressure(accessToken.getUserProfile().getUomPressure());
-                        userInfo.setUomDistance(accessToken.getUserProfile().getUomDistance());
-                        userInfo.setUomSpeed(accessToken.getUserProfile().getUomSpeed());
+                        stage = 3;
+                    }
+
+                    // Next, try to get the user's data
+                    if (stage == 3) {
+                        call = OAuth2Client.getUserProfile(token);
+                        Response<AccessToken> response = call.execute();
+                        if (!response.isSuccessful()) {
+                            continue;
+                        }
+
+                        accessToken = response.body();
+                        AccessToken.UserProfile userProfile = accessToken.getUserProfile();
+                        userId = UUID.nameUUIDFromBytes(userProfile.getUserGuid().getBytes()).toString();
+                        userDao.deleteUserInfoByUserId(userId);
+                        userInfo.setUserId(userId);
+
+                        userInfo.setLanguage(userProfile.getLanguage());
+                        userInfo.setCountry(userProfile.getCountry());
+                        userInfo.setUomPressure(userProfile.getUomPressure());
+                        userInfo.setUomDistance(userProfile.getUomDistance());
+                        userInfo.setUomSpeed(userProfile.getUomSpeed());
                         userInfo.setProgramState(nextState);
 
                         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -203,12 +216,6 @@ public class NetworkCalls {
                         LogFile.i(context, MainActivity.CHANNEL_ID, "refresh successful");
                         AccessToken accessToken = response.body();
                         UserInfo userInfo = dao.findUserInfo(userId);
-                        if (userId.equals(Constants.TEMP_ACCOUNT)) {
-                            dao.deleteUserInfo(userInfo);
-                            userId = accessToken.getUserId();
-                            userInfo.setUserId(userId);
-                            dao.insertUserInfo(userInfo);
-                        }
                         String token = accessToken.getAccessToken();
                         userInfo.setAccessToken(token);
                         userInfo.setRefreshToken(accessToken.getRefreshToken());

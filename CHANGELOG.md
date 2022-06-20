@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.06.20
+### Fixed
+- Updated to new Ford API for authentication; the older API stopped working today.  A refresh should
+  fix the issue; if not, a log in will be required.
+
 ## 2022.06.17
 ### Changed
 - Allow smaller widgets to be resized vertically as well as horizontally.

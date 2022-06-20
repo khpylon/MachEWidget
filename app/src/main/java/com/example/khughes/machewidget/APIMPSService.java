@@ -16,14 +16,20 @@ public interface APIMPSService {
     @Headers({"Content-Type: application/json",
             "Accept-Language: en-US", "Application-Id: " + Constants.APID,
             "Authorization: Basic ZWFpLWNsaWVudDo="})
-    @PUT("oauth2/v1/token")
+    @POST("token/v2/cat-with-ci-access-token")
     Call<AccessToken> getAccessToken(@Body RequestBody token);
 
     @Headers({"Content-Type: application/json",
             "Accept-Language: en-US", "Application-Id: " + Constants.APID,
             "Authorization: Basic ZWFpLWNsaWVudDo="})
-    @PUT("oauth2/v1/refresh")
+    @POST("token/v2/cat-with-refresh-token")
     Call<AccessToken> refreshAccessToken(@Body RequestBody token);
+
+    @Headers({"Content-Type: application/json",
+            "Accept-Language: en-US", "Application-Id: " + Constants.APID,
+            "Authorization: Basic ZWFpLWNsaWVudDo="})
+    @GET("users")
+    Call<AccessToken> getUserProfile(@Header("auth-token") String token);
 
     @Headers({
             "locale: en-US",
