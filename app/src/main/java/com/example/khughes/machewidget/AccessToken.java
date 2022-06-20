@@ -23,16 +23,16 @@ public class AccessToken {
     @SerializedName("expires_in")
     @Expose
     private Integer expiresIn;
-    @SerializedName("UserProfile")
+    @SerializedName("profile")
     @Expose
     private UserProfile userProfile;
-    @SerializedName("userId")
-    @Expose
-    private String userId;
 
     @Generated("jsonschema2pojo")
     public class UserProfile {
 
+        @SerializedName("userGuid")
+        @Expose
+        private String userGuid;
         @SerializedName("country")
         @Expose
         private String country;
@@ -48,6 +48,14 @@ public class AccessToken {
         @SerializedName("uomPressure")
         @Expose
         private String uomPressure;
+
+        public String getUserGuid() {
+            return userGuid;
+        }
+
+        public void setUserGuid(String userGuid) {
+            this.userGuid = userGuid;
+        }
 
         public String getCountry() {
             return country;
@@ -139,11 +147,4 @@ public class AccessToken {
         this.userProfile = userProfile;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 }

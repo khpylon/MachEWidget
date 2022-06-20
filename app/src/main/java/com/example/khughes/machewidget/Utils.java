@@ -1116,7 +1116,7 @@ public class Utils {
                 VINs.add(info.getVIN());
             }
 
-            // Insert missing users into the database, and remove all IDs from the current list
+            // Update users in the database, and remove all IDs from the current list
             JsonArray users = jsonObject.getAsJsonArray("users");
             for (JsonElement items : users) {
                 UserInfo info = gson.fromJson(items.toString(), new TypeToken<UserInfo>() {
@@ -1124,7 +1124,9 @@ public class Utils {
                 UserInfo current = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
                 if (current == null) {
                     info.setId(0);
-                    UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info); // BUG?
+                    UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info);
+                } else {
+                    UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info);
                 }
                 userIds.remove(info.getUserId());
             }

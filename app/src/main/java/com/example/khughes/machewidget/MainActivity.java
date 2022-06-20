@@ -249,6 +249,16 @@ public class MainActivity extends AppCompatActivity {
             if (lastVersion.compareTo("2022.05.31") < 0 || lastVersion.compareTo("2022.06.04a") < 0) {
                 PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true);
             }
+
+            // Re-enable OTA support on all vehicles, and add userId to settings.
+            if (lastVersion.compareTo("2022.06.20") < 0) {
+                new Thread(() -> {
+                    for(UserInfo userInfo: UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo() ) {
+                        userInfo.setProgramState(Constants.STATE_HAVE_TOKEN_AND_VIN);
+                        UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(userInfo);
+                    };
+                }).start();
+            }
         }
 
         // Update internally
