@@ -51,12 +51,25 @@ public class VehicleInfo {
 
     private boolean supportsOTA;
 
+    @ColumnInfo(defaultValue = "0")
+    @NonNull
+    private long initialForcedRefreshTime;
+
+    @ColumnInfo(defaultValue = "0")
+    @NonNull
+    private long lastForcedRefreshTime;
+
+    @ColumnInfo(defaultValue = "0")
+    @NonNull
+    private long forcedRefreshCount;
+
     @ColumnInfo(defaultValue = "1")
     @NonNull
     private Boolean enabled;
 
     public VehicleInfo() {
         id = 0; // for new database entries, this will generate a new id
+        initialForcedRefreshTime = 0;
         lastRefreshTime = 0;
         lastUpdateTime = 0;
         lastOTATime = 0;
@@ -67,6 +80,8 @@ public class VehicleInfo {
         supportsOTA = true;
         enabled = true;
         lastChargeStatus = "''";
+        lastForcedRefreshTime = 0;
+        forcedRefreshCount = 0;
     }
 
     @Embedded(prefix = "car_")
@@ -266,6 +281,18 @@ public class VehicleInfo {
     public long getLastOTATime() { return lastOTATime; }
 
     public void setLastOTATime(long lastOTATime) { this.lastOTATime = lastOTATime; }
+
+    public long getLastForcedRefreshTime() {  return lastForcedRefreshTime; }
+
+    public void setLastForcedRefreshTime(long lastForcedRefreshTime) { this.lastForcedRefreshTime = lastForcedRefreshTime; }
+
+    public long getForcedRefreshCount() { return forcedRefreshCount; }
+
+    public void setForcedRefreshCount(long forcedRefreshCount) { this.forcedRefreshCount = forcedRefreshCount; }
+
+    public long getInitialForcedRefreshTime() { return initialForcedRefreshTime; }
+
+    public void setInitialForcedRefreshTime(long initialForcedRefreshTime) { this.initialForcedRefreshTime = initialForcedRefreshTime; }
 
     @Entity
     public class CarStatusInfo {

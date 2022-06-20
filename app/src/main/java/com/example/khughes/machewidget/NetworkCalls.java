@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -363,7 +364,7 @@ public class NetworkCalls {
 
         for (VehicleInfo info : infoDao.findVehicleInfoByUserId(userId)) {
             String VIN = info.getVIN();
-            if(!info.isEnabled()) {
+            if (!info.isEnabled()) {
                 LogFile.i(context, MainActivity.CHANNEL_ID, VIN + " is disabled: skipping");
                 continue;
             } else {
@@ -372,16 +373,16 @@ public class NetworkCalls {
 
             boolean forceUpdate = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.forceUpdate_key), false);
 
-            if(forceUpdate) {
+            if (forceUpdate) {
                 LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
                 long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                 long lasttime = info.getLastRefreshTime();
 
-                LogFile.d(context, MainActivity.CHANNEL_ID, "last refresh was " + (nowtime - lasttime) / (1000*60) + " min ago");
-                LogFile.d(context, MainActivity.CHANNEL_ID, "last refresh was " + (nowtime - lasttime) / (1000*60) + " min ago");
+                LogFile.d(context, MainActivity.CHANNEL_ID, "last refresh was " + (nowtime - lasttime) / (1000 * 60) + " min ago");
+                LogFile.d(context, MainActivity.CHANNEL_ID, "last refresh was " + (nowtime - lasttime) / (1000 * 60) + " min ago");
 
-                if ((nowtime - lasttime) / (1000*60) > 6 * 60 && info.getCarStatus() != null && !info.getCarStatus().getDeepSleep() && info.getCarStatus().getLVBVoltage() > 12) {
-                    updateStatus(context, info.getVIN(), userInfo.getAccessToken());
+                if ((nowtime - lasttime) / (1000 * 60) > 6 * 60 && info.getCarStatus() != null && !info.getCarStatus().getDeepSleep() && info.getCarStatus().getLVBVoltage() > 12) {
+                    updateStatus(context, info.getVIN());
                 }
             }
 
@@ -433,7 +434,7 @@ public class NetworkCalls {
                             LogFile.i(context, MainActivity.CHANNEL_ID, responseStatus.raw().toString());
                             LogFile.i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.");
                             // For either of these client errors, we probably need to refresh the access token
-                            if (responseStatus.code() == Constants.HTTP_BAD_REQUEST ) {
+                            if (responseStatus.code() == Constants.HTTP_BAD_REQUEST) {
 //                            if (responseStatus.code() == Constants.HTTP_BAD_REQUEST || responseStatus.code() == Constants.HTTP_UNAUTHORIZED) {
                                 nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN;
                             }
@@ -611,7 +612,7 @@ public class NetworkCalls {
         t.start();
     }
 
-    public static void remoteStart(Handler handler, Context context, String VIN ) {
+    public static void remoteStart(Handler handler, Context context, String VIN) {
         Thread t = new Thread(() -> {
             Intent intent = NetworkCalls.execCommand(context, VIN, "v5", "engine", "start", "put");
             Message m = Message.obtain();
@@ -621,7 +622,7 @@ public class NetworkCalls {
         t.start();
     }
 
-    public static void remoteStop(Handler handler, Context context, String VIN ) {
+    public static void remoteStop(Handler handler, Context context, String VIN) {
         Thread t = new Thread(() -> {
             Intent intent = NetworkCalls.execCommand(context, VIN, "v5", "engine", "start", "delete");
             Message m = Message.obtain();
@@ -631,7 +632,7 @@ public class NetworkCalls {
         t.start();
     }
 
-    public static void lockDoors(Handler handler, Context context, String VIN ) {
+    public static void lockDoors(Handler handler, Context context, String VIN) {
         Thread t = new Thread(() -> {
             Intent intent = NetworkCalls.execCommand(context, VIN, "v2", "doors", "lock", "put");
             Message m = Message.obtain();
@@ -643,7 +644,7 @@ public class NetworkCalls {
 
     public static void unlockDoors(Handler handler, Context context, String VIN) {
         Thread t = new Thread(() -> {
-            Intent intent = NetworkCalls.execCommand(context,  VIN,"v2", "doors", "lock", "delete");
+            Intent intent = NetworkCalls.execCommand(context, VIN, "v2", "doors", "lock", "delete");
             Message m = Message.obtain();
             m.setData(intent.getExtras());
             handler.sendMessage(m);
@@ -746,8 +747,26 @@ public class NetworkCalls {
         }
     }
 
-    private static Intent updateStatus(Context context, String VIN, String token) {
+    public static void updateStatus(Handler handler, Context context, String VIN) {
+        Thread t = new Thread(() -> {
+            Intent intent = NetworkCalls.updateStatus(context, VIN);
+            Message m = Message.obtain();
+            m.setData(intent.getExtras());
+            handler.sendMessage(m);
+        });
+        t.start();
+    }
+
+    private static Intent updateStatus(Context context, String VIN) {
         Intent data = new Intent();
+        UserInfoDao userDao = UserInfoDatabase.getInstance(context)
+                .userInfoDao();
+        VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context)
+                .vehicleInfoDao();
+
+        VehicleInfo vehInfo = infoDao.findVehicleInfoByVIN(VIN);
+        UserInfo userInfo = userDao.findUserInfo(vehInfo.getUserId());
+        String token = userInfo.getAccessToken();
 
         if (!MainActivity.checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
@@ -763,7 +782,7 @@ public class NetworkCalls {
                         LogFile.i(context, MainActivity.CHANNEL_ID, "statusrefresh send successful.");
                         Looper.prepare();
                         Toast.makeText(context, "Command transmitted.", Toast.LENGTH_SHORT).show();
-                        data.putExtra("action", pollStatus(context, token, VIN, status.getCommandId()));
+                        data.putExtra("action", pollStatus(context, token, vehInfo, status.getCommandId()));
                     } else if (status.getStatus() == CMD_REMOTE_START_LIMIT) {
                         LogFile.i(context, MainActivity.CHANNEL_ID, "statusrefresh send UNSUCCESSFUL.");
                         data.putExtra("action", COMMAND_REMOTE_START_LIMIT);
@@ -785,7 +804,7 @@ public class NetworkCalls {
         return data;
     }
 
-    private static String pollStatus(Context context, String token, String VIN, String idCode) {
+    private static String pollStatus(Context context, String token, VehicleInfo vehInfo, String idCode) {
         // Delay 5 seconds before starting to check on status
         try {
             Thread.sleep(10 * 1000);
@@ -793,6 +812,7 @@ public class NetworkCalls {
             LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e);
         }
 
+        String VIN = vehInfo.getVIN();
         USAPICVService commandServiceClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
         try {
             for (int retries = 0; retries < 10; ++retries) {
@@ -803,6 +823,14 @@ public class NetworkCalls {
                     switch (status.getStatus()) {
                         case CMD_STATUS_SUCCESS:
                             LogFile.i(context, MainActivity.CHANNEL_ID, "poll response successful.");
+                            long now = Instant.now().toEpochMilli();
+                            vehInfo.setLastForcedRefreshTime(now);
+                            long count = vehInfo.getForcedRefreshCount();
+                            if (count == 0) {
+                                vehInfo.setInitialForcedRefreshTime(now);
+                            }
+                            vehInfo.setForcedRefreshCount(++count);
+                            VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateVehicleInfo(vehInfo);
                             return COMMAND_SUCCESSFUL;
                         case CMD_STATUS_FAILED:
                             LogFile.i(context, MainActivity.CHANNEL_ID, "poll response failed.");

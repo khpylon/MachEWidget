@@ -54,8 +54,9 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
     protected static final String LOCK_CLICK = "LockButton";
     protected static final String REFRESH_CLICK = "Refresh";
     protected static final String PHEVTOGGLE_CLICK = "PHEVToggle";
+    protected static final String UPDATE_CLICK = "ForceUpdate";
 
-    protected static final String APPWIDGETID ="appWidgetId";
+    protected static final String APPWIDGETID = "appWidgetId";
 
     protected static final String PADDING = "   ";
     protected static final String CHARGING_STATUS_NOT_READY = "NotReady";
@@ -167,7 +168,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
                 useTranparency ? R.color.transparent_black : R.color.black);
     }
 
-    protected VehicleInfo getVehicleInfo (Context context, InfoRepository info, int appWidgetId) {
+    protected VehicleInfo getVehicleInfo(Context context, InfoRepository info, int appWidgetId) {
         // Find the VIN associated with this widget
         String widget_VIN = Constants.VIN_KEY + appWidgetId;
         String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
@@ -454,7 +455,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
     }
 
     protected void drawLastRefresh(Context context, RemoteViews views, CarStatus carStatus, String timeFormat) {
-                // Fill in the last update time
+        // Fill in the last update time
         Calendar lastUpdateTime = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -511,7 +512,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
         views.setTextViewText(R.id.lastRefresh, refresh);
     }
 
-    protected void drawOdometer (RemoteViews views, CarStatus carStatus, double distanceConversion, String distanceUnits)    {
+    protected void drawOdometer(RemoteViews views, CarStatus carStatus, double distanceConversion, String distanceUnits) {
         Double odometer = carStatus.getOdometer();
         if (odometer != null && odometer > 0) {
             // FordPass truncates; go figure.
@@ -523,7 +524,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
     }
 
     // OTA status
-    protected void drawOTAInfo (Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat)  {
+    protected void drawOTAInfo(Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat) {
         OTAStatus otaStatus = vehicleInfo.toOTAStatus();
         boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
@@ -650,9 +651,9 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
         // Show last refresh, odometer
         String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
         drawLastRefresh(context, views, carStatus, timeFormat);
-        drawOdometer ( views,carStatus, distanceConversion, distanceUnits);
+        drawOdometer(views, carStatus, distanceConversion, distanceUnits);
 
-            // Ignition, alarm/sleep, plug icons
+        // Ignition, alarm/sleep, plug icons
         drawIcons(views, carStatus);
 
         // Draw range and fuel/gas stuff
@@ -712,7 +713,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
         views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
 
         // OTA status
-        drawOTAInfo ( context, views, vehicleInfo, timeFormat);
+        drawOTAInfo(context, views, vehicleInfo, timeFormat);
 
         // Location
         if (PreferenceManager.getDefaultSharedPreferences(context)
@@ -759,7 +760,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
         views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
         views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
         views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.lock_electric, hasEngine? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
 
         // Reset everything else
         views.setTextViewText(R.id.lastRefresh, "Not logged in");
@@ -870,19 +871,33 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
     }
 
     protected void remoteStart(Context context, String VIN) {
-        NetworkCalls.remoteStart(getHandler(context), context, VIN );
+        NetworkCalls.remoteStart(getHandler(context), context, VIN);
     }
 
     protected void remoteStop(Context context, String VIN) {
-        NetworkCalls.remoteStop(getHandler(context), context, VIN );
+        NetworkCalls.remoteStop(getHandler(context), context, VIN);
     }
 
-    protected void lock(Context context,  String VIN) {
-        NetworkCalls.lockDoors(getHandler(context), context, VIN );
+    protected void lock(Context context, String VIN) {
+        NetworkCalls.lockDoors(getHandler(context), context, VIN);
     }
 
     protected void unlock(Context context, String VIN) {
         NetworkCalls.unlockDoors(getHandler(context), context, VIN);
+    }
+
+    protected void forceUpdate(Context context, String VIN) {
+        NetworkCalls.updateStatus(
+                new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        String result = msg.getData().getString("action");
+                        if (result != null && result.equals(NetworkCalls.COMMAND_SUCCESSFUL)) {
+                            StatusReceiver.nextAlarm(context, 2);
+                        }
+                    }
+                },
+                context, VIN);
     }
 
     @Override
@@ -944,8 +959,8 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    private static long lastIgnitionClicktime = 0;
-    private static long lastLockClicktime = 0;
+    private static final long lastIgnitionClicktime = 0;
+    private static final long lastLockClicktime = 0;
     private static final long[] lastRefreshClicktime = {0, 0};
 
     // Flag to avoid executing a command before we receive a status update.
@@ -959,7 +974,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         // Handle the actions which don't require info about the vehicle or user
         String action = intent.getAction();
-        int appWidgetId = intent.getIntExtra(APPWIDGETID,-1);
+        int appWidgetId = intent.getIntExtra(APPWIDGETID, -1);
         String widget_action = action + "_" + appWidgetId;
         String widget_VIN = Constants.VIN_KEY + appWidgetId;
 
@@ -978,7 +993,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
             context.startActivity(intent);
             return;
         } else if (action.equals(PROFILE_CLICK)) {
-            ProfileManager.changeProfile(context, widget_VIN) ;
+            ProfileManager.changeProfile(context, widget_VIN);
             return;
         } else if (action.equals(LEFT_BUTTON_CLICK)) {
             StoredData appInfo = new StoredData(context);
@@ -1073,7 +1088,7 @@ public class CarStatusWidget_5x5 extends AppWidgetProvider {
                     context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
                 }
             };
-            if (clickCount == 1)  {
+            if (clickCount == 1) {
                 new Thread() {
                     @Override
                     public void run() {

@@ -84,11 +84,18 @@
         app:title="@string/enable_commands" />
 
     <SwitchPreferenceCompat
+        app:key="@string/user_forcedUpdate_key"
+        app:defaultValue="false"
+        app:singleLineTitle="false"
+        app:title="@string/user_force_updates" />
+
+    <SwitchPreferenceCompat
         app:defaultValue="false"
         app:key="@string/show_profiles_key"
         app:singleLineTitle="false"
         app:title="@string/show_profiles"
-        app:enabled="false"/>
+        app:enabled="false"
+        app:isPreferenceVisible="false" />
 
     <ListPreference
         app:key="@string/units_key"

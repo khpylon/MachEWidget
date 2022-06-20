@@ -20,7 +20,14 @@ import android.widget.Toast;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
+import com.example.khughes.machewidget.db.UserInfoDao;
+import com.example.khughes.machewidget.db.UserInfoDatabase;
+import com.example.khughes.machewidget.db.VehicleInfoDao;
+import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 
+import org.apache.avro.LogicalTypes;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -79,6 +86,10 @@ public class CarStatusWidget_2x5 extends CarStatusWidget_5x5 {
             views.setOnClickPendingIntent(R.id.leftappbutton, getPendingSelfIntent(context, id, WIDGET_CLICK));
             views.setOnClickPendingIntent(R.id.rightappbutton, getPendingSelfIntent(context, id, WIDGET_CLICK));
         }
+
+        boolean forceUpdates = sharedPref.getBoolean(context.getResources().getString(R.string.user_forcedUpdate_key), true);
+        views.setOnClickPendingIntent(R.id.refresh, getPendingSelfIntent(context, id, forceUpdates ? UPDATE_CLICK : WIDGET_CLICK));
+        views.setViewVisibility(R.id.refresh, forceUpdates ? View.VISIBLE : View.GONE);
 
         boolean enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.enable_commands_key), false);
@@ -254,7 +265,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget_5x5 {
             public void handleMessage(Message msg) {
                 UserInfo user = info[0].getUser();
                 if (user == null) {
-                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget_5x5.onUpdate(): no userinfo found");
+                    LogFile.d(context, MainActivity.CHANNEL_ID, "CarStatusWidget_2x5.onUpdate(): no userinfo found");
                     return;
                 }
 
@@ -405,7 +416,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget_5x5 {
             setPHEVCallbacks(context, views, Utils.FUEL_PHEV, appWidgetId, nextMode);
             appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
             return;
-        } else if (action.equals(IGNITION_CLICK) || action.equals(LOCK_CLICK)) {
+        } else if (action.equals(IGNITION_CLICK) || action.equals(LOCK_CLICK) || action.equals(UPDATE_CLICK)) {
             InfoRepository[] info = {null};
             int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
             context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, ++clickCount).commit();
@@ -437,6 +448,105 @@ public class CarStatusWidget_2x5 extends CarStatusWidget_5x5 {
                                             } else {
                                                 lock(context, VIN);
                                             }
+                                        }
+                                        break;
+                                    case UPDATE_CLICK:
+                                        if (carStatus.getLVBStatus().equals("STATUS_GOOD")) {
+                                            long nowTime = Instant.now().toEpochMilli();
+                                            long firstTime = vehInfo.getInitialForcedRefreshTime();
+                                            long lastTime = vehInfo.getLastForcedRefreshTime();
+                                            long seconds = (nowTime - firstTime) / 1000;
+
+                                            if(seconds > 60*60*12) {
+                                                vehInfo.setForcedRefreshCount(0);
+                                            }
+                                            seconds = (nowTime - lastTime) / 1000;
+
+                                            long count = vehInfo.getForcedRefreshCount();
+                                            if((count < 3 && seconds > 120) || (count < 5 && seconds > 300) ) {
+                                                long timeout = info[0].getUser().getExpiresIn();
+                                                seconds = (timeout - nowTime) / 1000;
+                                                // If the access token has expired, or is about to, do a refresh first
+                                                if (seconds < 30) {
+                                                    Toast.makeText(context, "The token is being refreshed; this may take a minute.", Toast.LENGTH_SHORT).show();
+                                                    StatusReceiver.nextAlarm(context, 2);
+                                                    new Thread() {
+                                                        @Override
+                                                        public void run() {
+                                                            try {
+                                                                synchronized (this) {
+                                                                    wait(15000);
+                                                                }
+                                                                forceUpdate(context, VIN);
+                                                            } catch (InterruptedException ex) {
+                                                            }
+                                                        }
+                                                    }.start();
+                                                }
+                                                // Otherwise just do it
+                                                else {
+                                                    Toast.makeText(context, "Forcing a refresh; this may take 30 seconds.", Toast.LENGTH_SHORT).show();
+                                                    long now = Instant.now().toEpochMilli();
+                                                    vehInfo.setLastForcedRefreshTime(now);
+                                                    count = vehInfo.getForcedRefreshCount();
+                                                    if (count == 0) {
+                                                        vehInfo.setInitialForcedRefreshTime(now);
+                                                    }
+                                                    vehInfo.setForcedRefreshCount(++count);
+                                                    info[0].setVehicle(vehInfo);
+//                                                    forceUpdate(context, VIN);
+                                                }
+                                            } else if (count < 3) {
+                                                Toast.makeText(context, "Cannot force update for another " + (120 - seconds) + " seconds.", Toast.LENGTH_SHORT).show();
+                                            } else if (count < 5) {
+                                                Toast.makeText(context, "Cannot force update for another " + (300 - seconds) + " seconds.", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(context, "Too many forced updates attempted; ignored.", Toast.LENGTH_SHORT).show();
+                                            }
+
+
+
+//                                            long nowTime = Instant.now().toEpochMilli();
+//                                            long lastTime = vehInfo.getLastForcedRefreshTime();
+//                                            long seconds = (nowTime - lastTime) / 1000;
+//                                            // Need to be at least two minutes between updates
+//                                            if (seconds >= 120) {
+//                                                long count = vehInfo.getForcedRefreshCount();
+//                                                // if it's less been less than 10 minutes, make note
+//                                                if (seconds <= 600) {
+//                                                    ++count;
+//                                                    vehInfo.setForcedRefreshCount(count);
+//                                                    info[0].setVehicle(vehInfo);
+//                                                }
+//                                                // If it's been more than 10 minutes,
+//                                                else if (count > 0) {
+//                                                    vehInfo.setForcedRefreshCount(0);
+//                                                    info[0].setVehicle(vehInfo);
+//                                                }
+//                                                // If there are too many requests in 30 minutes, ignore it
+//                                                if (count > 3) {
+//                                                    Toast.makeText(context, "Too many forced updates attempted; ignored.", Toast.LENGTH_SHORT).show();
+//                                                }
+//                                                // Let's give it a go
+//                                                else {
+//                                                    // If the access token has expired, or is about to, do a refresh first
+//                                                    long timeout = info[0].getUser().getExpiresIn();
+//                                                    seconds = (timeout - nowTime) / 1000;
+//                                                    if (seconds < 30) {
+//                                                        Toast.makeText(context, "The token is being refreshed; try again in a few seconds", Toast.LENGTH_SHORT).show();
+//                                                        StatusReceiver.nextAlarm(context, 2);
+//                                                    } else {
+//                                                        Toast.makeText(context, "Attempting to force an update.", Toast.LENGTH_SHORT).show();
+//                                                        vehInfo.setLastForcedRefreshTime(nowTime);
+//                                                        info[0].setVehicle(vehInfo);
+//                                                  //      forceUpdate(context, VIN);
+//                                                    }
+//                                                }
+//                                            } else {
+//                                                Toast.makeText(context, "Cannot force update for another " + (120 - seconds) + " seconds.", Toast.LENGTH_SHORT).show();
+//                                            }
+                                        } else {
+                                            Toast.makeText(context, "The LVB status is not good.", Toast.LENGTH_SHORT).show();
                                         }
                                         break;
                                 }

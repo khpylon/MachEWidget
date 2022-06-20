@@ -52,8 +52,10 @@
     <string name="github_summary">Link to the code repository</string>
     <string name="battery_opt">Battery optimization</string>
     <string name="battery_notification_title">Enable battery optimization notification</string>
-    <string name="force_updates">Force updates</string>
-    <string name="force_updates_summary">If vehicle data is more than 6 hours old, force an update.  WARNING: This may cause a drain on the 12V battery.</string>
+    <string name="force_updates">Automatic forced updates</string>
+    <string name="force_updates_summary">If vehicle data is more than 6 hours old, automatically force an update.  WARNING: This may cause a drain on the 12V battery.</string>
+    <string name="user_force_updates">Enable forced refresh</string>
+    <string name="user_force_updates_summary">Allow user-forced updates from the widget.  WARNING: This may cause a drain on the 12V battery.</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
@@ -78,6 +80,7 @@
     <string name="userId_key">userId</string>
     <string name="forceUpdate_key">forceUpdate</string>
     <string name="batteryNotification_key">batteryNotification</string>
+    <string name="user_forcedUpdate_key">userForcefUpdate</string>
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>
