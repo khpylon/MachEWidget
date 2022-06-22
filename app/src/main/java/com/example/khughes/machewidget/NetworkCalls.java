@@ -495,9 +495,17 @@ public class NetworkCalls {
                         }
                     } catch (java.net.UnknownHostException e3) {
                         LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getStatus");
+                        // If the vehicle info changed, commit
+                        if (statusUpdated) {
+                            infoDao.updateVehicleInfo(info);
+                        }
                         break;
                     } catch (Exception e) {
                         LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
+                        // If the vehicle info changed, commit
+                        if (statusUpdated) {
+                            infoDao.updateVehicleInfo(info);
+                        }
                         break;
                     }
                 }
