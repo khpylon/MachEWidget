@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Base64;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -81,7 +82,8 @@ public class UpdateActivity extends AppCompatActivity {
             if (!context.getPackageManager().canRequestPackageInstalls()) {
                 Toast.makeText(context, "The app needs permission to install unknown apps. For more info, read the FAQ on GitHub.", Toast.LENGTH_LONG).show();
             } else {
-                new AlertDialog.Builder(this)
+                new AlertDialog.Builder(//
+                        new ContextThemeWrapper(this,R.style.AlertDialogCustom))// )
                         .setTitle("Notice")
                         .setMessage("After the app is updated, it will close.")
                         .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
