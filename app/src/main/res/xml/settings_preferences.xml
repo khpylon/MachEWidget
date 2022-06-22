@@ -87,7 +87,8 @@
         app:key="@string/user_forcedUpdate_key"
         app:defaultValue="false"
         app:singleLineTitle="false"
-        app:title="@string/user_force_updates" />
+        app:title="@string/user_force_updates"
+        app:summary="@string/user_force_updates_summary"/>
 
     <SwitchPreferenceCompat
         app:defaultValue="false"
