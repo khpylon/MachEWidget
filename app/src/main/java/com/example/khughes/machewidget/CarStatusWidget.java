@@ -64,6 +64,38 @@ public class CarStatusWidget extends AppWidgetProvider {
     protected static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
     protected static final String CHARGING_STATUS_PAUSED = "EvsePaused";
 
+    protected void updateTire(RemoteViews views, String pressure, String status,
+                            String units, Double conversion, int id) {
+        // Set the textview background color based on the status
+        int drawable;
+        if (status != null && !status.equals("Normal")) {
+            drawable = R.drawable.pressure_oval_red_solid;
+            // Get the tire pressure and do any conversion necessary.
+            if (pressure != null) {
+                double value = Double.parseDouble(pressure);
+                // Only display value if it's not ridiculous; after some OTA updates the
+                // raw value is "65533"
+                if (value < 2000) {
+                    // If conversion is really small, show value in tenths
+                    String pattern = conversion >= 0.1 ? "#" : "#.0";
+                    pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
+                            DecimalFormatSymbols.getInstance(Locale.US)).format(value * conversion), units);
+                    views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval);
+                } else {
+                    pressure = "N/A";
+                }
+            } else {
+                pressure = "N/A";
+            }
+            views.setTextViewText(id, pressure);
+        } else {
+            drawable = R.drawable.filler;
+            views.setTextViewText(id, "");
+        }
+        views.setInt(id, "setBackgroundResource", drawable);
+    }
+
+
 
     protected void updateLocation(Context context, RemoteViews views, String latitude, String longitude) {
         List<Address> addresses = null;
@@ -606,7 +638,12 @@ public class CarStatusWidget extends AppWidgetProvider {
         String widget_action = action + "_" + appWidgetId;
         String widget_VIN = Constants.VIN_KEY + appWidgetId;
 
-        if (action.equals(WIDGET_CLICK)) {
+        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+            AppWidgetManager man = AppWidgetManager.getInstance(context);
+            int[] ids = man.getAppWidgetIds(new ComponentName(context, this.getClass()));
+            onUpdate(context, AppWidgetManager.getInstance(context), ids);
+            return;
+        } else if (action.equals(WIDGET_CLICK)) {
             intent = new Intent(context, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);

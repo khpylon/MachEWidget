@@ -4,8 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
 import android.icu.text.MessageFormat;
@@ -15,21 +13,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
-import com.example.khughes.machewidget.db.UserInfoDao;
-import com.example.khughes.machewidget.db.UserInfoDatabase;
-import com.example.khughes.machewidget.db.VehicleInfoDao;
-import com.example.khughes.machewidget.db.VehicleInfoDatabase;
-
-import org.apache.avro.LogicalTypes;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,38 +24,6 @@ import java.util.Map;
  * Implementation of App Widget functionality.
  */
 public class CarStatusWidget_2x5 extends CarStatusWidget {
-    public static final String WIDGET_IDS_KEY = BuildConfig.APPLICATION_ID + ".CARSTATUSWIDGET2x5";
-
-    private void updateTire(RemoteViews views, String pressure, String status,
-                            String units, Double conversion, int id) {
-        // Set the textview background color based on the status
-        int drawable;
-        if (status != null && !status.equals("Normal")) {
-            drawable = R.drawable.pressure_oval_red_solid;
-            // Get the tire pressure and do any conversion necessary.
-            if (pressure != null) {
-                double value = Double.parseDouble(pressure);
-                // Only display value if it's not ridiculous; after some OTA updates the
-                // raw value is "65533"
-                if (value < 2000) {
-                    // If conversion is really small, show value in tenths
-                    String pattern = conversion >= 0.1 ? "#" : "#.0";
-                    pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
-                            DecimalFormatSymbols.getInstance(Locale.US)).format(value * conversion), units);
-                    views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval);
-                } else {
-                    pressure = "N/A";
-                }
-            } else {
-                pressure = "N/A";
-            }
-            views.setTextViewText(id, pressure);
-        } else {
-            drawable = R.drawable.filler;
-            views.setTextViewText(id, "");
-        }
-        views.setInt(id, "setBackgroundResource", drawable);
-    }
 
     // Define actions for clicking on various icons, including the widget itself
     protected void setCallbacks(Context context, RemoteViews views, int id) {
@@ -261,21 +216,13 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
 
     @Override
     public void onDisabled(Context context) {
-        AppWidgetManager man = AppWidgetManager.getInstance(context);
-        int[] ids = man.getAppWidgetIds(new ComponentName(context, this.getClass()));
-        return;
         // Enter relevant functionality for when the last widget is disabled
     }
 
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
-            AppWidgetManager man = AppWidgetManager.getInstance(context);
-            int[] ids = man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_2x5.class));
-            onUpdate(context, AppWidgetManager.getInstance(context), ids);
-            return;
-        } else if (action.equals(PHEVTOGGLE_CLICK)) {
+        if (action.equals(PHEVTOGGLE_CLICK)) {
             String mode = intent.getStringExtra("nextMode");
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_2x5);

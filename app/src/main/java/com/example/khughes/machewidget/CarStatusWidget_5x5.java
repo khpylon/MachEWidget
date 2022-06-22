@@ -1,22 +1,13 @@
 package com.example.khughes.machewidget;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
 import android.icu.text.MessageFormat;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,25 +19,15 @@ import android.widget.Toast;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
-import com.example.khughes.machewidget.OTAStatus.OTAStatus;
-import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class CarStatusWidget_5x5 extends CarStatusWidget {
 
-    private void updateTire(RemoteViews views, String pressure, String status,
+    @Override
+    protected void updateTire(RemoteViews views, String pressure, String status,
                             String units, Double conversion, int id) {
         // Set the textview background color based on the status
         int drawable;
@@ -454,12 +435,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         String widget_action = action + "_" + appWidgetId;
         String widget_VIN = Constants.VIN_KEY + appWidgetId;
 
-        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
-            AppWidgetManager man = AppWidgetManager.getInstance(context);
-            int[] ids = man.getAppWidgetIds(new ComponentName(context, this.getClass()));
-            onUpdate(context, AppWidgetManager.getInstance(context), ids);
-            return;
-        } else if (action.equals(PROFILE_CLICK)) {
+        if (action.equals(PROFILE_CLICK)) {
             ProfileManager.changeProfile(context, widget_VIN);
             return;
         } else if (action.equals(PHEVTOGGLE_CLICK)) {
