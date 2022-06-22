@@ -232,13 +232,13 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
                 pressureUnits, pressureConversion, R.id.rrtire);
 
         // Window statuses
-        views.setImageViewResource(R.id.lt_ft_window,
+        views.setImageViewResource(R.id.lfwindow,
                 isWindowClosed(carStatus.getDriverWindow()) ? R.drawable.filler : R.drawable.icons8_left_front_window_down_red);
-        views.setImageViewResource(R.id.lt_ft_window,
+        views.setImageViewResource(R.id.rfwindow,
                 isWindowClosed(carStatus.getPassengerWindow()) ? R.drawable.filler : R.drawable.icons8_right_front_window_down_red);
-        views.setImageViewResource(R.id.lt_ft_window,
+        views.setImageViewResource(R.id.lrwindow,
                 isWindowClosed(carStatus.getLeftRearWindow()) ? R.drawable.filler : R.drawable.icons8_left_rear_window_down_red);
-        views.setImageViewResource(R.id.lt_ft_window,
+        views.setImageViewResource(R.id.rrwindow,
                 isWindowClosed(carStatus.getRightRearWindow()) ? R.drawable.filler : R.drawable.icons8_right_rear_window_down_red);
 
         // Get the right images to use for this vehicle
