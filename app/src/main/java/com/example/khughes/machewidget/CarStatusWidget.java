@@ -737,6 +737,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                                             // If it's been twelve hours since the initial refresh, reset the count
                                             if (seconds > TIMEOUT_INTERVAL) {
                                                 vehInfo.setForcedRefreshCount(0);
+                                                info[0].setVehicle(vehInfo);
                                             }
 
                                             // Calculate how long since the last refresh
