@@ -1019,6 +1019,62 @@ public class Utils {
         return apkFile;
     }
 
+    public static String elapsedSecondsToDescription(long seconds) {
+        StringBuilder result = new StringBuilder();
+
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        // less than 1 minute
+        if (minutes == 0) {
+            result.append(seconds + " sec");
+        }
+        // less than an hour
+        else if (hours == 0) {
+            result.append(minutes + " min");
+            // not right on the minute
+            if ((seconds % 60) != 0) {
+                result.append(", " + (seconds % 60) + " sec");
+            }
+        }
+        // more than an hour
+        else {
+            result.append(hours == 1 ? "1 hr" : hours + " hrs");
+            // not right on the hour
+            if ((minutes % 60) != 0) {
+                result.append(", " + (minutes % 60) + " min");
+            }
+        }
+        return result.toString();
+    }
+
+    public static String elapsedMinutesToDescription(long minutes) {
+        StringBuilder result = new StringBuilder();
+
+        // less than an hour
+        if (minutes < 60) {
+            result.append(minutes + " min");
+            // less than a day
+        } else if (minutes / 60 < 24) {
+            result.append((minutes / 60) + " hr");
+            // right on the hour
+            if ((minutes % 60) == 0) {
+                if (minutes != 60) {
+                    result.append("s");
+                }
+                // hours and minutes
+            } else {
+                if (minutes >= 120) {
+                    result.append("s");
+                }
+                result.append(", " + (minutes % 60) + " min");
+            }
+        } else {
+            long days = minutes / (24 * 60);
+            result.append(days == 1 ? "1 day" : days + " days");
+        }
+        return result.toString();
+    }
+
     private static final int JSON_SETTINGS_VERSION = 2;
 
     public static void savePrefs(Context context) {

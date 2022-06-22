@@ -28,7 +28,7 @@ import java.util.TimeZone;
 /**
  * Implementation of App Widget functionality.
  */
-public class CarStatusWidget_1x5 extends CarStatusWidget_5x5 {
+public class CarStatusWidget_1x5 extends CarStatusWidget {
     public static final String WIDGET_IDS_KEY = BuildConfig.APPLICATION_ID + ".CARSTATUSWIDGET2";
 
     private void updateTire(RemoteViews views, String pressure, String status,
@@ -62,38 +62,17 @@ public class CarStatusWidget_1x5 extends CarStatusWidget_5x5 {
         views.setInt(id, "setBackgroundResource", drawable);
     }
 
-    private void setCallbacks(Context context, RemoteViews views, int id) {
-        // Define actions for clicking on various icons, including the widget itself
-        views.setOnClickPendingIntent(R.id.thewidget, getPendingSelfIntent(context, id, WIDGET_CLICK));
-
+    // Define actions for clicking on various icons, including the widget itself
+    protected void setCallbacks(Context context, RemoteViews views, int id) {
         views.setOnClickPendingIntent(R.id.wireframe, getPendingSelfIntent(context, id, PROFILE_CLICK));
-        views.setOnClickPendingIntent(R.id.settings, getPendingSelfIntent(context, id, SETTINGS_CLICK));
-
-        boolean enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.enable_commands_key), false);
-        if (enableCommands) {
-            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, id, LOCK_CLICK));
-            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, id, LOCK_CLICK));
-            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, id, IGNITION_CLICK));
-        } else {
-            views.setOnClickPendingIntent(R.id.lock_gasoline, getPendingSelfIntent(context, id, WIDGET_CLICK));
-            views.setOnClickPendingIntent(R.id.lock_electric, getPendingSelfIntent(context, id, WIDGET_CLICK));
-            views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, id, WIDGET_CLICK));
-        }
-    }
-
-    // Based on the VIN, find the right widget layout
-    private RemoteViews getWidgetView(Context context) {
-//        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-//        return new RemoteViews(context.getPackageName(), Utils.getLayoutByVIN(VIN));
-        return new RemoteViews(context.getPackageName(), R.layout.widget_1x5);
+        super.setCallbacks(context, views, id);
     }
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId, InfoRepository info) {
 
         // Construct the RemoteViews object
-        RemoteViews views = getWidgetView(context);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_1x5);
 
         // Setup actions for specific widgets
         setCallbacks(context, views, appWidgetId);
@@ -247,95 +226,19 @@ public class CarStatusWidget_1x5 extends CarStatusWidget_5x5 {
         // Enter relevant functionality for when the last widget is disabled
     }
 
+    @Override
     public void onReceive(Context context, Intent intent) {
-        // Handle the actions which don't require info about the vehicle or user
         String action = intent.getAction();
-        int appWidgetId = intent.getIntExtra(APPWIDGETID,-1);
-        String widget_action = action + "_" + appWidgetId;
-        String widget_VIN = Constants.VIN_KEY + appWidgetId;
 
         if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
             AppWidgetManager man = AppWidgetManager.getInstance(context);
             int[] ids = man.getAppWidgetIds(new ComponentName(context, this.getClass()));
             onUpdate(context, AppWidgetManager.getInstance(context), ids);
-//            if (intent.hasExtra(WIDGET_IDS_KEY)) {
-//                int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
-//                onUpdate(context, AppWidgetManager.getInstance(context), ids);
-//            }
-            return;
-        } else if (action.equals(WIDGET_CLICK)) {
-            intent = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-            return;
-        } else if (action.equals(PROFILE_CLICK)) {
-            InfoRepository[] info = {null};
-            int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
-            context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, ++clickCount).commit();
-            final Handler handler = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message msg) {
-                    int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
-                    if (clickCount > 2) {
-                        String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
-                        VehicleInfo vehInfo = info[0].getVehicleByVIN(VIN);
-                        UserInfo userInfo = info[0].getUser();
-                        long lastUpdateInMillis = vehInfo.getLastUpdateTime();
-                        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-                        String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
-                        Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
-                        long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
-                        String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
-                        Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
-
-                        Calendar lastUpdateTime = Calendar.getInstance();
-                        SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
-                        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        String lastRefresh  = vehInfo.getCarStatus().getLastRefresh();
-                        try {
-                            lastUpdateTime.setTime(sdf.parse(lastRefresh));// all done
-                        } catch (ParseException e) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in CarStatusWidget_1x5.updateAppWidget: ", e);
-                        }
-                        lastRefresh = OTAViewActivity.convertMillisToDate(lastUpdateTime.toInstant().toEpochMilli(), timeFormat);
-                        Toast.makeText(context, "Last refresh at " + lastRefresh, Toast.LENGTH_SHORT).show();
-                    } else if (clickCount > 1) {
-                        ProfileManager.changeProfile(context, widget_VIN);
-                    } else {
-                        Intent intent = new Intent(context, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-                    }
-                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
-                }
-            };
-            if (clickCount == 1) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            info[0] = new InfoRepository(context);
-                            synchronized (this) {
-                                wait(500);
-                            }
-                            handler.sendEmptyMessage(0);
-                        } catch (InterruptedException ex) {
-                        }
-                    }
-                }.start();
-            } else if (clickCount > 3) {
-                context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
-            }
-            return;
-        } else if (action.equals(SETTINGS_CLICK)) {
-            intent = new Intent(context, SettingsActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
             return;
         } else if (action.equals(PHEVTOGGLE_CLICK)) {
             String mode = intent.getStringExtra("nextMode");
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            RemoteViews views = getWidgetView(context);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_1x5);
             String nextMode;
             if (mode.equals("showGasoline")) {
                 nextMode = "showElectric";
@@ -346,67 +249,9 @@ public class CarStatusWidget_1x5 extends CarStatusWidget_5x5 {
                 views.setViewVisibility(R.id.bottom_electric, View.VISIBLE);
                 views.setViewVisibility(R.id.bottom_gasoline, View.GONE);
             }
+            int appWidgetId = intent.getIntExtra(APPWIDGETID,-1);
             setPHEVCallbacks(context, views, Utils.FUEL_PHEV, appWidgetId, nextMode);
             appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
-            return;
-        } else if (action.equals(IGNITION_CLICK) || action.equals(LOCK_CLICK)) {
-            InfoRepository[] info = {null};
-            int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(action, 0);
-            context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(action, ++clickCount).commit();
-            final Handler handler = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message msg) {
-                    int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(action, 0);
-                    if (clickCount > 1) {
-                        String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
-                        VehicleInfo vehInfo = info[0].getVehicleByVIN(VIN);
-                        if (vehInfo != null) {
-                            CarStatus carStatus = vehInfo.getCarStatus();
-                            if (carStatus != null) {
-                                switch (action) {
-                                    case IGNITION_CLICK:
-                                        if (carStatus.getRemoteStartStatus() != null
-                                                && carStatus.getIgnition() != null && carStatus.getIgnition().equals("Off")) {
-                                            if (!carStatus.getRemoteStartStatus()) {
-                                                remoteStart(context, VIN);
-                                            } else {
-                                                remoteStop(context, VIN);
-                                            }
-                                        }
-                                        break;
-                                    case LOCK_CLICK:
-                                        if (carStatus.getLock() != null) {
-                                            if (carStatus.getLock().equals("LOCKED")) {
-                                                unlock(context, VIN);
-                                            } else {
-                                                lock(context, VIN);
-                                            }
-                                        }
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(action, 0).commit();
-                }
-            };
-            if (clickCount == 1) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            info[0] = new InfoRepository(context);
-                            synchronized (this) {
-                                wait(500);
-                            }
-                            handler.sendEmptyMessage(0);
-                        } catch (InterruptedException ex) {
-                        }
-                    }
-                }.start();
-            } else if (clickCount > 3) {
-                context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
-            }
             return;
         } else {
             super.onReceive(context, intent);
