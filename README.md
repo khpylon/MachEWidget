@@ -32,9 +32,9 @@ Download the [app-release.apk](https://github.com/khpylon/MachEWidget/blob/maste
 
 - Will automatically fetch data from servers (default is every 10 minutes, but configurable)
 - Shows recent OTA information
-- Send commands to car to lock or unlock doors, and perform remote start
+- Send commands to car to lock or unlock doors, perform remote start, and force refresh
 - Assign "short cuts" to other related apps such as FordPass, Waze, etc
-- Can display all supported vehicles assigned to a single log-in
+- Can display all supported vehicles assigned to a single log-in on individual widgets
 
 ## Known Issues & Limitations
 

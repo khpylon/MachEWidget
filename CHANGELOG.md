@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.06.21
+### Changed
+- Each widget now separately tracks a vehicle.  This means if you have multiple vehicles, you can have a widget for each.
+  Related to this....
+- The "OTA Update Info" now uses a pull-down menu to specify the vehicle being viewed (only visible to for multiple vehicle
+  accounts).
+- You can manually "force" a refresh for a vehicle from each widget.  Since this has the potential to impact the 12V
+  battery, the app limits the number of times you can do this within a 24 hour interval.
+
+### Fixed
+- Corrected issue when attempting to clear OTA status notification.
+
 ## 2022.06.20
 ### Fixed
 - Updated to new Ford API for authentication; the older API stopped working today.  A refresh should
