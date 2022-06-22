@@ -1,12 +1,10 @@
 package com.example.khughes.machewidget;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,16 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import com.example.khughes.machewidget.OTAStatus.FuseResponse;
 import com.example.khughes.machewidget.OTAStatus.FuseResponseList;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
-import com.example.khughes.machewidget.db.UserInfoDatabase;
-import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,35 +65,11 @@ public class OTAViewActivity extends AppCompatActivity {
         return sdf.format(cal.getTime());
     }
 
-//    public static long getLastOTATimeInMillis(Context context, String format) {
-//        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-//        String lastOTATime = sharedPref.getString(context.getResources().getString(R.string.last_ota_time), "0");
-//        if (lastOTATime.contains(":")) {
-//            Calendar cal = Calendar.getInstance();
-//            SimpleDateFormat sdf;
-//            // Determine the format of the date
-//            if (lastOTATime.length() == Constants.OLDLOCALTIMEFORMAT.length()) {
-//                sdf = new SimpleDateFormat(Constants.OLDLOCALTIMEFORMAT, Locale.ENGLISH);
-//            } else {
-//                sdf = new SimpleDateFormat(format, Locale.ENGLISH);
-//            }
-//            try {
-//                cal.setTime(sdf.parse(lastOTATime));
-//            } catch (ParseException e) {
-//                Log.e(MainActivity.CHANNEL_ID, "exception in OTAViewActivity.getLastOTATimeInMillis: ", e);
-//            }
-//            return cal.toInstant().toEpochMilli();
-//        } else {
-//            return Long.parseLong(lastOTATime);
-//        }
-//    }
-
     private static long currentOTATime = 0;
     private static long lastOTATime;
 
-    private static Button clear;
     private static InfoRepository info;
-    private static VehicleInfo vehicleInfo;
+    private static VehicleInfo mVehicleInfo;
 
     private ArrayList<String> arrayList;
 
@@ -108,7 +77,6 @@ public class OTAViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otaview);
-//        String VIN = PreferenceManager.getDefaultSharedPreferences(this).getString(this.getResources().getString(R.string.VIN_key), "");
 
         Context context = getApplicationContext();
 
@@ -118,11 +86,11 @@ public class OTAViewActivity extends AppCompatActivity {
             WebSettingsCompat.setForceDark(mWebView.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
         }
 
-        clear = findViewById(R.id.button);
+        Button clear = findViewById(R.id.button);
         clear.setOnClickListener(view -> {
             if (currentOTATime > 0) {
-                vehicleInfo.setLastOTATime( currentOTATime );
-                info.setVehicle(vehicleInfo);
+                mVehicleInfo.setLastOTATime( currentOTATime );
+                info.setVehicle(mVehicleInfo);
                 MainActivity.updateWidget(context);
                 clear.setEnabled(false);
             }
@@ -130,14 +98,14 @@ public class OTAViewActivity extends AppCompatActivity {
 
         Spinner spinner = findViewById(R.id.spinner);
         arrayList = new ArrayList<>();
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arrayList);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, arrayList);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         new Thread(()-> {
             info = new InfoRepository(context);
             List<VehicleInfo> vehicles= info.getVehicles();
             if(vehicles.size() == 1) {
                 spinner.setVisibility(View.GONE);
-                new DownloadChangelog(context, mWebView).execute(info.getVehicles().get(0).getVIN());
+                new DownloadChangelog(context, mWebView, clear).execute(info.getVehicles().get(0).getVIN());
             } else {
                 arrayList.clear();
                 for (VehicleInfo vehicle : vehicles) {
@@ -152,24 +120,25 @@ public class OTAViewActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String VIN = parent.getItemAtPosition(position).toString();
-                new DownloadChangelog(context, mWebView).execute(VIN);
+                new DownloadChangelog(context, mWebView, clear).execute(VIN);
             }
             @Override
             public void onNothingSelected(AdapterView <?> parent) {
             }
         });
-//        new DownloadChangelog(context, mWebView).execute(VIN);
     }
 
     private static class DownloadChangelog extends AsyncTask<String, String, VehicleInfo> {
 
         private final WeakReference<Context> mContext;
         private final WeakReference<WebView> mWebView;
+        private final WeakReference<Button> mClear;
         private String dateFormat = Constants.LOCALTIMEFORMAT;
 
-        public DownloadChangelog(Context context, WebView webView) {
+        public DownloadChangelog(Context context, WebView webView, Button clear) {
             mContext = new WeakReference<>(context);
             mWebView = new WeakReference<>(webView);
+            mClear = new WeakReference<>(clear);
         }
 
         @Override
@@ -182,8 +151,8 @@ public class OTAViewActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(VehicleInfo vehicleInfo) {
-            Context context = mContext.get();
-
+            Button clear = mClear.get();
+            mVehicleInfo = vehicleInfo;
             OTAStatus ota = vehicleInfo.toOTAStatus();
             lastOTATime = vehicleInfo.getLastOTATime();
 
