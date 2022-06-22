@@ -93,7 +93,7 @@
         android:src="@drawable/locked_icon_gray" />
 
     <ImageView
-        android:id="@+id/lfwindow"
+        android:id="@+id/lt_ft_window"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignTop="@id/leftfiller"
@@ -103,7 +103,7 @@
         android:src="@drawable/filler" />
 
     <ImageView
-        android:id="@+id/lrwindow"
+        android:id="@+id/lt_rr_window"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignTop="@id/leftfiller"
@@ -113,7 +113,7 @@
         android:src="@drawable/filler" />
 
     <ImageView
-        android:id="@+id/rfwindow"
+        android:id="@+id/rt_ft_window"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignTop="@id/rightfiller"
@@ -123,7 +123,7 @@
         android:src="@drawable/filler"/>
 
     <ImageView
-        android:id="@+id/rrwindow"
+        android:id="@+id/rt_rr_window"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignStart="@id/rightfiller"

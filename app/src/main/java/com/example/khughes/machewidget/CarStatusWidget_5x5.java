@@ -1,7 +1,6 @@
 package com.example.khughes.machewidget;
 
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -232,13 +231,13 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
                 pressureUnits, pressureConversion, R.id.rrtire);
 
         // Window statuses
-        views.setImageViewResource(R.id.lfwindow,
+        views.setImageViewResource(R.id.lt_ft_window,
                 isWindowClosed(carStatus.getDriverWindow()) ? R.drawable.filler : R.drawable.icons8_left_front_window_down_red);
-        views.setImageViewResource(R.id.rfwindow,
+        views.setImageViewResource(R.id.rt_ft_window,
                 isWindowClosed(carStatus.getPassengerWindow()) ? R.drawable.filler : R.drawable.icons8_right_front_window_down_red);
-        views.setImageViewResource(R.id.lrwindow,
+        views.setImageViewResource(R.id.lt_rr_window,
                 isWindowClosed(carStatus.getLeftRearWindow()) ? R.drawable.filler : R.drawable.icons8_left_rear_window_down_red);
-        views.setImageViewResource(R.id.rrwindow,
+        views.setImageViewResource(R.id.rt_rr_window,
                 isWindowClosed(carStatus.getRightRearWindow()) ? R.drawable.filler : R.drawable.icons8_right_rear_window_down_red);
 
         // Get the right images to use for this vehicle
@@ -332,10 +331,10 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         views.setImageViewResource(R.id.lock_electric, R.drawable.locked_icon_gray);
         views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray);
 
-        views.setImageViewResource(R.id.lfwindow, R.drawable.filler);
-        views.setImageViewResource(R.id.rfwindow, R.drawable.filler);
-        views.setImageViewResource(R.id.lrwindow, R.drawable.filler);
-        views.setImageViewResource(R.id.rrwindow, R.drawable.filler);
+        views.setImageViewResource(R.id.lt_ft_window, R.drawable.filler);
+        views.setImageViewResource(R.id.rt_ft_window, R.drawable.filler);
+        views.setImageViewResource(R.id.lt_rr_window, R.drawable.filler);
+        views.setImageViewResource(R.id.rt_rr_window, R.drawable.filler);
 
         views.setInt(R.id.lftire, "setBackgroundResource", R.drawable.pressure_oval);
         views.setTextViewText(R.id.lftire, "N/A");
