@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -137,6 +139,15 @@ public class VehicleActivity extends AppCompatActivity {
                 holder.imageView.setVisibility(View.VISIBLE);
             } else {
                 holder.imageView.setVisibility(View.GONE);
+            }
+
+            int nightModeFlags =  holder.itemView.getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            holder.VINItemView.setTextColor(Color.parseColor(nightModeFlags == Configuration.UI_MODE_NIGHT_NO ? "#000000" : "#FFFFFF"));
+            holder.nicknameItemView.setTextColor(Color.parseColor(nightModeFlags == Configuration.UI_MODE_NIGHT_NO ? "#000000" : "#FFFFFF"));
+            if(position %2 == 1)  {
+                holder.itemView.setBackgroundColor(Color.parseColor(nightModeFlags == Configuration.UI_MODE_NIGHT_NO ? "#FFFFFF" : "#000000"));
+            } else {
+                holder.itemView.setBackgroundColor(Color.parseColor(nightModeFlags == Configuration.UI_MODE_NIGHT_NO ? "#F0F0F0" : "#202020"));
             }
 
             changing = true;

@@ -460,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(context, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_chooseapp) {
-            Intent intent = new Intent(this, ChooseApp.class);
+            Intent intent = new Intent(this, ChooseAppActivity.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.action_vehicle) {

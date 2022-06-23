@@ -4,60 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChooseApp">
+    tools:context=".ChooseAppActivity">
 
     <LinearLayout
         android:layout_width = "match_parent"
         android:layout_height = "match_parent"
         android:orientation = "vertical">
 
-    <RelativeLayout
-        android:layout_width = "match_parent"
-        android:layout_height = "wrap_content"
-        android:orientation = "horizontal">
+        <RelativeLayout
+            android:layout_width = "match_parent"
+            android:layout_height = "wrap_content"
+            android:orientation = "horizontal">
 
-        <TextView
-            android:id="@+id/textview"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:gravity="center_vertical"
-            android:typeface="sans"
-            android:padding="8dp"
-            android:text="Link app to "/>
+            <TextView
+                android:id="@+id/textview"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:typeface="sans"
+                android:padding="8dp"
+                android:text="Link app to "/>
 
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/textview"
-            android:layout_alignTop="@id/textview"
-            android:orientation="horizontal">
-
-            <RadioButton
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="false"
-                android:typeface="sans"
-                android:text="Left button" />
+                android:layout_toRightOf="@id/textview"
+                android:layout_alignTop="@id/textview"
+                android:orientation="horizontal">
 
-            <RadioButton
-                android:id="@+id/rightIcon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:typeface="sans"
-                android:text="Right button" />
-        </RadioGroup>
-    </RelativeLayout>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:typeface="sans"
+                    android:text="Left button" />
 
-        <ListView
-        android:id = "@+id/list"
-        android:layout_width = "wrap_content"
-        android:layout_height = "match_parent"
-        android:divider = "#000"
-        android:dividerHeight = "1dp"
-        android:footerDividersEnabled = "false"
-        android:headerDividersEnabled = "false"
-        tools:ignore="MissingConstraints" />
+                <RadioButton
+                    android:id="@+id/rightIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:typeface="sans"
+                    android:text="Right button" />
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/applist_row" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

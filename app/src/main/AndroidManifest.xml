@@ -23,7 +23,7 @@
             android:label="@string/action_settings" />
 
         <activity
-            android:name=".ChooseApp"
+            android:name=".ChooseAppActivity"
             android:exported="false"
             android:label="@string/action_chooseapp"
             android:parentActivityName=".MainActivity">
