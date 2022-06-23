@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.06.23
+## Fixed
+- Fixed bug where window status was not updated correctly in full-size widget.
+- Improved the contrast of various UI items
+
 ## 2022.06.21
 ### Changed
 - Each widget now separately tracks a vehicle.  This means if you have multiple vehicles, you can have a widget for each.
