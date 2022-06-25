@@ -558,13 +558,13 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe);
-        tmpMap.put(HOOD, R.drawable.escape_hood);
-        tmpMap.put(TAILGATE, R.drawable.escape_hatch);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.edge_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.edge_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.edge_liftgate_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.edge_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.edge_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.edge_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.edge_rrdoor_vert);
         edgeDrawables = tmpMap;
     }
 
@@ -770,17 +770,17 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.escape_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.escape_hatch_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.escape_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.escape_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.escape_lrwindow_horz);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.escape_rrwindow_horz);
+        tmpMap.put(WIREFRAME, R.drawable.edge_wireframe_horz);
+        tmpMap.put(HOOD, R.drawable.edge_hood_horz);
+        tmpMap.put(TAILGATE, R.drawable.edge_liftgate_horz);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.edge_lfdoor_horz);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.edge_rfdoor_horz);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.edge_lrdoor_horz);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.edge_rrdoor_horz);
+        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.edge_lfwindow_horz);
+        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.edge_rfwindow_horz);
+        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.edge_lrwindow_horz);
+        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.edge_rrwindow_horz);
         edgeDrawables_1x5 = tmpMap;
     }
 

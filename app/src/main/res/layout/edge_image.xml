@@ -78,7 +78,7 @@
         android:layout_height="216dp"
         android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/escape_wireframe" />
+        android:src="@drawable/edge_wireframe_vert" />
 
     <ImageView
         android:id="@+id/lock_electric"
@@ -88,7 +88,7 @@
         android:layout_alignStart="@id/wireframe"
         android:layout_alignTop="@id/wireframe"
         android:layout_marginStart="33.3dp"
-        android:layout_marginTop="110dp"
+        android:layout_marginTop="100dp"
         android:src="@drawable/locked_icon_gray" />
 
     <ImageView
