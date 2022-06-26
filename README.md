@@ -9,7 +9,7 @@ This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/
 [David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps](https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
 .  It is not a complete implementation of the functionality of their widgets, as it:
 - is only intended for the Ford Mustang Mach-E, as that's the only Ford I own (capabilities have been extended to support 
-  F-150/Bronco/Bronco Sport/Explorer/Escape owners as well, but feedback is encouraged)
+  F-150/Bronco/Bronco Sport/Explorer/Escape/Edge owners as well, but feedback is encouraged)
 - does not include all the function of tonesto7's Apple/iOS widget
 - does not currently support accounts outside of the United States, although it may still work
 
@@ -19,9 +19,10 @@ This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/
 
 My purpose for hosting this code on GitHub under the GPL v3 license is to provide a starting point for anyone who wants to extend its functionality.
 
-## Downloads
+## Installation
 
-Download the [app-release.apk](https://github.com/khpylon/MachEWidget/blob/master/app/github/release/app-release.apk?raw=true) file and sideload on your Android device.
+Search for "Ford Status Widget" on the Google Play store, or download 
+this [app-release.apk](https://github.com/khpylon/MachEWidget/blob/master/app/github/release/app-release.apk?raw=true) file and sideload on your Android device.
 
 ## Requirements
 
