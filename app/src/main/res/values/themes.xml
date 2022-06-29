@@ -30,4 +30,12 @@
     </style>
 
     <style name="Theme.MacheWidget.AppWidgetContainer" parent="Theme.MacheWidget.AppWidgetContainerParent" />
+
+    <style name="Theme1">
+        <item name="rapidred">#7f9c1316</item>
+    </style>
+    <style name="Theme2" parent="Theme1">
+        <item name="rapidred">#00000000</item>
+    </style>
+
 </resources>

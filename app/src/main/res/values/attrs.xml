@@ -4,4 +4,7 @@
         <attr name="appWidgetInnerRadius" format="dimension" />
         <attr name="appWidgetRadius" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="Vehicle">
+        <attr name="rapidred" format="color" />
+    </declare-styleable>
 </resources>

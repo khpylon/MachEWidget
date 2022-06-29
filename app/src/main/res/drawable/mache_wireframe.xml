@@ -56,7 +56,7 @@
       android:strokeLineJoin="round"
       android:strokeWidth="1.15"
       android:fillColor="#00000000"
-      android:strokeColor="#fffffe"
+      android:strokeColor="#ffffff"
       android:fillType="evenOdd"
       android:strokeLineCap="round"/>
   <path

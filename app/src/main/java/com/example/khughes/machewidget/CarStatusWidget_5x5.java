@@ -3,7 +3,10 @@ package com.example.khughes.machewidget;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
 import android.icu.text.MessageFormat;
@@ -15,7 +18,9 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.preference.PreferenceManager;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
@@ -258,6 +263,21 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
                 isDoorClosed(carStatus.getRightRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
 
         views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
+
+        {
+            final ContextThemeWrapper wrapper = new ContextThemeWrapper(context, R.style.Theme1);
+            Bitmap bmp = Bitmap.createBitmap(100, 225, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bmp);
+            Drawable icon ;
+            icon = VectorDrawableCompat.create(context.getResources(), R.drawable.mache_wireframe, wrapper.getTheme());
+            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            icon.draw(canvas);
+            icon = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_mache_outline_vert, wrapper.getTheme());
+            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            icon.draw(canvas);
+            views.setImageViewBitmap(R.id.wireframe, bmp);
+        }
+
 
         views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
 
