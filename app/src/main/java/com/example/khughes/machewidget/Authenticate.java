@@ -80,7 +80,6 @@ public class Authenticate {
     public static String newAuthenticate(Context context, String username, String password) {
         mContext = context;
         try {
-
             ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
 
             OkHttpClient.Builder ssoCiHttpClient = new OkHttpClient.Builder();
@@ -116,7 +115,8 @@ public class Authenticate {
                     .addHeader("Content-type", "application/json")
                     .build();
             okhttp3.Response response = client.newCall(request).execute();
-            if(response.code() != 302) {
+            if (response.code() != 302) {
+                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: first GET request didn't return 302 response");
                 return null;
             }
 
@@ -144,6 +144,7 @@ public class Authenticate {
                         .build();
                 response = client.newCall(request).execute();
                 if (response.code() != 302) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: second GET request didn't return 302 response");
                     return null;
                 }
                 cookies.addAll(response.headers().values("set-cookie"));
@@ -160,6 +161,10 @@ public class Authenticate {
                         .headers(headers.build())
                         .build();
                 response = client.newCall(request).execute();
+                if (response.code() != 200) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: third GET request didn't return 200 response");
+                    return null;
+                }
 
                 String thing = response.body().string();
                 final String loginUrlString = "data-ibm-login-url=\"";
@@ -187,12 +192,34 @@ public class Authenticate {
                         .cookieJar(cookieJar)
                         .build();
                 response = client.newCall(request).execute();
-
                 if (response.code() != 302) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: fourth POST request didn't return 302 response");
+                    return null;
+                }
+                cookies.addAll(response.headers().values("set-cookie"));
+                newUrl = response.headers().get("location");
+
+                // Fifth URL
+                headers = new Headers.Builder();
+                headers.addAll(defaultHeaders);
+                for (String cookie : cookies) {
+                    headers.add("cookie", cookie);
+                }
+                request = new Request.Builder()
+                        .url(newUrl)
+                        .headers(headers.build())
+                        .build();
+                response = client.newCall(request).execute();
+                if (response.code() != 302) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: fifth GET request didn't return 302 response");
                     return null;
                 }
 
-                cookies = new ArrayList<>();
+                newUrl = response.headers().get("location");
+                if (!newUrl.startsWith("fordapp://userauthorized")) {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: fifth GET request doesn't contain location \"fordapp://userauthorized\"");
+                    return null;
+                }
                 cookies.addAll(response.headers().values("set-cookie"));
             }
 
@@ -240,16 +267,16 @@ public class Authenticate {
             response = client.newCall(request).execute();
 
             if (response.code() != 200) {
+                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: final POST request didn't return 200 response");
                 return null;
             } else {
+                LogFile.d(context, MainActivity.CHANNEL_ID, "Authorization successful");
                 Gson gson = new GsonBuilder().create();
                 AccessToken accessToken = gson.fromJson(response.body().string(), AccessToken.class);
                 return accessToken.getAccessToken();
             }
-
-
         } catch (IOException e) {
-            e.printStackTrace();
+            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in Authenticate.newAuthenticate: ", e);
         }
         return null;
     }

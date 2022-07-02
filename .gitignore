@@ -25,3 +25,4 @@ output-metadata.json
 /app/schemas/com.example.khughes.machewidget.db.UserInfoDatabase/*.json
 /app/playstore/production/app-playstore-production.aab
 /.idea/gradle.xml
+/app/playstore/production/app-playstore-production.apk
