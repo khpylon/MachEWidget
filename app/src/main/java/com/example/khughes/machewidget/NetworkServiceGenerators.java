@@ -2,16 +2,33 @@ package com.example.khughes.machewidget;
 
 import android.content.Context;
 
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class NetworkServiceGenerators {
 
     private static Context mContext;
 
     private static final String IBMCLOUD_BASE_URL = "https://fcis.ice.ibmcloud.com/v1.0/endpoint/default/";
+
+    private static final String SSOCI_BASE_URL = "https://sso.ci.ford.com/";
+
     private static final String APIMPS_BASE_URL = "https://api.mps.ford.com/api/";
     private static final String USAPICV_BASE_URL = "https://usapi.cv.ford.com/api/";
     private static final String DIGITALSERVICES_BASE_URL = "https://www.digitalservices.ford.com/";
@@ -20,7 +37,7 @@ public class NetworkServiceGenerators {
             new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                 public void log(String message) {
                     // If the line contains login credentials, scrub them before logging
-                    if (message.contains("grant_type=password")) {
+                    if (message.contains("login-form-type=password")) {
                         int index = message.indexOf("&username");
                         if (index > 0) {
                             message = message.substring(0, index);
@@ -28,7 +45,7 @@ public class NetworkServiceGenerators {
                         }
                     }
                     if (message.contains("UserProfile\":{")) {
-                        message = message.replaceAll("\"UserProfile\":.[^}]*.[^}]*.[^}]*.", "\"UserProfile\":**redacted**");
+                        message = message.replaceAll("\"profile\":.[^}]*.[^}]*.[^}]*.", "\"profile\":**redacted**");
                     }
                     if (message.contains("\"userId\"")) {
                         message = message.replaceAll("\"userId\":.[^\"]*.", "\"userId\":**redacted**");
@@ -57,6 +74,32 @@ public class NetworkServiceGenerators {
             ibmCloudRetrofit = ibmCloudBuilder.build();
         }
         return ibmCloudRetrofit.create(serviceClass);
+    }
+
+    private static final Retrofit.Builder ssoCiBuilder =
+            new Retrofit.Builder()
+                    .baseUrl(SSOCI_BASE_URL);
+
+    private static Retrofit ssoCiRetrofit = ssoCiBuilder
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build();
+
+    private static final OkHttpClient.Builder ssoCiHttpClient =
+            new OkHttpClient.Builder();
+
+    public static <S> S createSsoCiService(
+            Class<S> serviceClass, Context context, boolean redirects) {
+        mContext = context;
+        if (!ssoCiHttpClient.interceptors().contains(logging)) {
+            ssoCiHttpClient.addInterceptor(logging);
+            ssoCiBuilder.client(ssoCiHttpClient.build());
+            ssoCiRetrofit = ssoCiBuilder.build();
+        }
+        return ssoCiRetrofit.create(serviceClass);
+    }
+
+    public static void ssoCiHttpClientSetFollowRedirects(boolean follow) {
+        ssoCiHttpClient.followRedirects( follow );
     }
 
     private static final Retrofit.Builder APIMPS =

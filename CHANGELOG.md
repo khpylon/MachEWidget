@@ -5,12 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.07.02
+### Fixed
+- Fixed bug processing first log-in attempt.
+
+## 2022.07.01
+### Fixed
+- New authentication code for changes in Ford's login API.  Note this is a work-in-progress, and you may need to attempt logging in multiple times for it work. 
+
 ## 2022.06.26
-## Added
+### Added
 - Ford Edge vehicles are now officially supported.
 
 ## 2022.06.23
-## Fixed
+### Fixed
 - Fixed bug where window status was not updated correctly in full-size widget.
 - Improved the contrast of various UI items
 

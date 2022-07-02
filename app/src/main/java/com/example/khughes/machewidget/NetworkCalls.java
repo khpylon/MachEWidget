@@ -93,13 +93,17 @@ public class NetworkCalls {
 
                     if (stage == 1) {
                         // Start by getting token we need for OAuth2 authentication
-                        call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
-                        Response<AccessToken> response = call.execute();
-                        if (!response.isSuccessful()) {
+//                        call = fordClient.getAccessToken(Constants.CLIENTID, "password", username, password);
+//                        Response<AccessToken> response = call.execute();
+//                        if (!response.isSuccessful()) {
+//                            continue;
+//                        }
+//                        accessToken = response.body();
+//                        token = accessToken.getAccessToken();
+                        token = Authenticate.newAuthenticate(context, username, password);
+                        if (token == null) {
                             continue;
                         }
-                        accessToken = response.body();
-                        token = accessToken.getAccessToken();
                         stage = 2;
                     }
 
@@ -484,6 +488,11 @@ public class NetworkCalls {
                         if (statusUpdated) {
                             infoDao.updateVehicleInfo(info);
                         }
+
+//                        // get vehicle color information
+//                        Call<VehicleInfo> thing = statusClient.getVehicleInfo(token, Constants.APID, VIN);
+//                        Response<VehicleInfo> othething = thing.execute();
+
                         break;
 
                     } catch (java.net.SocketTimeoutException e2) {
