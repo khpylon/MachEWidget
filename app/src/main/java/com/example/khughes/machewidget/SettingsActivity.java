@@ -2,17 +2,23 @@ package com.example.khughes.machewidget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -121,7 +127,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             // Changing any of these preferences requires updating the widget
             for (int id : new int[]{R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key,
-                    R.string.show_location_key, R.string.user_forcedUpdate_key}) {
+                    R.string.show_location_key, R.string.user_forcedUpdate_key, R.string.use_colors_key}) {
                 showApps = findPreference(this.getResources().getString(id));
                 showApps.setOnPreferenceClickListener(preference -> {
                     if (preference.getKey().equals(getResources().getString(R.string.update_frequency_key))) {
@@ -132,6 +138,12 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 });
             }
+            showApps = findPreference(this.getResources().getString(R.string.RGBcolor_key));
+            showApps.setOnPreferenceChangeListener( (preference, newValue) -> {
+                MainActivity.updateWidget(context);
+                return true;
+                    }
+            );
 
             // Set app version info
             Preference version = findPreference(this.getResources().getString(R.string.version_key));
@@ -178,6 +190,31 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.settings_preferences, rootKey);
+            EditTextPreference colorSetting = findPreference(this.getResources().getString(R.string.RGBcolor_key));
+
+            if (colorSetting != null) {
+                colorSetting.setOnBindEditTextListener(
+                        new EditTextPreference.OnBindEditTextListener() {
+                            @Override
+                            public void onBindEditText(@NonNull EditText editText) {
+                                InputFilter filter = new InputFilter() {
+                                    public CharSequence filter(CharSequence source, int start, int end,
+                                                               Spanned dest, int dstart, int dend) {
+                                        String result = "";
+                                        for (int i = start; i < end ; i++) {
+                                            char c = source.charAt(i);
+                                            if (!(Character.isDigit(c) || (c >= 'a' && c <= 'f')|| (c >= 'A' && c <= 'F'))) { // Accept only letter & digits ; otherwise just return
+                                                return "";
+                                            }
+                                            result += Character.toUpperCase(c);
+                                        }
+                                        return result;
+                                    }
+                                };
+                                editText.setFilters(new InputFilter[]{filter});
+                            }
+                        });
+            }
         }
     }
 }

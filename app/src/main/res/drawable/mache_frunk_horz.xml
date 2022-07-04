@@ -9,7 +9,6 @@
       android:strokeWidth="1.155"
       android:fillColor="#ff0000"
       android:fillType="evenOdd"
-      android:strokeColor="#ff0001"
-      android:fillAlpha="0.5019608"
+      android:strokeColor="#ff0000"
       android:strokeLineCap="round"/>
 </vector>

@@ -430,6 +430,7 @@ public class Utils {
     public static final String RIGHT_FRONT_WINDOW = "rfwindow_open";
     public static final String LEFT_REAR_WINDOW = "lrwindow_open";
     public static final String RIGHT_REAR_WINDOW = "rrwindow_open";
+    public static final String OUTLINE = "outline";
 
     // Drawables for original widget
 
@@ -445,6 +446,7 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor);
         tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor);
         tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor);
+        tmpMap.put(OUTLINE, R.drawable.ic_mache_outline_vert);
         macheDrawables = tmpMap;
     }
 
@@ -629,6 +631,7 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.mache_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.mache_lrwindow_horz);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.mache_rrwindow_horz);
+        tmpMap.put(OUTLINE, R.drawable.ic_mache_outline_horz);
         macheDrawables_1x5 = tmpMap;
     }
 

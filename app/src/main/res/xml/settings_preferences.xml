@@ -13,18 +13,6 @@
         app:useSimpleSummaryProvider="true"
         app:enabled="false" />
 
-    <!--
-    <ListPreference
-        app:key="vintest"
-        app:defaultValue="3FMTK3R75MMA0MACH"
-        app:entries="@array/pref_vintest"
-        app:entryValues="@array/pref_vintest"
-        app:negativeButtonText="@null"
-        app:positiveButtonText="@null"
-        app:title="VIN test"
-        app:useSimpleSummaryProvider="true" />
-    -->
-
     <ListPreference
         app:key="@string/update_frequency_key"
         app:defaultValue="30"
@@ -117,6 +105,19 @@
     <Preference
         app:key="@string/battery_opt_key"
         app:title="@string/battery_opt"/>
+
+    <SwitchPreferenceCompat
+        app:key="@string/use_colors_key"
+        app:defaultValue="false"
+        app:singleLineTitle="false"
+        app:title="@string/use_colors" />
+
+    <EditTextPreference
+        app:key="@string/RGBcolor_key"
+        app:defaultValue="FFFFFF"
+        app:singleLine="true"
+        app:useSimpleSummaryProvider="true"
+        app:title="RGB color to be used for drawing the vehicle's image" />
 
     <PreferenceCategory
         app:title="Developer options">

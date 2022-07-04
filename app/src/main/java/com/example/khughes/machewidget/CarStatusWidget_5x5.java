@@ -25,6 +25,7 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -116,8 +117,12 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         }
     }
 
+    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
+        super.drawVehicleImage(context, views, carStatus, whatsOpen, vehicleImages);
+    }
+
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                 int appWidgetId, InfoRepository info) {
+                             int appWidgetId, InfoRepository info) {
         RemoteViews views = getWidgetView(context);
 
         // Make sure the left side is visible depending on the widget width
@@ -248,36 +253,8 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         // Get the right images to use for this vehicle
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(vehicleInfo.getVIN());
 
-        // Hood, tailgate, and door statuses
-        views.setImageViewResource(R.id.hood,
-                isDoorClosed(carStatus.getFrunk()) ? R.drawable.filler : vehicleImages.get(Utils.HOOD));
-        views.setImageViewResource(R.id.tailgate,
-                isDoorClosed(carStatus.getTailgate()) ? R.drawable.filler : vehicleImages.get(Utils.TAILGATE));
-        views.setImageViewResource(R.id.lt_ft_door,
-                isDoorClosed(carStatus.getDriverDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
-        views.setImageViewResource(R.id.rt_ft_door,
-                isDoorClosed(carStatus.getPassengerDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_FRONT_DOOR));
-        views.setImageViewResource(R.id.lt_rr_door,
-                isDoorClosed(carStatus.getLeftRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_REAR_DOOR));
-        views.setImageViewResource(R.id.rt_rr_door,
-                isDoorClosed(carStatus.getRightRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
-
-        views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
-
-        {
-            final ContextThemeWrapper wrapper = new ContextThemeWrapper(context, R.style.Theme1);
-            Bitmap bmp = Bitmap.createBitmap(100, 225, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bmp);
-            Drawable icon ;
-            icon = VectorDrawableCompat.create(context.getResources(), R.drawable.mache_wireframe, wrapper.getTheme());
-            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            icon.draw(canvas);
-            icon = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_mache_outline_vert, wrapper.getTheme());
-            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            icon.draw(canvas);
-            views.setImageViewBitmap(R.id.wireframe, bmp);
-        }
-
+        // Draw the vehicle image
+        drawVehicleImage( context, views,  carStatus, null,  vehicleImages);
 
         views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
 
