@@ -102,22 +102,15 @@
         app:singleLineTitle="false"
         app:title="@string/transparent_back" />
 
-    <Preference
-        app:key="@string/battery_opt_key"
-        app:title="@string/battery_opt"/>
-
     <SwitchPreferenceCompat
         app:key="@string/use_colors_key"
         app:defaultValue="false"
         app:singleLineTitle="false"
         app:title="@string/use_colors" />
 
-    <EditTextPreference
-        app:key="@string/RGBcolor_key"
-        app:defaultValue="FFFFFF"
-        app:singleLine="true"
-        app:useSimpleSummaryProvider="true"
-        app:title="RGB color to be used for drawing the vehicle's image" />
+    <Preference
+        app:key="@string/battery_opt_key"
+        app:title="@string/battery_opt"/>
 
     <PreferenceCategory
         app:title="Developer options">

@@ -400,6 +400,11 @@ public class MainActivity extends AppCompatActivity {
                 .getBoolean(context.getResources().getString(R.string.logging_key), true);
         menu.findItem(R.id.action_copylog).setEnabled(loggingEnabled);
 
+        // Only enable "Set Vehicle Color" if colors are enabled,
+        boolean colorsEnabled = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(context.getResources().getString(R.string.use_colors_key), true);
+        menu.findItem(R.id.action_color).setVisible(colorsEnabled);
+
         // The PlayStore version doesn't do all the update stuff
         if (com.example.khughes.machewidget.BuildConfig.FLAVOR.equals("playstore")) {
             menu.findItem(R.id.action_update).setVisible(false);
@@ -465,6 +470,10 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_vehicle) {
             Intent intent = new Intent(this, VehicleActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.action_color) {
+            Intent intent = new Intent(this, ColorActivity.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.action_ota_view) {

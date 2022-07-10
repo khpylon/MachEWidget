@@ -67,6 +67,10 @@ public class VehicleInfo {
     @NonNull
     private Boolean enabled;
 
+    @ColumnInfo(defaultValue = "0xffffffff")
+    @NonNull
+    private int colorValue;
+
     public VehicleInfo() {
         id = 0; // for new database entries, this will generate a new id
         initialForcedRefreshTime = 0;
@@ -82,6 +86,7 @@ public class VehicleInfo {
         lastChargeStatus = "''";
         lastForcedRefreshTime = 0;
         forcedRefreshCount = 0;
+        colorValue = 0xffffffff;
     }
 
     @Embedded(prefix = "car_")
@@ -293,6 +298,14 @@ public class VehicleInfo {
     public long getInitialForcedRefreshTime() { return initialForcedRefreshTime; }
 
     public void setInitialForcedRefreshTime(long initialForcedRefreshTime) { this.initialForcedRefreshTime = initialForcedRefreshTime; }
+
+    public int getColorValue() {
+        return colorValue;
+    }
+
+    public void setColorValue(int colorValue) {
+        this.colorValue = colorValue;
+    }
 
     @Entity
     public class CarStatusInfo {

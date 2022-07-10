@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -28,13 +27,13 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -550,7 +549,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
     }
 
-    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
+    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, int vehicleColor, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
         // If we're not passed a list, create one
         if (whatsOpen == null) {
             whatsOpen = new ArrayList<>();
@@ -582,15 +581,12 @@ public class CarStatusWidget extends AppWidgetProvider {
         // See if color image is enabled and defined.
         Boolean useColor = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.use_colors_key), false);
-        String colorValue = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getResources().getString(R.string.RGBcolor_key), "FFFFFF").toUpperCase();
 
         // We're drawing the color image
-        if (vehicleImages.get(Utils.OUTLINE) != null && useColor && colorValue.replaceAll("[^0-9|A-F]", "").length() == 6) {
+        if (vehicleImages.get(Utils.BODY_PRIMARY) != null && useColor) {
             Paint paint = new Paint();
 
-            // Set the color mask
-            paint.setColor(Integer.decode("0x" + colorValue));
+            paint.setColor(vehicleColor);
 
             // Set the alpha based on whether something is open
             paint.setAlpha(whatsOpen.isEmpty() ? 0xff : 0xbf);
@@ -599,13 +595,21 @@ public class CarStatusWidget extends AppWidgetProvider {
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
 
             // Draw the outline in color
-            Drawable drawable = ContextCompat.getDrawable(context, vehicleImages.get(Utils.OUTLINE));
+            Drawable drawable = ContextCompat.getDrawable(context, vehicleImages.get(Utils.BODY_PRIMARY));
             Bitmap car = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
                     drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvas2 = new Canvas(car);
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas2);
             canvas.drawBitmap(car, 0, 0, paint);
+
+            // If secondary colors exist, draw them
+            Integer secondary = vehicleImages.get((Utils.BODY_SECONDARY));
+            if (secondary != null) {
+                icon = AppCompatResources.getDrawable(context, secondary);
+                icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                icon.draw(canvas);
+            }
         }
 
         // Draw anything that's open

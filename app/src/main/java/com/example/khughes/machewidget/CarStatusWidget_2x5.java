@@ -49,13 +49,13 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         super.setCallbacks(context, views, id);
     }
 
-    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
+    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, int vehicleColor, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
         whatsOpen = new ArrayList<>();
         whatsOpen.add(isWindowClosed(carStatus.getDriverWindow()) ? null : vehicleImages.get(Utils.LEFT_FRONT_WINDOW));
         whatsOpen.add(isWindowClosed(carStatus.getPassengerWindow()) ? null : vehicleImages.get(Utils.RIGHT_FRONT_WINDOW));
         whatsOpen.add(isWindowClosed(carStatus.getLeftRearWindow()) ? null : vehicleImages.get(Utils.LEFT_REAR_WINDOW));
         whatsOpen.add(isWindowClosed(carStatus.getRightRearWindow()) ? null : vehicleImages.get(Utils.RIGHT_REAR_WINDOW));
-        super.drawVehicleImage(context, views, carStatus, whatsOpen, vehicleImages);
+        super.drawVehicleImage(context, views, carStatus, vehicleColor, whatsOpen, vehicleImages);
     }
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -166,7 +166,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables_1x5(vehicleInfo.getVIN());
 
         // Draw the vehicle image
-        drawVehicleImage( context, views,  carStatus, null,  vehicleImages);
+        drawVehicleImage( context, views,  carStatus, vehicleInfo.getColorValue(), null,  vehicleImages);
 
         updateLinkedApps(context, views);
 

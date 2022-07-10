@@ -15,6 +15,7 @@
     <string name="action_copylog">Save Logfile</string>
     <string name="action_update">Check For Update</string>
     <string name="action_vehicle">Manage Vehicles</string>
+    <string name="action_color">Set Vehicle Color</string>
     <string name="update_info">Update Information</string>
 
     <!-- Widget things -->
@@ -57,7 +58,6 @@
     <string name="user_force_updates">Enable forced refresh</string>
     <string name="user_force_updates_summary">Allow user-forced updates from the widget.  WARNING: This may cause a drain on the 12V battery.</string>
     <string name="use_colors">Enable color display of vehicle</string>
-    <string name="RGB_color">RGB color used for drawing the vehicle\'s image</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
@@ -84,7 +84,6 @@
     <string name="batteryNotification_key">batteryNotification</string>
     <string name="user_forcedUpdate_key">userForcefUpdate</string>
     <string name="use_colors_key">useColors</string>
-    <string name="RGBcolor_key">RGBColor</string>
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>
@@ -102,5 +101,14 @@
     </string>
 
     <string name="fordpassPackage">"com.ford.fordpass"</string>
+    <string name="title_activity_color">ColorActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
 </resources>

@@ -117,8 +117,8 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         }
     }
 
-    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
-        super.drawVehicleImage(context, views, carStatus, whatsOpen, vehicleImages);
+    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, int vehicleColor, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
+        super.drawVehicleImage(context, views, carStatus, vehicleColor, whatsOpen, vehicleImages);
     }
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -254,7 +254,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(vehicleInfo.getVIN());
 
         // Draw the vehicle image
-        drawVehicleImage( context, views,  carStatus, null,  vehicleImages);
+        drawVehicleImage( context, views,  carStatus, vehicleInfo.getColorValue(), null,  vehicleImages);
 
         views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
 

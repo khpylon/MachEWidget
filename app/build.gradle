@@ -12,7 +12,7 @@ android {
         applicationId "com.example.khughes.machewidget"
         minSdk 28
         targetSdk 31
-        versionCode 30
+        versionCode 31
         versionName "2022.07.02"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -127,6 +127,7 @@ dependencies {
     implementation 'org.commonmark:commonmark:0.18.2'
     implementation 'androidx.room:room-runtime:2.5.0-alpha01'
     implementation 'com.github.jozefchmelar:persistentcookiejar:1.0.1'
+    implementation 'com.github.skydoves:colorpickerview:2.2.4'
 
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.4.1'
     annotationProcessor 'androidx.room:room-compiler:2.5.0-alpha01'
