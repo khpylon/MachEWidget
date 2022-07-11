@@ -36,6 +36,7 @@ this [app-release.apk](https://github.com/khpylon/MachEWidget/blob/master/app/gi
 - Send commands to car to lock or unlock doors, perform remote start, and force refresh
 - Assign "short cuts" to other related apps such as FordPass, Waze, etc
 - Can display all supported vehicles assigned to a single log-in on individual widgets
+- Display vehicles as a wireframe or in a color of your choice
 
 ## Known Issues & Limitations
 
@@ -89,6 +90,9 @@ Thanks to [@DevSecOps](https://www.macheforum.com/site/members/devsecops.7076/) 
 for his valuable input and help with updating the appearance of the widget and permitting the use of the assets from his app.
 Additional thanks to [marco79cgn](https://github.com/marco79cgn) and [Tobias Battenberg](https://github.com/mountbatt) for your widgets.  Also, thanks to those
 who have funded the project via PayPal so that I have funds to purchase additional resources to further enhance the app.
+
+The [ColorPickerView](https://github.com/skydoves/ColorPickerView) was written by skydoves (Jawwoong Eum), and copyrighted 2017 under the [Apache Licence, Version 2.0]
+(https://github.com/skydoves/ColorPickerView#license).
 
 A number of the icons used in this app are derived from free ones found on [Icon8](https://icons8.com/); thanks to the original creators.
 
