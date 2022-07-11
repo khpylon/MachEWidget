@@ -78,7 +78,7 @@
         android:layout_height="216dp"
         android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/explorer_wireframe" />
+        android:src="@drawable/explorer_wireframe_vert" />
 
     <ImageView
         android:id="@+id/lock_electric"

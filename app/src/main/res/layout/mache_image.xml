@@ -80,7 +80,7 @@
         android:layout_height="216dp"
         android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/mache_wireframe"
+        android:src="@drawable/mache_wireframe_vert"
         tools:ignore="UseAppTint" />
 
     <ImageView

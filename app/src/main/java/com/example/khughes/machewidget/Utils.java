@@ -440,13 +440,13 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe);
-        tmpMap.put(HOOD, R.drawable.mache_frunk);
-        tmpMap.put(TAILGATE, R.drawable.mache_hatch);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.mache_frunk_vert);
+        tmpMap.put(TAILGATE, R.drawable.mache_hatch_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor_vert);
         tmpMap.put(BODY_PRIMARY, R.drawable.mache_primary_vert);
         tmpMap.put(BODY_SECONDARY, R.drawable.mache_secondary_vert);
         macheDrawables = tmpMap;
@@ -540,13 +540,13 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe);
-        tmpMap.put(HOOD, R.drawable.explorer_hood);
-        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.explorer_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor_vert);
         tmpMap.put(BODY_PRIMARY, R.drawable.explorer_primary_vert);
         tmpMap.put(BODY_SECONDARY, R.drawable.explorer_secondary_vert);
         explorerSTDrawables = tmpMap;
@@ -557,13 +557,13 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe);
-        tmpMap.put(HOOD, R.drawable.escape_hood);
-        tmpMap.put(TAILGATE, R.drawable.escape_hatch);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.escape_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.escape_hatch_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_vert);
         tmpMap.put(BODY_PRIMARY, R.drawable.escape_primary_vert);
         tmpMap.put(BODY_SECONDARY, R.drawable.escape_secondary_vert);
         escapeDrawables = tmpMap;
@@ -581,6 +581,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.edge_rfdoor_vert);
         tmpMap.put(LEFT_REAR_DOOR, R.drawable.edge_lrdoor_vert);
         tmpMap.put(RIGHT_REAR_DOOR, R.drawable.edge_rrdoor_vert);
+        tmpMap.put(BODY_PRIMARY, R.drawable.edge_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.edge_secondary_vert);
         edgeDrawables = tmpMap;
     }
 
@@ -811,6 +813,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.edge_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.edge_lrwindow_horz);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.edge_rrwindow_horz);
+        tmpMap.put(BODY_PRIMARY, R.drawable.edge_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.edge_secondary_horz);
         edgeDrawables_1x5 = tmpMap;
     }
 

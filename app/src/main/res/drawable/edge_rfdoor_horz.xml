@@ -11,6 +11,5 @@
       android:fillColor="#ff0000"
       android:fillType="evenOdd"
       android:strokeColor="#00000000"
-      android:fillAlpha="0.501961"
       android:strokeLineCap="round"/>
 </vector>
