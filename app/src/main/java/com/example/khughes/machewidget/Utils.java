@@ -4,6 +4,13 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.Drawable;
 import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +22,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.db.UserInfoDatabase;
@@ -1311,4 +1320,89 @@ public class Utils {
             handler.sendEmptyMessage(0);
         }).start();
     }
+
+    public static final int ARGB_MASK = 0xffffff;  // only use RGB components
+    public static final int WIREFRAME_MASK = 0x03 << 24;
+    public static final int WIREFRAME_WHITE = 0;
+    public static final int WIREFRAME_BLACK = 1 << 24;
+    public static final int WIREFRAME_AUTO = 2 << 24;
+
+    public static void drawColoredVehicle(Context context, Bitmap bmp, int color, ArrayList<Integer> whatsOpen,
+                                          boolean useColor, Map<String, Integer> vehicleImages ) {
+        // Create base canvas the size of the image
+        Canvas canvas = new Canvas(bmp);
+
+        Drawable drawable = AppCompatResources.getDrawable(context, vehicleImages.get(Utils.BODY_PRIMARY));
+        Bitmap bmp2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas2 = new Canvas(bmp2);
+        Paint paint = new Paint();
+        Drawable icon;
+
+        if (vehicleImages.get(Utils.BODY_PRIMARY) != null && useColor) {
+
+            // Fill with the primary color mask
+            paint.setColor(color & Utils.ARGB_MASK);
+            // Set the alpha based on whether something is open
+            paint.setAlpha(whatsOpen.isEmpty() ? 0xff : 0xbf);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawPaint(paint);
+
+            // Draw the primary body in color
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas2);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+            canvas.drawBitmap(bmp2, 0, 0, paint);
+
+            // If secondary colors exist, add them
+            Integer secondary = vehicleImages.get((Utils.BODY_SECONDARY));
+            if (secondary != null) {
+                icon = AppCompatResources.getDrawable(context, secondary);
+                icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                icon.draw(canvas);
+            }
+        }
+
+        // Draw anything that's open
+        for (Integer id : whatsOpen) {
+            icon = context.getDrawable(id);
+            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            icon.draw(canvas);
+        }
+
+        // Create a second bitmap the same size as the primary
+        bmp2 = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+        canvas2 = new Canvas(bmp2);
+
+        // Figure out whether wireframe should be drawn light or dark
+        float[] hsl = new float[3];
+        ColorUtils.colorToHSL(color & ARGB_MASK, hsl);
+        int wireframeMode =color & WIREFRAME_MASK;
+        paint.setColor(wireframeMode == WIREFRAME_WHITE ? Color.WHITE :
+                wireframeMode == WIREFRAME_BLACK ? Color.BLACK :
+                hsl[2] > 0.5 ? Color.BLACK : Color.WHITE);
+        paint.setAlpha(0xff);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+
+        // Fill with a contrasting color
+        paint.setStyle(Paint.Style.FILL);
+        canvas2.drawPaint(paint);
+
+        // Draw the wireframe body
+        drawable = AppCompatResources.getDrawable(context, vehicleImages.get(Utils.WIREFRAME));
+        Bitmap bmp3 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas3 = new Canvas(bmp3);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas3);
+
+        // Set the wireframe's color
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+        canvas2.drawBitmap(bmp3, 0, 0, paint);
+
+        // Draw wireframe over the colored body
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+        canvas.drawBitmap(bmp2, 0, 0, paint);
+    }
+
 }

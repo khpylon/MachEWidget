@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -100,19 +101,23 @@ public class OTAViewActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, arrayList);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        new Thread(()-> {
-            info = new InfoRepository(context);
-            List<VehicleInfo> vehicles= info.getVehicles();
-            if(vehicles.size() == 1) {
-                spinner.setVisibility(View.GONE);
-                new DownloadChangelog(context, mWebView, clear).execute(info.getVehicles().get(0).getVIN());
-            } else {
-                arrayList.clear();
-                for (VehicleInfo vehicle : vehicles) {
-                    arrayList.add(vehicle.getVIN());
+
+        Handler handler = new Handler(this.getMainLooper());
+        new Thread(() -> {
+            info = new InfoRepository(getApplicationContext());
+            handler.post(() -> {
+                List<VehicleInfo> vehicles = info.getVehicles();
+                if(vehicles.size() == 1) {
+                    spinner.setVisibility(View.GONE);
+                    new DownloadChangelog(context, mWebView, clear).execute(info.getVehicles().get(0).getVIN());
+                } else {
+                    arrayList.clear();
+                    for (VehicleInfo vehicle : vehicles) {
+                        arrayList.add(vehicle.getVIN());
+                    }
+                    spinner.setAdapter(arrayAdapter);
                 }
-                spinner.setAdapter(arrayAdapter);
-            }
+            });
         }).start();
 
         spinner.setAdapter(arrayAdapter);

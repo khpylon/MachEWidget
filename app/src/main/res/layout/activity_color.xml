@@ -17,10 +17,9 @@
         android:padding="@dimen/widget_margin">
 
         <Spinner
-            android:id = "@+id/spinner"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:prompt = "@string/app_name"
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="5"/>
 
         <ImageView
@@ -34,8 +33,10 @@
             android:id="@+id/colorValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/light_blue_50"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:textColor="@color/quantum_white_100"
+            android:layout_marginBottom="16dp"/>
 
         <com.skydoves.colorpickerview.ColorPickerView
           android:id="@+id/colorPickerView"
@@ -51,29 +52,74 @@
             app:selector_BrightnessSlider="@drawable/wheel"
             android:layout_weight="15"/>
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:padding="4dp">
-
-        <Button
-            android:id="@+id/ok"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save"/>
+            android:background="@drawable/background"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="4dp">
 
-        <Button
-            android:id="@+id/reset"
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wireframe color"
+                android:textColor="@color/quantum_white_100"
+                android:textSize="16sp" />
+
+            <RadioGroup
+                android:id="@+id/radiogroup"
+                style="@style/Theme.MacheWidget.CompoundButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    style="@style/Theme.MacheWidget.CompoundButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:checked="false"
+                    android:text="White"
+                    android:typeface="sans" />
+
+                <RadioButton
+                    android:id="@+id/centerIcon"
+                    style="@style/Theme.MacheWidget.CompoundButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:typeface="sans"
+                    android:text="Black" />
+
+                <RadioButton
+                    android:id="@+id/rightIcon"
+                    style="@style/Theme.MacheWidget.CompoundButton"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:typeface="sans"
+                    android:text="Auto" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Reset"/>
+            android:background="@drawable/background"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:padding="4dp">
 
+            <Button
+                android:id="@+id/ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"/>
 
-    </LinearLayout>
-
+            <Button
+                android:id="@+id/reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset"/>
+        </LinearLayout>
     </LinearLayout>
   </androidx.constraintlayout.widget.ConstraintLayout>
