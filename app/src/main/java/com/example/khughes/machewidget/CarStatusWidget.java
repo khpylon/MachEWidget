@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
@@ -25,18 +27,21 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -65,7 +70,7 @@ public class CarStatusWidget extends AppWidgetProvider {
     protected static final String CHARGING_STATUS_PAUSED = "EvsePaused";
 
     protected void updateTire(RemoteViews views, String pressure, String status,
-                            String units, Double conversion, int id) {
+                              String units, Double conversion, int id) {
         // Set the textview background color based on the status
         int drawable;
         if (status != null && !status.equals("Normal")) {
@@ -94,7 +99,6 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
         views.setInt(id, "setBackgroundResource", drawable);
     }
-
 
 
     protected void updateLocation(Context context, RemoteViews views, String latitude, String longitude) {
@@ -543,6 +547,42 @@ public class CarStatusWidget extends AppWidgetProvider {
         } catch (PackageManager.NameNotFoundException e) {
             views.setImageViewResource(id, R.drawable.x_gray);
         }
+    }
+
+    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, int vehicleColor, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
+        // If we're not passed a list, create one
+        if (whatsOpen == null) {
+            whatsOpen = new ArrayList<>();
+        }
+
+        // Find anything that's open
+        whatsOpen.add(isDoorClosed(carStatus.getFrunk()) ? null : vehicleImages.get(Utils.HOOD));
+        whatsOpen.add(isDoorClosed(carStatus.getTailgate()) ? null : vehicleImages.get(Utils.TAILGATE));
+        whatsOpen.add(isDoorClosed(carStatus.getDriverDoor()) ? null : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getPassengerDoor()) ? null : vehicleImages.get(Utils.RIGHT_FRONT_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getLeftRearDoor()) ? null : vehicleImages.get(Utils.LEFT_REAR_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getRightRearDoor()) ? null : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
+        whatsOpen.removeAll(Collections.singleton(null));
+
+        // Determine the orientation of the image
+        Drawable icon = context.getDrawable(vehicleImages.get(Utils.WIREFRAME));
+        int width = icon.getIntrinsicWidth();
+        int height = icon.getIntrinsicHeight();
+        if (width > height) {
+            width = 225;
+            height = 100;
+        } else {
+            width = 100;
+            height = 225;
+        }
+        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        // See if color image is enabled and defined.
+        Boolean useColor = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(R.string.use_colors_key), false);
+
+        Utils.drawColoredVehicle( context, bmp,  vehicleColor, new ArrayList<>(), useColor, vehicleImages);
+        views.setImageViewBitmap(R.id.wireframe, bmp);
     }
 
     protected void updateLinkedApps(Context context, RemoteViews views) {

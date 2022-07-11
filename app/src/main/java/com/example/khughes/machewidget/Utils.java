@@ -4,6 +4,13 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.Drawable;
 import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +22,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.db.UserInfoDatabase;
@@ -430,6 +439,8 @@ public class Utils {
     public static final String RIGHT_FRONT_WINDOW = "rfwindow_open";
     public static final String LEFT_REAR_WINDOW = "lrwindow_open";
     public static final String RIGHT_REAR_WINDOW = "rrwindow_open";
+    public static final String BODY_PRIMARY = "body1st";
+    public static final String BODY_SECONDARY = "body2nd";
 
     // Drawables for original widget
 
@@ -438,13 +449,15 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe);
-        tmpMap.put(HOOD, R.drawable.mache_frunk);
-        tmpMap.put(TAILGATE, R.drawable.mache_hatch);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.mache_frunk_vert);
+        tmpMap.put(TAILGATE, R.drawable.mache_hatch_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor_vert);
+        tmpMap.put(BODY_PRIMARY, R.drawable.mache_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.mache_secondary_vert);
         macheDrawables = tmpMap;
     }
 
@@ -453,13 +466,15 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.regularcab_wireframe);
-        tmpMap.put(HOOD, R.drawable.regularcab_hood);
-        tmpMap.put(TAILGATE, R.drawable.regularcab_tailgate);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.regularcab_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.regularcab_rfdoor);
+        tmpMap.put(WIREFRAME, R.drawable.regularcab_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.regularcab_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.regularcab_tailgate_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.regularcab_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.regularcab_rfdoor_vert);
         tmpMap.put(LEFT_REAR_DOOR, R.drawable.filler);
         tmpMap.put(RIGHT_REAR_DOOR, R.drawable.filler);
+        tmpMap.put(BODY_PRIMARY, R.drawable.regularcab_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.regularcab_secondary_vert);
         regcabDrawables = tmpMap;
     }
 
@@ -468,13 +483,15 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.supercab_wireframe);
-        tmpMap.put(HOOD, R.drawable.supercab_hood);
-        tmpMap.put(TAILGATE, R.drawable.supercab_tailgate);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercab_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercab_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercab_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercab_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.supercab_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.supercab_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.supercab_tailgate_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercab_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercab_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercab_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercab_rrdoor_vert);
+        tmpMap.put(BODY_PRIMARY, R.drawable.supercab_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.supercab_secondary_vert);
         supercabDrawables = tmpMap;
     }
 
@@ -483,13 +500,15 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.supercrew_wireframe);
-        tmpMap.put(HOOD, R.drawable.supercrew_hood);
-        tmpMap.put(TAILGATE, R.drawable.supercrew_tailgate);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercrew_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercrew_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercrew_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercrew_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.supercrew_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.supercrew_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.supercrew_tailgate_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercrew_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercrew_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercrew_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercrew_rrdoor_vert);
+        tmpMap.put(BODY_PRIMARY, R.drawable.supercrew_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.supercrew_secondary_vert);
         supercrewDrawables = tmpMap;
     }
 
@@ -513,13 +532,15 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.bronco_base_4x4_wireframe);
-        tmpMap.put(HOOD, R.drawable.bronco_base_4x4_hood);
-        tmpMap.put(TAILGATE, R.drawable.bronco_base_4x4_tailgate);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.bronco_base_4x4_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.bronco_base_4x4_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.bronco_base_4x4_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.bronco_base_4x4_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.bronco_base_4x4_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.bronco_base_4x4_tailgate_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.bronco_base_4x4_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.bronco_base_4x4_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.bronco_base_4x4_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor_vert);
+        tmpMap.put(BODY_PRIMARY, R.drawable.bronco_base_4x4_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.bronco_base_4x4_secondary_vert);
         broncobase4x4Drawables = tmpMap;
     }
 
@@ -528,13 +549,15 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe);
-        tmpMap.put(HOOD, R.drawable.explorer_hood);
-        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.explorer_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor_vert);
+        tmpMap.put(BODY_PRIMARY, R.drawable.explorer_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.explorer_secondary_vert);
         explorerSTDrawables = tmpMap;
     }
 
@@ -543,17 +566,19 @@ public class Utils {
 
     static {
         Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe);
-        tmpMap.put(HOOD, R.drawable.escape_hood);
-        tmpMap.put(TAILGATE, R.drawable.escape_hatch);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor);
+        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_vert);
+        tmpMap.put(HOOD, R.drawable.escape_hood_vert);
+        tmpMap.put(TAILGATE, R.drawable.escape_hatch_vert);
+        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_vert);
+        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_vert);
+        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_vert);
+        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_vert);
+        tmpMap.put(BODY_PRIMARY, R.drawable.escape_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.escape_secondary_vert);
         escapeDrawables = tmpMap;
     }
 
-    // Drawables for Escape
+    // Drawables for Edge
     private static final Map<String, Integer> edgeDrawables;
 
     static {
@@ -565,6 +590,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.edge_rfdoor_vert);
         tmpMap.put(LEFT_REAR_DOOR, R.drawable.edge_lrdoor_vert);
         tmpMap.put(RIGHT_REAR_DOOR, R.drawable.edge_rrdoor_vert);
+        tmpMap.put(BODY_PRIMARY, R.drawable.edge_primary_vert);
+        tmpMap.put(BODY_SECONDARY, R.drawable.edge_secondary_vert);
         edgeDrawables = tmpMap;
     }
 
@@ -629,6 +656,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.mache_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.mache_lrwindow_horz);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.mache_rrwindow_horz);
+        tmpMap.put(BODY_PRIMARY, R.drawable.mache_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.mache_secondary_horz);
         macheDrawables_1x5 = tmpMap;
     }
 
@@ -648,6 +677,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.regularcab_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.filler);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.filler);
+        tmpMap.put(BODY_PRIMARY, R.drawable.regularcab_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.regularcab_secondary_horz);
         regcabDrawables_1x5 = tmpMap;
     }
 
@@ -667,6 +698,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.supercab_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.filler);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.filler);
+        tmpMap.put(BODY_PRIMARY, R.drawable.supercab_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.supercab_secondary_horz);
         supercabDrawables_1x5 = tmpMap;
     }
 
@@ -686,6 +719,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.supercrew_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.supercrew_lrwindow_horz);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.supercrew_rrwindow_horz);
+        tmpMap.put(BODY_PRIMARY, R.drawable.supercrew_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.supercrew_secondary_horz);
         supercrewDrawables_1x5 = tmpMap;
     }
 
@@ -724,6 +759,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.bronco_base_4x4_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.bronco_base_4x4_lrwindow_horz);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.bronco_base_4x4_rrwindow_horz);
+        tmpMap.put(BODY_PRIMARY, R.drawable.bronco_base_4x4_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.bronco_base_4x4_secondary_horz);
         broncobase4x4Drawables_1x5 = tmpMap;
     }
 
@@ -743,6 +780,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.explorer_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.explorer_lrwindow_horz);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.explorer_rrwindow_horz);
+        tmpMap.put(BODY_PRIMARY, R.drawable.explorer_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.explorer_secondary_horz);
         explorerSTDrawables_1x5 = tmpMap;
     }
 
@@ -762,6 +801,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.escape_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.escape_lrwindow_horz);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.escape_rrwindow_horz);
+        tmpMap.put(BODY_PRIMARY, R.drawable.escape_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.escape_secondary_horz);
         escapeDrawables_1x5 = tmpMap;
     }
 
@@ -781,6 +822,8 @@ public class Utils {
         tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.edge_rfwindow_horz);
         tmpMap.put(LEFT_REAR_WINDOW, R.drawable.edge_lrwindow_horz);
         tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.edge_rrwindow_horz);
+        tmpMap.put(BODY_PRIMARY, R.drawable.edge_primary_horz);
+        tmpMap.put(BODY_SECONDARY, R.drawable.edge_secondary_horz);
         edgeDrawables_1x5 = tmpMap;
     }
 
@@ -1277,4 +1320,89 @@ public class Utils {
             handler.sendEmptyMessage(0);
         }).start();
     }
+
+    public static final int ARGB_MASK = 0xffffff;  // only use RGB components
+    public static final int WIREFRAME_MASK = 0x03 << 24;
+    public static final int WIREFRAME_WHITE = 0;
+    public static final int WIREFRAME_BLACK = 1 << 24;
+    public static final int WIREFRAME_AUTO = 2 << 24;
+
+    public static void drawColoredVehicle(Context context, Bitmap bmp, int color, ArrayList<Integer> whatsOpen,
+                                          boolean useColor, Map<String, Integer> vehicleImages ) {
+        // Create base canvas the size of the image
+        Canvas canvas = new Canvas(bmp);
+
+        Drawable drawable = AppCompatResources.getDrawable(context, vehicleImages.get(Utils.BODY_PRIMARY));
+        Bitmap bmp2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas2 = new Canvas(bmp2);
+        Paint paint = new Paint();
+        Drawable icon;
+
+        if (vehicleImages.get(Utils.BODY_PRIMARY) != null && useColor) {
+
+            // Fill with the primary color mask
+            paint.setColor(color & Utils.ARGB_MASK);
+            // Set the alpha based on whether something is open
+            paint.setAlpha(whatsOpen.isEmpty() ? 0xff : 0xbf);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawPaint(paint);
+
+            // Draw the primary body in color
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas2);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+            canvas.drawBitmap(bmp2, 0, 0, paint);
+
+            // If secondary colors exist, add them
+            Integer secondary = vehicleImages.get((Utils.BODY_SECONDARY));
+            if (secondary != null) {
+                icon = AppCompatResources.getDrawable(context, secondary);
+                icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                icon.draw(canvas);
+            }
+        }
+
+        // Draw anything that's open
+        for (Integer id : whatsOpen) {
+            icon = context.getDrawable(id);
+            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            icon.draw(canvas);
+        }
+
+        // Create a second bitmap the same size as the primary
+        bmp2 = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+        canvas2 = new Canvas(bmp2);
+
+        // Figure out whether wireframe should be drawn light or dark
+        float[] hsl = new float[3];
+        ColorUtils.colorToHSL(color & ARGB_MASK, hsl);
+        int wireframeMode =color & WIREFRAME_MASK;
+        paint.setColor(wireframeMode == WIREFRAME_WHITE ? Color.WHITE :
+                wireframeMode == WIREFRAME_BLACK ? Color.BLACK :
+                hsl[2] > 0.5 ? Color.BLACK : Color.WHITE);
+        paint.setAlpha(0xff);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+
+        // Fill with a contrasting color
+        paint.setStyle(Paint.Style.FILL);
+        canvas2.drawPaint(paint);
+
+        // Draw the wireframe body
+        drawable = AppCompatResources.getDrawable(context, vehicleImages.get(Utils.WIREFRAME));
+        Bitmap bmp3 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas3 = new Canvas(bmp3);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas3);
+
+        // Set the wireframe's color
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+        canvas2.drawBitmap(bmp3, 0, 0, paint);
+
+        // Draw wireframe over the colored body
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+        canvas.drawBitmap(bmp2, 0, 0, paint);
+    }
+
 }

@@ -1,4 +1,5 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
 
     <ImageView
@@ -79,7 +80,8 @@
         android:layout_height="216dp"
         android:layout_below="@id/topfiller"
         android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/mache_wireframe" />
+        android:src="@drawable/mache_wireframe_vert"
+        tools:ignore="UseAppTint" />
 
     <ImageView
         android:id="@+id/lock_electric"

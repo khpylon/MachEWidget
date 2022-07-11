@@ -13,18 +13,6 @@
         app:useSimpleSummaryProvider="true"
         app:enabled="false" />
 
-    <!--
-    <ListPreference
-        app:key="vintest"
-        app:defaultValue="3FMTK3R75MMA0MACH"
-        app:entries="@array/pref_vintest"
-        app:entryValues="@array/pref_vintest"
-        app:negativeButtonText="@null"
-        app:positiveButtonText="@null"
-        app:title="VIN test"
-        app:useSimpleSummaryProvider="true" />
-    -->
-
     <ListPreference
         app:key="@string/update_frequency_key"
         app:defaultValue="30"
@@ -113,6 +101,12 @@
         app:key="@string/transp_bg_key"
         app:singleLineTitle="false"
         app:title="@string/transparent_back" />
+
+    <SwitchPreferenceCompat
+        app:key="@string/use_colors_key"
+        app:defaultValue="false"
+        app:singleLineTitle="false"
+        app:title="@string/use_colors" />
 
     <Preference
         app:key="@string/battery_opt_key"

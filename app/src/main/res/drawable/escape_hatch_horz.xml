@@ -9,8 +9,7 @@
       android:strokeWidth="1"
       android:fillColor="#ff0000"
       android:fillType="evenOdd"
-      android:strokeColor="#ff0000"
-      android:fillAlpha="0.501961"
+      android:strokeColor="#0000"
       android:strokeLineCap="round"/>
   <path
       android:pathData="m20.46,187.65 l-0.06,0.85"
@@ -18,7 +17,6 @@
       android:strokeWidth=".26"
       android:fillColor="#ff0000"
       android:fillType="evenOdd"
-      android:strokeColor="#ff0000"
-      android:fillAlpha="0.501961"
+      android:strokeColor="#0000"
       android:strokeLineCap="round"/>
 </vector>

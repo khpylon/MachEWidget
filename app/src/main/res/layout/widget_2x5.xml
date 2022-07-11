@@ -360,6 +360,7 @@
             android:layout_below="@id/right_top_icons"
             android:visibility="visible">
 
+            <!--
             <ImageView
                 android:id="@+id/hood"
                 android:layout_width="@dimen/vehicle_width"
@@ -419,6 +420,7 @@
                 android:layout_width="@dimen/vehicle_width"
                 android:layout_height="@dimen/vehicle_height"
                 android:src="@drawable/mache_rrwindow_horz" />
+        -->
 
             <ImageView
                 android:id="@+id/wireframe"

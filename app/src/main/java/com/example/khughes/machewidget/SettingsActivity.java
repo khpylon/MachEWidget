@@ -64,7 +64,6 @@ public class SettingsActivity extends AppCompatActivity {
             // If update frequency is changed, sent the info to the Alarm Manager
             Preference showApps = findPreference(this.getResources().getString(R.string.update_frequency_key));
             showApps.setOnPreferenceChangeListener((preference, newValue) -> {
-//                    StatusReceiver.cancelAlarm(getContext());
                 StatusReceiver.nextAlarm(context, Integer.parseInt((String) newValue));
                 return true;
             });
@@ -121,7 +120,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             // Changing any of these preferences requires updating the widget
             for (int id : new int[]{R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key,
-                    R.string.show_location_key, R.string.user_forcedUpdate_key}) {
+                    R.string.show_location_key, R.string.user_forcedUpdate_key, R.string.use_colors_key}) {
                 showApps = findPreference(this.getResources().getString(id));
                 showApps.setOnPreferenceClickListener(preference -> {
                     if (preference.getKey().equals(getResources().getString(R.string.update_frequency_key))) {
@@ -132,6 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 });
             }
+
 
             // Set app version info
             Preference version = findPreference(this.getResources().getString(R.string.version_key));

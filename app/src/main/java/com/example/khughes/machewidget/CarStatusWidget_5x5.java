@@ -3,7 +3,10 @@ package com.example.khughes.machewidget;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
 import android.icu.text.MessageFormat;
@@ -15,11 +18,14 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.preference.PreferenceManager;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -111,8 +117,12 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         }
     }
 
+    protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, int vehicleColor, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
+        super.drawVehicleImage(context, views, carStatus, vehicleColor, whatsOpen, vehicleImages);
+    }
+
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                 int appWidgetId, InfoRepository info) {
+                             int appWidgetId, InfoRepository info) {
         RemoteViews views = getWidgetView(context);
 
         // Make sure the left side is visible depending on the widget width
@@ -243,21 +253,8 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         // Get the right images to use for this vehicle
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(vehicleInfo.getVIN());
 
-        // Hood, tailgate, and door statuses
-        views.setImageViewResource(R.id.hood,
-                isDoorClosed(carStatus.getFrunk()) ? R.drawable.filler : vehicleImages.get(Utils.HOOD));
-        views.setImageViewResource(R.id.tailgate,
-                isDoorClosed(carStatus.getTailgate()) ? R.drawable.filler : vehicleImages.get(Utils.TAILGATE));
-        views.setImageViewResource(R.id.lt_ft_door,
-                isDoorClosed(carStatus.getDriverDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
-        views.setImageViewResource(R.id.rt_ft_door,
-                isDoorClosed(carStatus.getPassengerDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_FRONT_DOOR));
-        views.setImageViewResource(R.id.lt_rr_door,
-                isDoorClosed(carStatus.getLeftRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.LEFT_REAR_DOOR));
-        views.setImageViewResource(R.id.rt_rr_door,
-                isDoorClosed(carStatus.getRightRearDoor()) ? R.drawable.filler : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
-
-        views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
+        // Draw the vehicle image
+        drawVehicleImage( context, views,  carStatus, vehicleInfo.getColorValue(), null,  vehicleImages);
 
         views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
 
