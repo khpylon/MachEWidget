@@ -9,6 +9,8 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 import javax.annotation.Generated;
 
 @Generated("jsonschema2pojo")
@@ -41,10 +43,17 @@ public class OTAStatus {
         }
     }
 
-
     public String getDescription() {
         try {
             return getFuseResponse().getLanguageText().getText();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+    public List<FuseResponseList> getFuseResponseList() {
+        try {
+            return getFuseResponse().getFuseResponseList();
         } catch (NullPointerException e) {
             return null;
         }

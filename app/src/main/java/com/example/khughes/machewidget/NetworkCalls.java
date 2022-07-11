@@ -464,7 +464,9 @@ public class NetworkCalls {
                                 if (!Utils.OTASupportCheck(status.getOtaAlertStatus())) {
                                     LogFile.i(context, MainActivity.CHANNEL_ID, "This vehicle doesn't support OTA updates.");
                                     info.setSupportsOTA(false);
-                                } else if (status.getOtaAlertStatus() != null) {
+                                }
+                                // Only save the status if there is something in the fuseResponse
+                                else if (status.getOtaAlertStatus() != null && status.getFuseResponseList() != null ) {
                                     info.fromOTAStatus(status);
                                 }
                                 statusUpdated = true;
