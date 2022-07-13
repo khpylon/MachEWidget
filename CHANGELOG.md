@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.07.13
+### Added
+- Ford Expedition VINs are now recognized (uses the Explorer silhouette).
+
+### Fixed
+- Corrected bug with initially not drawing silhouette when vehicle color not enabled.  
+
 ## 2022.07.11
 ### Added
 - Per user request, vehicles can now be displayed in color in the widgets.  A color picker, written by @skydoves (https://github.com/skydoves/ColorPickerView), is used to choose
