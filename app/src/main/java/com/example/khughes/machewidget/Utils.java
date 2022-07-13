@@ -146,6 +146,28 @@ public class Utils {
     public static final String LINE_SERIES_EDGE_SEL_AWD = "K4J";
     public static final String LINE_SERIES_EDGE_TITANIUM_AWD = "K4K";
 
+    public static final String LINE_SERIES_EXPEDITION_MAX_XL_4x2 = "K1F";
+    public static final String LINE_SERIES_EXPEDITION_MAX_XL_4x4 = "K1G";
+    public static final String LINE_SERIES_EXPEDITION_MAX_XLT_4x2 = "K1H";
+    public static final String LINE_SERIES_EXPEDITION_MAX_XLT_4x4 = "K1J";
+    public static final String LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2 = "K1N";
+    public static final String LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4 = "K1P";
+    public static final String LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2 = "K1K";
+    public static final String LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4 = "K2A";
+    public static final String LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2 = "K1L";
+    public static final String LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4 = "K1M";
+    public static final String LINE_SERIES_EXPEDITION_XL_4x2 = "U1F";
+    public static final String LINE_SERIES_EXPEDITION_XL_4x4 = "U1G";
+    public static final String LINE_SERIES_EXPEDITION_XLT_4x2 = "U1H";
+    public static final String LINE_SERIES_EXPEDITION_XLT_4x4 = "U1J";
+    public static final String LINE_SERIES_EXPEDITION_KINGRANCH_4x2 = "U1N";
+    public static final String LINE_SERIES_EXPEDITION_KINGRANCH_4x4 = "U1P";
+    public static final String LINE_SERIES_EXPEDITION_LIMITED_4x2 = "U1K";
+    public static final String LINE_SERIES_EXPEDITION_LIMITED_4x4 = "U2A";
+    public static final String LINE_SERIES_EXPEDITION_PLATINUM_4x2 = "U1L";
+    public static final String LINE_SERIES_EXPEDITION_PLATINUM_4x4 = "U1M";
+    public static final String LINE_SERIES_EXPEDITION_TIMBERLINE_4x4 = "U1R";
+
     public static final int FUEL_TYPE_START_INDEX = 8 - 1;
     public static final int FUEL_TYPE_END_INDEX = 8;
     public static final String HYBRID_TRUCK_2_5_LITER = "3";
@@ -366,10 +388,44 @@ public class Utils {
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && edgeLineSeries.contains(lineSeries);
     }
 
+    private static final Set<String> expeditionLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_XL_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_XL_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_XLT_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_XLT_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_XL_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_XL_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_XLT_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_XLT_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_KINGRANCH_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_KINGRANCH_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_LIMITED_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_LIMITED_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_PLATINUM_4x2);
+        tmpSet.add(LINE_SERIES_EXPEDITION_PLATINUM_4x4);
+        tmpSet.add(LINE_SERIES_EXPEDITION_TIMBERLINE_4x4);
+        expeditionLineSeries = tmpSet;
+    }
+
+    public static boolean isExpedition(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && expeditionLineSeries.contains(lineSeries);
+    }
+
     // Check to see if we recognize a VIN in general
     public static boolean isVINRecognized(String VIN) {
         return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN)
-                | isEscape(VIN) | isEdge(VIN);
+                | isEscape(VIN) | isEdge(VIN) | isExpedition(VIN);
     }
 
     private static final Set<String> fuelElectric;
@@ -412,7 +468,8 @@ public class Utils {
             return FUEL_ELECTRIC;
         }
         // Otherwise check the VIN
-        else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN) || isEscape(VIN) || isEdge(VIN)) {
+        else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
+                || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)) {
             String fuelType = VIN.substring(FUEL_TYPE_START_INDEX, FUEL_TYPE_END_INDEX);
             if (fuelElectric.contains(fuelType)) {
                 return FUEL_ELECTRIC;
@@ -616,6 +673,8 @@ public class Utils {
                 return escapeDrawables;
             } else if (isEdge(VIN)) {
                 return edgeDrawables;
+            } else if (isExpedition(VIN)) {
+                return explorerSTDrawables;
             }
         }
         return macheDrawables;
@@ -633,6 +692,8 @@ public class Utils {
                 return R.layout.escape_widget;
             } else if (isEdge(VIN)) {
                 return R.layout.escape_widget;
+            } else if (isExpedition(VIN)) {
+                return R.layout.explorer_widget;
             }
         }
         return R.layout.mache_widget;
@@ -848,6 +909,8 @@ public class Utils {
                 return escapeDrawables_1x5;
             } else if (isEdge(VIN)) {
                 return edgeDrawables_1x5;
+            } else if (isExpedition(VIN)) {
+                return explorerSTDrawables_1x5;
             }
         }
         return macheDrawables_1x5;
@@ -1328,7 +1391,7 @@ public class Utils {
     public static final int WIREFRAME_AUTO = 2 << 24;
 
     public static void drawColoredVehicle(Context context, Bitmap bmp, int color, ArrayList<Integer> whatsOpen,
-                                          boolean useColor, Map<String, Integer> vehicleImages ) {
+                                          boolean useColor, Map<String, Integer> vehicleImages) {
         // Create base canvas the size of the image
         Canvas canvas = new Canvas(bmp);
 
@@ -1374,13 +1437,19 @@ public class Utils {
         bmp2 = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
         canvas2 = new Canvas(bmp2);
 
+        // If not using colors, draw wireframe in white
+        if (!useColor) {
+            paint.setColor(Color.WHITE);
+        }
         // Figure out whether wireframe should be drawn light or dark
-        float[] hsl = new float[3];
-        ColorUtils.colorToHSL(color & ARGB_MASK, hsl);
-        int wireframeMode =color & WIREFRAME_MASK;
-        paint.setColor(wireframeMode == WIREFRAME_WHITE ? Color.WHITE :
-                wireframeMode == WIREFRAME_BLACK ? Color.BLACK :
-                hsl[2] > 0.5 ? Color.BLACK : Color.WHITE);
+        else {
+            float[] hsl = new float[3];
+            ColorUtils.colorToHSL(color & ARGB_MASK, hsl);
+            int wireframeMode = color & WIREFRAME_MASK;
+            paint.setColor(wireframeMode == WIREFRAME_WHITE ? Color.WHITE :
+                    wireframeMode == WIREFRAME_BLACK ? Color.BLACK :
+                            hsl[2] > 0.5 ? Color.BLACK : Color.WHITE);
+        }
         paint.setAlpha(0xff);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
 
