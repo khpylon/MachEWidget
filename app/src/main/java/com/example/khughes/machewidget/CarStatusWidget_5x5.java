@@ -277,93 +277,6 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
     }
 
-    private void updateAppLogout(Context context, AppWidgetManager appWidgetManager, int appWidgetId, InfoRepository info) {
-        RemoteViews views = getWidgetView(context);
-
-        // Make sure the left side is visible depending on the widget width
-        Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
-        onResize(appWidgetOptions, views);
-
-        setCallbacks(context, views, appWidgetId);
-
-        // Set background transparency
-        setBackground(context, views);
-
-        // Find which user is active.
-        UserInfo userInfo = info.getUser();
-        if (userInfo == null) {
-            return;
-        }
-
-        // Find the vehicle for this widget
-        VehicleInfo vehicleInfo = getVehicleInfo(context, info, appWidgetId);
-        if (vehicleInfo == null) {
-            return;
-        }
-
-        int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
-        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
-        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
-
-        // Reset everything else
-        views.setTextViewText(R.id.lastRefresh, "Not logged in");
-        views.setTextViewText(R.id.odometer, "Odo: N/A");
-        views.setTextViewText(R.id.LVBVoltage, "LVB Volts: N/A");
-        views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
-        views.setTextViewText(R.id.ota_line1, "");
-        views.setTextViewText(R.id.ota_line2, "");
-        views.setTextViewText(R.id.location_line1, "");
-        views.setTextViewText(R.id.location_line2, "");
-        views.setTextViewText(R.id.location_line3, "");
-
-        views.setProgressBar(R.id.HBVChargeProgress, 100, 0, false);
-        views.setTextViewText(R.id.HVBChargePercent, "N/A");
-        views.setTextViewText(R.id.GOM, "N/A");
-
-        views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_gray);
-        views.setImageViewResource(R.id.lock_gasoline, R.drawable.locked_icon_gray);
-        views.setImageViewResource(R.id.lock_electric, R.drawable.locked_icon_gray);
-        views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray);
-
-        views.setImageViewResource(R.id.lt_ft_window, R.drawable.filler);
-        views.setImageViewResource(R.id.rt_ft_window, R.drawable.filler);
-        views.setImageViewResource(R.id.lt_rr_window, R.drawable.filler);
-        views.setImageViewResource(R.id.rt_rr_window, R.drawable.filler);
-
-        views.setInt(R.id.lftire, "setBackgroundResource", R.drawable.pressure_oval);
-        views.setTextViewText(R.id.lftire, "N/A");
-        views.setInt(R.id.rftire, "setBackgroundResource", R.drawable.pressure_oval);
-        views.setTextViewText(R.id.rftire, "N/A");
-        views.setInt(R.id.lrtire, "setBackgroundResource", R.drawable.pressure_oval);
-        views.setTextViewText(R.id.lrtire, "N/A");
-        views.setInt(R.id.rrtire, "setBackgroundResource", R.drawable.pressure_oval);
-        views.setTextViewText(R.id.rrtire, "N/A");
-
-        if (fuelType != Utils.FUEL_GAS) {
-            views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white));
-            views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray);
-            views.setImageViewResource(R.id.plug, R.drawable.plug_icon_gray);
-        }
-
-        // Get the wireframe for the vehicle
-        Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(vehicleInfo.getVIN());
-        views.setImageViewResource(R.id.wireframe, vehicleImages.get(Utils.WIREFRAME));
-
-        views.setImageViewResource(R.id.hood, R.drawable.filler);
-        views.setImageViewResource(R.id.tailgate, R.drawable.filler);
-        views.setImageViewResource(R.id.lt_ft_door, R.drawable.filler);
-        views.setImageViewResource(R.id.rt_ft_door, R.drawable.filler);
-        views.setImageViewResource(R.id.lt_rr_door, R.drawable.filler);
-        views.setImageViewResource(R.id.rt_rr_door, R.drawable.filler);
-
-        updateLinkedApps(context, views);
-
-        appWidgetManager.updateAppWidget(appWidgetId, views);
-    }
-
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         final InfoRepository[] info = {null};
@@ -381,11 +294,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
                 // There may be multiple widgets active, so update all of them
                 for (int appWidgetId : appWidgetIds) {
-                    if (!state.equals(Constants.STATE_INITIAL_STATE)) {
-                        updateAppWidget(context, appWidgetManager, appWidgetId, info[0]);
-                    } else {
-                        updateAppLogout(context, appWidgetManager, appWidgetId, info[0]);
-                    }
+                    updateAppWidget(context, appWidgetManager, appWidgetId, info[0]);
                 }
             }
         };

@@ -25,54 +25,6 @@
         android:background="@drawable/filler" />
 
     <ImageView
-        android:id="@+id/hood"
-        android:layout_width="99dp"
-        android:layout_height="216dp"
-        android:layout_below="@id/topfiller"
-        android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/filler" />
-
-    <ImageView
-        android:id="@+id/lt_ft_door"
-        android:layout_width="99dp"
-        android:layout_height="216dp"
-        android:layout_below="@id/topfiller"
-        android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/filler" />
-
-    <ImageView
-        android:id="@+id/rt_ft_door"
-        android:layout_width="99dp"
-        android:layout_height="216dp"
-        android:layout_below="@id/topfiller"
-        android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/filler" />
-
-    <ImageView
-        android:id="@+id/lt_rr_door"
-        android:layout_width="99dp"
-        android:layout_height="216dp"
-        android:layout_below="@id/topfiller"
-        android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/filler" />
-
-    <ImageView
-        android:id="@+id/rt_rr_door"
-        android:layout_width="99dp"
-        android:layout_height="216dp"
-        android:layout_below="@id/topfiller"
-        android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/filler" />
-
-    <ImageView
-        android:id="@+id/tailgate"
-        android:layout_width="99dp"
-        android:layout_height="216dp"
-        android:layout_below="@id/topfiller"
-        android:layout_toStartOf="@id/rightfiller"
-        android:src="@drawable/filler" />
-
-    <ImageView
         android:id="@+id/wireframe"
         android:layout_width="99dp"
         android:layout_height="216dp"
