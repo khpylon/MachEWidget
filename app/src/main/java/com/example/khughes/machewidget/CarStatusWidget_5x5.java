@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
@@ -19,6 +20,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
@@ -152,6 +154,42 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         File image = new File(imageDir, vehicleInfo.getVIN() + ".png");
         if (image.exists()) {
             String path = image.getPath();
+
+//            mache - 324,243 - 12x12
+//            explorer - 401,176 - 12x12
+//            supercrew - 461,221 - 12x12
+//            Bitmap bmp = BitmapFactory.decodeFile(path);
+//            int[] hist = new int[72];
+//            int count=0;
+//            int width = bmp.getWidth();
+//            int height = bmp.getHeight();
+//            int startx = bmp.getWidth()/4;
+//            int starty = bmp.getHeight()/4;
+//            for(int y = starty; y < bmp.getHeight()- starty; ++y) {
+//                for(int x = startx; x < bmp.getWidth() - startx; ++x) {
+//                    int color = bmp.getPixel(x,y);
+//                    Color pixel = Color.valueOf(color);
+//                    float []hsl = new float[3];
+//                    ColorUtils.colorToHSL(color, hsl);
+//                    if(pixel.alpha(color) >0x1f ) { //&& hsl[2]< 0.75 && hsl[2]> 0.25) {
+//                        hist[(int)(hsl[0]/5)]++;
+//                        count++;
+//                    }
+//                }
+//            }
+//            float xcomp = 0;
+//            float ycomp = 0;
+//            double angle = 0;
+//            for(int i=0 ; i < 36 ; ++i ) {
+//                int mag = hist[i] - hist[i+36];
+//                ycomp += Math.sin(angle) * mag;
+//                xcomp += Math.cos(angle) * mag;
+//                angle += Math.toRadians(5);
+//            }
+//            xcomp /= count;
+//            ycomp /= count;
+//            double magnitude = Math.sqrt(xcomp * xcomp + ycomp * ycomp);
+//            angle = Math.atan(xcomp * ycomp / (magnitude * magnitude))/Math.PI*180;
             views.setImageViewBitmap(R.id.logo, BitmapFactory.decodeFile(path));
         }
 
@@ -252,6 +290,11 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
         // Get the right images to use for this vehicle
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(vehicleInfo.getVIN());
+
+        // See if we should guess vehicle color
+        if( Utils.scanImageForColor (context, vehicleInfo) ) {
+            info.setVehicle(vehicleInfo);
+        }
 
         // Draw the vehicle image
         drawVehicleImage( context, views,  carStatus, vehicleInfo.getColorValue(), null,  vehicleImages);
@@ -405,152 +448,4 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
             super.onReceive(context, intent);
         }
     }
-
-//    public void onReceive(Context context, Intent intent) {
-//        // Handle the actions which don't require info about the vehicle or user
-//        String action = intent.getAction();
-//        String widget_action = action + "_" + intent.getStringExtra(APPWIDGETID);
-//        String widget_VIN = Constants.VIN_KEY + intent.getStringExtra(APPWIDGETID);
-//
-//        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
-//            if (intent.hasExtra(WIDGET_IDS_KEY)) {
-//                int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
-//                onUpdate(context, AppWidgetManager.getInstance(context), ids);
-//            }
-//            return;
-////        } else if (action.equals(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED) && intent.hasExtra(WIDGET_IDS_KEY)) {
-////                int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
-////                onUpdate(context, AppWidgetManager.getInstance(context), ids);
-////                return;
-//        } else if (action.equals(PROFILE_CLICK)) {
-//            ProfileManager.changeProfile(context, widget_VIN) ;
-//            return;
-//        } else if (action.equals(WIDGET_CLICK)) {
-//            intent = new Intent(context, MainActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            context.startActivity(intent);
-//            return;
-//        } else if (action.equals(SETTINGS_CLICK)) {
-//            intent = new Intent(context, SettingsActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            context.startActivity(intent);
-//            return;
-//        } else if (action.equals(LEFT_BUTTON_CLICK)) {
-//            StoredData appInfo = new StoredData(context);
-//            String appPackageName = appInfo.getLeftAppPackage();
-//            if (appPackageName != null) {
-//                PackageManager pm = context.getApplicationContext().getPackageManager();
-//                intent = pm.getLaunchIntentForPackage(appPackageName);
-//                if (intent != null) {
-//                    context.startActivity(intent);
-//                } else {
-//                    appInfo.setLeftAppPackage(null);
-//                    MainActivity.updateWidget(context);
-//                    Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//            return;
-//        } else if (action.equals(RIGHT_BUTTON_CLICK)) {
-//            StoredData appInfo = new StoredData(context);
-//            String appPackageName = appInfo.getRightAppPackage();
-//            if (appPackageName != null) {
-//                PackageManager pm = context.getApplicationContext().getPackageManager();
-//                intent = pm.getLaunchIntentForPackage(appPackageName);
-//                if (intent != null) {
-//                    context.startActivity(intent);
-//                } else {
-//                    appInfo.setRightAppPackage(null);
-//                    MainActivity.updateWidget(context);
-//                    Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//            return;
-//        } else if (action.equals(PHEVTOGGLE_CLICK)) {
-//            int appWidgetId = intent.getIntExtra(APPWIDGETID, -1);
-//            String mode = intent.getStringExtra("nextMode");
-//            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-//            RemoteViews views = getWidgetView(context);
-//            String nextMode;
-//            if (mode.equals("showGasoline")) {
-//                nextMode = "showElectric";
-//                views.setViewVisibility(R.id.bottom_electric, View.GONE);
-//                views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE);
-//            } else {
-//                nextMode = "showGasoline";
-//                views.setViewVisibility(R.id.bottom_electric, View.VISIBLE);
-//                views.setViewVisibility(R.id.bottom_gasoline, View.GONE);
-//            }
-//            setPHEVCallbacks(context, views, Utils.FUEL_PHEV, appWidgetId, nextMode);
-//            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
-//            return;
-//        }
-//
-//        // The remaining actions need to wait for info from the databases
-//        InfoRepository[] info = {null};
-//
-//        final Gson gson = new Gson();
-//        Handler handler = new Handler(Looper.getMainLooper()) {
-//            @Override
-//            public void handleMessage(Message msg) {
-//                String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
-//                VehicleInfo vehInfo = info[0].getVehicleByVIN(VIN);
-//
-//                UserInfo userInfo = info[0].getUser();
-//                if (action.equals(LOCK_CLICK)) {
-//                    // Avoid performing the action on a single press (in case the widget is accidentally
-//                    // touched): require two presses within 500 ms of one another to activate.
-//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-//                    long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-//                    if (nowtime - lastLockClicktime < 500) {
-//                        CarStatus carStatus = vehInfo.getCarStatus();
-//                        if (!awaitingUpdate && carStatus != null && carStatus.getLock() != null) {
-//                            if (carStatus.getLock().equals("LOCKED")) {
-//                                unlock(context, VIN);
-//                            } else {
-//                                lock(context, VIN);
-//                            }
-//                        }
-//                    }
-//                    lastLockClicktime = nowtime;
-//                } else if (action.equals(IGNITION_CLICK)) {
-//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-//                    long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-//                    if (nowtime - lastIgnitionClicktime < 500) {
-//                        CarStatus carStatus = vehInfo.getCarStatus();
-//                        if (!awaitingUpdate && carStatus != null && carStatus.getRemoteStartStatus() != null
-//                                && carStatus.getIgnition() != null && carStatus.getIgnition().equals("Off")) {
-//                            if (!carStatus.getRemoteStartStatus()) {
-//                                remoteStart(context, VIN);
-//                            } else {
-//                                remoteStop(context, VIN);
-//                            }
-//                        }
-//                    }
-//                    lastIgnitionClicktime = nowtime;
-//                } else if (action.equals(REFRESH_CLICK)) {
-//                    LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-//                    long nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-//                    if (nowtime - lastRefreshClicktime[0] < 500) {
-//                        long lastUpdateInMillis = vehInfo.getLastUpdateTime();
-//                        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-//                        String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
-//                        Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
-//                        long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
-//                        String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
-//                        Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
-//                    }
-//                    lastRefreshClicktime[0] = lastRefreshClicktime[1];
-//                    lastRefreshClicktime[1] = nowtime;
-//                }
-//            }
-//
-//        };
-//
-//        new Thread(() -> {
-//            info[0] = new InfoRepository(context);
-//            handler.sendEmptyMessage(0);
-//        }).start();
-//        super.onReceive(context, intent);
-//
-//    }
 }

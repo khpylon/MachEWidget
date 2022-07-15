@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -1382,6 +1383,71 @@ public class Utils {
             MainActivity.updateWidget(context);
             handler.sendEmptyMessage(0);
         }).start();
+    }
+
+    public static boolean scanImageForColor(Context context, VehicleInfo vehicleInfo) {
+        // If vehicle color has been set, do nothing
+        if ((vehicleInfo.getColorValue() & ARGB_MASK) != (Color.WHITE & ARGB_MASK)) {
+            return false;
+        }
+
+        // If the vehicle image doesn't exist, do nothing
+        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+        String VIN = vehicleInfo.getVIN();
+        File image = new File(imageDir, VIN + ".png");
+        if (!image.exists() || vehicleInfo.getColorValue() != Color.WHITE) {
+            return false;
+        }
+
+        // Based on the vehicle type, choose a small image patch to sample
+        int startx;
+        int starty;
+        if (isMachE(VIN)) {
+            startx = 324;
+            starty = 244;
+        } else if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) {
+            startx = 460;
+            starty = 220;
+        } else if (isF150RegularCab(VIN) || isF150SuperCab(VIN)) {
+            startx = 440;
+            starty = 216;
+        } else if (isBronco(VIN) || isBroncoSport(VIN)) {
+            startx = 572;
+            starty = 188;
+        } else if (isExplorer(VIN) || isExpedition(VIN)) {
+            startx = 628;
+            starty = 176;
+        } else if (isEscape(VIN)) {
+            startx = 300;
+            starty = 204;
+        } else if (isEdge(VIN)) {
+            startx = 284;
+            starty = 208;
+        } else {
+            return false;
+        }
+        int[] RGB = new int[3];
+        Bitmap bmp = BitmapFactory.decodeFile(image.getPath());
+        final int patchSize = 12;
+
+        // get the RBG value of each pixel in the patch
+        for (int y = 0; y < patchSize; ++y) {
+            for (int x = 0; x < patchSize; ++x) {
+                int color = bmp.getPixel(startx + x, starty + y);
+                RGB[0] += (color >> 16) & 0xff;
+                RGB[1] += (color >> 8) & 0xff;
+                RGB[2] += color & 0xff;
+            }
+        }
+
+        // average the components
+        RGB[0] /= patchSize * patchSize;
+        RGB[1] /= patchSize * patchSize;
+        RGB[2] /= patchSize * patchSize;
+
+        // Set the color and exit
+        vehicleInfo.setColorValue((RGB[0] << 16 | RGB[1] << 8 | RGB[2]) & ARGB_MASK | WIREFRAME_AUTO);
+        return true;
     }
 
     public static final int ARGB_MASK = 0xffffff;  // only use RGB components

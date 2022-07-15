@@ -1,8 +1,11 @@
 package com.example.khughes.machewidget;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.TooltipCompat;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -19,6 +22,7 @@ import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.listeners.ColorListener;
 import com.skydoves.colorpickerview.sliders.BrightnessSlideBar;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +37,8 @@ public class ColorActivity extends AppCompatActivity {
 
     private int wireframeMode = Utils.WIREFRAME_WHITE;
 
-    private    RadioGroup group;
+    private RadioGroup group;
+    private Button auto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +78,17 @@ public class ColorActivity extends AppCompatActivity {
             colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
         });
 
+        auto = findViewById(R.id.auto_image);
+        auto.setOnClickListener(view -> {
+            int oldColor = mVehicleInfo.getColorValue();
+            mVehicleInfo.setColorValue(Color.WHITE);
+            if( Utils.scanImageForColor( this, mVehicleInfo) ) {
+                colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
+            }
+            mVehicleInfo.setColorValue(oldColor);
+        });
+        TooltipCompat.setTooltipText(auto, "Use stored image as color source.");
+
         colorPickerView.setColorListener((ColorListener) (color, fromUser) -> {
             feedback.setText("RGB value: #" + Integer.toHexString(color).toUpperCase(Locale.ROOT).substring(2));
             drawVehicle((color & Utils.ARGB_MASK)| wireframeMode);
@@ -96,7 +112,8 @@ public class ColorActivity extends AppCompatActivity {
                     mVehicleInfo = info.getVehicles().get(0);
                     setCheckedButton(mVehicleInfo.getColorValue());
                     colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
-                } else {
+                    setAutoButton ( mVehicleInfo.getVIN() );
+                    } else {
                     arrayList.clear();
                     for (VehicleInfo vehicle : vehicles) {
                         arrayList.add(vehicle.getVIN());
@@ -114,12 +131,19 @@ public class ColorActivity extends AppCompatActivity {
                 mVehicleInfo = info.getVehicleByVIN(VIN);
                 setCheckedButton(mVehicleInfo.getColorValue());
                 colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
+                setAutoButton ( mVehicleInfo.getVIN() );
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private void setAutoButton ( String VIN ) {
+        File imageDir = new File(getApplicationContext().getDataDir(), Constants.IMAGES_FOLDER);
+        File image = new File(imageDir, VIN + ".png");
+        auto.setVisibility(image.exists() ? View.VISIBLE : View.GONE);
     }
 
     private void setCheckedButton(int color) {

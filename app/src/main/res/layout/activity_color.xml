@@ -120,6 +120,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Reset"/>
+
+            <Button
+                android:id="@+id/auto_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto"/>
+
         </LinearLayout>
     </LinearLayout>
   </androidx.constraintlayout.widget.ConstraintLayout>

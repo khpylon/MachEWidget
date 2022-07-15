@@ -165,6 +165,11 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         // Get the right images to use for this vehicle
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables_1x5(vehicleInfo.getVIN());
 
+        // See if we should guess vehicle color
+        if( Utils.scanImageForColor (context, vehicleInfo) ) {
+            info.setVehicle(vehicleInfo);
+        }
+
         // Draw the vehicle image
         drawVehicleImage( context, views,  carStatus, vehicleInfo.getColorValue(), null,  vehicleImages);
 
