@@ -120,7 +120,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             // Changing any of these preferences requires updating the widget
             for (int id : new int[]{R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key,
-                    R.string.show_location_key, R.string.user_forcedUpdate_key, R.string.use_colors_key}) {
+                    R.string.show_location_key, R.string.user_forcedUpdate_key, R.string.use_colors_key,  R.string.use_image_key}) {
                 showApps = findPreference(this.getResources().getString(id));
                 showApps.setOnPreferenceClickListener(preference -> {
                     if (preference.getKey().equals(getResources().getString(R.string.update_frequency_key))) {

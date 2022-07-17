@@ -53,8 +53,6 @@ public class NetworkCalls {
     private static final int CMD_STATUS_FAILED = 411;
     private static final int CMD_REMOTE_START_LIMIT = 590;
 
-    private static final boolean use_network = true;
-
     public static void getAccessToken(Handler handler, Context context, String username, String password) {
         Thread t = new Thread(() -> {
             Intent intent = NetworkCalls.getAccessToken(context, username, password);
@@ -466,7 +464,7 @@ public class NetworkCalls {
                                     info.setSupportsOTA(false);
                                 }
                                 // Only save the status if there is something in the fuseResponse
-                                else if (status.getOtaAlertStatus() != null && status.getFuseResponseList() != null ) {
+                                else if (status.getOtaAlertStatus() != null && status.getFuseResponseList() != null) {
                                     info.fromOTAStatus(status);
                                 }
                                 statusUpdated = true;
@@ -580,62 +578,56 @@ public class NetworkCalls {
 //        }
 //    }
 
-    public static void getVehicleImage(Context context, String token, String VIN, String country, Path filePath) {
+    public static void getVehicleImage(Context context, String token, String VIN, String country) {
         // Create the images folder if necessary
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
         if (!imageDir.exists()) {
             imageDir.mkdir();
         }
-        File image = new File(filePath.toString());
-        if (image.exists()) {
-            return;
-        }
+        String modelYear = String.valueOf(Utils.getModelYear(VIN));
+        DigitalServicesService vehicleImageClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
 
-        Thread t = new Thread(() -> {
-            String modelYear = String.valueOf(Utils.getModelYear(VIN));
-            if (use_network) {
-                if (MainActivity.checkInternetConnection(context)) {
-                    DigitalServicesService vehicleImageClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
-                    Integer angle = 1;
-                    for (int retry = 2; retry >= 0; --retry) {
-                        Call<ResponseBody> call = vehicleImageClient.getVehicleImage(token, Constants.APID, VIN, modelYear, country, angle.toString());
-                        try {
-                            Response<ResponseBody> response = call.execute();
-                            if (response.isSuccessful()) {
-                                Files.copy(response.body().byteStream(), filePath);
-                                LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image successful.");
-                                MainActivity.updateWidget(context);
-                            } else {
-                                LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                                if (response.code() == Constants.HTTP_BAD_REQUEST && angle < 5) {
-                                    angle += 1;
-                                    retry += 1;
-                                    LogFile.i(context, MainActivity.CHANNEL_ID, " trying angle " + angle);
-                                    continue;
-                                } else {
-                                    LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image UNSUCCESSFUL.");
-                                }
-                            }
-                            break;
-                        } catch (java.net.SocketTimeoutException ee) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getVehicleImage");
-                            LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+        if (MainActivity.checkInternetConnection(context)) {
+            for (int angle = 1; angle <= 5; ++angle) {
+                final File image = new File(imageDir, VIN + "_angle" + angle + ".png");
+                if (!image.exists()) {
+                    final int a = angle;
+                    Thread t = new Thread(() -> {
+                        for (int retry = 2; retry >= 0; --retry) {
+                            Call<ResponseBody> call = vehicleImageClient.getVehicleImage(token, Constants.APID, VIN, modelYear, country, String.valueOf(a));
                             try {
-                                Thread.sleep(3 * 1000);
-                            } catch (InterruptedException e) {
+                                Response<ResponseBody> response = call.execute();
+                                if (response.isSuccessful()) {
+                                    Files.copy(response.body().byteStream(), image.toPath());
+                                    LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image " + a + " successful.");
+                                    MainActivity.updateWidget(context);
+                                } else {
+                                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                                    if (response.code() == Constants.HTTP_BAD_REQUEST) {
+                                        LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image " + a + " UNSUCCESSFUL.");
+                                    }
+                                }
+                                break;
+                            } catch (java.net.SocketTimeoutException ee) {
+                                LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getVehicleImage");
+                                LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
+                                try {
+                                    Thread.sleep(3 * 1000);
+                                } catch (InterruptedException e) {
+                                }
+                            } catch (java.net.UnknownHostException e3) {
+                                LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getVehicleImage");
+                                break;
+                            } catch (Exception e) {
+                                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getVehicleImage: ", e);
+                                break;
                             }
-                        } catch (java.net.UnknownHostException e3) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getVehicleImage");
-                            break;
-                        } catch (Exception e) {
-                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getVehicleImage: ", e);
-                            break;
                         }
-                    }
+                    });
+                    t.start();
                 }
             }
-        });
-        t.start();
+        }
     }
 
     public static void remoteStart(Handler handler, Context context, String VIN) {

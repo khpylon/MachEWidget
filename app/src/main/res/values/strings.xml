@@ -58,6 +58,7 @@
     <string name="user_force_updates">Enable forced refresh</string>
     <string name="user_force_updates_summary">Allow user-forced updates from the widget.  WARNING: This may cause a drain on the 12V battery.</string>
     <string name="use_colors">Enable color display of vehicle</string>
+    <string name="use_image">Display vehicle photo instead of logo on full-size widget</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
@@ -84,6 +85,7 @@
     <string name="batteryNotification_key">batteryNotification</string>
     <string name="user_forcedUpdate_key">userForcefUpdate</string>
     <string name="use_colors_key">useColors</string>
+    <string name="use_image_key">useImage</string>
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>

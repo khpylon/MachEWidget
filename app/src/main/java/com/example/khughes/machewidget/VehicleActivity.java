@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -56,12 +57,12 @@ public class VehicleActivity extends AppCompatActivity {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String VIN_key = context.getResources().getString(R.string.VIN_key);
         String VIN = sharedPref.getString(VIN_key, "");
-        if(!VIN.equals("")) {
+        if (!VIN.equals("")) {
             String newVIN = "";
-            for(VehicleIds info: mVehicleViewModel.getAllVehicles().getValue()) {
+            for (VehicleIds info : mVehicleViewModel.getAllVehicles().getValue()) {
                 // If this vehicle is enabled, then remember its VIN and, if it's the
                 // current VIN, exit
-                if(info.isEnabled()) {
+                if (info.isEnabled()) {
                     newVIN = info.getVIN();
                     if (VIN.equals(newVIN)) {
                         return;
@@ -108,10 +109,10 @@ public class VehicleActivity extends AppCompatActivity {
         public VehicleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             VehicleViewHolder tmp = VehicleViewHolder.create(parent);
             tmp.enabledView.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if(!changing) {
+                if (!changing) {
                     VehicleIds vehicle = this.getItem(tmp.getAdapterPosition());
                     String VIN = vehicle.getVIN();
-                    mVehicleViewModel.setEnable(VIN,isChecked);
+                    mVehicleViewModel.setEnable(VIN, isChecked);
                     vehicle.setEnabled(isChecked);
                     notifyDataSetChanged();
                 }
@@ -126,25 +127,24 @@ public class VehicleActivity extends AppCompatActivity {
 
             // if VIN isn't recognized, denote with a strike-through
             SpannableString text = new SpannableString(VIN);
-            if(!Utils.isVINRecognized(VIN)) {
+            if (!Utils.isVINRecognized(VIN)) {
                 text.setSpan(new StrikethroughSpan(), 0, VIN.length(), 0);
             }
             holder.VINItemView.setText(text);
 
             holder.nicknameItemView.setText(current.getNickname());
-            File imageDir = new File(getApplicationContext().getDataDir(), Constants.IMAGES_FOLDER);
-            File image = new File(imageDir, VIN + ".png");
-            if(image.exists()) {
-                holder.imageView.setImageBitmap( BitmapFactory.decodeFile(image.getPath()));
+            Bitmap bmp = Utils.getRandomVehicleImage(getApplicationContext(), VIN);
+            if (bmp != null) {
+                holder.imageView.setImageBitmap(bmp);
                 holder.imageView.setVisibility(View.VISIBLE);
             } else {
                 holder.imageView.setVisibility(View.GONE);
             }
 
-            int nightModeFlags =  holder.itemView.getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            int nightModeFlags = holder.itemView.getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
             holder.VINItemView.setTextColor(Color.parseColor(nightModeFlags == Configuration.UI_MODE_NIGHT_NO ? "#000000" : "#FFFFFF"));
             holder.nicknameItemView.setTextColor(Color.parseColor(nightModeFlags == Configuration.UI_MODE_NIGHT_NO ? "#000000" : "#FFFFFF"));
-            if(position %2 == 1)  {
+            if (position % 2 == 1) {
                 holder.itemView.setBackgroundColor(Color.parseColor(nightModeFlags == Configuration.UI_MODE_NIGHT_NO ? "#FFFFFF" : "#000000"));
             } else {
                 holder.itemView.setBackgroundColor(Color.parseColor(nightModeFlags == Configuration.UI_MODE_NIGHT_NO ? "#F0F0F0" : "#202020"));

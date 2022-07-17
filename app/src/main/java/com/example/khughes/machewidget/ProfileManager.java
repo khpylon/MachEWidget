@@ -248,7 +248,6 @@ public class ProfileManager extends AppCompatActivity {
         String userId = userInfo.getUserId();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String currentVIN = prefs.getString(context.getResources().getString(R.string.VIN_key), "");
 
         VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context)
                 .vehicleInfoDao();
@@ -262,39 +261,14 @@ public class ProfileManager extends AppCompatActivity {
             }
         }
 
-        // If the current VIN is defined but isn't in the list of new VINs, handle it
-        if (!currentVIN.equals("") && !vehicles.isEmpty() && !vehicles.containsKey(currentVIN)) {
-
-            // Make the first VIN the current VIN
-            prefs.edit().putString(context.getResources().getString(R.string.VIN_key), vehicles.keySet().toArray(new String[0])[0]).apply();
-
-            // Get the info on the current vehicle
-            info = infoDao.findVehicleInfoByVIN(currentVIN);
-
-            // Delete all the vehicles and images associated with the user ID
-            if (info != null) {
-                List<String> VINs = infoDao.findVINsByUserId(info.getUserId());
-                if (VINs != null && !VINs.isEmpty()) {
-                    for (String v : infoDao.findVINsByUserId(info.getUserId())) {
-                        infoDao.deleteVehicleInfoByVIN(v);
-                        File image = new File(imageDir, v + ".png");
-                        if (image.exists()) {
-                            image.delete();
-                        }
-                    }
-                }
+        // Delete any vehicles and users which are old
+        for (VehicleInfo vehicle : infoDao.findVehicleInfo()) {
+            if (!vehicle.getUserId().equals(userId)) {
+                String VIN = vehicle.getVIN();
+                infoDao.deleteVehicleInfoByVIN(VIN);
+                Utils.deleteVehicleImages(context,VIN);
+                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(vehicle.getUserId());
             }
-
-            // If the user ID is also different, delete the user too
-            String thisUserId = info.getUserId();
-            if (thisUserId != null && !thisUserId.equals(userId)) {
-                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(thisUserId);
-            }
-        }
-
-        // Make the first VIN the current VIN
-        if (currentVIN.equals("")) {
-            prefs.edit().putString(context.getResources().getString(R.string.VIN_key), vehicles.keySet().toArray(new String[0])[0]).apply();
         }
 
         // Process the new VINs
@@ -304,16 +278,15 @@ public class ProfileManager extends AppCompatActivity {
             if (nickname == null || nickname.equals("")) {
                 nickname = VIN.substring(12);
             }
-            File image = new File(imageDir, VIN + ".png");
-            if (!image.exists()) {
-                String accessToken = userInfo.getAccessToken();
-                String country = userInfo.getCountry();
-                NetworkCalls.getVehicleImage(context, accessToken, VIN, country, image.toPath());
-            }
-            info = infoDao.findVehicleInfoByVIN(VIN);
+
+            // Get images
+            String accessToken = userInfo.getAccessToken();
+            String country = userInfo.getCountry();
+            NetworkCalls.getVehicleImage(context, accessToken, VIN, country);
 
             // If the vehicle is already in the database, check the user ID to see if it was a temporary one and if so
             // delete that user
+            info = infoDao.findVehicleInfoByVIN(VIN);
             if (info != null) {
                 if (info.getUserId().equals(Constants.TEMP_ACCOUNT)) {
                     UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(info.getUserId());

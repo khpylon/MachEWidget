@@ -35,7 +35,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
     @Override
     protected void updateTire(RemoteViews views, String pressure, String status,
-                            String units, Double conversion, int id) {
+                              String units, Double conversion, int id) {
         // Set the textview background color based on the status
         int drawable;
         if (status != null && !status.equals("Normal")) {
@@ -124,7 +124,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
     }
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                             int appWidgetId, InfoRepository info) {
+                                 int appWidgetId, InfoRepository info) {
         RemoteViews views = getWidgetView(context);
 
         // Make sure the left side is visible depending on the widget width
@@ -150,47 +150,21 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         }
 
         // If the vehicle image has been downloaded, update it
-        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
-        File image = new File(imageDir, vehicleInfo.getVIN() + ".png");
-        if (image.exists()) {
-            String path = image.getPath();
-
-//            mache - 324,243 - 12x12
-//            explorer - 401,176 - 12x12
-//            supercrew - 461,221 - 12x12
-//            Bitmap bmp = BitmapFactory.decodeFile(path);
-//            int[] hist = new int[72];
-//            int count=0;
-//            int width = bmp.getWidth();
-//            int height = bmp.getHeight();
-//            int startx = bmp.getWidth()/4;
-//            int starty = bmp.getHeight()/4;
-//            for(int y = starty; y < bmp.getHeight()- starty; ++y) {
-//                for(int x = startx; x < bmp.getWidth() - startx; ++x) {
-//                    int color = bmp.getPixel(x,y);
-//                    Color pixel = Color.valueOf(color);
-//                    float []hsl = new float[3];
-//                    ColorUtils.colorToHSL(color, hsl);
-//                    if(pixel.alpha(color) >0x1f ) { //&& hsl[2]< 0.75 && hsl[2]> 0.25) {
-//                        hist[(int)(hsl[0]/5)]++;
-//                        count++;
-//                    }
-//                }
-//            }
-//            float xcomp = 0;
-//            float ycomp = 0;
-//            double angle = 0;
-//            for(int i=0 ; i < 36 ; ++i ) {
-//                int mag = hist[i] - hist[i+36];
-//                ycomp += Math.sin(angle) * mag;
-//                xcomp += Math.cos(angle) * mag;
-//                angle += Math.toRadians(5);
-//            }
-//            xcomp /= count;
-//            ycomp /= count;
-//            double magnitude = Math.sqrt(xcomp * xcomp + ycomp * ycomp);
-//            angle = Math.atan(xcomp * ycomp / (magnitude * magnitude))/Math.PI*180;
-            views.setImageViewBitmap(R.id.logo, BitmapFactory.decodeFile(path));
+        Boolean useImage = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_image_key), true);
+        Bitmap bmp = Utils.getRandomVehicleImage(context, vehicleInfo.getVIN());
+        if (useImage && bmp != null) {
+            views.setImageViewBitmap(R.id.logo, bmp);
+        } else {
+            String VIN = vehicleInfo.getVIN();
+            if (Utils.isF150(VIN)) {
+                views.setImageViewResource(R.id.logo, R.drawable.ford_f150_logo);
+            } else if (Utils.isBronco(VIN) || Utils.isBroncoSport(VIN)) {
+                    views.setImageViewResource(R.id.logo, R.drawable.bronco_logo);
+            } else if (Utils.isExplorer(VIN)) {
+                views.setImageViewResource(R.id.logo, R.drawable.ford_explorer_logo);
+            } else {
+                views.setImageViewResource(R.id.logo, R.drawable.mache_logo);
+            }
         }
 
         // Display the vehicle's nickname
@@ -292,12 +266,12 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(vehicleInfo.getVIN());
 
         // See if we should guess vehicle color
-        if( Utils.scanImageForColor (context, vehicleInfo) ) {
+        if (Utils.scanImageForColor(context, vehicleInfo)) {
             info.setVehicle(vehicleInfo);
         }
 
         // Draw the vehicle image
-        drawVehicleImage( context, views,  carStatus, vehicleInfo.getColorValue(), null,  vehicleImages);
+        drawVehicleImage(context, views, carStatus, vehicleInfo.getColorValue(), null, vehicleImages);
 
         views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
 

@@ -5,7 +5,10 @@ import androidx.appcompat.widget.TooltipCompat;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -37,6 +40,7 @@ public class ColorActivity extends AppCompatActivity {
 
     private int wireframeMode = Utils.WIREFRAME_WHITE;
 
+    private ColorPickerView colorPickerView;
     private RadioGroup group;
     private Button auto;
 
@@ -45,13 +49,13 @@ public class ColorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_color);
 
-        ColorPickerView colorPickerView = findViewById(R.id.colorPickerView);
+        colorPickerView = findViewById(R.id.colorPickerView);
         TextView feedback = findViewById(R.id.colorValue);
 
-        group = (RadioGroup) findViewById(R.id.radiogroup);
+        group = findViewById(R.id.radiogroup);
         group.setOnCheckedChangeListener((radioGroup, i) -> {
             View radioButton = radioGroup.findViewById(i);
-            switch (radioGroup.indexOfChild(radioButton) ) {
+            switch (radioGroup.indexOfChild(radioButton)) {
                 case 0:
                     wireframeMode = Utils.WIREFRAME_WHITE;
                     break;
@@ -65,9 +69,10 @@ public class ColorActivity extends AppCompatActivity {
             colorPickerView.setInitialColor(colorPickerView.getColor());
         });
 
+
         Button save = findViewById(R.id.ok);
         save.setOnClickListener(view -> {
-            mVehicleInfo.setColorValue((colorPickerView.getColor() & Utils.ARGB_MASK) | wireframeMode );
+            mVehicleInfo.setColorValue((colorPickerView.getColor() & Utils.ARGB_MASK) | wireframeMode);
             info.setVehicle(mVehicleInfo);
             MainActivity.updateWidget(getApplicationContext());
         });
@@ -82,7 +87,7 @@ public class ColorActivity extends AppCompatActivity {
         auto.setOnClickListener(view -> {
             int oldColor = mVehicleInfo.getColorValue();
             mVehicleInfo.setColorValue(Color.WHITE);
-            if( Utils.scanImageForColor( this, mVehicleInfo) ) {
+            if (Utils.scanImageForColor(this, mVehicleInfo)) {
                 colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
             }
             mVehicleInfo.setColorValue(oldColor);
@@ -91,11 +96,12 @@ public class ColorActivity extends AppCompatActivity {
 
         colorPickerView.setColorListener((ColorListener) (color, fromUser) -> {
             feedback.setText("RGB value: #" + Integer.toHexString(color).toUpperCase(Locale.ROOT).substring(2));
-            drawVehicle((color & Utils.ARGB_MASK)| wireframeMode);
+            drawVehicle((color & Utils.ARGB_MASK) | wireframeMode);
         });
 
         BrightnessSlideBar brightnessSlideBar = findViewById(R.id.brightnessSlide);
         colorPickerView.attachBrightnessSlider(brightnessSlideBar);
+        colorPickerView.getPreferenceName();
 
         Spinner spinner = findViewById(R.id.spinner);
         arrayList = new ArrayList<>();
@@ -112,8 +118,9 @@ public class ColorActivity extends AppCompatActivity {
                     mVehicleInfo = info.getVehicles().get(0);
                     setCheckedButton(mVehicleInfo.getColorValue());
                     colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
-                    setAutoButton ( mVehicleInfo.getVIN() );
-                    } else {
+                    setAutoButton(mVehicleInfo.getVIN());
+                    setImageThing(mVehicleInfo.getVIN());
+                } else {
                     arrayList.clear();
                     for (VehicleInfo vehicle : vehicles) {
                         arrayList.add(vehicle.getVIN());
@@ -130,8 +137,9 @@ public class ColorActivity extends AppCompatActivity {
                 String VIN = parent.getItemAtPosition(position).toString();
                 mVehicleInfo = info.getVehicleByVIN(VIN);
                 setCheckedButton(mVehicleInfo.getColorValue());
+                setImageThing(VIN);
                 colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
-                setAutoButton ( mVehicleInfo.getVIN() );
+                setAutoButton(mVehicleInfo.getVIN());
             }
 
             @Override
@@ -140,10 +148,21 @@ public class ColorActivity extends AppCompatActivity {
         });
     }
 
-    private void setAutoButton ( String VIN ) {
-        File imageDir = new File(getApplicationContext().getDataDir(), Constants.IMAGES_FOLDER);
-        File image = new File(imageDir, VIN + ".png");
-        auto.setVisibility(image.exists() ? View.VISIBLE : View.GONE);
+    private void setImageThing(String VIN) {
+//        File imageDir = new File(getApplicationContext().getDataDir(), Constants.IMAGES_FOLDER);
+//        File image = new File(imageDir, VIN + ".png");
+//        if (image.exists() ) {
+//            Bitmap bmp = BitmapFactory.decodeFile(image.getPath());
+//            Drawable drawable = new BitmapDrawable(getResources(), bmp);
+//            colorPickerView.setPaletteDrawable(drawable);
+//            return;
+//        }
+        colorPickerView.setHsvPaletteDrawable();
+    }
+
+    private void setAutoButton(String VIN) {
+        Bitmap bmp = Utils.getVehicleImage(getApplicationContext(), VIN, 4);
+        auto.setVisibility(bmp != null ? View.VISIBLE : View.GONE);
     }
 
     private void setCheckedButton(int color) {
@@ -159,7 +178,7 @@ public class ColorActivity extends AppCompatActivity {
                 index = 2;
                 break;
         }
-        ((RadioButton)group.getChildAt(index)).setChecked(true);
+        ((RadioButton) group.getChildAt(index)).setChecked(true);
     }
 
     private void drawVehicle(int color) {
@@ -172,7 +191,7 @@ public class ColorActivity extends AppCompatActivity {
         // Create base bitmap the size of the image
         Bitmap bmp = Bitmap.createBitmap(225, 100, Bitmap.Config.ARGB_8888);
 
-        Utils.drawColoredVehicle( getApplicationContext(), bmp,  color, new ArrayList<>(), true, vehicleImages);
+        Utils.drawColoredVehicle(getApplicationContext(), bmp, color, new ArrayList<>(), true, vehicleImages);
 
 //        Canvas canvas = new Canvas(bmp);
 //

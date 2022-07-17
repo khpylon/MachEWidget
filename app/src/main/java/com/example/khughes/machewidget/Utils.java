@@ -51,20 +51,20 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class Utils {
-    public static final String WIDGETMODE_MACHE = "ModeMachE";
-    public static final String WIDGETMODE_F150 = "ModeF150";
-    public static final String WIDGETMODE_BRONCO = "ModeBrondo";
-    public static final String WIDGETMODE_EXPLORER = "ModeExplorer";
 
     public static final int WORLD_MANUFACTURING_IDENTIFIER_START_INDEX = 1 - 1;
     public static final int WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3;
@@ -1309,12 +1309,9 @@ public class Utils {
                     info.setId(0);
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().insertVehicleInfo(info);
                 }
-                File image = new File(imageDir, newVIN + ".png");
-                if (!image.exists()) {
-                    UserInfo user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
-                    if (user != null) {
-                        NetworkCalls.getVehicleImage(context, user.getAccessToken(), newVIN, user.getCountry(), image.toPath());
-                    }
+                UserInfo user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
+                if (user != null) {
+                    NetworkCalls.getVehicleImage(context, user.getAccessToken(), newVIN, user.getCountry());
                 }
                 VINs.remove(info.getVIN());
             }
@@ -1335,10 +1332,7 @@ public class Utils {
             // Any user IDs or VINs which weren't restored get deleted
             for (String VIN : VINs) {
                 VehicleInfoDatabase.getInstance(context).vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
-                File image = new File(imageDir, VIN + ".png");
-                if (image.exists()) {
-                    image.delete();
-                }
+                deleteVehicleImages(context, VIN);
             }
             for (String user : userIds) {
                 UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user);
@@ -1392,10 +1386,9 @@ public class Utils {
         }
 
         // If the vehicle image doesn't exist, do nothing
-        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
         String VIN = vehicleInfo.getVIN();
-        File image = new File(imageDir, VIN + ".png");
-        if (!image.exists() || vehicleInfo.getColorValue() != Color.WHITE) {
+        Bitmap bmp = Utils.getVehicleImage(context, VIN, 4);
+        if (bmp == null || vehicleInfo.getColorValue() != Color.WHITE) {
             return false;
         }
 
@@ -1403,32 +1396,31 @@ public class Utils {
         int startx;
         int starty;
         if (isMachE(VIN)) {
-            startx = 324;
-            starty = 244;
-        } else if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) {
-            startx = 460;
-            starty = 220;
-        } else if (isF150RegularCab(VIN) || isF150SuperCab(VIN)) {
-            startx = 440;
-            starty = 216;
+            startx = 352; // 324;
+            starty = 288; // 244;
+        } else if (isF150(VIN)) {
+            startx = 344; // 460;
+            starty = 220; // 220;
         } else if (isBronco(VIN) || isBroncoSport(VIN)) {
-            startx = 572;
-            starty = 188;
-        } else if (isExplorer(VIN) || isExpedition(VIN)) {
-            startx = 628;
-            starty = 176;
+            startx = 244; // 572;
+            starty = 200; // 188;
+        } else if (isExplorer(VIN)) {
+            startx = 320; // 628;
+            starty = 280; // 176;
         } else if (isEscape(VIN)) {
-            startx = 300;
-            starty = 204;
+            startx = 340; // 300;
+            starty = 244; // 204;
         } else if (isEdge(VIN)) {
-            startx = 284;
-            starty = 208;
+            startx = 240; // 284;
+            starty = 200; // 208;
+        } else if (isExpedition(VIN)) {
+            startx = 324; // 628;
+            starty = 304; // 176;
         } else {
             return false;
         }
         int[] RGB = new int[3];
-        Bitmap bmp = BitmapFactory.decodeFile(image.getPath());
-        final int patchSize = 12;
+        final int patchSize = 10;
 
         // get the RBG value of each pixel in the patch
         for (int y = 0; y < patchSize; ++y) {
@@ -1540,4 +1532,36 @@ public class Utils {
         canvas.drawBitmap(bmp2, 0, 0, paint);
     }
 
+    public static Bitmap getVehicleImage(Context context, String VIN, int angle) {
+        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+        File image = new File(imageDir, VIN + "_angle" + angle + ".png");
+        if (image.exists()) {
+            return BitmapFactory.decodeFile(image.getPath());
+        }
+        return null;
+    }
+
+    public static Bitmap getRandomVehicleImage(Context context, String VIN) {
+        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+        ArrayList<String> allImages = new ArrayList<>(Arrays.asList(imageDir.list()));
+        Predicate<String> byVIN = thisVIN -> thisVIN.contains(VIN);
+        ArrayList<String> myImages = new ArrayList<>(allImages.stream().filter(byVIN).collect(Collectors.toList()));
+        if(!myImages.isEmpty()) {
+            int angle = new Random(System.currentTimeMillis()).nextInt(myImages.size());
+            File image = new File(imageDir, myImages.get(angle));
+            return BitmapFactory.decodeFile(image.getPath());
+        }
+        return null;
+    }
+
+
+    public static void deleteVehicleImages(Context context, String VIN) {
+        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+        for (int angle = 1; angle <= 5; ++angle) {
+            File image = new File(imageDir, VIN + "_angle" + angle + ".png");
+            if (image.exists()) {
+                image.delete();
+            }
+        }
+    }
 }

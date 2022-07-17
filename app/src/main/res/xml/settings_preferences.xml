@@ -103,6 +103,12 @@
         app:title="@string/transparent_back" />
 
     <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:key="@string/use_image_key"
+        app:singleLineTitle="false"
+        app:title="@string/use_image" />
+
+    <SwitchPreferenceCompat
         app:key="@string/use_colors_key"
         app:defaultValue="false"
         app:singleLineTitle="false"

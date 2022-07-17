@@ -224,17 +224,6 @@ public class StoredData {
         commitWait(edit);
     }
 
-    public String getWidgetMode() {
-        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-        return pref.getString(WIDGETMODE, Utils.WIDGETMODE_MACHE);
-    }
-
-    public void setWidgetMode(String mode) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
-        edit.putString(WIDGETMODE, mode);
-        commitWait(edit);
-    }
-
     public void setLastAlarmTime() {
         SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
         long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();

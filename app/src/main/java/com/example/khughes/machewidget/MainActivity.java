@@ -162,27 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
             // Add operations here
 
-            // Remove Good/Bad/Ugly counters
-            if (lastVersion.compareTo("2022.03.21") < 0) {
-                new StoredData(context).removeCounters();
-            }
-
-            // Replace widget mode identifiers based on WMI
-            if (lastVersion.compareTo("2022.04.02") < 0) {
-                StoredData appInfo = new StoredData(context);
-                switch (appInfo.getWidgetMode()) {
-                    case Utils.WORLD_MANUFACTURING_IDENTIFIER_USA_MPV:
-                        appInfo.setWidgetMode(Utils.WIDGETMODE_BRONCO);
-                        break;
-                    case Utils.WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK:
-                        appInfo.setWidgetMode(Utils.WIDGETMODE_F150);
-                        break;
-                    default:
-                        appInfo.setWidgetMode(Utils.WIDGETMODE_MACHE);
-                        break;
-                }
-            }
-
             // Replace sharedpreference files with databases
             if (lastVersion.compareTo("2022.04.29") < 0) {
                 migrateToDatabases(context);
@@ -252,10 +231,27 @@ public class MainActivity extends AppCompatActivity {
             // Re-enable OTA support on all vehicles, and add userId to settings.
             if (lastVersion.compareTo("2022.06.20") < 0) {
                 new Thread(() -> {
-                    for(UserInfo userInfo: UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo() ) {
+                    for (UserInfo userInfo : UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
                         userInfo.setProgramState(Constants.STATE_HAVE_TOKEN_AND_VIN);
                         UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(userInfo);
-                    };
+                    }
+                    ;
+                }).start();
+            }
+
+            // Reload vehicle images, including angles
+            if (lastVersion.compareTo("2022.07.16") < 0) {
+                File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+                for (String file : imageDir.list()) {
+                    new File(imageDir, file).delete();
+                }
+                new Thread(() -> {
+                    for (VehicleInfo vehicleInfo : VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {
+                        UserInfo user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(vehicleInfo.getUserId());
+                        if (user != null) {
+                            NetworkCalls.getVehicleImage(context, user.getAccessToken(), vehicleInfo.getVIN(), user.getCountry());
+                        }
+                    }
                 }).start();
             }
         }
