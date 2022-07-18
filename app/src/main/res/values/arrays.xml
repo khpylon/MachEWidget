@@ -1,17 +1,5 @@
 <resources>
 
-    <!--
-    <string-array name="pref_vintest">
-        <item>3FMTK3R75MMA0MACH</item>
-        <item>1FMDE5AP3MLA0BRON</item>
-        <item>1FTTF1C75MAM00REG</item>
-        <item>1FTTW1C75MAM0CREW</item>
-        <item>1FTTX1C75MAM00CAB</item>
-        <item>1FTTW1R75MAM0RAPT</item>
-        <item>1FMSK7KH4MAM0EXPL</item>
-    </string-array>
-    -->
-
     <string-array name="pref_update_titles">
         <item>5 min</item>
         <item>10 min</item>
@@ -32,17 +20,6 @@
         <item>60</item>
         <item>120</item>
         <item>0</item>
-    </string-array>
-
-    <string-array name="profile_delay_values">
-        <item>800</item>
-        <item>900</item>
-        <item>1000</item>
-        <item>1100</item>
-        <item>1200</item>
-        <item>1300</item>
-        <item>1400</item>
-        <item>1500</item>
     </string-array>
 
     <string-array name="units_titles">

@@ -91,33 +91,6 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
 
-            // Modify the VIN file when profiles are changed.
-//            Preference profiles = findPreference(this.getResources().getString(R.string.show_profiles_key));
-//            profiles.setOnPreferenceChangeListener((preference, newValue) -> {
-//                if ((Boolean) newValue) {
-//                    // when enabled, create a profile for the current VIN
-//                    String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-//                    if (!VIN.equals("")) {
-//                        new StoredData(context).addProfile(VIN, "User 1");
-//                    }
-//                } else {
-//                    // when disables, remove all profiles
-//                    new StoredData(context).clearProfiles();
-//                }
-//                return true;
-//            });
-
-//            Preference vintest = findPreference("vintest");
-//            vintest.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//                @Override
-//                public boolean onPreferenceChange(Preference preference, Object newValue) {
-//                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-//                    sharedPref.edit().putString("VIN",(String)newValue).commit();
-//                    MainActivity.updateWidget(mContext);
-//                    return true;
-//                }
-//            });
-
             // Changing any of these preferences requires updating the widget
             for (int id : new int[]{R.string.show_app_links_key, R.string.transp_bg_key, R.string.enable_commands_key, R.string.last_refresh_time_key, R.string.show_OTA_key,
                     R.string.show_location_key, R.string.user_forcedUpdate_key, R.string.use_colors_key,  R.string.use_image_key}) {
@@ -131,7 +104,6 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 });
             }
-
 
             // Set app version info
             Preference version = findPreference(this.getResources().getString(R.string.version_key));
