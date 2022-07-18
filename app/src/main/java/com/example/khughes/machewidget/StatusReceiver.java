@@ -108,15 +108,18 @@ public class StatusReceiver extends BroadcastReceiver {
                         int delayInMillis = Integer.parseInt(sharedPref.getString(context.getResources().getString(R.string.update_frequency_key), "10")) * 60 * Millis;
 
                         // Find out when the list of vehicles was updated
+                        long thenTime = 0;
                         String lastModified = userInfo.getLastModified();
-                        Calendar cal = Calendar.getInstance();
-                        SimpleDateFormat sdf = new SimpleDateFormat(Constants.LASTMODIFIEDFORMAT, Locale.ENGLISH);
-                        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-                        try {
-                            cal.setTime(sdf.parse(lastModified));
-                        } catch (ParseException e) {
+                        if (lastModified != null) {
+                            Calendar cal = Calendar.getInstance();
+                            SimpleDateFormat sdf = new SimpleDateFormat(Constants.LASTMODIFIEDFORMAT, Locale.ENGLISH);
+                            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+                            try {
+                                cal.setTime(sdf.parse(lastModified));
+                            } catch (ParseException e) {
+                            }
+                            thenTime = cal.getTimeInMillis();
                         }
-                        long thenTime = cal.getTimeInMillis();
 
                         // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
                         // the next update.
@@ -171,15 +174,15 @@ public class StatusReceiver extends BroadcastReceiver {
         // Gather the app widget Iss for every widget
         AppWidgetManager man = AppWidgetManager.getInstance(context);
         ArrayList<Integer> appIds = new ArrayList<>();
-        appIds.addAll (Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_1x5.class))).boxed().collect(Collectors.toList()));
-        appIds.addAll (Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_2x5.class))).boxed().collect(Collectors.toList()));
-        appIds.addAll (Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_5x5.class))).boxed().collect(Collectors.toList()));
+        appIds.addAll(Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_1x5.class))).boxed().collect(Collectors.toList()));
+        appIds.addAll(Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_2x5.class))).boxed().collect(Collectors.toList()));
+        appIds.addAll(Arrays.stream(man.getAppWidgetIds(new ComponentName(context, CarStatusWidget_5x5.class))).boxed().collect(Collectors.toList()));
 
         // If any widgets have been removed, delete their VIN entry
-        for( String key: context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getAll().keySet() ) {
-            if(key.startsWith(Constants.VIN_KEY)) {
+        for (String key : context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getAll().keySet()) {
+            if (key.startsWith(Constants.VIN_KEY)) {
                 int appWidgetId = Integer.parseInt(key.replace(Constants.VIN_KEY, ""));
-                if(!appIds.contains(appWidgetId)) {
+                if (!appIds.contains(appWidgetId)) {
                     context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(key).apply();
                 }
             }

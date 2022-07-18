@@ -34,7 +34,7 @@ import java.util.Map;
 public class CarStatusWidget_5x5 extends CarStatusWidget {
 
     @Override
-    protected void updateTire(RemoteViews views, String pressure, String status,
+    protected void updateTire(Context context, RemoteViews views, String pressure, String status,
                               String units, Double conversion, int id) {
         // Set the textview background color based on the status
         int drawable;
@@ -47,16 +47,21 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
         // Get the tire pressure and do any conversion necessary.
         if (pressure != null) {
-            double value = Double.parseDouble(pressure);
-            // Only display value if it's not ridiculous; after some OTA updates the
-            // raw value is "65533"
-            if (value < 2000) {
-                // If conversion is really small, show value in tenths
-                String pattern = conversion >= 0.1 ? "#" : "#.0";
-                pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
-                        DecimalFormatSymbols.getInstance(Locale.US)).format(value * conversion), units);
-                views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval);
-            } else {
+            try {
+                double value = Double.parseDouble(pressure);
+                // Only display value if it's not ridiculous; after some OTA updates the
+                // raw value is "65533"
+                if (value < 2000) {
+                    // If conversion is really small, show value in tenths
+                    String pattern = conversion >= 0.1 ? "#" : "#.0";
+                    pressure = MessageFormat.format("{0}{1}", new DecimalFormat(pattern, // "#.0",
+                            DecimalFormatSymbols.getInstance(Locale.US)).format(value * conversion), units);
+                    views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval);
+                } else {
+                    pressure = "N/A";
+                }
+            } catch (NumberFormatException e) {
+                LogFile.e(context, MainActivity.CHANNEL_ID, "java.lang.NumberFormatException in CarStatusWidget_5x5.updateTire(): pressure = " + pressure);
                 pressure = "N/A";
             }
         } else {
@@ -243,13 +248,13 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         }
 
         // Tire pressures
-        updateTire(views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
+        updateTire(context, views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
                 pressureUnits, pressureConversion, R.id.lftire);
-        updateTire(views, carStatus.getRightFrontTirePressure(), carStatus.getRightFrontTireStatus(),
+        updateTire(context, views, carStatus.getRightFrontTirePressure(), carStatus.getRightFrontTireStatus(),
                 pressureUnits, pressureConversion, R.id.rftire);
-        updateTire(views, carStatus.getLeftRearTirePressure(), carStatus.getLeftRearTireStatus(),
+        updateTire(context, views, carStatus.getLeftRearTirePressure(), carStatus.getLeftRearTireStatus(),
                 pressureUnits, pressureConversion, R.id.lrtire);
-        updateTire(views, carStatus.getRightRearTirePressure(), carStatus.getRightRearTireStatus(),
+        updateTire(context, views, carStatus.getRightRearTirePressure(), carStatus.getRightRearTireStatus(),
                 pressureUnits, pressureConversion, R.id.rrtire);
 
         // Window statuses

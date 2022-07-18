@@ -235,15 +235,16 @@ public class MainActivity extends AppCompatActivity {
                         userInfo.setProgramState(Constants.STATE_HAVE_TOKEN_AND_VIN);
                         UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(userInfo);
                     }
-                    ;
                 }).start();
             }
 
             // Reload vehicle images, including angles
             if (lastVersion.compareTo("2022.07.16") < 0) {
                 File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
-                for (String file : imageDir.list()) {
-                    new File(imageDir, file).delete();
+                if (imageDir != null) {
+                    for (String file : imageDir.list()) {
+                        new File(imageDir, file).delete();
+                    }
                 }
                 new Thread(() -> {
                     for (VehicleInfo vehicleInfo : VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {

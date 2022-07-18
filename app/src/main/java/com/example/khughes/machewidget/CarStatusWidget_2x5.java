@@ -153,13 +153,13 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
                 distanceConversion, distanceUnits, twoLines);
 
         // Tire pressures
-        updateTire(views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
+        updateTire(context, views, carStatus.getLeftFrontTirePressure(), carStatus.getLeftFrontTireStatus(),
                 pressureUnits, pressureConversion, R.id.lt_ft_tire);
-        updateTire(views, carStatus.getRightFrontTirePressure(), carStatus.getRightFrontTireStatus(),
+        updateTire(context, views, carStatus.getRightFrontTirePressure(), carStatus.getRightFrontTireStatus(),
                 pressureUnits, pressureConversion, R.id.rt_ft_tire);
-        updateTire(views, carStatus.getLeftRearTirePressure(), carStatus.getLeftRearTireStatus(),
+        updateTire(context, views, carStatus.getLeftRearTirePressure(), carStatus.getLeftRearTireStatus(),
                 pressureUnits, pressureConversion, R.id.lt_rr_tire);
-        updateTire(views, carStatus.getRightRearTirePressure(), carStatus.getRightRearTireStatus(),
+        updateTire(context, views, carStatus.getRightRearTirePressure(), carStatus.getRightRearTireStatus(),
                 pressureUnits, pressureConversion, R.id.rt_rr_tire);
 
         // Get the right images to use for this vehicle
