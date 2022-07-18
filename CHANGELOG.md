@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.07.18
+### Fixed
+- Fix various bugs discovered from Google Play automated feedback.
+
 ## 2022.07.16
 ### Added
 - Use stored vehicle images to help set widget vehicle colors.  A color is automatically assigned on initial use, but user can also choose "Auto" in the Set Vehicle Color activity 
