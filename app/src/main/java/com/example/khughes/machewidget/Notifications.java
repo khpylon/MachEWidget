@@ -166,7 +166,7 @@ public class Notifications extends BroadcastReceiver {
         StoredData appInfo = new StoredData(context);
         boolean batteryNotification = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.batteryNotification_key), true);
 
-        if (batteryNotification && !MainActivity.ignoringBatteryOptimizations(context)) {
+        if (batteryNotification && !Utils.ignoringBatteryOptimizations(context)) {
             long lastBatteryNotification = appInfo.getBatteryNotification();
             LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
             long nowTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();

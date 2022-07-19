@@ -66,7 +66,7 @@ public class StatusReceiver extends BroadcastReceiver {
 
                 LogFile.d(mContext, MainActivity.CHANNEL_ID,
                         MessageFormat.format("StatusReceiver: time({0}), state({1}), battery optimization({2})",
-                                (timeout - nowtime) / Millis, state, MainActivity.ignoringBatteryOptimizations(context)));
+                                (timeout - nowtime) / Millis, state, Utils.ignoringBatteryOptimizations(context)));
 
                 // Check whether credentials are being saved
                 boolean savingCredentials = PreferenceManager.getDefaultSharedPreferences(mContext)
@@ -245,7 +245,7 @@ public class StatusReceiver extends BroadcastReceiver {
                 String action = bb.getString("action");
                 LogFile.i(mContext, MainActivity.CHANNEL_ID, "Status: " + action);
                 // Update the widgets, no mattery what.
-                MainActivity.updateWidget(mContext);
+                CarStatusWidget.updateWidget(mContext);
             }
         };
         NetworkCalls.getStatus(h, mContext, userId);

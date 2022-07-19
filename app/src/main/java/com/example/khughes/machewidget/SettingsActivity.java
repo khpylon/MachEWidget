@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static Preference battery;
 
     private static void displayOptimizationMessage(Context context) {
-        if (MainActivity.ignoringBatteryOptimizations(context)) {
+        if (Utils.ignoringBatteryOptimizations(context)) {
             battery.setSummary("Off (recommended)");
         } else {
             battery.setSummary("On (may cause issues)");
@@ -71,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
             // Update the widget once the user pick a new unit preference.
             Preference units = findPreference(this.getResources().getString(R.string.units_key));
             units.setOnPreferenceChangeListener((preference, newValue) -> {
-                MainActivity.updateWidget(context);
+                CarStatusWidget.updateWidget(context);
                 return true;
             });
 
@@ -99,7 +99,7 @@ public class SettingsActivity extends AppCompatActivity {
                     if (preference.getKey().equals(getResources().getString(R.string.update_frequency_key))) {
                         StatusReceiver.nextAlarm(context);
                     } else {
-                        MainActivity.updateWidget(context);
+                        CarStatusWidget.updateWidget(context);
                     }
                     return true;
                 });

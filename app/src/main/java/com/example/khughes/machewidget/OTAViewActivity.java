@@ -92,7 +92,7 @@ public class OTAViewActivity extends AppCompatActivity {
             if (currentOTATime > 0) {
                 mVehicleInfo.setLastOTATime( currentOTATime );
                 info.setVehicle(mVehicleInfo);
-                MainActivity.updateWidget(context);
+                CarStatusWidget.updateWidget(context);
                 clear.setEnabled(false);
             }
         });

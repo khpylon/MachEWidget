@@ -19,6 +19,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -63,6 +64,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.content.Context.POWER_SERVICE;
 
 public class Utils {
 
@@ -1374,7 +1376,7 @@ public class Utils {
             }
 
             // Tell the widget to update
-            MainActivity.updateWidget(context);
+            CarStatusWidget.updateWidget(context);
             handler.sendEmptyMessage(0);
         }).start();
     }
@@ -1554,7 +1556,6 @@ public class Utils {
         return null;
     }
 
-
     public static void deleteVehicleImages(Context context, String VIN) {
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
         for (int angle = 1; angle <= 5; ++angle) {
@@ -1564,4 +1565,12 @@ public class Utils {
             }
         }
     }
+
+    public static Boolean ignoringBatteryOptimizations(Context context) {
+        String packageName = context.getPackageName();
+        PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
+        return pm.isIgnoringBatteryOptimizations(packageName);
+    }
+
+
 }

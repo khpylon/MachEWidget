@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -53,6 +55,25 @@ public class NetworkCalls {
     private static final int CMD_STATUS_FAILED = 411;
     private static final int CMD_REMOTE_START_LIMIT = 590;
 
+    private static boolean checkInternetConnection(Context context) {
+        // Get Connectivity Manager
+        ConnectivityManager connManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Details about the currently active default data network
+        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+
+        if (networkInfo == null) {
+            return false;
+        }
+
+        if (!networkInfo.isConnected()) {
+            return false;
+        }
+
+        return networkInfo.isAvailable();
+    }
+
     public static void getAccessToken(Handler handler, Context context, String username, String password) {
         Thread t = new Thread(() -> {
             Intent intent = NetworkCalls.getAccessToken(context, username, password);
@@ -77,7 +98,7 @@ public class NetworkCalls {
 
         if (username == null) {
             LogFile.e(context, MainActivity.CHANNEL_ID, "NetworkCalls.getAccessToken() called with null username?");
-        } else if (MainActivity.checkInternetConnection(context)) {
+        } else if (checkInternetConnection(context)) {
             AccessTokenService fordClient = NetworkServiceGenerators.createIBMCloudService(AccessTokenService.class, context);
             APIMPSService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
 
@@ -204,7 +225,7 @@ public class NetworkCalls {
         UserInfoDao dao = UserInfoDatabase.getInstance(context)
                 .userInfoDao();
 
-        if (MainActivity.checkInternetConnection(context)) {
+        if (checkInternetConnection(context)) {
             Map<String, String> jsonParams = new ArrayMap<>();
             jsonParams.put("refresh_token", refreshToken);
             RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
@@ -282,7 +303,7 @@ public class NetworkCalls {
         String token = userInfo.getAccessToken();
         String country = userInfo.getCountry();
 
-        if (MainActivity.checkInternetConnection(context)) {
+        if (checkInternetConnection(context)) {
             APIMPSService userDetailsClient = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
 
             for (int retry = 2; retry >= 0; --retry) {
@@ -397,7 +418,7 @@ public class NetworkCalls {
 
             boolean statusUpdated = false;
             boolean supportsOTA = info.isSupportsOTA();
-            if (MainActivity.checkInternetConnection(context)) {
+            if (checkInternetConnection(context)) {
                 USAPICVService statusClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
                 DigitalServicesService OTAstatusClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
                 for (int retry = 2; retry >= 0; --retry) {
@@ -587,7 +608,7 @@ public class NetworkCalls {
         String modelYear = String.valueOf(Utils.getModelYear(VIN));
         DigitalServicesService vehicleImageClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
 
-        if (MainActivity.checkInternetConnection(context)) {
+        if (checkInternetConnection(context)) {
             for (int angle = 1; angle <= 5; ++angle) {
                 final File image = new File(imageDir, VIN + "_angle" + angle + ".png");
                 if (!image.exists()) {
@@ -600,7 +621,7 @@ public class NetworkCalls {
                                 if (response.isSuccessful()) {
                                     Files.copy(response.body().byteStream(), image.toPath());
                                     LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle image " + a + " successful.");
-                                    MainActivity.updateWidget(context);
+                                    CarStatusWidget.updateWidget(context);
                                 } else {
                                     LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
                                     if (response.code() == Constants.HTTP_BAD_REQUEST) {
@@ -678,7 +699,7 @@ public class NetworkCalls {
         String token = userInfo.getAccessToken();
         Intent data = new Intent();
 
-        if (!MainActivity.checkInternetConnection(context)) {
+        if (!checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
         } else {
             USAPICVService commandServiceClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
@@ -786,7 +807,7 @@ public class NetworkCalls {
         UserInfo userInfo = userDao.findUserInfo(vehInfo.getUserId());
         String token = userInfo.getAccessToken();
 
-        if (!MainActivity.checkInternetConnection(context)) {
+        if (!checkInternetConnection(context)) {
             data.putExtra("action", COMMAND_NO_NETWORK);
         } else {
             USAPICVService commandServiceClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);

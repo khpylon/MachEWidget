@@ -63,7 +63,7 @@ public class ChooseAppActivity extends AppCompatActivity {
                     } else {
                         appInfo.setRightAppPackage(app.packageName);
                     }
-                    MainActivity.updateWidget(getApplicationContext());
+                    CarStatusWidget.updateWidget(getApplicationContext());
                     finish();
                 }
             };

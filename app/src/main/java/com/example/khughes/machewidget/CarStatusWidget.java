@@ -703,7 +703,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                     context.startActivity(intent);
                 } else {
                     appInfo.setLeftAppPackage(null);
-                    MainActivity.updateWidget(context);
+                    CarStatusWidget.updateWidget(context);
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }
             }
@@ -718,7 +718,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                     context.startActivity(intent);
                 } else {
                     appInfo.setRightAppPackage(null);
-                    MainActivity.updateWidget(context);
+                    CarStatusWidget.updateWidget(context);
                     Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG).show();
                 }
             }
@@ -895,4 +895,11 @@ public class CarStatusWidget extends AppWidgetProvider {
             super.onReceive(context, intent);
         }
     }
+
+    public static void updateWidget(Context context) {
+        Intent updateIntent = new Intent();
+        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        context.sendBroadcast(updateIntent);
+    }
+
 }

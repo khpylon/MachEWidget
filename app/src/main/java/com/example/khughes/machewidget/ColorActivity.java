@@ -74,7 +74,7 @@ public class ColorActivity extends AppCompatActivity {
         save.setOnClickListener(view -> {
             mVehicleInfo.setColorValue((colorPickerView.getColor() & Utils.ARGB_MASK) | wireframeMode);
             info.setVehicle(mVehicleInfo);
-            MainActivity.updateWidget(getApplicationContext());
+            CarStatusWidget.updateWidget(getApplicationContext());
         });
 
         Button reset = findViewById(R.id.reset);

@@ -229,7 +229,7 @@ public class ProfileManager extends AppCompatActivity {
                     if (!VIN.equals(newVIN)) {
                         context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putString(widget_VIN, newVIN).commit();
                         Toast.makeText(context, vehicles.get(index).getNickname(), Toast.LENGTH_SHORT).show();
-                        MainActivity.updateWidget(context);
+                        CarStatusWidget.updateWidget(context);
                     }
                 }
             }
@@ -310,6 +310,6 @@ public class ProfileManager extends AppCompatActivity {
             LogFile.d(context, MainActivity.CHANNEL_ID, "info is " + info + ", info.userId = " + info.getUserId());
         }
 
-        MainActivity.updateWidget(context);
+        CarStatusWidget.updateWidget(context);
     }
 }

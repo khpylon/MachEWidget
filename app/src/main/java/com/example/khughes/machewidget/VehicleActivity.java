@@ -71,7 +71,7 @@ public class VehicleActivity extends AppCompatActivity {
             }
             // Change the current VIN and refresh widgets.
             sharedPref.edit().putString(VIN_key, newVIN).apply();
-            MainActivity.updateWidget(context);
+            CarStatusWidget.updateWidget(context);
         }
     }
 
