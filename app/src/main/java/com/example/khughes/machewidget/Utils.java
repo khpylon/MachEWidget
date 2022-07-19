@@ -75,164 +75,139 @@ public class Utils {
     public static final String WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK = "1FT";
     public static final String WORLD_MANUFACTURING_IDENTIFIER_USA_MPV = "1FM";
 
-    public static final int LINE_SERIES_START_INDEX = 5 - 1;
-    public static final int LINE_SERIES_END_INDEX = 7;
+    public static final int NA_LINE_SERIES_START_INDEX = 5 - 1;
+    public static final int NA_LINE_SERIES_END_INDEX = 7;
 
-    public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
-    public static final String LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
-    public static final String LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
-    public static final String LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
-    public static final String LINE_SERIES_MACHE_PREMIUM_AWD = "K3S"; // Premium AWD?
-    public static final String LINE_SERIES_MACHE_GT_RWD = "K4S"; // GT AWD
+    public static final String NA_LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
+    public static final String NA_LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
+    public static final String NA_LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
+    public static final String NA_LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
+    public static final String NA_LINE_SERIES_MACHE_PREMIUM_AWD = "K3S"; // Premium AWD?
+    public static final String NA_LINE_SERIES_MACHE_GT_RWD = "K4S"; // GT AWD
 
-    public static final String LINE_SERIES_F150_REGULAR_4X2 = "F1C"; // 4x2 chassis, regular cab
-    public static final String LINE_SERIES_F150_REGULAR_4X4 = "F1E"; // 4x4 chassis, regular cab
-    public static final String LINE_SERIES_F150_SUPERCREW_4X2 = "W1C"; // 4x2, SuperCrew
-    public static final String LINE_SERIES_F150_SUPERCREW_4X4 = "W1E"; // 4x4, superCrew
-    public static final String LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR = "W1R"; // 4x4, SuperCrew, Raptor
-    public static final String LINE_SERIES_F150_SUPERCREW_4X4_POLICE = "W1P"; // 4x4, SuperCrew, Police
-    public static final String LINE_SERIES_F150_SUPERCREW_4X2_SSV = "W1S"; // 4x2, SuperCrew, SSV (Special Service Vehicle), government
-    public static final String LINE_SERIES_F150_SUPERCREW_4X4_SSV = "W1T"; // 4x4, superCrew, SSV (Special Service Vehicle), government
-    public static final String LINE_SERIES_F150_SUPERCAB_4X2 = "X1C"; // 4x2, SuperCab
-    public static final String LINE_SERIES_F150_SUPERCAB_4X4 = "X1E"; // 4x4, SuperCab
+    public static final String NA_LINE_SERIES_F150_REGULAR_4X2 = "F1C"; // 4x2 chassis, regular cab
+    public static final String NA_LINE_SERIES_F150_REGULAR_4X4 = "F1E"; // 4x4 chassis, regular cab
+    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X2 = "W1C"; // 4x2, SuperCrew
+    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4 = "W1E"; // 4x4, superCrew
+    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR = "W1R"; // 4x4, SuperCrew, Raptor
+    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_POLICE = "W1P"; // 4x4, SuperCrew, Police
+    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X2_SSV = "W1S"; // 4x2, SuperCrew, SSV (Special Service Vehicle), government
+    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_SSV = "W1T"; // 4x4, superCrew, SSV (Special Service Vehicle), government
+    public static final String NA_LINE_SERIES_F150_SUPERCAB_4X2 = "X1C"; // 4x2, SuperCab
+    public static final String NA_LINE_SERIES_F150_SUPERCAB_4X4 = "X1E"; // 4x4, SuperCab
 
-    public static final String LINE_SERIES_BRONCO_BASE_2DOOR_4X4 = "E5A"; //
-    public static final String LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B"; //
-    public static final String LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C"; //
-    public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD = "E5D"; //
-    public static final String LINE_SERIES_BRONCO_FE_4DOOR_AWD = "E5E"; //
-    public static final String LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
-    public static final String LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
+    public static final String NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4 = "E5A"; //
+    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B"; //
+    public static final String NA_LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C"; //
+    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD = "E5D"; //
+    public static final String NA_LINE_SERIES_BRONCO_FE_4DOOR_AWD = "E5E"; //
+    public static final String NA_LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
+    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
 
-    public static final String LINE_SERIES_BRONCOSPORT_BASE_4x4 = "R9A";
-    public static final String LINE_SERIES_BRONCOSPORT_BIGBEND_4x4 = "R9B";
-    public static final String LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4 = "R9C";
-    public static final String LINE_SERIES_BRONCOSPORT_BADLANDS_4x4 = "R9D";
-    public static final String LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4 = "R9E";
+    public static final String NA_LINE_SERIES_BRONCOSPORT_BASE_4x4 = "R9A";
+    public static final String NA_LINE_SERIES_BRONCOSPORT_BIGBEND_4x4 = "R9B";
+    public static final String NA_LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4 = "R9C";
+    public static final String NA_LINE_SERIES_BRONCOSPORT_BADLANDS_4x4 = "R9D";
+    public static final String NA_LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4 = "R9E";
 
-    public static final String LINE_SERIES_EXPLORER_BASE_RWD = "K7B";
-    public static final String LINE_SERIES_EXPLORER_XLT_RWD = "K7D";
-    public static final String LINE_SERIES_EXPLORER_LIMITED_RWD = "K7F";
-    public static final String LINE_SERIES_EXPLORER_PLATINUM_RWD = "K7H";
-    public static final String LINE_SERIES_EXPLORER_KING_RWD = "K7L";
-    public static final String LINE_SERIES_EXPLORER_ST_RWD = "K7G";
-    public static final String LINE_SERIES_EXPLORER_STLINE_RWD = "K7K";
-    public static final String LINE_SERIES_EXPLORER_POLICE = "K8A";
-    public static final String LINE_SERIES_EXPLORER_BASE_4WD = "K8B";
-    public static final String LINE_SERIES_EXPLORER_XLT_4WD = "K8D";
-    public static final String LINE_SERIES_EXPLORER_LIMITED_4WD = "K8F";
-    public static final String LINE_SERIES_EXPLORER_ST_4WD = "K8G";
-    public static final String LINE_SERIES_EXPLORER_PLATINUM_4WD = "K8H";
-    public static final String LINE_SERIES_EXPLORER_KING_4WD = "K8L";
-    public static final String LINE_SERIES_EXPLORER_STLINE_4WD = "K8K";
-    public static final String LINE_SERIES_EXPLORER_TIMBERLINE_4WD = "K8J";
+    public static final String NA_LINE_SERIES_EXPLORER_BASE_RWD = "K7B";
+    public static final String NA_LINE_SERIES_EXPLORER_XLT_RWD = "K7D";
+    public static final String NA_LINE_SERIES_EXPLORER_LIMITED_RWD = "K7F";
+    public static final String NA_LINE_SERIES_EXPLORER_PLATINUM_RWD = "K7H";
+    public static final String NA_LINE_SERIES_EXPLORER_KING_RWD = "K7L";
+    public static final String NA_LINE_SERIES_EXPLORER_ST_RWD = "K7G";
+    public static final String NA_LINE_SERIES_EXPLORER_STLINE_RWD = "K7K";
+    public static final String NA_LINE_SERIES_EXPLORER_POLICE = "K8A";
+    public static final String NA_LINE_SERIES_EXPLORER_BASE_4WD = "K8B";
+    public static final String NA_LINE_SERIES_EXPLORER_XLT_4WD = "K8D";
+    public static final String NA_LINE_SERIES_EXPLORER_LIMITED_4WD = "K8F";
+    public static final String NA_LINE_SERIES_EXPLORER_ST_4WD = "K8G";
+    public static final String NA_LINE_SERIES_EXPLORER_PLATINUM_4WD = "K8H";
+    public static final String NA_LINE_SERIES_EXPLORER_KING_4WD = "K8L";
+    public static final String NA_LINE_SERIES_EXPLORER_STLINE_4WD = "K8K";
+    public static final String NA_LINE_SERIES_EXPLORER_TIMBERLINE_4WD = "K8J";
 
-    public static final String LINE_SERIES_ESCAPE_S_RWD = "U0F";
-    public static final String LINE_SERIES_ESCAPE_SE_RWD = "U0G";
-    public static final String LINE_SERIES_ESCAPE_SEL_RWD = "U0H";
-    public static final String LINE_SERIES_ESCAPE_SE_FHEV_RWD = "U0B";
-    public static final String LINE_SERIES_ESCAPE_SEL_FHEV_RWD = "U0C";
-    public static final String LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD = "U0D";
-    public static final String LINE_SERIES_ESCAPE_SE_PHEV_RWD = "U0E";
-    public static final String LINE_SERIES_ESCAPE_SEL_PHEV_RWD = "U0K";
-    public static final String LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD = "U0L";
-    public static final String LINE_SERIES_ESCAPE_S_4WD = "U9F";
-    public static final String LINE_SERIES_ESCAPE_SE_4WD = "U9G";
-    public static final String LINE_SERIES_ESCAPE_SEL_4WD = "U9H";
-    public static final String LINE_SERIES_ESCAPE_TITANIUM_4WD = "U9J";
-    public static final String LINE_SERIES_ESCAPE_SE_FHEV_4WD = "U9B";
-    public static final String LINE_SERIES_ESCAPE_SEL_FHEV_4WD = "U9C";
-    public static final String LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD = "U9D";
+    public static final String NA_LINE_SERIES_ESCAPE_S_RWD = "U0F";
+    public static final String NA_LINE_SERIES_ESCAPE_SE_RWD = "U0G";
+    public static final String NA_LINE_SERIES_ESCAPE_SEL_RWD = "U0H";
+    public static final String NA_LINE_SERIES_ESCAPE_SE_FHEV_RWD = "U0B";
+    public static final String NA_LINE_SERIES_ESCAPE_SEL_FHEV_RWD = "U0C";
+    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD = "U0D";
+    public static final String NA_LINE_SERIES_ESCAPE_SE_PHEV_RWD = "U0E";
+    public static final String NA_LINE_SERIES_ESCAPE_SEL_PHEV_RWD = "U0K";
+    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD = "U0L";
+    public static final String NA_LINE_SERIES_ESCAPE_S_4WD = "U9F";
+    public static final String NA_LINE_SERIES_ESCAPE_SE_4WD = "U9G";
+    public static final String NA_LINE_SERIES_ESCAPE_SEL_4WD = "U9H";
+    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_4WD = "U9J";
+    public static final String NA_LINE_SERIES_ESCAPE_SE_FHEV_4WD = "U9B";
+    public static final String NA_LINE_SERIES_ESCAPE_SEL_FHEV_4WD = "U9C";
+    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD = "U9D";
 
-    public static final String LINE_SERIES_EDGE_ST_AWD = "K4A";
-    public static final String LINE_SERIES_EDGE_SE_AWD = "K4G";
-    public static final String LINE_SERIES_EDGE_SEL_AWD = "K4J";
-    public static final String LINE_SERIES_EDGE_TITANIUM_AWD = "K4K";
+    public static final String NA_LINE_SERIES_EDGE_ST_AWD = "K4A";
+    public static final String NA_LINE_SERIES_EDGE_SE_AWD = "K4G";
+    public static final String NA_LINE_SERIES_EDGE_SEL_AWD = "K4J";
+    public static final String NA_LINE_SERIES_EDGE_TITANIUM_AWD = "K4K";
 
-    public static final String LINE_SERIES_EXPEDITION_MAX_XL_4x2 = "K1F";
-    public static final String LINE_SERIES_EXPEDITION_MAX_XL_4x4 = "K1G";
-    public static final String LINE_SERIES_EXPEDITION_MAX_XLT_4x2 = "K1H";
-    public static final String LINE_SERIES_EXPEDITION_MAX_XLT_4x4 = "K1J";
-    public static final String LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2 = "K1N";
-    public static final String LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4 = "K1P";
-    public static final String LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2 = "K1K";
-    public static final String LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4 = "K2A";
-    public static final String LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2 = "K1L";
-    public static final String LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4 = "K1M";
-    public static final String LINE_SERIES_EXPEDITION_XL_4x2 = "U1F";
-    public static final String LINE_SERIES_EXPEDITION_XL_4x4 = "U1G";
-    public static final String LINE_SERIES_EXPEDITION_XLT_4x2 = "U1H";
-    public static final String LINE_SERIES_EXPEDITION_XLT_4x4 = "U1J";
-    public static final String LINE_SERIES_EXPEDITION_KINGRANCH_4x2 = "U1N";
-    public static final String LINE_SERIES_EXPEDITION_KINGRANCH_4x4 = "U1P";
-    public static final String LINE_SERIES_EXPEDITION_LIMITED_4x2 = "U1K";
-    public static final String LINE_SERIES_EXPEDITION_LIMITED_4x4 = "U2A";
-    public static final String LINE_SERIES_EXPEDITION_PLATINUM_4x2 = "U1L";
-    public static final String LINE_SERIES_EXPEDITION_PLATINUM_4x4 = "U1M";
-    public static final String LINE_SERIES_EXPEDITION_TIMBERLINE_4x4 = "U1R";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2 = "K1F";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4 = "K1G";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x2 = "K1H";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x4 = "K1J";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2 = "K1N";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4 = "K1P";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2 = "K1K";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4 = "K2A";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2 = "K1L";
+    public static final String NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4 = "K1M";
+    public static final String NA_LINE_SERIES_EXPEDITION_XL_4x2 = "U1F";
+    public static final String NA_LINE_SERIES_EXPEDITION_XL_4x4 = "U1G";
+    public static final String NA_LINE_SERIES_EXPEDITION_XLT_4x2 = "U1H";
+    public static final String NA_LINE_SERIES_EXPEDITION_XLT_4x4 = "U1J";
+    public static final String NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x2 = "U1N";
+    public static final String NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x4 = "U1P";
+    public static final String NA_LINE_SERIES_EXPEDITION_LIMITED_4x2 = "U1K";
+    public static final String NA_LINE_SERIES_EXPEDITION_LIMITED_4x4 = "U2A";
+    public static final String NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2 = "U1L";
+    public static final String NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4 = "U1M";
+    public static final String NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4 = "U1R";
 
-    public static final int FUEL_TYPE_START_INDEX = 8 - 1;
-    public static final int FUEL_TYPE_END_INDEX = 8;
-    public static final String HYBRID_TRUCK_2_5_LITER = "3";
-    public static final String ELEC_TRUCK_EXT_BATT_REAR_MOTOR = "7";
-    public static final String HYBRID_TRUCK_3_5_LITER = "D";
-    public static final String ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
-    public static final String ELEC_TRUCK_STD_BATT_DUAL_MOTOR = "L";
-    public static final String ELEC_TRUCK_STD_BATT_REAR_MOTOR = "M";
-    public static final String ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
-    public static final String ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
-    public static final String ELEC_TRUCK_EXT_BATT_DUAL_MOTOR = "V";
-    public static final String ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
-    public static final String HYBRID_TRUCK_3_3_LITER = "W";
-    public static final String PHEV_TRUCK_3_0_LITER = "Y";
-    public static final String PHEV_TRUCK_2_5_LITER = "Z";
-    public static final String ELEC_CAR_EXT_BATT_REAR_MOTOR = "7";
-    public static final String ELEC_CAR_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
-    public static final String ELEC_CAR_STD_BATT_REAR_MOTOR = "M";
-    public static final String ELEC_CAR_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
-    public static final String ELEC_CAR_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
-    public static final String ELEC_CAR_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
+    public static final int EURO_LINE_SERIES_START_INDEX = 7 - 1;
+    public static final int EURO_LINE_SERIES_END_INDEX = 9;
 
-    public static final int FUEL_UNKNOWN = 0;
-    public static final int FUEL_GAS = FUEL_UNKNOWN + 1;
-    public static final int FUEL_HYBRID = FUEL_GAS + 1;
-    public static final int FUEL_PHEV = FUEL_HYBRID + 1;
-    public static final int FUEL_ELECTRIC = FUEL_PHEV + 1;
-
-    public static final int MODEL_YEAR_START_INDEX = 10 - 1;
-    public static final int MODEL_YEAR_END_INDEX = 10;
+    public static final String EURO_LINE_SERIES_KUGA = "WPM";
+    public static final String EURO_LINE_SERIES_PUMA = "ERK";
 
     private static final Set<String> macheLineSeries;
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_MACHE_SELECT_RWD);
-        tmpSet.add(LINE_SERIES_MACHE_SELECT_AWD);
-        tmpSet.add(LINE_SERIES_MACHE_CAROUTE1_RWD);
-        tmpSet.add(LINE_SERIES_MACHE_PREMIUM_RWD);
-        tmpSet.add(LINE_SERIES_MACHE_PREMIUM_AWD);
-        tmpSet.add(LINE_SERIES_MACHE_GT_RWD);
+        tmpSet.add(NA_LINE_SERIES_MACHE_SELECT_RWD);
+        tmpSet.add(NA_LINE_SERIES_MACHE_SELECT_AWD);
+        tmpSet.add(NA_LINE_SERIES_MACHE_CAROUTE1_RWD);
+        tmpSet.add(NA_LINE_SERIES_MACHE_PREMIUM_RWD);
+        tmpSet.add(NA_LINE_SERIES_MACHE_PREMIUM_AWD);
+        tmpSet.add(NA_LINE_SERIES_MACHE_GT_RWD);
         macheLineSeries = tmpSet;
     }
 
     public static boolean isMachE(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) ||
-                (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV) && macheLineSeries.contains(lineSeries));
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+        return (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) ||
+                WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)) && macheLineSeries.contains(lineSeries);
     }
 
     private static final Set<String> f150RegularCabsLineSeries;
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_F150_REGULAR_4X2);
-        tmpSet.add(LINE_SERIES_F150_REGULAR_4X4);
+        tmpSet.add(NA_LINE_SERIES_F150_REGULAR_4X2);
+        tmpSet.add(NA_LINE_SERIES_F150_REGULAR_4X4);
         f150RegularCabsLineSeries = tmpSet;
     }
 
     public static boolean isF150RegularCab(String VIN) {
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return f150RegularCabsLineSeries.contains(lineSeries);
     }
 
@@ -240,13 +215,13 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X2);
-        tmpSet.add(LINE_SERIES_F150_SUPERCAB_4X4);
+        tmpSet.add(NA_LINE_SERIES_F150_SUPERCAB_4X2);
+        tmpSet.add(NA_LINE_SERIES_F150_SUPERCAB_4X4);
         f150SuperCabsLineSeries = tmpSet;
     }
 
     public static boolean isF150SuperCab(String VIN) {
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return f150SuperCabsLineSeries.contains(lineSeries);
     }
 
@@ -254,22 +229,22 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X2);
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4);
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_POLICE);
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X2_SSV);
-        tmpSet.add(LINE_SERIES_F150_SUPERCREW_4X4_SSV);
+        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X2);
+        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4);
+        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4_POLICE);
+        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X2_SSV);
+        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4_SSV);
         f150SuperCrewsLineSeries = tmpSet;
     }
 
     public static boolean isF150SuperCrew(String VIN) {
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return f150SuperCrewsLineSeries.contains(lineSeries);
     }
 
     public static boolean isF150Raptor(String VIN) {
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return lineSeries.equals(LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+        return lineSeries.equals(NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR);
     }
 
     public static boolean isF150(String VIN) {
@@ -282,28 +257,28 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_EXPLORER_BASE_RWD);
-        tmpSet.add(LINE_SERIES_EXPLORER_XLT_RWD);
-        tmpSet.add(LINE_SERIES_EXPLORER_LIMITED_RWD);
-        tmpSet.add(LINE_SERIES_EXPLORER_PLATINUM_RWD);
-        tmpSet.add(LINE_SERIES_EXPLORER_KING_RWD);
-        tmpSet.add(LINE_SERIES_EXPLORER_ST_RWD);
-        tmpSet.add(LINE_SERIES_EXPLORER_STLINE_RWD);
-        tmpSet.add(LINE_SERIES_EXPLORER_POLICE);
-        tmpSet.add(LINE_SERIES_EXPLORER_BASE_4WD);
-        tmpSet.add(LINE_SERIES_EXPLORER_XLT_4WD);
-        tmpSet.add(LINE_SERIES_EXPLORER_LIMITED_4WD);
-        tmpSet.add(LINE_SERIES_EXPLORER_ST_4WD);
-        tmpSet.add(LINE_SERIES_EXPLORER_PLATINUM_4WD);
-        tmpSet.add(LINE_SERIES_EXPLORER_KING_4WD);
-        tmpSet.add(LINE_SERIES_EXPLORER_STLINE_4WD);
-        tmpSet.add(LINE_SERIES_EXPLORER_TIMBERLINE_4WD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_BASE_RWD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_XLT_RWD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_LIMITED_RWD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_PLATINUM_RWD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_KING_RWD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_ST_RWD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_STLINE_RWD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_POLICE);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_BASE_4WD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_XLT_4WD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_LIMITED_4WD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_ST_4WD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_PLATINUM_4WD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_KING_4WD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_STLINE_4WD);
+        tmpSet.add(NA_LINE_SERIES_EXPLORER_TIMBERLINE_4WD);
         explorerLineSeries = tmpSet;
     }
 
     public static boolean isExplorer(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && explorerLineSeries.contains(lineSeries);
     }
 
@@ -311,19 +286,19 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_BRONCO_BASE_2DOOR_4X4);
-        tmpSet.add(LINE_SERIES_BRONCO_BASE_4DOOR_4X4);
-        tmpSet.add(LINE_SERIES_BRONCO_BASE_2DOOR_AWD);
-        tmpSet.add(LINE_SERIES_BRONCO_BASE_4DOOR_AWD);
-        tmpSet.add(LINE_SERIES_BRONCO_FE_4DOOR_AWD);
-        tmpSet.add(LINE_SERIES_BRONCO_FE_2DOOR_AWD);
-        tmpSet.add(LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR);
+        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4);
+        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4);
+        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_2DOOR_AWD);
+        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD);
+        tmpSet.add(NA_LINE_SERIES_BRONCO_FE_4DOOR_AWD);
+        tmpSet.add(NA_LINE_SERIES_BRONCO_FE_2DOOR_AWD);
+        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR);
         broncoLineSeries = tmpSet;
     }
 
     public static boolean isBronco(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoLineSeries.contains(lineSeries);
     }
 
@@ -331,17 +306,17 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_BRONCOSPORT_BASE_4x4);
-        tmpSet.add(LINE_SERIES_BRONCOSPORT_BIGBEND_4x4);
-        tmpSet.add(LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4);
-        tmpSet.add(LINE_SERIES_BRONCOSPORT_BADLANDS_4x4);
-        tmpSet.add(LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4);
+        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BASE_4x4);
+        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BIGBEND_4x4);
+        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4);
+        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BADLANDS_4x4);
+        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4);
         broncoSportLineSeries = tmpSet;
     }
 
     public static boolean isBroncoSport(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoSportLineSeries.contains(lineSeries);
     }
 
@@ -349,28 +324,28 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_ESCAPE_S_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SE_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SEL_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SE_FHEV_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SEL_FHEV_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SE_PHEV_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SEL_PHEV_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD);
-        tmpSet.add(LINE_SERIES_ESCAPE_S_4WD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SE_4WD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SEL_4WD);
-        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_4WD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SE_FHEV_4WD);
-        tmpSet.add(LINE_SERIES_ESCAPE_SEL_FHEV_4WD);
-        tmpSet.add(LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_S_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_FHEV_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_FHEV_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_PHEV_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_PHEV_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_S_4WD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_4WD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_4WD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_4WD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_FHEV_4WD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_FHEV_4WD);
+        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD);
         escapeLineSeries = tmpSet;
     }
 
     public static boolean isEscape(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && escapeLineSeries.contains(lineSeries);
     }
 
@@ -378,16 +353,16 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_EDGE_ST_AWD);
-        tmpSet.add(LINE_SERIES_EDGE_SE_AWD);
-        tmpSet.add(LINE_SERIES_EDGE_SEL_AWD);
-        tmpSet.add(LINE_SERIES_EDGE_TITANIUM_AWD);
+        tmpSet.add(NA_LINE_SERIES_EDGE_ST_AWD);
+        tmpSet.add(NA_LINE_SERIES_EDGE_SE_AWD);
+        tmpSet.add(NA_LINE_SERIES_EDGE_SEL_AWD);
+        tmpSet.add(NA_LINE_SERIES_EDGE_TITANIUM_AWD);
         edgeLineSeries = tmpSet;
     }
 
     public static boolean isEdge(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && edgeLineSeries.contains(lineSeries);
     }
 
@@ -395,54 +370,101 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_XL_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_XL_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_XLT_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_XLT_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_XL_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_XL_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_XLT_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_XLT_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_KINGRANCH_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_KINGRANCH_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_LIMITED_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_LIMITED_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_PLATINUM_4x2);
-        tmpSet.add(LINE_SERIES_EXPEDITION_PLATINUM_4x4);
-        tmpSet.add(LINE_SERIES_EXPEDITION_TIMBERLINE_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XL_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XL_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XLT_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XLT_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_LIMITED_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_LIMITED_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4);
+        tmpSet.add(NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4);
         expeditionLineSeries = tmpSet;
     }
 
     public static boolean isExpedition(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
+        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && expeditionLineSeries.contains(lineSeries);
+    }
+
+    public static boolean isKuga(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) && lineSeries.equals(EURO_LINE_SERIES_KUGA);
+    }
+
+    public static boolean isPuma(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) && lineSeries.equals(EURO_LINE_SERIES_PUMA);
     }
 
     // Check to see if we recognize a VIN in general
     public static boolean isVINRecognized(String VIN) {
-        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN)
-                | isEscape(VIN) | isEdge(VIN) | isExpedition(VIN);
+        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) || isBroncoSport(VIN)
+                || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)
+                || isKuga(VIN) || isPuma(VIN);
     }
+
+    public static final int NA_FUEL_TYPE_START_INDEX = 8 - 1;
+    public static final int NA_FUEL_TYPE_END_INDEX = 8;
+
+    public static final String NA_HYBRID_TRUCK_2_5_LITER = "3";
+    public static final String NA_ELEC_TRUCK_EXT_BATT_REAR_MOTOR = "7";
+    public static final String NA_HYBRID_TRUCK_3_5_LITER = "D";
+    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
+    public static final String NA_ELEC_TRUCK_STD_BATT_DUAL_MOTOR = "L";
+    public static final String NA_ELEC_TRUCK_STD_BATT_REAR_MOTOR = "M";
+    public static final String NA_ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
+    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
+    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_MOTOR = "V";
+    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
+    public static final String NA_HYBRID_TRUCK_3_3_LITER = "W";
+    public static final String NA_PHEV_TRUCK_3_0_LITER = "Y";
+    public static final String NA_PHEV_TRUCK_2_5_LITER = "Z";
+//    public static final String NA_ELEC_CAR_EXT_BATT_REAR_MOTOR = "7";
+//    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
+//    public static final String NA_ELEC_CAR_STD_BATT_REAR_MOTOR = "M";
+//    public static final String NA_ELEC_CAR_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
+//    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
+//    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
+
+    public static final int EURO_FUEL_TYPE_START_INDEX = 10 - 1;
+    public static final int EURO_FUEL_TYPE_END_INDEX = 10;
+
+    public static final String EURO_PHEV = "H";
+
+    public static final int FUEL_UNKNOWN = 0;
+    public static final int FUEL_GAS = FUEL_UNKNOWN + 1;
+    public static final int FUEL_HYBRID = FUEL_GAS + 1;
+    public static final int FUEL_PHEV = FUEL_HYBRID + 1;
+    public static final int FUEL_ELECTRIC = FUEL_PHEV + 1;
 
     private static final Set<String> fuelElectric;
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(ELEC_TRUCK_STD_BATT_DUAL_MOTOR);
-        tmpSet.add(ELEC_TRUCK_EXT_BATT_REAR_MOTOR);
-        tmpSet.add(ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR);
-        tmpSet.add(ELEC_TRUCK_STD_BATT_REAR_MOTOR);
-        tmpSet.add(ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
-        tmpSet.add(ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
-        tmpSet.add(ELEC_TRUCK_EXT_BATT_DUAL_MOTOR);
-        tmpSet.add(ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR);
+        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_DUAL_MOTOR);
+        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_REAR_MOTOR);
+        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR);
+        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_REAR_MOTOR);
+        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
+        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
+        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_MOTOR);
+        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR);
         fuelElectric = tmpSet;
     }
 
@@ -450,9 +472,9 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(HYBRID_TRUCK_2_5_LITER);
-        tmpSet.add(HYBRID_TRUCK_3_3_LITER);
-        tmpSet.add(HYBRID_TRUCK_3_5_LITER);
+        tmpSet.add(NA_HYBRID_TRUCK_2_5_LITER);
+        tmpSet.add(NA_HYBRID_TRUCK_3_3_LITER);
+        tmpSet.add(NA_HYBRID_TRUCK_3_5_LITER);
         fuelHybrid = tmpSet;
     }
 
@@ -460,8 +482,9 @@ public class Utils {
 
     static {
         Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(PHEV_TRUCK_2_5_LITER);
-        tmpSet.add(PHEV_TRUCK_3_0_LITER);
+        tmpSet.add(NA_PHEV_TRUCK_2_5_LITER);
+        tmpSet.add(NA_PHEV_TRUCK_3_0_LITER);
+        tmpSet.add(EURO_PHEV);
         fuelPHEV = tmpSet;
     }
 
@@ -473,12 +496,19 @@ public class Utils {
         // Otherwise check the VIN
         else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
                 || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)) {
-            String fuelType = VIN.substring(FUEL_TYPE_START_INDEX, FUEL_TYPE_END_INDEX);
+            String fuelType = VIN.substring(NA_FUEL_TYPE_START_INDEX, NA_FUEL_TYPE_END_INDEX);
             if (fuelElectric.contains(fuelType)) {
                 return FUEL_ELECTRIC;
             } else if (fuelHybrid.contains(fuelType)) {
                 return FUEL_HYBRID;
             } else if (fuelPHEV.contains(fuelType)) {
+                return FUEL_PHEV;
+            } else {
+                return FUEL_GAS;
+            }
+        } else if (isKuga(VIN) || isPuma(VIN)) {
+            String fuelType = VIN.substring(EURO_FUEL_TYPE_START_INDEX, EURO_FUEL_TYPE_END_INDEX);
+            if (fuelPHEV.contains(fuelType)) {
                 return FUEL_PHEV;
             } else {
                 return FUEL_GAS;
@@ -691,7 +721,7 @@ public class Utils {
                 return R.layout.bronco_widget;
             } else if (isExplorer(VIN)) {
                 return R.layout.explorer_widget;
-            } else if (isEscape(VIN)) {
+            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
                 return R.layout.escape_widget;
             } else if (isEdge(VIN)) {
                 return R.layout.escape_widget;
@@ -908,7 +938,7 @@ public class Utils {
                 return broncobase4x4Drawables_1x5;
             } else if (isExplorer(VIN)) {
                 return explorerSTDrawables_1x5;
-            } else if (isEscape(VIN)) {
+            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
                 return escapeDrawables_1x5;
             } else if (isEdge(VIN)) {
                 return edgeDrawables_1x5;
@@ -942,8 +972,20 @@ public class Utils {
         modelYears = tmpMap;
     }
 
+    public static final int NA_MODEL_YEAR_START_INDEX = 10 - 1;
+    public static final int NA_MODEL_YEAR_END_INDEX = 10;
+
+    public static final int EURO_MODEL_YEAR_START_INDEX = 11 - 1;
+    public static final int EURO_MODEL_YEAR_END_INDEX = 11;
+
     public static int getModelYear(String VIN) {
-        String vehicleYearCode = VIN.substring(MODEL_YEAR_START_INDEX, MODEL_YEAR_END_INDEX);
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String vehicleYearCode;
+        if (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY)) {
+            vehicleYearCode = VIN.substring(EURO_MODEL_YEAR_START_INDEX, EURO_MODEL_YEAR_END_INDEX);
+        } else {
+            vehicleYearCode = VIN.substring(NA_MODEL_YEAR_START_INDEX, NA_MODEL_YEAR_END_INDEX);
+        }
         Integer year = modelYears.get(vehicleYearCode);
         if (year != null) {
             return year;
@@ -1409,7 +1451,7 @@ public class Utils {
         } else if (isExplorer(VIN)) {
             startx = 320; // 628;
             starty = 280; // 176;
-        } else if (isEscape(VIN)) {
+        } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
             startx = 340; // 300;
             starty = 244; // 204;
         } else if (isEdge(VIN)) {
@@ -1548,7 +1590,7 @@ public class Utils {
         ArrayList<String> allImages = new ArrayList<>(Arrays.asList(imageDir.list()));
         Predicate<String> byVIN = thisVIN -> thisVIN.contains(VIN);
         ArrayList<String> myImages = new ArrayList<>(allImages.stream().filter(byVIN).collect(Collectors.toList()));
-        if(!myImages.isEmpty()) {
+        if (!myImages.isEmpty()) {
             int angle = new Random(System.currentTimeMillis()).nextInt(myImages.size());
             File image = new File(imageDir, myImages.get(angle));
             return BitmapFactory.decodeFile(image.getPath());
