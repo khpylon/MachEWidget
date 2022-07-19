@@ -76,6 +76,9 @@ public class Utils {
     public static final int LINE_SERIES_START_INDEX = 5 - 1;
     public static final int LINE_SERIES_END_INDEX = 7;
 
+    public static final int LINE_SERIES_EUROPE_START_INDEX = 9 - 1;
+    public static final int LINE_SERIES_EUROPE_END_INDEX = 11;
+
     public static final String LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
     public static final String LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
     public static final String LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
@@ -141,6 +144,18 @@ public class Utils {
     public static final String LINE_SERIES_ESCAPE_SE_FHEV_4WD = "U9B";
     public static final String LINE_SERIES_ESCAPE_SEL_FHEV_4WD = "U9C";
     public static final String LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD = "U9D";
+
+    public static final String LINE_SERIES_KUGA = "M";
+    public static final String LINE_SERIES_KUGA_HEV = "H";
+    public static final String LINE_SERIES_KUGA_CARBON = "F";
+    public static final String LINE_SERIES_KUGA_YEAR_2019 = "K";
+    public static final String LINE_SERIES_KUGA_YEAR_2020 = "L";
+    public static final String LINE_SERIES_KUGA_YEAR_2021 = "M";
+    public static final String LINE_SERIES_KUGA_YEAR_2022 = "N";
+
+    public static final int KUGA_FUEL_TYPE_START_INDEX = 10 - 1;
+    public static final int KUGA_FUEL_TYPE_END_INDEX = 10;
+
 
     public static final String LINE_SERIES_EDGE_ST_AWD = "K4A";
     public static final String LINE_SERIES_EDGE_SE_AWD = "K4G";
@@ -216,7 +231,7 @@ public class Utils {
     public static boolean isMachE(String VIN) {
         String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
         String lineSeries = VIN.substring(LINE_SERIES_START_INDEX, LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) ||
+        return (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) && !isKuga(VIN)) ||
                 (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV) && macheLineSeries.contains(lineSeries));
     }
 
@@ -343,6 +358,44 @@ public class Utils {
         return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoSportLineSeries.contains(lineSeries);
     }
 
+    private static final Set<String> kugaLineSeriesEngines;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_KUGA_HEV);
+        tmpSet.add(LINE_SERIES_KUGA_CARBON);
+        kugaLineSeriesEngines = tmpSet;
+    }
+
+    private static final Set<String> kugaLineSeriesYears;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        tmpSet.add(LINE_SERIES_KUGA_YEAR_2019);
+        tmpSet.add(LINE_SERIES_KUGA_YEAR_2020);
+        tmpSet.add(LINE_SERIES_KUGA_YEAR_2021);
+        tmpSet.add(LINE_SERIES_KUGA_YEAR_2022);
+        kugaLineSeriesYears = tmpSet;
+    }
+
+    private static final Set<String> kugaLineSeries;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
+        for (String engineString : kugaLineSeriesEngines) {
+            for (String yearString : kugaLineSeriesYears) {
+                tmpSet.add(LINE_SERIES_KUGA + engineString + yearString);
+            }
+        }
+        kugaLineSeries = tmpSet;
+    }
+
+    public static boolean isKuga(String VIN) {
+        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+        String lineSeries = VIN.substring(LINE_SERIES_EUROPE_START_INDEX, LINE_SERIES_EUROPE_END_INDEX);
+        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) && kugaLineSeries.contains(lineSeries);
+    }
+
     private static final Set<String> escapeLineSeries;
 
     static {
@@ -426,7 +479,7 @@ public class Utils {
     // Check to see if we recognize a VIN in general
     public static boolean isVINRecognized(String VIN) {
         return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) | isBroncoSport(VIN)
-                | isEscape(VIN) | isEdge(VIN) | isExpedition(VIN);
+                | isEscape(VIN) | isEdge(VIN) | isExpedition(VIN) | isKuga(VIN);
     }
 
     private static final Set<String> fuelElectric;
@@ -467,6 +520,13 @@ public class Utils {
         // Default is a Mach-E
         if (VIN == null || VIN.equals("") || isMachE(VIN)) {
             return FUEL_ELECTRIC;
+        } else if (isKuga(VIN)) {
+            String fuelType = VIN.substring(KUGA_FUEL_TYPE_START_INDEX, KUGA_FUEL_TYPE_END_INDEX);
+            if (fuelType.contains(LINE_SERIES_KUGA_HEV)) {
+                return FUEL_PHEV;
+            } else { // if (fuelType.contains(LINE_SERIES_KUGA_CARBON)) // diesel and gasoline
+                return FUEL_GAS;
+            }
         }
         // Otherwise check the VIN
         else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
@@ -670,7 +730,7 @@ public class Utils {
                 return broncobase4x4Drawables;
             } else if (isExplorer(VIN)) {
                 return explorerSTDrawables;
-            } else if (isEscape(VIN)) {
+            } else if (isEscape(VIN) | isKuga(VIN)) {
                 return escapeDrawables;
             } else if (isEdge(VIN)) {
                 return edgeDrawables;
@@ -689,7 +749,7 @@ public class Utils {
                 return R.layout.bronco_widget;
             } else if (isExplorer(VIN)) {
                 return R.layout.explorer_widget;
-            } else if (isEscape(VIN)) {
+            } else if (isEscape(VIN) | isKuga(VIN)) {
                 return R.layout.escape_widget;
             } else if (isEdge(VIN)) {
                 return R.layout.escape_widget;
@@ -906,7 +966,7 @@ public class Utils {
                 return broncobase4x4Drawables_1x5;
             } else if (isExplorer(VIN)) {
                 return explorerSTDrawables_1x5;
-            } else if (isEscape(VIN)) {
+            } else if (isEscape(VIN) || isKuga(VIN)) {
                 return escapeDrawables_1x5;
             } else if (isEdge(VIN)) {
                 return edgeDrawables_1x5;
@@ -1407,7 +1467,7 @@ public class Utils {
         } else if (isExplorer(VIN)) {
             startx = 320; // 628;
             starty = 280; // 176;
-        } else if (isEscape(VIN)) {
+        } else if (isEscape(VIN) || isKuga(VIN)) {
             startx = 340; // 300;
             starty = 244; // 204;
         } else if (isEdge(VIN)) {
