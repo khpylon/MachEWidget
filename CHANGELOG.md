@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.07.20
+### Added
+- Support for Kuga vehicles (cousin of the Escape).  Thanks to @consp for contributing!
+- Initial support for Puma vehicles.  There are currently no known users, so if you are a Puma owner and have issues, please submit a bug report.
+
+### Fixed
+- Miniature widget was not drawing lock icon for some vehicles when color vehicles was enabled.
+- More bugs caught by Google Play Store.
+
 ## 2022.07.18
 ### Fixed
 - Fix various bugs discovered from Google Play automated feedback.
