@@ -702,7 +702,7 @@ public class Utils {
                 return broncobase4x4Drawables;
             } else if (isExplorer(VIN)) {
                 return explorerSTDrawables;
-            } else if (isEscape(VIN)) {
+            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
                 return escapeDrawables;
             } else if (isEdge(VIN)) {
                 return edgeDrawables;
@@ -724,7 +724,7 @@ public class Utils {
             } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
                 return R.layout.escape_widget;
             } else if (isEdge(VIN)) {
-                return R.layout.escape_widget;
+                return R.layout.edge_widget;
             } else if (isExpedition(VIN)) {
                 return R.layout.explorer_widget;
             }
@@ -1451,9 +1451,15 @@ public class Utils {
         } else if (isExplorer(VIN)) {
             startx = 320; // 628;
             starty = 280; // 176;
-        } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
+        } else if (isEscape(VIN)) {
             startx = 340; // 300;
             starty = 244; // 204;
+        } else if (isKuga(VIN)) {
+            startx = 340;
+            starty = 280;
+        } else if (isPuma(VIN)) {
+            startx = 172;
+            starty = 288;
         } else if (isEdge(VIN)) {
             startx = 240; // 284;
             starty = 200; // 208;
