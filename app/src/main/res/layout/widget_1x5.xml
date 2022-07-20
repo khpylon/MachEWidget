@@ -172,17 +172,6 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/lock_electric"
-        android:layout_width="24dp"
-        android:layout_height="100dp"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@id/icons"
-        android:layout_marginLeft="75dp"
-        android:src="@drawable/locked_icon_green"
-        android:layout_weight="1"
-        android:visibility="visible"/>
-
     <!--
     <ImageView
         android:id="@+id/hood"
@@ -345,5 +334,16 @@
         android:layout_alignLeft="@id/wireframe"
         android:layout_alignBottom="@id/wireframe"
         android:src="@drawable/refresh_icon" />
+
+    <ImageView
+        android:id="@+id/lock_electric"
+        android:layout_width="24dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/icons"
+        android:layout_marginLeft="75dp"
+        android:src="@drawable/locked_icon_green"
+        android:layout_weight="1"
+        android:visibility="visible"/>
 
 </RelativeLayout>
