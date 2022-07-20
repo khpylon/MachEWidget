@@ -6,7 +6,10 @@ import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -61,17 +64,20 @@ public class NetworkCalls {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         // Details about the currently active default data network
-        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-
-        if (networkInfo == null) {
-            return false;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+            return networkInfo != null && !networkInfo.isConnected() && networkInfo.isAvailable();
+        } else {
+            Network networkInfo = connManager.getActiveNetwork();
+            if(networkInfo == null) {
+                return false;
+            }
+            NetworkCapabilities networkCapabilities = connManager.getNetworkCapabilities(networkInfo);
+            return networkCapabilities != null &&
+                    (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                    || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
         }
-
-        if (!networkInfo.isConnected()) {
-            return false;
-        }
-
-        return networkInfo.isAvailable();
     }
 
     public static void getAccessToken(Handler handler, Context context, String username, String password) {
