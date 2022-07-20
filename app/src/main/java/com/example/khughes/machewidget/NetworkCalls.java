@@ -66,7 +66,7 @@ public class NetworkCalls {
         // Details about the currently active default data network
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-            return networkInfo != null && !networkInfo.isConnected() && networkInfo.isAvailable();
+            return networkInfo != null && networkInfo.isConnected() && networkInfo.isAvailable();
         } else {
             Network networkInfo = connManager.getActiveNetwork();
             if(networkInfo == null) {
