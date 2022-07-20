@@ -702,7 +702,7 @@ public class Utils {
                 return broncobase4x4Drawables;
             } else if (isExplorer(VIN)) {
                 return explorerSTDrawables;
-            } else if (isEscape(VIN)) {
+            } else if (isEscape(VIN) || isKuga(VIN)) {
                 return escapeDrawables;
             } else if (isEdge(VIN)) {
                 return edgeDrawables;
@@ -1616,3 +1616,4 @@ public class Utils {
 
 
 }
+
