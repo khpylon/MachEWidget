@@ -360,67 +360,6 @@
             android:layout_below="@id/right_top_icons"
             android:visibility="visible">
 
-            <!--
-            <ImageView
-                android:id="@+id/hood"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_frunk_horz" />
-
-            <ImageView
-                android:id="@+id/tailgate"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_hatch_horz" />
-
-            <ImageView
-                android:id="@+id/lt_ft_door"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_lfdoor_horz" />
-
-            <ImageView
-                android:id="@+id/lt_ft_window"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_lfwindow_horz" />
-
-            <ImageView
-                android:id="@+id/rt_ft_door"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_rfdoor_horz" />
-
-            <ImageView
-                android:id="@+id/rt_ft_window"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_rfwindow_horz" />
-
-            <ImageView
-                android:id="@+id/lt_rr_door"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_lrdoor_horz" />
-
-            <ImageView
-                android:id="@+id/lt_rr_window"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_lrwindow_horz" />
-
-            <ImageView
-                android:id="@+id/rt_rr_door"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_rrdoor_horz" />
-
-            <ImageView
-                android:id="@+id/rt_rr_window"
-                android:layout_width="@dimen/vehicle_width"
-                android:layout_height="@dimen/vehicle_height"
-                android:src="@drawable/mache_rrwindow_horz" />
-        -->
 
             <ImageView
                 android:id="@+id/wireframe"
