@@ -586,7 +586,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         Boolean useColor = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.use_colors_key), false);
 
-        Utils.drawColoredVehicle( context, bmp,  vehicleColor, new ArrayList<>(), useColor, vehicleImages);
+        Utils.drawColoredVehicle( context, bmp,  vehicleColor, whatsOpen, useColor, vehicleImages);
         views.setImageViewBitmap(R.id.wireframe, bmp);
     }
 
