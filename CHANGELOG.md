@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.07.21
+### Fixed
+- Open windows and doors were not being displayed on the widget.
+- Some North American vehicles were incorrectly identified as PHEVs.
+
 ## 2022.07.20
 ### Added
 - Support for Kuga vehicles (cousin of the Escape).  Thanks to @consp for contributing!
