@@ -38,6 +38,7 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
         whatsOpen.add(isWindowClosed(carStatus.getPassengerWindow()) ? null : vehicleImages.get(Utils.RIGHT_FRONT_WINDOW));
         whatsOpen.add(isWindowClosed(carStatus.getLeftRearWindow()) ? null : vehicleImages.get(Utils.LEFT_REAR_WINDOW));
         whatsOpen.add(isWindowClosed(carStatus.getRightRearWindow()) ? null : vehicleImages.get(Utils.RIGHT_REAR_WINDOW));
+
         super.drawVehicleImage(context, views, carStatus, vehicleColor, whatsOpen, vehicleImages);
     }
 

@@ -453,7 +453,7 @@ public class Utils {
     public static final int FUEL_PHEV = FUEL_HYBRID + 1;
     public static final int FUEL_ELECTRIC = FUEL_PHEV + 1;
 
-    private static final Set<String> fuelElectric;
+    private static final Set<String> na_fuelElectric;
 
     static {
         Set<String> tmpSet = new HashSet<>();
@@ -465,27 +465,34 @@ public class Utils {
         tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
         tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_MOTOR);
         tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR);
-        fuelElectric = tmpSet;
+        na_fuelElectric = tmpSet;
     }
 
-    private static final Set<String> fuelHybrid;
+    private static final Set<String> na_fuelHybrid;
 
     static {
         Set<String> tmpSet = new HashSet<>();
         tmpSet.add(NA_HYBRID_TRUCK_2_5_LITER);
         tmpSet.add(NA_HYBRID_TRUCK_3_3_LITER);
         tmpSet.add(NA_HYBRID_TRUCK_3_5_LITER);
-        fuelHybrid = tmpSet;
+        na_fuelHybrid = tmpSet;
     }
 
-    private static final Set<String> fuelPHEV;
+    private static final Set<String> na_fuelPHEV;
 
     static {
         Set<String> tmpSet = new HashSet<>();
         tmpSet.add(NA_PHEV_TRUCK_2_5_LITER);
         tmpSet.add(NA_PHEV_TRUCK_3_0_LITER);
+        na_fuelPHEV = tmpSet;
+    }
+
+    private static final Set<String> euro_fuelPHEV;
+
+    static {
+        Set<String> tmpSet = new HashSet<>();
         tmpSet.add(EURO_PHEV);
-        fuelPHEV = tmpSet;
+        euro_fuelPHEV = tmpSet;
     }
 
     public static int getFuelType(String VIN) {
@@ -497,18 +504,18 @@ public class Utils {
         else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
                 || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)) {
             String fuelType = VIN.substring(NA_FUEL_TYPE_START_INDEX, NA_FUEL_TYPE_END_INDEX);
-            if (fuelElectric.contains(fuelType)) {
+            if (na_fuelElectric.contains(fuelType)) {
                 return FUEL_ELECTRIC;
-            } else if (fuelHybrid.contains(fuelType)) {
+            } else if (na_fuelHybrid.contains(fuelType)) {
                 return FUEL_HYBRID;
-            } else if (fuelPHEV.contains(fuelType)) {
+            } else if (na_fuelPHEV.contains(fuelType)) {
                 return FUEL_PHEV;
             } else {
                 return FUEL_GAS;
             }
         } else if (isKuga(VIN) || isPuma(VIN)) {
             String fuelType = VIN.substring(EURO_FUEL_TYPE_START_INDEX, EURO_FUEL_TYPE_END_INDEX);
-            if (fuelPHEV.contains(fuelType)) {
+            if (euro_fuelPHEV.contains(fuelType)) {
                 return FUEL_PHEV;
             } else {
                 return FUEL_GAS;
