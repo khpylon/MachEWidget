@@ -303,6 +303,36 @@ public class CarStatus {
         }
     }
 
+    private static final int PROPULSION_UNKNOWN = 0;
+    private static final int PROPULSION_ELECTRIC = 1;
+    private static final int PROPULSION_PHEV = 2;
+    private static final int PROPULSION_ICE_OR_HYBRID = 3;
+
+    public int getPropulsion() {
+        if (getVehiclestatus() != null) {
+            if (getVehiclestatus().getFuel() == null) {
+                return PROPULSION_ELECTRIC;
+            } else if (getVehiclestatus().getBatteryFillLevel() == null) {
+                return PROPULSION_ICE_OR_HYBRID;
+            } else {
+                return PROPULSION_PHEV;
+            }
+        }
+        return PROPULSION_UNKNOWN;
+    }
+
+    public boolean isPropulsionElectric (int method) {
+        return method == PROPULSION_ELECTRIC;
+    }
+
+    public boolean isPropulsionPHEV (int method) {
+        return method == PROPULSION_PHEV;
+    }
+
+    public boolean isPropulsionICEOrHybrid (int method) {
+        return method == PROPULSION_ICE_OR_HYBRID;
+    }
+
 //    @Generated("jsonschema2pojo")
 //    public class BattTracLoSocDDsply {
 //

@@ -4,10 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
 import android.icu.text.MessageFormat;
@@ -19,14 +15,10 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
@@ -155,7 +147,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         }
 
         // If the vehicle image has been downloaded, update it
-        Boolean useImage = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_image_key), true);
+        boolean useImage = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_image_key), true);
         Bitmap bmp = Utils.getRandomVehicleImage(context, vehicleInfo.getVIN());
         if (useImage && bmp != null) {
             views.setImageViewBitmap(R.id.logo, bmp);
@@ -186,14 +178,22 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
             return;
         }
 
-        int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
-        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
-        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.bottom_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.plug, hasEngine ? View.GONE : View.VISIBLE);
-        setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
+        boolean isICEOrHybrid;
+        boolean isPHEV;
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
+            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
+            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
+            isPHEV = (fuelType == Utils.FUEL_PHEV);
+        } else {
+            isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
+            isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
+        }
+        views.setViewVisibility(R.id.lock_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.bottom_electric, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.plug, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline");
 
         // Get conversion factors for Metric vs Imperial measurement units
         int units = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context)
@@ -234,7 +234,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
         // Draw range and fuel/gas stuff
         boolean twoLines = true;
-        drawRangeFuel(context, views, carStatus, info, vehicleInfo, fuelType,
+        drawRangeFuel(context, views, carStatus, info, vehicleInfo,
                 distanceConversion, distanceUnits, twoLines);
 
         // Current Odometer reading
@@ -312,8 +312,6 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
                     return;
                 }
 
-                String state = info[0].getUser().getProgramState();
-
                 // There may be multiple widgets active, so update all of them
                 for (int appWidgetId : appWidgetIds) {
                     updateAppWidget(context, appWidgetManager, appWidgetId, info[0]);
@@ -362,69 +360,71 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         String widget_action = action + "_" + appWidgetId;
         String widget_VIN = Constants.VIN_KEY + appWidgetId;
 
-        if (action.equals(PROFILE_CLICK)) {
-            ProfileManager.changeProfile(context, widget_VIN);
-            return;
-        } else if (action.equals(PHEVTOGGLE_CLICK)) {
-            String mode = intent.getStringExtra("nextMode");
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            RemoteViews views = getWidgetView(context);
-            String nextMode;
-            if (mode.equals("showGasoline")) {
-                nextMode = "showElectric";
-                views.setViewVisibility(R.id.bottom_electric, View.GONE);
-                views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE);
-            } else {
-                nextMode = "showGasoline";
-                views.setViewVisibility(R.id.bottom_electric, View.VISIBLE);
-                views.setViewVisibility(R.id.bottom_gasoline, View.GONE);
-            }
-            setPHEVCallbacks(context, views, Utils.FUEL_PHEV, appWidgetId, nextMode);
-            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
-            return;
-        } else if (action.equals(REFRESH_CLICK)) {
-            InfoRepository[] info = {null};
-            int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
-            context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, ++clickCount).commit();
-            final Handler handler = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message msg) {
-                    int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
-                    if (clickCount > 2) {
-                        String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
-                        VehicleInfo vehInfo = info[0].getVehicleByVIN(VIN);
-                        UserInfo userInfo = info[0].getUser();
-                        long lastUpdateInMillis = vehInfo.getLastUpdateTime();
-                        String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
-                        String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
-                        Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
-                        long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
-                        String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
-                        Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
-                    }
-                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, 0).commit();
+        switch (action) {
+            case PROFILE_CLICK:
+                ProfileManager.changeProfile(context, widget_VIN);
+                break;
+            case PHEVTOGGLE_CLICK:
+                String mode = intent.getStringExtra("nextMode");
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                RemoteViews views = getWidgetView(context);
+                String nextMode;
+                if (mode.equals("showGasoline")) {
+                    nextMode = "showElectric";
+                    views.setViewVisibility(R.id.bottom_electric, View.GONE);
+                    views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE);
+                } else {
+                    nextMode = "showGasoline";
+                    views.setViewVisibility(R.id.bottom_electric, View.VISIBLE);
+                    views.setViewVisibility(R.id.bottom_gasoline, View.GONE);
                 }
-            };
-            if (clickCount == 1) {
-                new Thread() {
+                setPHEVCallbacks(context, views, true, appWidgetId, nextMode);
+                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+                break;
+            case REFRESH_CLICK:
+                InfoRepository[] info = {null};
+                int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
+                context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, ++clickCount).commit();
+                final Handler handler = new Handler(Looper.getMainLooper()) {
                     @Override
-                    public void run() {
-                        try {
-                            info[0] = new InfoRepository(context);
-                            synchronized (this) {
-                                wait(500);
-                            }
-                            handler.sendEmptyMessage(0);
-                        } catch (InterruptedException ex) {
+                    public void handleMessage(Message msg) {
+                        int clickCount = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getInt(widget_action, 0);
+                        if (clickCount > 2) {
+                            String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, null);
+                            VehicleInfo vehInfo = info[0].getVehicleByVIN(VIN);
+                            UserInfo userInfo = info[0].getUser();
+                            long lastUpdateInMillis = vehInfo.getLastUpdateTime();
+                            String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
+                            String lastUpdate = OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat);
+                            Toast.makeText(context, "Last update at " + lastUpdate, Toast.LENGTH_SHORT).show();
+                            long lastAlarmInMillis = new StoredData(context).getLastAlarmTime();
+                            String lastAlarm = OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat);
+                            Toast.makeText(context, "Last alarm at " + lastAlarm, Toast.LENGTH_SHORT).show();
                         }
+                        context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().putInt(widget_action, 0).commit();
                     }
-                }.start();
-            } else if (clickCount > 3) {
-                context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
-            }
-            return;
-        } else {
-            super.onReceive(context, intent);
+                };
+                if (clickCount == 1) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                info[0] = new InfoRepository(context);
+                                synchronized (this) {
+                                    wait(500);
+                                }
+                                handler.sendEmptyMessage(0);
+                            } catch (InterruptedException ex) {
+                            }
+                        }
+                    }.start();
+                } else if (clickCount > 3) {
+                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit().remove(widget_action).apply();
+                }
+                break;
+            default:
+                super.onReceive(context, intent);
+                break;
         }
     }
 }

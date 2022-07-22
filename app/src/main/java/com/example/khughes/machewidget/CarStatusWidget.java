@@ -240,8 +240,8 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.ignition, getPendingSelfIntent(context, id, enableCommands ? IGNITION_CLICK : WIDGET_CLICK));
     }
 
-    protected void setPHEVCallbacks(Context context, RemoteViews views, int fuelType, int id, String mode) {
-        if (fuelType != Utils.FUEL_PHEV) {
+    protected void setPHEVCallbacks(Context context, RemoteViews views, boolean isPHEV, int id, String mode) {
+        if (!isPHEV) {
             views.setOnClickPendingIntent(R.id.bottom_gasoline, getPendingSelfIntent(context, id, WIDGET_CLICK));
             views.setOnClickPendingIntent(R.id.bottom_electric, getPendingSelfIntent(context, id, WIDGET_CLICK));
         } else {
@@ -293,11 +293,21 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     protected void drawRangeFuel(Context context, RemoteViews views, CarStatus carStatus,
-                                 InfoRepository info, VehicleInfo vehicleInfo, int fuelType,
+                                 InfoRepository info, VehicleInfo vehicleInfo,
                                  double distanceConversion, String distanceUnits, boolean twoLines) {
-        String rangeCharge = "N/A";
-        if (fuelType == Utils.FUEL_ELECTRIC || fuelType == Utils.FUEL_PHEV) {
+        boolean isICEOrHybrid;
+        boolean isPHEV;
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
+            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
+            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
+            isPHEV = (fuelType == Utils.FUEL_PHEV);
+        } else {
+            isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
+            isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
+        }
 
+        String rangeCharge = "N/A";
+        if (isICEOrHybrid) {
             // Estimated range
             Double range = carStatus.getElVehDTE();
             if (range != null && range > 0) {
@@ -389,7 +399,8 @@ public class CarStatusWidget extends AppWidgetProvider {
                                 DecimalFormatSymbols.getInstance(Locale.US)).format(chargeLevel)));
             }
         }
-        if (fuelType != Utils.FUEL_ELECTRIC) {
+
+        if (!isICEOrHybrid && !isPHEV) {
             // Estimated range
             Double range = carStatus.getDistanceToEmpty();
             if (range != null && range >= 0) {
@@ -586,7 +597,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         Boolean useColor = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getResources().getString(R.string.use_colors_key), false);
 
-        Utils.drawColoredVehicle( context, bmp,  vehicleColor, whatsOpen, useColor, vehicleImages);
+        Utils.drawColoredVehicle(context, bmp, vehicleColor, whatsOpen, useColor, vehicleImages);
         views.setImageViewBitmap(R.id.wireframe, bmp);
     }
 

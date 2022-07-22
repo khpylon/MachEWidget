@@ -1,19 +1,8 @@
 package com.example.khughes.machewidget;
 
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Xfermode;
-import android.graphics.drawable.Drawable;
-import android.icu.text.DecimalFormat;
-import android.icu.text.DecimalFormatSymbols;
-import android.icu.text.MessageFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -21,15 +10,11 @@ import android.os.Message;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -120,14 +105,22 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
             return;
         }
 
-        int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
-        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
-        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.bottom_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.plug, hasEngine ? View.GONE : View.VISIBLE);
-        setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
+        boolean isICEOrHybrid;
+        boolean isPHEV;
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
+            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
+            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
+            isPHEV = (fuelType == Utils.FUEL_PHEV);
+        } else {
+            isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
+            isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
+        }
+        views.setViewVisibility(R.id.lock_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.bottom_electric, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.plug, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline");
 
         // Show last refresh, odometer, OTA status
         String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
@@ -149,7 +142,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
 
         // Draw range and fuel/gas stuff
         boolean twoLines = false;
-        drawRangeFuel(context, views, carStatus, info, vehicleInfo, fuelType,
+        drawRangeFuel(context, views, carStatus, info, vehicleInfo,
                 distanceConversion, distanceUnits, twoLines);
 
         // Tire pressures
@@ -166,12 +159,12 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         Map<String, Integer> vehicleImages = Utils.getVehicleDrawables_1x5(vehicleInfo.getVIN());
 
         // See if we should guess vehicle color
-        if( Utils.scanImageForColor (context, vehicleInfo) ) {
+        if (Utils.scanImageForColor(context, vehicleInfo)) {
             info.setVehicle(vehicleInfo);
         }
 
         // Draw the vehicle image
-        drawVehicleImage( context, views,  carStatus, vehicleInfo.getColorValue(), null,  vehicleImages);
+        drawVehicleImage(context, views, carStatus, vehicleInfo.getColorValue(), null, vehicleImages);
 
         updateLinkedApps(context, views);
 
@@ -240,9 +233,8 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
                 views.setViewVisibility(R.id.bottom_gasoline, View.GONE);
             }
             int appWidgetId = intent.getIntExtra(APPWIDGETID, -1);
-            setPHEVCallbacks(context, views, Utils.FUEL_PHEV, appWidgetId, nextMode);
+            setPHEVCallbacks(context, views, true, appWidgetId, nextMode);
             appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
-            return;
         } else {
             super.onReceive(context, intent);
         }

@@ -1,12 +1,8 @@
 package com.example.khughes.machewidget;
 
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.icu.text.DecimalFormat;
-import android.icu.text.DecimalFormatSymbols;
-import android.icu.text.MessageFormat;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -18,7 +14,6 @@ import androidx.preference.PreferenceManager;
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -101,21 +96,29 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
             return;
         }
 
-        int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
-        boolean hasEngine = fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID;
-        views.setViewVisibility(R.id.lock_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.bottom_gasoline, hasEngine ? View.VISIBLE : View.GONE);
-        views.setViewVisibility(R.id.lock_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.bottom_electric, hasEngine ? View.GONE : View.VISIBLE);
-        views.setViewVisibility(R.id.plug, hasEngine ? View.GONE : View.VISIBLE);
-        setPHEVCallbacks(context, views, fuelType, appWidgetId, "showGasoline");
+        boolean isICEOrHybrid;
+        boolean isPHEV;
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
+            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
+            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
+            isPHEV = (fuelType == Utils.FUEL_PHEV);
+        } else {
+            isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
+            isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
+        }
+        views.setViewVisibility(R.id.lock_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.bottom_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
+        views.setViewVisibility(R.id.lock_electric, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.bottom_electric, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        views.setViewVisibility(R.id.plug, isICEOrHybrid ? View.GONE : View.VISIBLE);
+        setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline");
 
         // Ingition, alarm/sleep, plug icons
         drawIcons(views, carStatus);
 
         // Draw range and fuel/gas stuff
         boolean twoLines = true;
-        drawRangeFuel(context, views, carStatus, info, vehicleInfo, fuelType,
+        drawRangeFuel(context, views, carStatus, info, vehicleInfo,
                 distanceConversion, distanceUnits, twoLines);
 
         // Tire pressures
@@ -172,13 +175,11 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
 
     @Override
     public void onEnabled(Context context) {
-        return;
         // Enter relevant functionality for when the first widget is created
     }
 
     @Override
     public void onDisabled(Context context) {
-        return;
         // Enter relevant functionality for when the last widget is disabled
     }
 
@@ -201,9 +202,8 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
                 views.setViewVisibility(R.id.bottom_gasoline, View.GONE);
             }
             int appWidgetId = intent.getIntExtra(APPWIDGETID,-1);
-            setPHEVCallbacks(context, views, Utils.FUEL_PHEV, appWidgetId, nextMode);
+            setPHEVCallbacks(context, views, true, appWidgetId, nextMode);
             appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
-            return;
         } else {
             super.onReceive(context, intent);
         }
