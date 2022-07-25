@@ -390,9 +390,9 @@ public class OTAStatus {
     @Expose
     @Embedded
     private FuseResponse fuseResponse;
-//    @SerializedName("tappsResponse")
-//    @Expose
-//    private TappsResponse tappsResponse;
+    @SerializedName("tappsResponse")
+    @Expose
+    private TappsResponse tappsResponse;
     @SerializedName("updatePendingState")
     @Expose
     @Embedded
@@ -433,13 +433,13 @@ public class OTAStatus {
         this.fuseResponse = fuseResponse;
     }
 
-//    public TappsResponse getTappsResponse() {
-//        return tappsResponse;
-//    }
-//
-//    public void setTappsResponse(TappsResponse tappsResponse) {
-//        this.tappsResponse = tappsResponse;
-//    }
+    public TappsResponse getTappsResponse() {
+        return tappsResponse;
+    }
+
+    public void setTappsResponse(TappsResponse tappsResponse) {
+        this.tappsResponse = tappsResponse;
+    }
 
     public Object getUpdatePendingState() {
         return updatePendingState;
