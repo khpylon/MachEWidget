@@ -3,12 +3,8 @@ package com.example.khughes.machewidget;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.TooltipCompat;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -25,7 +21,6 @@ import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.listeners.ColorListener;
 import com.skydoves.colorpickerview.sliders.BrightnessSlideBar;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -101,7 +96,6 @@ public class ColorActivity extends AppCompatActivity {
 
         BrightnessSlideBar brightnessSlideBar = findViewById(R.id.brightnessSlide);
         colorPickerView.attachBrightnessSlider(brightnessSlideBar);
-        colorPickerView.getPreferenceName();
 
         Spinner spinner = findViewById(R.id.spinner);
         arrayList = new ArrayList<>();
@@ -119,7 +113,6 @@ public class ColorActivity extends AppCompatActivity {
                     setCheckedButton(mVehicleInfo.getColorValue());
                     colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
                     setAutoButton(mVehicleInfo.getVIN());
-                    setImageThing(mVehicleInfo.getVIN());
                 } else {
                     arrayList.clear();
                     for (VehicleInfo vehicle : vehicles) {
@@ -137,7 +130,6 @@ public class ColorActivity extends AppCompatActivity {
                 String VIN = parent.getItemAtPosition(position).toString();
                 mVehicleInfo = info.getVehicleByVIN(VIN);
                 setCheckedButton(mVehicleInfo.getColorValue());
-                setImageThing(VIN);
                 colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
                 setAutoButton(mVehicleInfo.getVIN());
             }
@@ -146,18 +138,6 @@ public class ColorActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-    }
-
-    private void setImageThing(String VIN) {
-//        File imageDir = new File(getApplicationContext().getDataDir(), Constants.IMAGES_FOLDER);
-//        File image = new File(imageDir, VIN + ".png");
-//        if (image.exists() ) {
-//            Bitmap bmp = BitmapFactory.decodeFile(image.getPath());
-//            Drawable drawable = new BitmapDrawable(getResources(), bmp);
-//            colorPickerView.setPaletteDrawable(drawable);
-//            return;
-//        }
-        colorPickerView.setHsvPaletteDrawable();
     }
 
     private void setAutoButton(String VIN) {
@@ -190,69 +170,7 @@ public class ColorActivity extends AppCompatActivity {
 
         // Create base bitmap the size of the image
         Bitmap bmp = Bitmap.createBitmap(225, 100, Bitmap.Config.ARGB_8888);
-
         Utils.drawColoredVehicle(getApplicationContext(), bmp, color, new ArrayList<>(), true, vehicleImages);
-
-//        Canvas canvas = new Canvas(bmp);
-//
-//        Drawable drawable = AppCompatResources.getDrawable(this, vehicleImages.get(Utils.BODY_PRIMARY));
-//        Bitmap bmp2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-//                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-//        Canvas canvas2 = new Canvas(bmp2);
-//
-//        Paint paint = new Paint();
-//        // Fill with the primary color mask
-//        paint.setColor(color);
-//        paint.setAlpha(0xff);
-//        paint.setStyle(Paint.Style.FILL);
-//        canvas.drawPaint(paint);
-//
-//        // Draw the primary body in color
-//        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-//        drawable.draw(canvas2);
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
-//        canvas.drawBitmap(bmp2, 0, 0, paint);
-//
-//        // If secondary colors exist, add them
-//        Drawable icon;
-//        Integer secondary = vehicleImages.get((Utils.BODY_SECONDARY));
-//        if (secondary != null) {
-//            icon = AppCompatResources.getDrawable(this, secondary);
-//            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-//            icon.draw(canvas);
-//        }
-//
-//        // Create a second bitmap the same size as the primary
-//        bmp2 = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
-//        canvas2 = new Canvas(bmp2);
-//
-//        // Figure out whether wireframe should be drawn light or dark
-//        float[] hsl = new float[3];
-//        ColorUtils.colorToHSL(color & ARGB_MASK, hsl);
-//        paint.setColor(hsl[2] > 0.5 ? Color.BLACK : Color.WHITE);
-//        paint.setAlpha(0xff);
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
-//
-//        // Fill with a contrasting color
-//        paint.setStyle(Paint.Style.FILL);
-//        canvas2.drawPaint(paint);
-//
-//        // Draw the wireframe body
-//        drawable = AppCompatResources.getDrawable(this, vehicleImages.get(Utils.WIREFRAME));
-//        Bitmap bmp3 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-//                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-//        Canvas canvas3 = new Canvas(bmp3);
-//        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-//        drawable.draw(canvas3);
-//
-//        // Set the wireframe's color
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
-//        canvas2.drawBitmap(bmp3, 0, 0, paint);
-//
-//        // Draw wireframe over the colored body
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-//        canvas.drawBitmap(bmp2, 0, 0, paint);
-
         ImageView image = findViewById(R.id.carImage);
         image.setImageBitmap(bmp);
     }
