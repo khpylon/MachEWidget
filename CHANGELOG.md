@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 2022.07.31
-### Fixed
+### Changed
 - Identify vehicles as ICE, PHEV, or BEV using status information.  Note: if you notice the wrong info displayed in the widget, enable "Use older methods to determine fuel type"
   in Settings and file a bug report on GitHub.
+
+### Fixed
 - Fix some null pointer exceptions caught by Google Play Store.
 
 ## 2022.07.21
@@ -35,7 +37,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
   to use the automatic selection results.  Note: this feature will only work if the necessary images are available on Ford's servers.
 - Allow user to choose whether the full-size widget displays a generic icon or vehicle images.
 
-### Changes
+### Changed
 - Improve instructions for the ignition and alarm icons.
 
 ## 2022.07.13
