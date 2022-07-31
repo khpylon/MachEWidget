@@ -1509,15 +1509,16 @@ public class Utils {
                                           boolean useColor, Map<String, Integer> vehicleImages) {
         // Create base canvas the size of the image
         Canvas canvas = new Canvas(bmp);
-
-        Drawable drawable = AppCompatResources.getDrawable(context, vehicleImages.get(Utils.BODY_PRIMARY));
-        Bitmap bmp2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas2 = new Canvas(bmp2);
         Paint paint = new Paint();
         Drawable icon;
+        Bitmap bmp2;
+        Canvas canvas2;
 
+        Drawable drawable = AppCompatResources.getDrawable(context, vehicleImages.get(Utils.BODY_PRIMARY));
         if (vehicleImages.get(Utils.BODY_PRIMARY) != null && useColor) {
+            bmp2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            canvas2 = new Canvas(bmp2);
 
             // Fill with the primary color mask
             paint.setColor(color & Utils.ARGB_MASK);
