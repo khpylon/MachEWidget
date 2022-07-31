@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.07.31
+### Fixed
+- Identify vehicles as ICE, PHEV, or BEV using status information.  Note: if you notice the wrong info displayed in the widget, enable "Use older methods to determine fuel type"
+  in Settings and file a bug report on GitHub.
+- Fix some null pointer exceptions caught by Google Play Store.
+
 ## 2022.07.21
 ### Fixed
 - Open windows and doors were not being displayed on the widget.
