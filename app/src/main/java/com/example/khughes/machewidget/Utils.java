@@ -610,19 +610,19 @@ public class Utils {
     }
 
     // Drawables for F-150 Raptor
-    private static final Map<String, Integer> raptorDrawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe);
-        tmpMap.put(HOOD, R.drawable.raptor_hood);
-        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor);
-        raptorDrawables = tmpMap;
-    }
+//    private static final Map<String, Integer> raptorDrawables;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe);
+//        tmpMap.put(HOOD, R.drawable.raptor_hood);
+//        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor);
+//        raptorDrawables = tmpMap;
+//    }
 
     // Drawables for Bronco Base 4x4
     private static final Map<String, Integer> broncobase4x4Drawables;
@@ -700,10 +700,10 @@ public class Utils {
                     return regcabDrawables;
                 } else if (isF150SuperCab(VIN)) {
                     return supercabDrawables;
-                } else if (isF150SuperCrew(VIN)) {
+                } else if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) {
                     return supercrewDrawables;
-                } else if (isF150Raptor(VIN)) {
-                    return raptorDrawables;
+//                } else if (isF150Raptor(VIN)) {
+//                    return raptorDrawables;
                 }
             } else if (isBronco(VIN) || isBroncoSport(VIN)) {
                 return broncobase4x4Drawables;
@@ -826,23 +826,23 @@ public class Utils {
     }
 
     // Drawables for F-150 Raptor
-    private static final Map<String, Integer> raptorDrawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.raptor_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.raptor_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.raptor_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.raptor_lrwindow_horz);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.raptor_rrwindow_horz);
-        raptorDrawables_1x5 = tmpMap;
-    }
+//    private static final Map<String, Integer> raptorDrawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.raptor_hood_horz);
+//        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor_horz);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor_horz);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.raptor_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.raptor_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.raptor_lrwindow_horz);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.raptor_rrwindow_horz);
+//        raptorDrawables_1x5 = tmpMap;
+//    }
 
     // Drawables for Bronco Base 4x4
     private static final Map<String, Integer> broncobase4x4Drawables_1x5;
@@ -936,10 +936,10 @@ public class Utils {
                     return regcabDrawables_1x5;
                 } else if (isF150SuperCab(VIN)) {
                     return supercabDrawables_1x5;
-                } else if (isF150SuperCrew(VIN)) {
+                } else if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) {
                     return supercrewDrawables_1x5;
-                } else if (isF150Raptor(VIN)) {
-                    return raptorDrawables_1x5;
+//                } else if (isF150Raptor(VIN)) {
+//                    return raptorDrawables_1x5;
                 }
             } else if (isBronco(VIN) || isBroncoSport(VIN)) {
                 return broncobase4x4Drawables_1x5;
