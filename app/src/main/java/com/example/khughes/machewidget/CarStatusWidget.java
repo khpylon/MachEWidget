@@ -307,7 +307,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         String rangeCharge = "N/A";
-        if (isICEOrHybrid) {
+        if (!isICEOrHybrid) {
             // Estimated range
             Double range = carStatus.getElVehDTE();
             if (range != null && range > 0) {
