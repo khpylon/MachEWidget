@@ -522,8 +522,8 @@ public class NetworkCalls {
 
                         break;
 
-                    } catch (java.net.SocketTimeoutException e2) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getStatus");
+                    } catch (java.net.SocketTimeoutException | IllegalStateException e2) {
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus");
                         LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
                         try {
                             Thread.sleep(3 * 1000);
