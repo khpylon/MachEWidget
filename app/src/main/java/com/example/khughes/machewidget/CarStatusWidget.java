@@ -400,7 +400,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             }
         }
 
-        if (!isICEOrHybrid && !isPHEV) {
+        if (isICEOrHybrid || isPHEV) {
             // Estimated range
             Double range = carStatus.getDistanceToEmpty();
             if (range != null && range >= 0) {
