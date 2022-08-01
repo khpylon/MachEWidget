@@ -517,27 +517,31 @@ public class CarStatusWidget extends AppWidgetProvider {
             if (Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
                 views.setTextViewText(R.id.ota_line1, "OTA Status:");
                 String OTArefresh;
-                long lastOTATime = vehicleInfo.getLastOTATime();
-                String currentUTCOTATime = otaStatus.getOTADateTime();
-                if (currentUTCOTATime == null) {
-                    OTArefresh = "Unknown";
+                if (otaStatus.getFuseResponse() == null) {
+                    OTArefresh = "No OTA data";
                 } else {
-                    long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
-
-                    // If there's new information, display that data/time in a different color
-                    if (currentOTATime > lastOTATime) {
-                        // if OTA failed, show it in red (that means something bad)
-                        String OTAResult = otaStatus.getOTAAggregateStatus();
-                        if (OTAResult != null && OTAResult.equals("failure")) {
-                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
-                        } else {
-                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
-                        }
-                        OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
-                        Notifications.newOTA(context);
+                    long lastOTATime = vehicleInfo.getLastOTATime();
+                    String currentUTCOTATime = otaStatus.getOTADateTime();
+                    if (currentUTCOTATime == null) {
+                        OTArefresh = "No date specified";
                     } else {
-                        views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
-                        OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
+                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+
+                        // If there's new information, display that data/time in a different color
+                        if (currentOTATime > lastOTATime) {
+                            // if OTA failed, show it in red (that means something bad)
+                            String OTAResult = otaStatus.getOTAAggregateStatus();
+                            if (OTAResult != null && OTAResult.equals("failure")) {
+                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
+                            } else {
+                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
+                            }
+                            OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
+                            Notifications.newOTA(context);
+                        } else {
+                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
+                            OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
+                        }
                     }
                 }
                 views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
