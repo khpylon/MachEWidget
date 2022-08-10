@@ -160,7 +160,6 @@ public class Notifications extends BroadcastReceiver {
     }
 
     private static final int BATTERY_OPTIMIZATION = 939;
-    private static final String BATTERY_OPTIMIZATION_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.BatteryOptimization";
 
     public static void batteryOptimization(Context context) {
         StoredData appInfo = new StoredData(context);
@@ -185,7 +184,7 @@ public class Notifications extends BroadcastReceiver {
                         .setAutoCancel(true);
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                 // notificationId is a unique int for each notification that you must define
-                notificationManager.notify(CHARGE_STATUS, builder.build());
+                notificationManager.notify(BATTERY_OPTIMIZATION, builder.build());
 
                 // If this was the first notification, notify again in one more day
                 if (lastBatteryNotification == 0) {
@@ -200,6 +199,21 @@ public class Notifications extends BroadcastReceiver {
         } else {
             appInfo.setBatteryNotification(0);
         }
+    }
+
+    private static final int CHARGE_REMINDER = 940;
+
+    public static void chargeReminder(Context context) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
+                .setContentTitle("Charge Reminder")
+                .setContentText("HVB level is below threshold and charger is not detected.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(CHARGE_REMINDER, builder.build());
     }
 
     @Override

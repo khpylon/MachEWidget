@@ -14,14 +14,14 @@ import com.example.khughes.machewidget.VehicleInfo;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = VehicleInfo.class, version = 5)
+@Database(entities = VehicleInfo.class, version = 6)
 public abstract class VehicleInfoDatabase extends RoomDatabase {
     private static VehicleInfoDatabase instance;
 
     public static synchronized VehicleInfoDatabase getInstance(Context context) {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(), VehicleInfoDatabase.class, "vehicleinfo_db")
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3,  MIGRATION_3_4, MIGRATION_4_5)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3,  MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                     .fallbackToDestructiveMigration()
                     .setJournalMode(JournalMode.TRUNCATE)
                     .build();
@@ -138,6 +138,17 @@ public abstract class VehicleInfoDatabase extends RoomDatabase {
             // Add new column
             database.execSQL(
                     "ALTER TABLE vehicle_info ADD COLUMN colorValue INTEGER DEFAULT 0xffffffff NOT NULL");
+        }
+    };
+
+    static final Migration MIGRATION_5_6 = new Migration(5,6) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            // Add new column
+            database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN chargeHour INTEGER DEFAULT 0 NOT NULL");
+            database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN chargeThresholdLevel INTEGER DEFAULT 7 NOT NULL");
         }
     };
 

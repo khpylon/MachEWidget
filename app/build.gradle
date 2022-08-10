@@ -3,6 +3,8 @@ import java.text.SimpleDateFormat
 plugins {
     id 'com.android.application'
     id "org.ajoberstar.grgit" version "1.7.2"
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
 }
 
 android {
@@ -128,6 +130,8 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.5.0-alpha01'
     implementation 'com.github.jozefchmelar:persistentcookiejar:1.0.1'
     implementation 'com.github.skydoves:colorpickerview:2.2.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
 
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.4.1'
     annotationProcessor 'androidx.room:room-compiler:2.5.0-alpha01'

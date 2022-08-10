@@ -1,55 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.khughes.machewidget" >
-
-    <queries>
-
-        <!-- Specific apps you interact with, eg: -->
-        <intent>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent>
-
-        <package android:name="com.coulombtech" /> <!-- Chargepoint -->
-        <package android:name="com.ford.fordpass" />
-    </queries>
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+    package="com.example.khughes.machewidget">
 
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/mache_launcher_icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MacheWidget" >
-        <activity
-            android:name=".ColorActivity"
-            android:exported="false" />
+        android:theme="@style/Theme.MacheWidget">
         <activity
             android:name=".MainActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/action_settings" />
+
+        <activity
+            android:name=".ChooseAppActivity"
+            android:exported="false"
+            android:label="@string/action_chooseapp"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".VehicleActivity"
+            android:exported="false"
+            android:label="@string/action_vehicle"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".ProfileManager"
+            android:exported="false"
+            android:label="@string/action_profile">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:label="@string/action_login" />
+        <activity
+            android:name=".OTAViewActivity"
+            android:exported="false"
+            android:label="@string/action_OTA"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".ColorActivity"
+            android:exported="false"
+            android:label="@string/action_color"/>
+        <activity
+            android:name=".ReminderActivity"
+            android:exported="false"
+            android:label="@string/action_reminder"/>
 
         <activity-alias
             android:name=".F150MainActivity"
             android:enabled="false"
             android:exported="true"
-            android:targetActivity=".MainActivity" >
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -60,7 +86,7 @@
             android:name=".BroncoMainActivity"
             android:enabled="false"
             android:exported="true"
-            android:targetActivity=".MainActivity" >
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -71,71 +97,31 @@
             android:name=".ExplorerMainActivity"
             android:enabled="false"
             android:exported="true"
-            android:targetActivity=".MainActivity" >
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="false"
-            android:label="@string/action_settings" />
-        <activity
-            android:name=".ChooseAppActivity"
-            android:exported="false"
-            android:label="@string/action_chooseapp"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".VehicleActivity"
-            android:exported="false"
-            android:label="@string/action_vehicle"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".ProfileManager"
-            android:exported="false"
-            android:label="@string/action_profile" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false"
-            android:label="@string/action_login" />
-        <activity
-            android:name=".OTAViewActivity"
-            android:exported="false"
-            android:label="@string/action_OTA"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
 
         <receiver
+            android:name=".ReminderReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <receiver
             android:name=".CarStatusWidget_5x5"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -146,7 +132,7 @@
         </receiver>
         <receiver
             android:name=".CarStatusWidget_1x5"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -157,7 +143,7 @@
         </receiver>
         <receiver
             android:name=".CarStatusWidget_2x5"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -171,7 +157,7 @@
         <receiver
             android:name=".BootComplete"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
@@ -180,5 +166,29 @@
             </intent-filter>
         </receiver>
     </application>
+
+    <queries>
+
+        <!-- Specific apps you interact with, eg: -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+
+        <package android:name="com.coulombtech" /> <!-- Chargepoint -->
+        <package android:name="com.ford.fordpass" />
+    </queries>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

@@ -34,7 +34,6 @@ public class VehicleInfo {
     private long lastUpdateTime;
 
     @ColumnInfo(defaultValue = "0")
-    @NonNull
     private long lastOTATime;
 
     private String lastLVBStatus;
@@ -52,15 +51,12 @@ public class VehicleInfo {
     private boolean supportsOTA;
 
     @ColumnInfo(defaultValue = "0")
-    @NonNull
     private long initialForcedRefreshTime;
 
     @ColumnInfo(defaultValue = "0")
-    @NonNull
     private long lastForcedRefreshTime;
 
     @ColumnInfo(defaultValue = "0")
-    @NonNull
     private long forcedRefreshCount;
 
     @ColumnInfo(defaultValue = "1")
@@ -68,8 +64,13 @@ public class VehicleInfo {
     private Boolean enabled;
 
     @ColumnInfo(defaultValue = "0xffffffff")
-    @NonNull
     private int colorValue;
+
+    @ColumnInfo(defaultValue = "0")
+    private int chargeHour;
+
+    @ColumnInfo(defaultValue = "7")
+    private int chargeThresholdLevel;
 
     public VehicleInfo() {
         id = 0; // for new database entries, this will generate a new id
@@ -87,6 +88,8 @@ public class VehicleInfo {
         lastForcedRefreshTime = 0;
         forcedRefreshCount = 0;
         colorValue = 0xffffffff;
+        chargeHour = 0;
+        chargeThresholdLevel = 7;
     }
 
     @Embedded(prefix = "car_")
@@ -306,6 +309,14 @@ public class VehicleInfo {
     public void setColorValue(int colorValue) {
         this.colorValue = colorValue;
     }
+
+    public int getChargeHour() { return chargeHour; }
+
+    public void setChargeHour(int hour) { this.chargeHour = hour; }
+
+    public int getChargeThresholdLevel() { return chargeThresholdLevel; }
+
+    public void setChargeThresholdLevel(int chargeThresholdLevel) { this.chargeThresholdLevel = chargeThresholdLevel; }
 
     @Entity
     public class CarStatusInfo {

@@ -2,7 +2,6 @@ package com.example.khughes.machewidget;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DiffUtil;
@@ -15,9 +14,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.StrikethroughSpan;
@@ -27,9 +24,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
 
 public class VehicleActivity extends AppCompatActivity {
 
@@ -83,7 +77,7 @@ public class VehicleActivity extends AppCompatActivity {
 
         private VehicleViewHolder(View itemView) {
             super(itemView);
-            VINItemView = itemView.findViewById(R.id.VIN);
+            VINItemView = itemView.findViewById(R.id.VIN_spinner);
             nicknameItemView = itemView.findViewById(R.id.nickname);
             enabledView = itemView.findViewById(R.id.checkBox);
             imageView = itemView.findViewById(R.id.image);
