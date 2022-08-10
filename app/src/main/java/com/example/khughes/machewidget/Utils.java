@@ -1499,6 +1499,28 @@ public class Utils {
         return true;
     }
 
+    // Examine image to see if this is a Mach-E First Edition
+    public static boolean isFirstEdition(Context context, String VIN ) {
+        // If the vehicle isn't a Mach-E, nevermind
+        if (!isMachE(VIN)) {
+            return false;
+        }
+
+        // If the vehicle image doesn't exist, do nothing
+        Bitmap bmp = Utils.getVehicleImage(context, VIN, 4);
+        if (bmp == null) {
+            return false;
+        }
+
+        // Check if a pixel on the side view mirror is black or colored
+        int color = bmp.getPixel(220 , 152 );
+        int[] RGB = new int[3];
+        RGB[0] = (color >> 16) & 0xff;
+        RGB[1] = (color >> 8) & 0xff;
+        RGB[2] = color & 0xff;
+        return ( RGB[0] > 0x08 || RGB[1] > 0x08 || RGB[2] > 0x08 );
+    }
+
     public static final int ARGB_MASK = 0xffffff;  // only use RGB components
     public static final int WIREFRAME_MASK = 0x03 << 24;
     public static final int WIREFRAME_WHITE = 0;

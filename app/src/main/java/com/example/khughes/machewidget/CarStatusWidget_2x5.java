@@ -163,6 +163,11 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
             info.setVehicle(vehicleInfo);
         }
 
+        // If vehicle is a Mach-E First Edition, show mirrors in body color
+        if(Utils.isFirstEdition(context, vehicleInfo.getVIN())) {
+            vehicleImages.put(Utils.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_horz);
+        }
+
         // Draw the vehicle image
         drawVehicleImage(context, views, carStatus, vehicleInfo.getColorValue(), null, vehicleImages);
 
