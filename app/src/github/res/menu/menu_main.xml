@@ -33,6 +33,11 @@
         android:title="@string/action_color"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_reminder"
+        android:orderInCategory="30"
+        android:title="@string/action_reminder"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_backup"
         android:orderInCategory="30"
         android:title="@string/action_backup"

@@ -264,6 +264,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ColorActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_reminder) {
+            Intent intent = new Intent(this, ReminderActivity.class);
+            startActivity(intent);
+            return true;
         } else if (id == R.id.action_ota_view) {
             Intent intent = new Intent(this, OTAViewActivity.class);
             startActivity(intent);

@@ -15,7 +15,6 @@
         android:orientation="vertical"
         android:padding="@dimen/widget_margin">
 
-
         <Spinner
             android:id="@+id/VIN_spinner"
             android:layout_width="wrap_content"
@@ -36,14 +35,13 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/quantum_white_100"
                 android:text="@string/reminder_instructions"
-                android:layout_marginBottom="10dp"/>
+                android:layout_margin="10dp"/>
 
             <Switch
                 android:id="@+id/batteryNotification"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/quantum_white_100"
-
                 android:text="Notification enabled:"
                 android:checked="false" />
 
