@@ -67,25 +67,31 @@ public class ColorActivity extends AppCompatActivity {
 
         Button save = findViewById(R.id.ok);
         save.setOnClickListener(view -> {
-            mVehicleInfo.setColorValue((colorPickerView.getColor() & Utils.ARGB_MASK) | wireframeMode);
-            info.setVehicle(mVehicleInfo);
+            if (mVehicleInfo != null) {
+                mVehicleInfo.setColorValue((colorPickerView.getColor() & Utils.ARGB_MASK) | wireframeMode);
+                info.setVehicle(mVehicleInfo);
+            }
             CarStatusWidget.updateWidget(getApplicationContext());
         });
 
         Button reset = findViewById(R.id.reset);
         reset.setOnClickListener(view -> {
-            setCheckedButton(mVehicleInfo.getColorValue());
-            colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
+            if (mVehicleInfo != null) {
+                setCheckedButton(mVehicleInfo.getColorValue());
+                colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
+            }
         });
 
         auto = findViewById(R.id.auto_image);
         auto.setOnClickListener(view -> {
-            int oldColor = mVehicleInfo.getColorValue();
-            mVehicleInfo.setColorValue(Color.WHITE);
-            if (Utils.scanImageForColor(this, mVehicleInfo)) {
-                colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
+            if (mVehicleInfo != null) {
+                int oldColor = mVehicleInfo.getColorValue();
+                mVehicleInfo.setColorValue(Color.WHITE);
+                if (Utils.scanImageForColor(this, mVehicleInfo)) {
+                    colorPickerView.setInitialColor(mVehicleInfo.getColorValue());
+                }
+                mVehicleInfo.setColorValue(oldColor);
             }
-            mVehicleInfo.setColorValue(oldColor);
         });
         TooltipCompat.setTooltipText(auto, "Use stored image as color source.");
 
