@@ -5,20 +5,12 @@ import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.os.PowerManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,15 +33,7 @@ import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
 import androidx.webkit.WebViewFeature;
 
-import com.example.khughes.machewidget.db.UserInfoDatabase;
-import com.example.khughes.machewidget.db.VehicleInfoDatabase;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "934TXS";
@@ -199,9 +183,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // If there aren't multiple vehicles, don't display manage vehicles option.
-        if (vehicleCount < 2) {
-            menu.findItem(R.id.action_vehicle).setVisible(false);
-        }
+//        if (vehicleCount < 2) {
+//            menu.findItem(R.id.action_vehicle).setVisible(false);
+//        }
 
         return true;
     }
