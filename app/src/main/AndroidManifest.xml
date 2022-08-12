@@ -21,7 +21,6 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/action_settings" />
-
         <activity
             android:name=".ChooseAppActivity"
             android:exported="false"
@@ -40,6 +39,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
         <activity
             android:name=".ProfileManager"
             android:exported="false"
@@ -48,7 +48,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".LoginActivity"
             android:exported="false"
@@ -65,14 +64,13 @@
         <activity
             android:name=".ColorActivity"
             android:exported="false"
-            android:label="@string/action_color"/>
+            android:label="@string/action_color" />
         <activity
             android:name=".ReminderActivity"
             android:exported="false"
-            android:label="@string/action_reminder"/>
-
+            android:label="@string/action_reminder" />
         <activity-alias
-            android:name=".F150MainActivity"
+            android:name=".ExplorerMainActivity"
             android:enabled="false"
             android:exported="true"
             android:targetActivity=".MainActivity">
@@ -94,7 +92,7 @@
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".ExplorerMainActivity"
+            android:name=".F150MainActivity"
             android:enabled="false"
             android:exported="true"
             android:targetActivity=".MainActivity">
@@ -104,6 +102,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -117,8 +116,7 @@
         <receiver
             android:name=".ReminderReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
-
+            android:exported="true" />
         <receiver
             android:name=".CarStatusWidget_5x5"
             android:exported="true">
@@ -179,7 +177,6 @@
         <package android:name="com.coulombtech" /> <!-- Chargepoint -->
         <package android:name="com.ford.fordpass" />
     </queries>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -188,7 +185,8 @@
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>
