@@ -172,8 +172,11 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun isPHEVorBEV(vehicle: VehicleInfo): Boolean {
         val status = vehicle.carStatus
-        val propulsionType = status.propulsion
-        return !status.isPropulsionICEOrHybrid(propulsionType)
+        status?.let {
+            val propulsionType = status.propulsion
+            return !status.isPropulsionICEOrHybrid(propulsionType)
+        }
+        return true
     }
 
     private inline fun isNotificationEnabled(chargeHour: Int) =
