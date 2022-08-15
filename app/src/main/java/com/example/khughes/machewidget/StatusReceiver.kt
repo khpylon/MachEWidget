@@ -37,6 +37,10 @@ class StatusReceiver : BroadcastReceiver() {
         // Set the next alarm
         nextAlarm(context)
 
+        // Store time when we run the update;
+        val appInfo = StoredData(context)
+        appInfo.setLastAlarmTime()
+
         // Check battery optimization
         Notifications.batteryOptimization(context)
 
@@ -114,12 +118,6 @@ class StatusReceiver : BroadcastReceiver() {
                 val timeout = userInfo.expiresIn
                 val time = LocalDateTime.now(ZoneId.systemDefault())
                 val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                val appInfo = StoredData(context)
-
-                // Store time when we run the update;
-
-                // Store time when we run the update;
-                appInfo.setLastAlarmTime()
 
                 val userId = userInfo.userId
                 val state = userInfo.programState
