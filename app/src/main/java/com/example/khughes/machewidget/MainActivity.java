@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -24,6 +26,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -46,6 +49,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
+
+        // If we haven't bugged about the survey before, do it once and get it over with
+        if( !PreferenceManager.getDefaultSharedPreferences(context).getBoolean("showSurvey",false) ) {
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("showSurvey",true).apply();
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Please take this short survey about app usage details.");
+
+            WebView wv = new WebView(this);
+            wv.loadUrl("https://www.surveymonkey.com/r/VWG5TRZ");
+            wv.setWebViewClient(new WebViewClient() {
+            });
+            wv.getSettings().setJavaScriptEnabled(true);
+
+            alert.setView(wv);
+            alert.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+            alert.show();
+        }
 
         // First thing, check logcat for a crash and save if so
         String crashMessage = Utils.checkLogcat(context);
