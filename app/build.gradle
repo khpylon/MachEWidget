@@ -8,12 +8,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.khughes.machewidget"
         minSdk 28
-        targetSdk 31
+        targetSdk 33
         versionCode 42
         versionName "2022.08.13"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
