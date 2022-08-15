@@ -1,32 +1,22 @@
-package com.example.khughes.machewidget;
+package com.example.khughes.machewidget
 
-public class Profile {
-    private String VIN;         // the "key" for the object
-    private String alias;
-    public Profile(String VIN) {
-        this.VIN = VIN;
-        this.alias = "";
+class Profile {
+    var vIN // the "key" for the object
+            : String
+    var profileName: String
+        private set
+
+    constructor(VIN: String) {
+        vIN = VIN
+        profileName = ""
     }
 
-    public Profile(String VIN, String alias) {
-        this.VIN = VIN;
-        this.alias = alias;
+    constructor(VIN: String, alias: String) {
+        vIN = VIN
+        profileName = alias
     }
 
-    public String getVIN() {
-        return VIN;
+    fun setAlias(alias: String) {
+        profileName = alias
     }
-
-    public void setVIN(String VIN) {
-        this.VIN = VIN;
-    }
-
-    public String getProfileName() {
-        return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
 }

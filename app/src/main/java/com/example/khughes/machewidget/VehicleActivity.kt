@@ -76,11 +76,13 @@ class VehicleActivity : AppCompatActivity() {
                     val position = tmp.adapterPosition
                     if(position >= 0) {
                         val vehicle = getItem(position)
-                        val VIN = vehicle!!.vin
-                        VIN?.let {
-                            mVehicleViewModel.setEnable(VIN, isChecked)
-                            vehicle.isEnabled = isChecked
-                            notifyDataSetChanged()
+                        vehicle?.let {
+                            val VIN = vehicle.vin
+                            VIN?.let {
+                                mVehicleViewModel.setEnable(VIN, isChecked)
+                                vehicle.isEnabled = isChecked
+                                notifyDataSetChanged()
+                            }
                         }
                     }
                 }

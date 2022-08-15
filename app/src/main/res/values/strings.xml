@@ -62,6 +62,7 @@
     <string name="use_colors">Enable color display of vehicle</string>
     <string name="use_image">Display vehicle photo instead of logo on full-size widget</string>
     <string name="use_old_engine">Use older methods to determine fuel type</string>
+    <string name="zenmode">Do not update while Do Not Disturb is active</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
@@ -90,6 +91,7 @@
     <string name="use_colors_key">useColors</string>
     <string name="use_image_key">useImage</string>
     <string name="use_old_engine_key">useOldEngine</string>
+    <string name="zenmode_key">zenMode</string>
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>

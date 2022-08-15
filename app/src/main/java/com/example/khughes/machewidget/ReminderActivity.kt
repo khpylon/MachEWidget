@@ -40,9 +40,11 @@ class ReminderActivity : AppCompatActivity() {
             info = getInfo(applicationContext)
             // Find the BEV and PHEV vehicles
             val VINs: MutableList<String> = mutableListOf()
-            for (vehicle in info!!.vehicles) {
-                if (isPHEVorBEV(vehicle)) {
-                    VINs.add(vehicle.vin)
+            info?.let {
+                for (vehicle in it.vehicles) {
+                    if (isPHEVorBEV(vehicle)) {
+                        VINs.add(vehicle.vin)
+                    }
                 }
             }
 
@@ -75,18 +77,21 @@ class ReminderActivity : AppCompatActivity() {
 
                         // If there is a vehicle, see if we need to update the database
                         currentVehicle?.let { updateVehicle() }
+                        currentVehicle = null
 
                         // Find the new info and populate the UI
                         val VIN = parent?.getItemAtPosition(position) as String
-                        val vehicle = info!!.getVehicleByVIN(VIN)
-                        val isEnabled = isNotificationEnabled(vehicle.chargeHour)
+                        info?.let {
+                            val vehicle = it.getVehicleByVIN(VIN)
+                            val isEnabled = isNotificationEnabled(vehicle.chargeHour)
 
-                        binding.batteryNotification.isChecked = isEnabled
-                        binding.hourSetting.isEnabled = isEnabled
-                        binding.batteryLevel.isEnabled = isEnabled
-                        binding.hourSetting.setSelection(getHour(vehicle.chargeHour))
-                        binding.batteryLevel.setSelection(levelToPosition(vehicle.chargeThresholdLevel))
-                        currentVehicle = vehicle
+                            binding.batteryNotification.isChecked = isEnabled
+                            binding.hourSetting.isEnabled = isEnabled
+                            binding.batteryLevel.isEnabled = isEnabled
+                            binding.hourSetting.setSelection(getHour(vehicle.chargeHour))
+                            binding.batteryLevel.setSelection(levelToPosition(vehicle.chargeThresholdLevel))
+                            currentVehicle = vehicle
+                        }
                     }
                 }
         }
@@ -148,10 +153,10 @@ class ReminderActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        currentVehicle.let {
-            if (isNotificationEnabled(currentVehicle!!.chargeHour) != isEnabled
-                || getHour(currentVehicle!!.chargeHour) != hour
-                || currentVehicle!!.chargeThresholdLevel != level
+        currentVehicle?.let {
+            if (isNotificationEnabled(it.chargeHour) != isEnabled
+                || getHour(it.chargeHour) != hour
+                || it.chargeThresholdLevel != level
             ) {
                 updateVehicle()
             }
@@ -160,21 +165,27 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun updateVehicle() {
         val chargeHour = hour or (if (isEnabled) NOTIFICATION_BIT else 0)
-        currentVehicle!!.chargeThresholdLevel = level
-        currentVehicle!!.chargeHour = chargeHour
-        info!!.setVehicle(currentVehicle)
-        if (isNotificationEnabled(chargeHour)) {
-            ReminderReceiver.setAlarm(applicationContext, currentVehicle!!.vin, getHour(chargeHour))
-        } else {
-            ReminderReceiver.cancelAlarm(applicationContext, currentVehicle!!.vin)
+        currentVehicle?.let {
+            it.chargeThresholdLevel = level
+            it.chargeHour = chargeHour
+            info?.setVehicle(currentVehicle)
+            if (isNotificationEnabled(chargeHour)) {
+                ReminderReceiver.setAlarm(
+                    applicationContext,
+                    it.vin,
+                    getHour(chargeHour)
+                )
+            } else {
+                ReminderReceiver.cancelAlarm(applicationContext, it.vin)
+            }
         }
     }
 
     private fun isPHEVorBEV(vehicle: VehicleInfo): Boolean {
         val status = vehicle.carStatus
         status?.let {
-            val propulsionType = status.propulsion
-            return !status.isPropulsionICEOrHybrid(propulsionType)
+            val propulsionType = it.propulsion
+            return !it.isPropulsionICEOrHybrid(propulsionType)
         }
         return true
     }

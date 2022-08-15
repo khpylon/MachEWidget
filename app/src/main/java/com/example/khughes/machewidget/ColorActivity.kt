@@ -41,28 +41,28 @@ class ColorActivity : AppCompatActivity() {
 
         binding.ok.setOnClickListener {
             mVehicleInfo?.let {
-                    mVehicleInfo!!.colorValue =
+                    it.colorValue =
                         binding.colorPickerView.color and Utils.ARGB_MASK or wireframeMode
-                    info.setVehicle(mVehicleInfo)
+                    info.setVehicle(it)
                     CarStatusWidget.updateWidget(applicationContext)
                 }
         }
 
         binding.reset.setOnClickListener {
             mVehicleInfo?.let {
-                setCheckedButton(mVehicleInfo!!.colorValue)
-                binding.colorPickerView.setInitialColor(mVehicleInfo!!.colorValue)
+                setCheckedButton(it.colorValue)
+                binding.colorPickerView.setInitialColor(it.colorValue)
             }
         }
 
         binding.autoImage.setOnClickListener {
             mVehicleInfo?.let {
-                val oldColor = mVehicleInfo!!.colorValue
-                mVehicleInfo!!.colorValue = Color.WHITE
-                if (Utils.scanImageForColor(this, mVehicleInfo)) {
-                    binding.colorPickerView.setInitialColor(mVehicleInfo!!.colorValue)
+                val oldColor = it.colorValue
+                it.colorValue = Color.WHITE
+                if (Utils.scanImageForColor(this, it)) {
+                    binding.colorPickerView.setInitialColor(it.colorValue)
                 }
-                mVehicleInfo!!.colorValue = oldColor
+                it.colorValue = oldColor
             }
         }
         TooltipCompat.setTooltipText(binding.autoImage, "Use stored image as color source.")
@@ -86,10 +86,12 @@ class ColorActivity : AppCompatActivity() {
                 id: Long
             ) {
                 val VIN = parent.getItemAtPosition(position).toString()
-                mVehicleInfo = info.getVehicleByVIN(VIN)
-                setCheckedButton(mVehicleInfo!!.colorValue)
-                binding.colorPickerView.setInitialColor(mVehicleInfo!!.colorValue)
-                setAutoButton(mVehicleInfo!!.vin)
+                info.getVehicleByVIN(VIN)?.let {
+                    setCheckedButton(it.colorValue)
+                    binding.colorPickerView.setInitialColor(it.colorValue)
+                    setAutoButton(it.vin)
+                    mVehicleInfo = it
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -131,7 +133,7 @@ class ColorActivity : AppCompatActivity() {
 
     private fun drawVehicle(color: Int) {
         mVehicleInfo?.let {
-            val vehicleImages = Utils.getVehicleDrawables_1x5(mVehicleInfo!!.vin)
+            val vehicleImages = Utils.getVehicleDrawables_1x5(it.vin)
 
             // Create base bitmap the size of the image
             val bmp = Bitmap.createBitmap(225, 100, Bitmap.Config.ARGB_8888)

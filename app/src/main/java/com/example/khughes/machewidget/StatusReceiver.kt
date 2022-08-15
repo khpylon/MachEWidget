@@ -14,6 +14,8 @@ import android.icu.util.TimeZone
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.provider.Settings
+import android.provider.Settings.SettingNotFoundException
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.preference.PreferenceManager
@@ -32,7 +34,10 @@ class StatusReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
+        // Set the next alarm
         nextAlarm(context)
+
+        // Check battery optimization
         Notifications.batteryOptimization(context)
 
         // Gather the app widget IDs for every widget
@@ -79,6 +84,22 @@ class StatusReceiver : BroadcastReceiver() {
                     context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit()
                         .remove(key).apply()
                 }
+            }
+        }
+
+        // If user doesn't want updates when Do Not Disturb is active, then see if it's active
+        val zenMode = PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(
+                context.resources.getString(R.string.zenmode_key),
+                false
+            )
+        if(zenMode) {
+            try {
+                // Non-zero when DnD is on
+                if( Settings.Global.getInt(context.contentResolver, "zen_mode") != 0 ) {
+                    return;
+                }
+            } catch (e: SettingNotFoundException) {
             }
         }
 
@@ -178,7 +199,7 @@ class StatusReceiver : BroadcastReceiver() {
                             val sdf = SimpleDateFormat(Constants.LASTMODIFIEDFORMAT, Locale.ENGLISH)
                             sdf.timeZone = TimeZone.getTimeZone("GMT")
                             try {
-                                cal.time = sdf.parse(lastModified)
+                                cal.time = sdf.parse(it)
                             } catch (e: ParseException) {
                             }
                             thenTime = cal.timeInMillis
