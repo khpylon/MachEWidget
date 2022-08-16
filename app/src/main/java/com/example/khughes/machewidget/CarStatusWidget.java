@@ -10,9 +10,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.icu.text.DecimalFormat;
 import android.icu.text.DecimalFormatSymbols;
@@ -27,8 +24,6 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
@@ -62,12 +57,6 @@ public class CarStatusWidget extends AppWidgetProvider {
     protected static final String APPWIDGETID = "appWidgetId";
 
     protected static final String PADDING = "   ";
-    protected static final String CHARGING_STATUS_NOT_READY = "NotReady";
-    protected static final String CHARGING_STATUS_CHARGING_AC = "ChargingAC";
-    protected static final String CHARGING_STATUS_CHARGING_DC = "ChargingDC";
-    protected static final String CHARGING_STATUS_TARGET_REACHED = "ChargeTargetReached";
-    protected static final String CHARGING_STATUS_PRECONDITION = "CabinPreconditioning";
-    protected static final String CHARGING_STATUS_PAUSED = "EvsePaused";
 
     protected void updateTire(Context context, RemoteViews views, String pressure, String status,
                               String units, Double conversion, int id) {
@@ -323,18 +312,18 @@ public class CarStatusWidget extends AppWidgetProvider {
             if (pluggedIn) {
                 String chargeStatus = carStatus.getChargingStatus();
                 switch (chargeStatus) {
-                    case CHARGING_STATUS_NOT_READY:
+                    case Constants.CHARGING_STATUS_NOT_READY:
                         views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_red);
                         break;
-                    case CHARGING_STATUS_CHARGING_AC:
-                    case CHARGING_STATUS_CHARGING_DC:
+                    case Constants.CHARGING_STATUS_CHARGING_AC:
+                    case Constants.CHARGING_STATUS_CHARGING_DC:
                         views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_charging);
                         break;
-                    case CHARGING_STATUS_TARGET_REACHED:
-                    case CHARGING_STATUS_PRECONDITION:
+                    case Constants.CHARGING_STATUS_TARGET_REACHED:
+                    case Constants.CHARGING_STATUS_PRECONDITION:
                         views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_charged_green);
                         break;
-                    case CHARGING_STATUS_PAUSED:
+                    case Constants.CHARGING_STATUS_PAUSED:
                         views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_yellow);
                         break;
                     default:
@@ -346,12 +335,12 @@ public class CarStatusWidget extends AppWidgetProvider {
                 if (!rangeCharge.equals("")) {
                     rangeCharge += twoLines ? "\n" : " - ";
                 }
-                if (chargeStatus.equals(CHARGING_STATUS_TARGET_REACHED)) {
+                if (chargeStatus.equals(Constants.CHARGING_STATUS_TARGET_REACHED)) {
                     rangeCharge += "Target Reached";
-                    if (!vehicleInfo.getLastChargeStatus().equals(CHARGING_STATUS_TARGET_REACHED)) {
+                    if (!vehicleInfo.getLastChargeStatus().equals(Constants.CHARGING_STATUS_TARGET_REACHED)) {
                         Notifications.chargeComplete(context);
                     }
-                } else if (chargeStatus.equals(CHARGING_STATUS_PRECONDITION)) {
+                } else if (chargeStatus.equals(Constants.CHARGING_STATUS_PRECONDITION)) {
                     rangeCharge += "Preconditioning";
                 } else {
                     SimpleDateFormat sdf = new SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US);
