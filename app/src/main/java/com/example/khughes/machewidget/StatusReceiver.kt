@@ -147,6 +147,7 @@ class StatusReceiver : BroadcastReceiver() {
                             "Initial state: how'd did the alarm go off (manual refresh)?"
                         )
                         cancelAlarm(context)
+                        Notifications.loginRequired(context)
                         appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
                     }
                     Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN -> {
@@ -169,6 +170,7 @@ class StatusReceiver : BroadcastReceiver() {
                                 "Log-in required but credentials are not being saved: cancelling alarm"
                             )
                             cancelAlarm(context)
+                            Notifications.loginRequired(context)
                             appInfo.incCounter(StoredData.STATUS_LOG_OUT)
                         }
                     }

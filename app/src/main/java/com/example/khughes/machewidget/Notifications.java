@@ -216,6 +216,25 @@ public class Notifications extends BroadcastReceiver {
         notificationManager.notify(CHARGE_REMINDER, builder.build());
     }
 
+    private static final int LOGIN_STATUS = 941;
+
+    public static void loginRequired(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Login required")
+                .setContentText("Unable to refresh tokens: you need to log in again.")
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(LOGIN_STATUS, builder.build());
+    }
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
@@ -227,4 +246,6 @@ public class Notifications extends BroadcastReceiver {
             ChargeNotificationVisible = false;
         }
     }
+
+
 }
