@@ -34,7 +34,7 @@ class ReminderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityReminderBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val context = applicationContext
+        val activity = this
 
         lifecycleScope.launch {
             info = getInfo(applicationContext)
@@ -50,50 +50,50 @@ class ReminderActivity : AppCompatActivity() {
 
             // If no vehicles found, display a dialog instead
             if (VINs.size == 0) {
-                AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+                AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
                     .setTitle("Error")
                     .setMessage("No PHEVs or BEVs were found.")
                     .setPositiveButton(
-                        android.R.string.yes
+                        android.R.string.ok
                     ) { _: DialogInterface?, _: Int -> finish() }
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show()
-            }
+            } else {
+                binding.VINSpinner.adapter =
+                    ArrayAdapter(applicationContext, android.R.layout.simple_spinner_item, VINs)
+                binding.VINSpinner.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onNothingSelected(parent: AdapterView<*>?) {}
 
-            binding.VINSpinner.adapter =
-                ArrayAdapter(applicationContext, android.R.layout.simple_spinner_item, VINs)
-            binding.VINSpinner.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            // Set text color of VIN number
+                            (parent?.getChildAt(0) as TextView?)?.setTextColor(getColor(R.color.quantum_white_secondary_text))
 
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        // Set text color of VIN number
-                        (parent?.getChildAt(0) as TextView?)?.setTextColor(getColor(R.color.quantum_white_secondary_text))
+                            // If there is a vehicle, see if we need to update the database
+                            currentVehicle?.let { updateVehicle() }
+                            currentVehicle = null
 
-                        // If there is a vehicle, see if we need to update the database
-                        currentVehicle?.let { updateVehicle() }
-                        currentVehicle = null
+                            // Find the new info and populate the UI
+                            val VIN = parent?.getItemAtPosition(position) as String
+                            info?.let {
+                                val vehicle = it.getVehicleByVIN(VIN)
+                                val isEnabled = isNotificationEnabled(vehicle.chargeHour)
 
-                        // Find the new info and populate the UI
-                        val VIN = parent?.getItemAtPosition(position) as String
-                        info?.let {
-                            val vehicle = it.getVehicleByVIN(VIN)
-                            val isEnabled = isNotificationEnabled(vehicle.chargeHour)
-
-                            binding.batteryNotification.isChecked = isEnabled
-                            binding.hourSetting.isEnabled = isEnabled
-                            binding.batteryLevel.isEnabled = isEnabled
-                            binding.hourSetting.setSelection(getHour(vehicle.chargeHour))
-                            binding.batteryLevel.setSelection(levelToPosition(vehicle.chargeThresholdLevel))
-                            currentVehicle = vehicle
+                                binding.batteryNotification.isChecked = isEnabled
+                                binding.hourSetting.isEnabled = isEnabled
+                                binding.batteryLevel.isEnabled = isEnabled
+                                binding.hourSetting.setSelection(getHour(vehicle.chargeHour))
+                                binding.batteryLevel.setSelection(levelToPosition(vehicle.chargeThresholdLevel))
+                                currentVehicle = vehicle
+                            }
                         }
                     }
-                }
+            }
         }
 
         val hours = mutableListOf("12 am")
