@@ -62,7 +62,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                               String units, Double conversion, int id) {
         // Set the textview background color based on the status
         int drawable;
-        if (status != null && !status.equals("Normal")) {
+        if (status != null && !status.equals("Normal") && !status.equals("Unknown")) {
             drawable = R.drawable.pressure_oval_red_solid;
             // Get the tire pressure and do any conversion necessary.
             if (pressure != null) {
