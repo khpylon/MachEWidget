@@ -1430,6 +1430,18 @@ public class Utils {
         }).start();
     }
 
+    // Check if we should display most recent survey information.
+    public static boolean doSurvey (Context context) {
+        String surveyVersion_key = context.getResources().getString(R.string.surveyVersion_key);
+        int currentSurveyVersion = PreferenceManager.getDefaultSharedPreferences(context).getInt(surveyVersion_key, 0);
+        if (currentSurveyVersion <= Constants.SURVEY_VERSION) {
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(surveyVersion_key, Constants.SURVEY_VERSION + 1).apply();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static boolean scanImageForColor(Context context, VehicleInfo vehicleInfo) {
         // If vehicle color has been set, do nothing
         if ((vehicleInfo.getColorValue() & ARGB_MASK) != (Color.WHITE & ARGB_MASK)) {

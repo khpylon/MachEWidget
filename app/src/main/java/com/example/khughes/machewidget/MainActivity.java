@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private int vehicleCount = 0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,25 +53,16 @@ public class MainActivity extends AppCompatActivity {
         context = this.getApplicationContext();
 
         // If we haven't bugged about the survey before, do it once and get it over with
-        if( !PreferenceManager.getDefaultSharedPreferences(context).getBoolean("showSurvey",false) ) {
-            PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("showSurvey",true).apply();
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle("Please take this short survey about app usage details.");
+        if (Utils.doSurvey(context)) {
+            WebView surveyWebview = new WebView(this);
+            surveyWebview.loadUrl(context.getResources().getString(R.string.survey_uri));
+            surveyWebview.getSettings().setJavaScriptEnabled(true);
+            surveyWebview.setWebViewClient(new WebViewClient() {});
 
-            WebView wv = new WebView(this);
-            wv.loadUrl("https://www.surveymonkey.com/r/VWG5TRZ");
-            wv.setWebViewClient(new WebViewClient() {
-            });
-            wv.getSettings().setJavaScriptEnabled(true);
-
-            alert.setView(wv);
-            alert.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            });
-            alert.show();
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.survey_description)
+                    .setNegativeButton("Close", (dialog, id) -> dialog.dismiss())
+                    .setView(surveyWebview).show();
         }
 
         // First thing, check logcat for a crash and save if so
@@ -103,6 +96,16 @@ public class MainActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 }
+            }
+        }
+
+        // Android 13 and later require user to allow posting of notifications
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                }).launch(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
 

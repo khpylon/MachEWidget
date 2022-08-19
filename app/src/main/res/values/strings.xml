@@ -98,6 +98,14 @@
     <string name="units_metric">1</string>
     <string name="units_imperial">2</string>
 
+    <!-- survey values -->
+    <string name="surveyVersion_key">surveyVersion</string>
+    <string name="survey_description">Please take this short survey about app usage details.</string>
+    <string name="survey_uri">https://www.surveymonkey.com/r/VWG5TRZ</string>
+
+
+
+
     <string name="clear_alert">Clear Alert</string>
     <string name="install_update">Install Update</string>
 
