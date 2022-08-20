@@ -82,10 +82,7 @@ public class OTAViewActivity extends AppCompatActivity {
         Context context = getApplicationContext();
 
         WebView mWebView = findViewById(R.id.ota_webview);
-        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-            WebSettingsCompat.setForceDark(mWebView.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
-        }
+        Utils.checkDarkMode(context, mWebView);
 
         Button clear = findViewById(R.id.button);
         clear.setOnClickListener(view -> {
