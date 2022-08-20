@@ -14,8 +14,8 @@ android {
         applicationId "com.example.khughes.machewidget"
         minSdkVersion 28
         targetSdkVersion 33
-        versionCode 42
-        versionName "2022.08.19"
+        versionCode 43
+        versionName "2022.08.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {

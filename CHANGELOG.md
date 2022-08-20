@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 2022.08.13
+### Added
+- A notification will alert you should the app be unable to refresh the authentication token.
+
+### Changed
+- Don't show low tire pressure warning notification if status reports "unknown".
+- Various modifications to support Android 13.
+
+## 2022.08.13
 ### Fixed
 - Fix some null pointer exceptions caught by Google Play Store.
 
