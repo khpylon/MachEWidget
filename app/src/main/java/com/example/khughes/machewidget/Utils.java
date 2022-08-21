@@ -73,937 +73,937 @@ import static android.content.Context.POWER_SERVICE;
 
 public class Utils {
 
-    public static final int WORLD_MANUFACTURING_IDENTIFIER_START_INDEX = 1 - 1;
-    public static final int WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3;
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV = "3FM";
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_GERMANY = "WF0";
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK = "1FT";
-    public static final String WORLD_MANUFACTURING_IDENTIFIER_USA_MPV = "1FM";
-
-    public static final int NA_LINE_SERIES_START_INDEX = 5 - 1;
-    public static final int NA_LINE_SERIES_END_INDEX = 7;
-
-    public static final String NA_LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
-    public static final String NA_LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
-    public static final String NA_LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
-    public static final String NA_LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
-    public static final String NA_LINE_SERIES_MACHE_PREMIUM_AWD = "K3S"; // Premium AWD?
-    public static final String NA_LINE_SERIES_MACHE_GT_RWD = "K4S"; // GT AWD
-
-    public static final String NA_LINE_SERIES_F150_REGULAR_4X2 = "F1C"; // 4x2 chassis, regular cab
-    public static final String NA_LINE_SERIES_F150_REGULAR_4X4 = "F1E"; // 4x4 chassis, regular cab
-    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X2 = "W1C"; // 4x2, SuperCrew
-    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4 = "W1E"; // 4x4, superCrew
-    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR = "W1R"; // 4x4, SuperCrew, Raptor
-    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_POLICE = "W1P"; // 4x4, SuperCrew, Police
-    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X2_SSV = "W1S"; // 4x2, SuperCrew, SSV (Special Service Vehicle), government
-    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_SSV = "W1T"; // 4x4, superCrew, SSV (Special Service Vehicle), government
-    public static final String NA_LINE_SERIES_F150_SUPERCAB_4X2 = "X1C"; // 4x2, SuperCab
-    public static final String NA_LINE_SERIES_F150_SUPERCAB_4X4 = "X1E"; // 4x4, SuperCab
-
-    public static final String NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4 = "E5A"; //
-    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B"; //
-    public static final String NA_LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C"; //
-    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD = "E5D"; //
-    public static final String NA_LINE_SERIES_BRONCO_FE_4DOOR_AWD = "E5E"; //
-    public static final String NA_LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
-    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
-
-    public static final String NA_LINE_SERIES_BRONCOSPORT_BASE_4x4 = "R9A";
-    public static final String NA_LINE_SERIES_BRONCOSPORT_BIGBEND_4x4 = "R9B";
-    public static final String NA_LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4 = "R9C";
-    public static final String NA_LINE_SERIES_BRONCOSPORT_BADLANDS_4x4 = "R9D";
-    public static final String NA_LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4 = "R9E";
-
-    public static final String NA_LINE_SERIES_EXPLORER_BASE_RWD = "K7B";
-    public static final String NA_LINE_SERIES_EXPLORER_XLT_RWD = "K7D";
-    public static final String NA_LINE_SERIES_EXPLORER_LIMITED_RWD = "K7F";
-    public static final String NA_LINE_SERIES_EXPLORER_PLATINUM_RWD = "K7H";
-    public static final String NA_LINE_SERIES_EXPLORER_KING_RWD = "K7L";
-    public static final String NA_LINE_SERIES_EXPLORER_ST_RWD = "K7G";
-    public static final String NA_LINE_SERIES_EXPLORER_STLINE_RWD = "K7K";
-    public static final String NA_LINE_SERIES_EXPLORER_POLICE = "K8A";
-    public static final String NA_LINE_SERIES_EXPLORER_BASE_4WD = "K8B";
-    public static final String NA_LINE_SERIES_EXPLORER_XLT_4WD = "K8D";
-    public static final String NA_LINE_SERIES_EXPLORER_LIMITED_4WD = "K8F";
-    public static final String NA_LINE_SERIES_EXPLORER_ST_4WD = "K8G";
-    public static final String NA_LINE_SERIES_EXPLORER_PLATINUM_4WD = "K8H";
-    public static final String NA_LINE_SERIES_EXPLORER_KING_4WD = "K8L";
-    public static final String NA_LINE_SERIES_EXPLORER_STLINE_4WD = "K8K";
-    public static final String NA_LINE_SERIES_EXPLORER_TIMBERLINE_4WD = "K8J";
-
-    public static final String NA_LINE_SERIES_ESCAPE_S_RWD = "U0F";
-    public static final String NA_LINE_SERIES_ESCAPE_SE_RWD = "U0G";
-    public static final String NA_LINE_SERIES_ESCAPE_SEL_RWD = "U0H";
-    public static final String NA_LINE_SERIES_ESCAPE_SE_FHEV_RWD = "U0B";
-    public static final String NA_LINE_SERIES_ESCAPE_SEL_FHEV_RWD = "U0C";
-    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD = "U0D";
-    public static final String NA_LINE_SERIES_ESCAPE_SE_PHEV_RWD = "U0E";
-    public static final String NA_LINE_SERIES_ESCAPE_SEL_PHEV_RWD = "U0K";
-    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD = "U0L";
-    public static final String NA_LINE_SERIES_ESCAPE_S_4WD = "U9F";
-    public static final String NA_LINE_SERIES_ESCAPE_SE_4WD = "U9G";
-    public static final String NA_LINE_SERIES_ESCAPE_SEL_4WD = "U9H";
-    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_4WD = "U9J";
-    public static final String NA_LINE_SERIES_ESCAPE_SE_FHEV_4WD = "U9B";
-    public static final String NA_LINE_SERIES_ESCAPE_SEL_FHEV_4WD = "U9C";
-    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD = "U9D";
-
-    public static final String NA_LINE_SERIES_EDGE_ST_AWD = "K4A";
-    public static final String NA_LINE_SERIES_EDGE_SE_AWD = "K4G";
-    public static final String NA_LINE_SERIES_EDGE_SEL_AWD = "K4J";
-    public static final String NA_LINE_SERIES_EDGE_TITANIUM_AWD = "K4K";
-
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2 = "K1F";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4 = "K1G";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x2 = "K1H";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x4 = "K1J";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2 = "K1N";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4 = "K1P";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2 = "K1K";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4 = "K2A";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2 = "K1L";
-    public static final String NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4 = "K1M";
-    public static final String NA_LINE_SERIES_EXPEDITION_XL_4x2 = "U1F";
-    public static final String NA_LINE_SERIES_EXPEDITION_XL_4x4 = "U1G";
-    public static final String NA_LINE_SERIES_EXPEDITION_XLT_4x2 = "U1H";
-    public static final String NA_LINE_SERIES_EXPEDITION_XLT_4x4 = "U1J";
-    public static final String NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x2 = "U1N";
-    public static final String NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x4 = "U1P";
-    public static final String NA_LINE_SERIES_EXPEDITION_LIMITED_4x2 = "U1K";
-    public static final String NA_LINE_SERIES_EXPEDITION_LIMITED_4x4 = "U2A";
-    public static final String NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2 = "U1L";
-    public static final String NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4 = "U1M";
-    public static final String NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4 = "U1R";
-
-    public static final int EURO_LINE_SERIES_START_INDEX = 7 - 1;
-    public static final int EURO_LINE_SERIES_END_INDEX = 9;
-
-    public static final String EURO_LINE_SERIES_KUGA = "WPM";
-    public static final String EURO_LINE_SERIES_PUMA = "ERK";
-
-    private static final Set<String> macheLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_MACHE_SELECT_RWD);
-        tmpSet.add(NA_LINE_SERIES_MACHE_SELECT_AWD);
-        tmpSet.add(NA_LINE_SERIES_MACHE_CAROUTE1_RWD);
-        tmpSet.add(NA_LINE_SERIES_MACHE_PREMIUM_RWD);
-        tmpSet.add(NA_LINE_SERIES_MACHE_PREMIUM_AWD);
-        tmpSet.add(NA_LINE_SERIES_MACHE_GT_RWD);
-        macheLineSeries = tmpSet;
-    }
-
-    public static boolean isMachE(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) ||
-                WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)) && macheLineSeries.contains(lineSeries);
-    }
-
-    private static final Set<String> f150RegularCabsLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_F150_REGULAR_4X2);
-        tmpSet.add(NA_LINE_SERIES_F150_REGULAR_4X4);
-        f150RegularCabsLineSeries = tmpSet;
-    }
-
-    public static boolean isF150RegularCab(String VIN) {
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return f150RegularCabsLineSeries.contains(lineSeries);
-    }
-
-    private static final Set<String> f150SuperCabsLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_F150_SUPERCAB_4X2);
-        tmpSet.add(NA_LINE_SERIES_F150_SUPERCAB_4X4);
-        f150SuperCabsLineSeries = tmpSet;
-    }
-
-    public static boolean isF150SuperCab(String VIN) {
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return f150SuperCabsLineSeries.contains(lineSeries);
-    }
-
-    private static final Set<String> f150SuperCrewsLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X2);
-        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4);
-        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4_POLICE);
-        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X2_SSV);
-        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4_SSV);
-        f150SuperCrewsLineSeries = tmpSet;
-    }
-
-    public static boolean isF150SuperCrew(String VIN) {
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return f150SuperCrewsLineSeries.contains(lineSeries);
-    }
-
-    public static boolean isF150Raptor(String VIN) {
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return lineSeries.equals(NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR);
-    }
-
-    public static boolean isF150(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK) &&
-                (isF150RegularCab(VIN) || isF150SuperCab(VIN) || isF150SuperCrew(VIN) || isF150Raptor(VIN));
-    }
-
-    private static final Set<String> explorerLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_BASE_RWD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_XLT_RWD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_LIMITED_RWD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_PLATINUM_RWD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_KING_RWD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_ST_RWD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_STLINE_RWD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_POLICE);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_BASE_4WD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_XLT_4WD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_LIMITED_4WD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_ST_4WD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_PLATINUM_4WD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_KING_4WD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_STLINE_4WD);
-        tmpSet.add(NA_LINE_SERIES_EXPLORER_TIMBERLINE_4WD);
-        explorerLineSeries = tmpSet;
-    }
-
-    public static boolean isExplorer(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && explorerLineSeries.contains(lineSeries);
-    }
-
-    private static final Set<String> broncoLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4);
-        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4);
-        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_2DOOR_AWD);
-        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD);
-        tmpSet.add(NA_LINE_SERIES_BRONCO_FE_4DOOR_AWD);
-        tmpSet.add(NA_LINE_SERIES_BRONCO_FE_2DOOR_AWD);
-        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR);
-        broncoLineSeries = tmpSet;
-    }
-
-    public static boolean isBronco(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoLineSeries.contains(lineSeries);
-    }
-
-    private static final Set<String> broncoSportLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BASE_4x4);
-        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BIGBEND_4x4);
-        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4);
-        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BADLANDS_4x4);
-        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4);
-        broncoSportLineSeries = tmpSet;
-    }
-
-    public static boolean isBroncoSport(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoSportLineSeries.contains(lineSeries);
-    }
-
-    private static final Set<String> escapeLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_S_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_FHEV_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_FHEV_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_PHEV_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_PHEV_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_S_4WD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_4WD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_4WD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_4WD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_FHEV_4WD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_FHEV_4WD);
-        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD);
-        escapeLineSeries = tmpSet;
-    }
-
-    public static boolean isEscape(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && escapeLineSeries.contains(lineSeries);
-    }
-
-    private static final Set<String> edgeLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_EDGE_ST_AWD);
-        tmpSet.add(NA_LINE_SERIES_EDGE_SE_AWD);
-        tmpSet.add(NA_LINE_SERIES_EDGE_SEL_AWD);
-        tmpSet.add(NA_LINE_SERIES_EDGE_TITANIUM_AWD);
-        edgeLineSeries = tmpSet;
-    }
-
-    public static boolean isEdge(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && edgeLineSeries.contains(lineSeries);
-    }
-
-    private static final Set<String> expeditionLineSeries;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XL_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XL_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XLT_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XLT_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_LIMITED_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_LIMITED_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4);
-        tmpSet.add(NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4);
-        expeditionLineSeries = tmpSet;
-    }
-
-    public static boolean isExpedition(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && expeditionLineSeries.contains(lineSeries);
-    }
-
-    public static boolean isKuga(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) && lineSeries.equals(EURO_LINE_SERIES_KUGA);
-    }
-
-    public static boolean isPuma(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String lineSeries = VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX);
-        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) && lineSeries.equals(EURO_LINE_SERIES_PUMA);
-    }
-
-    // Check to see if we recognize a VIN in general
-    public static boolean isVINRecognized(String VIN) {
-        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) || isBroncoSport(VIN)
-                || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)
-                || isKuga(VIN) || isPuma(VIN);
-    }
-
-    public static final int NA_FUEL_TYPE_START_INDEX = 8 - 1;
-    public static final int NA_FUEL_TYPE_END_INDEX = 8;
-
-    public static final String NA_HYBRID_TRUCK_2_5_LITER = "3";
-    public static final String NA_ELEC_TRUCK_EXT_BATT_REAR_MOTOR = "7";
-    public static final String NA_HYBRID_TRUCK_3_5_LITER = "D";
-    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
-    public static final String NA_ELEC_TRUCK_STD_BATT_DUAL_MOTOR = "L";
-    public static final String NA_ELEC_TRUCK_STD_BATT_REAR_MOTOR = "M";
-    public static final String NA_ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
-    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
-    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_MOTOR = "V";
-    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
-    public static final String NA_HYBRID_TRUCK_3_3_LITER = "W";
-    public static final String NA_PHEV_TRUCK_3_0_LITER = "Y";
-    public static final String NA_PHEV_TRUCK_2_5_LITER = "Z";
-//    public static final String NA_ELEC_CAR_EXT_BATT_REAR_MOTOR = "7";
-//    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
-//    public static final String NA_ELEC_CAR_STD_BATT_REAR_MOTOR = "M";
-//    public static final String NA_ELEC_CAR_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
-//    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
-//    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
-
-    public static final int EURO_FUEL_TYPE_START_INDEX = 10 - 1;
-    public static final int EURO_FUEL_TYPE_END_INDEX = 10;
-
-    public static final String EURO_PHEV = "H";
-
-    public static final int FUEL_UNKNOWN = 0;
-    public static final int FUEL_GAS = FUEL_UNKNOWN + 1;
-    public static final int FUEL_HYBRID = FUEL_GAS + 1;
-    public static final int FUEL_PHEV = FUEL_HYBRID + 1;
-    public static final int FUEL_ELECTRIC = FUEL_PHEV + 1;
-
-    private static final Set<String> na_fuelElectric;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_DUAL_MOTOR);
-        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_REAR_MOTOR);
-        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR);
-        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_REAR_MOTOR);
-        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
-        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
-        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_MOTOR);
-        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR);
-        na_fuelElectric = tmpSet;
-    }
-
-    private static final Set<String> na_fuelHybrid;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_HYBRID_TRUCK_2_5_LITER);
-        tmpSet.add(NA_HYBRID_TRUCK_3_3_LITER);
-        tmpSet.add(NA_HYBRID_TRUCK_3_5_LITER);
-        na_fuelHybrid = tmpSet;
-    }
-
-    private static final Set<String> na_fuelPHEV;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(NA_PHEV_TRUCK_2_5_LITER);
-        tmpSet.add(NA_PHEV_TRUCK_3_0_LITER);
-        na_fuelPHEV = tmpSet;
-    }
-
-    private static final Set<String> euro_fuelPHEV;
-
-    static {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.add(EURO_PHEV);
-        euro_fuelPHEV = tmpSet;
-    }
-
-    public static int getFuelType(String VIN) {
-        // Default is a Mach-E
-        if (VIN == null || VIN.equals("") || isMachE(VIN)) {
-            return FUEL_ELECTRIC;
-        }
-        // Otherwise check the VIN
-        else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
-                || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)) {
-            String fuelType = VIN.substring(NA_FUEL_TYPE_START_INDEX, NA_FUEL_TYPE_END_INDEX);
-            if (na_fuelElectric.contains(fuelType)) {
-                return FUEL_ELECTRIC;
-            } else if (na_fuelHybrid.contains(fuelType)) {
-                return FUEL_HYBRID;
-            } else if (na_fuelPHEV.contains(fuelType)) {
-                return FUEL_PHEV;
-            } else {
-                return FUEL_GAS;
-            }
-        } else if (isKuga(VIN) || isPuma(VIN)) {
-            String fuelType = VIN.substring(EURO_FUEL_TYPE_START_INDEX, EURO_FUEL_TYPE_END_INDEX);
-            if (euro_fuelPHEV.contains(fuelType)) {
-                return FUEL_PHEV;
-            } else {
-                return FUEL_GAS;
-            }
-        } else {
-            return FUEL_ELECTRIC;
-        }
-    }
-
-    public static final String WIREFRAME = "wireframe";
-    public static final String HOOD = "hood";
-    public static final String TAILGATE = "tailgate_open";
-    public static final String LEFT_FRONT_DOOR = "lfdoor_open";
-    public static final String RIGHT_FRONT_DOOR = "rfdoor_open";
-    public static final String LEFT_REAR_DOOR = "lrdoor_open";
-    public static final String RIGHT_REAR_DOOR = "rrdoor_open";
-    public static final String LEFT_FRONT_WINDOW = "lfwindow_open";
-    public static final String RIGHT_FRONT_WINDOW = "rfwindow_open";
-    public static final String LEFT_REAR_WINDOW = "lrwindow_open";
-    public static final String RIGHT_REAR_WINDOW = "rrwindow_open";
-    public static final String BODY_PRIMARY = "body1st";
-    public static final String BODY_SECONDARY = "body2nd";
-
-    // Drawables for original widget
-
-    // Drawables for Mach-E
-    private static final Map<String, Integer> macheDrawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe_vert);
-        tmpMap.put(HOOD, R.drawable.mache_frunk_vert);
-        tmpMap.put(TAILGATE, R.drawable.mache_hatch_vert);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor_vert);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor_vert);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor_vert);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor_vert);
-        tmpMap.put(BODY_PRIMARY, R.drawable.mache_primary_vert);
-        tmpMap.put(BODY_SECONDARY, R.drawable.mache_secondary_vert);
-        macheDrawables = tmpMap;
-    }
-
-    // Drawables for Regular Cab (two door) F-150
-    private static final Map<String, Integer> regcabDrawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.regularcab_wireframe_vert);
-        tmpMap.put(HOOD, R.drawable.regularcab_hood_vert);
-        tmpMap.put(TAILGATE, R.drawable.regularcab_tailgate_vert);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.regularcab_lfdoor_vert);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.regularcab_rfdoor_vert);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.filler);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.filler);
-        tmpMap.put(BODY_PRIMARY, R.drawable.regularcab_primary_vert);
-        tmpMap.put(BODY_SECONDARY, R.drawable.regularcab_secondary_vert);
-        regcabDrawables = tmpMap;
-    }
-
-    // Drawables for SuperCab F-150
-    private static final Map<String, Integer> supercabDrawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.supercab_wireframe_vert);
-        tmpMap.put(HOOD, R.drawable.supercab_hood_vert);
-        tmpMap.put(TAILGATE, R.drawable.supercab_tailgate_vert);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercab_lfdoor_vert);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercab_rfdoor_vert);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercab_lrdoor_vert);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercab_rrdoor_vert);
-        tmpMap.put(BODY_PRIMARY, R.drawable.supercab_primary_vert);
-        tmpMap.put(BODY_SECONDARY, R.drawable.supercab_secondary_vert);
-        supercabDrawables = tmpMap;
-    }
-
-    // Drawables for SuperCrew F-150
-    private static final Map<String, Integer> supercrewDrawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.supercrew_wireframe_vert);
-        tmpMap.put(HOOD, R.drawable.supercrew_hood_vert);
-        tmpMap.put(TAILGATE, R.drawable.supercrew_tailgate_vert);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercrew_lfdoor_vert);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercrew_rfdoor_vert);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercrew_lrdoor_vert);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercrew_rrdoor_vert);
-        tmpMap.put(BODY_PRIMARY, R.drawable.supercrew_primary_vert);
-        tmpMap.put(BODY_SECONDARY, R.drawable.supercrew_secondary_vert);
-        supercrewDrawables = tmpMap;
-    }
-
-    // Drawables for F-150 Raptor
-//    private static final Map<String, Integer> raptorDrawables;
+//    public static final int WORLD_MANUFACTURING_IDENTIFIER_START_INDEX = 1 - 1;
+//    public static final int WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3;
+//    public static final String WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV = "3FM";
+//    public static final String WORLD_MANUFACTURING_IDENTIFIER_GERMANY = "WF0";
+//    public static final String WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK = "1FT";
+//    public static final String WORLD_MANUFACTURING_IDENTIFIER_USA_MPV = "1FM";
+//
+//    public static final int NA_LINE_SERIES_START_INDEX = 5 - 1;
+//    public static final int NA_LINE_SERIES_END_INDEX = 7;
+//
+//    public static final String NA_LINE_SERIES_MACHE_SELECT_RWD = "K1R"; // select RWD
+//    public static final String NA_LINE_SERIES_MACHE_SELECT_AWD = "K1S"; // select RWD (AWD?
+//    public static final String NA_LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R"; // Route 1 RWD
+//    public static final String NA_LINE_SERIES_MACHE_PREMIUM_RWD = "K3R"; // Premium RWD
+//    public static final String NA_LINE_SERIES_MACHE_PREMIUM_AWD = "K3S"; // Premium AWD?
+//    public static final String NA_LINE_SERIES_MACHE_GT_RWD = "K4S"; // GT AWD
+//
+//    public static final String NA_LINE_SERIES_F150_REGULAR_4X2 = "F1C"; // 4x2 chassis, regular cab
+//    public static final String NA_LINE_SERIES_F150_REGULAR_4X4 = "F1E"; // 4x4 chassis, regular cab
+//    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X2 = "W1C"; // 4x2, SuperCrew
+//    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4 = "W1E"; // 4x4, superCrew
+//    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR = "W1R"; // 4x4, SuperCrew, Raptor
+//    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_POLICE = "W1P"; // 4x4, SuperCrew, Police
+//    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X2_SSV = "W1S"; // 4x2, SuperCrew, SSV (Special Service Vehicle), government
+//    public static final String NA_LINE_SERIES_F150_SUPERCREW_4X4_SSV = "W1T"; // 4x4, superCrew, SSV (Special Service Vehicle), government
+//    public static final String NA_LINE_SERIES_F150_SUPERCAB_4X2 = "X1C"; // 4x2, SuperCab
+//    public static final String NA_LINE_SERIES_F150_SUPERCAB_4X4 = "X1E"; // 4x4, SuperCab
+//
+//    public static final String NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4 = "E5A"; //
+//    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B"; //
+//    public static final String NA_LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C"; //
+//    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD = "E5D"; //
+//    public static final String NA_LINE_SERIES_BRONCO_FE_4DOOR_AWD = "E5E"; //
+//    public static final String NA_LINE_SERIES_BRONCO_FE_2DOOR_AWD = "E5F"; //
+//    public static final String NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR = "E5J"; //
+//
+//    public static final String NA_LINE_SERIES_BRONCOSPORT_BASE_4x4 = "R9A";
+//    public static final String NA_LINE_SERIES_BRONCOSPORT_BIGBEND_4x4 = "R9B";
+//    public static final String NA_LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4 = "R9C";
+//    public static final String NA_LINE_SERIES_BRONCOSPORT_BADLANDS_4x4 = "R9D";
+//    public static final String NA_LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4 = "R9E";
+//
+//    public static final String NA_LINE_SERIES_EXPLORER_BASE_RWD = "K7B";
+//    public static final String NA_LINE_SERIES_EXPLORER_XLT_RWD = "K7D";
+//    public static final String NA_LINE_SERIES_EXPLORER_LIMITED_RWD = "K7F";
+//    public static final String NA_LINE_SERIES_EXPLORER_PLATINUM_RWD = "K7H";
+//    public static final String NA_LINE_SERIES_EXPLORER_KING_RWD = "K7L";
+//    public static final String NA_LINE_SERIES_EXPLORER_ST_RWD = "K7G";
+//    public static final String NA_LINE_SERIES_EXPLORER_STLINE_RWD = "K7K";
+//    public static final String NA_LINE_SERIES_EXPLORER_POLICE = "K8A";
+//    public static final String NA_LINE_SERIES_EXPLORER_BASE_4WD = "K8B";
+//    public static final String NA_LINE_SERIES_EXPLORER_XLT_4WD = "K8D";
+//    public static final String NA_LINE_SERIES_EXPLORER_LIMITED_4WD = "K8F";
+//    public static final String NA_LINE_SERIES_EXPLORER_ST_4WD = "K8G";
+//    public static final String NA_LINE_SERIES_EXPLORER_PLATINUM_4WD = "K8H";
+//    public static final String NA_LINE_SERIES_EXPLORER_KING_4WD = "K8L";
+//    public static final String NA_LINE_SERIES_EXPLORER_STLINE_4WD = "K8K";
+//    public static final String NA_LINE_SERIES_EXPLORER_TIMBERLINE_4WD = "K8J";
+//
+//    public static final String NA_LINE_SERIES_ESCAPE_S_RWD = "U0F";
+//    public static final String NA_LINE_SERIES_ESCAPE_SE_RWD = "U0G";
+//    public static final String NA_LINE_SERIES_ESCAPE_SEL_RWD = "U0H";
+//    public static final String NA_LINE_SERIES_ESCAPE_SE_FHEV_RWD = "U0B";
+//    public static final String NA_LINE_SERIES_ESCAPE_SEL_FHEV_RWD = "U0C";
+//    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD = "U0D";
+//    public static final String NA_LINE_SERIES_ESCAPE_SE_PHEV_RWD = "U0E";
+//    public static final String NA_LINE_SERIES_ESCAPE_SEL_PHEV_RWD = "U0K";
+//    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD = "U0L";
+//    public static final String NA_LINE_SERIES_ESCAPE_S_4WD = "U9F";
+//    public static final String NA_LINE_SERIES_ESCAPE_SE_4WD = "U9G";
+//    public static final String NA_LINE_SERIES_ESCAPE_SEL_4WD = "U9H";
+//    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_4WD = "U9J";
+//    public static final String NA_LINE_SERIES_ESCAPE_SE_FHEV_4WD = "U9B";
+//    public static final String NA_LINE_SERIES_ESCAPE_SEL_FHEV_4WD = "U9C";
+//    public static final String NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD = "U9D";
+//
+//    public static final String NA_LINE_SERIES_EDGE_ST_AWD = "K4A";
+//    public static final String NA_LINE_SERIES_EDGE_SE_AWD = "K4G";
+//    public static final String NA_LINE_SERIES_EDGE_SEL_AWD = "K4J";
+//    public static final String NA_LINE_SERIES_EDGE_TITANIUM_AWD = "K4K";
+//
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2 = "K1F";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4 = "K1G";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x2 = "K1H";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x4 = "K1J";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2 = "K1N";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4 = "K1P";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2 = "K1K";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4 = "K2A";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2 = "K1L";
+//    public static final String NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4 = "K1M";
+//    public static final String NA_LINE_SERIES_EXPEDITION_XL_4x2 = "U1F";
+//    public static final String NA_LINE_SERIES_EXPEDITION_XL_4x4 = "U1G";
+//    public static final String NA_LINE_SERIES_EXPEDITION_XLT_4x2 = "U1H";
+//    public static final String NA_LINE_SERIES_EXPEDITION_XLT_4x4 = "U1J";
+//    public static final String NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x2 = "U1N";
+//    public static final String NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x4 = "U1P";
+//    public static final String NA_LINE_SERIES_EXPEDITION_LIMITED_4x2 = "U1K";
+//    public static final String NA_LINE_SERIES_EXPEDITION_LIMITED_4x4 = "U2A";
+//    public static final String NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2 = "U1L";
+//    public static final String NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4 = "U1M";
+//    public static final String NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4 = "U1R";
+//
+//    public static final int EURO_LINE_SERIES_START_INDEX = 7 - 1;
+//    public static final int EURO_LINE_SERIES_END_INDEX = 9;
+//
+//    public static final String EURO_LINE_SERIES_KUGA = "WPM";
+//    public static final String EURO_LINE_SERIES_PUMA = "ERK";
+//
+//    private static final Set<String> macheLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_MACHE_SELECT_RWD);
+//        tmpSet.add(NA_LINE_SERIES_MACHE_SELECT_AWD);
+//        tmpSet.add(NA_LINE_SERIES_MACHE_CAROUTE1_RWD);
+//        tmpSet.add(NA_LINE_SERIES_MACHE_PREMIUM_RWD);
+//        tmpSet.add(NA_LINE_SERIES_MACHE_PREMIUM_AWD);
+//        tmpSet.add(NA_LINE_SERIES_MACHE_GT_RWD);
+//        macheLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isMachE(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) ||
+//                WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)) && macheLineSeries.contains(lineSeries);
+//    }
+//
+//    private static final Set<String> f150RegularCabsLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_F150_REGULAR_4X2);
+//        tmpSet.add(NA_LINE_SERIES_F150_REGULAR_4X4);
+//        f150RegularCabsLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isF150RegularCab(String VIN) {
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return f150RegularCabsLineSeries.contains(lineSeries);
+//    }
+//
+//    private static final Set<String> f150SuperCabsLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_F150_SUPERCAB_4X2);
+//        tmpSet.add(NA_LINE_SERIES_F150_SUPERCAB_4X4);
+//        f150SuperCabsLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isF150SuperCab(String VIN) {
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return f150SuperCabsLineSeries.contains(lineSeries);
+//    }
+//
+//    private static final Set<String> f150SuperCrewsLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X2);
+//        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4);
+//        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4_POLICE);
+//        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X2_SSV);
+//        tmpSet.add(NA_LINE_SERIES_F150_SUPERCREW_4X4_SSV);
+//        f150SuperCrewsLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isF150SuperCrew(String VIN) {
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return f150SuperCrewsLineSeries.contains(lineSeries);
+//    }
+//
+//    public static boolean isF150Raptor(String VIN) {
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return lineSeries.equals(NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR);
+//    }
+//
+//    public static boolean isF150(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK) &&
+//                (isF150RegularCab(VIN) || isF150SuperCab(VIN) || isF150SuperCrew(VIN) || isF150Raptor(VIN));
+//    }
+//
+//    private static final Set<String> explorerLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_BASE_RWD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_XLT_RWD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_LIMITED_RWD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_PLATINUM_RWD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_KING_RWD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_ST_RWD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_STLINE_RWD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_POLICE);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_BASE_4WD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_XLT_4WD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_LIMITED_4WD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_ST_4WD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_PLATINUM_4WD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_KING_4WD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_STLINE_4WD);
+//        tmpSet.add(NA_LINE_SERIES_EXPLORER_TIMBERLINE_4WD);
+//        explorerLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isExplorer(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && explorerLineSeries.contains(lineSeries);
+//    }
+//
+//    private static final Set<String> broncoLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4);
+//        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4);
+//        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_2DOOR_AWD);
+//        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD);
+//        tmpSet.add(NA_LINE_SERIES_BRONCO_FE_4DOOR_AWD);
+//        tmpSet.add(NA_LINE_SERIES_BRONCO_FE_2DOOR_AWD);
+//        tmpSet.add(NA_LINE_SERIES_BRONCO_BASE_4DOOR_AWD_RAPTOR);
+//        broncoLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isBronco(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoLineSeries.contains(lineSeries);
+//    }
+//
+//    private static final Set<String> broncoSportLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BASE_4x4);
+//        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BIGBEND_4x4);
+//        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_OUTERBANKS_4x4);
+//        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_BADLANDS_4x4);
+//        tmpSet.add(NA_LINE_SERIES_BRONCOSPORT_WILDTRAK_4x4);
+//        broncoSportLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isBroncoSport(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && broncoSportLineSeries.contains(lineSeries);
+//    }
+//
+//    private static final Set<String> escapeLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_S_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_FHEV_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_FHEV_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_PHEV_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_PHEV_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_PHEV_RWD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_S_4WD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_4WD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_4WD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_4WD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SE_FHEV_4WD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_SEL_FHEV_4WD);
+//        tmpSet.add(NA_LINE_SERIES_ESCAPE_TITANIUM_FHEV_4WD);
+//        escapeLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isEscape(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && escapeLineSeries.contains(lineSeries);
+//    }
+//
+//    private static final Set<String> edgeLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_EDGE_ST_AWD);
+//        tmpSet.add(NA_LINE_SERIES_EDGE_SE_AWD);
+//        tmpSet.add(NA_LINE_SERIES_EDGE_SEL_AWD);
+//        tmpSet.add(NA_LINE_SERIES_EDGE_TITANIUM_AWD);
+//        edgeLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isEdge(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && edgeLineSeries.contains(lineSeries);
+//    }
+//
+//    private static final Set<String> expeditionLineSeries;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XL_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XL_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XLT_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_XLT_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_LIMITED_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_LIMITED_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4);
+//        tmpSet.add(NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4);
+//        expeditionLineSeries = tmpSet;
+//    }
+//
+//    public static boolean isExpedition(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_USA_MPV) && expeditionLineSeries.contains(lineSeries);
+//    }
+//
+//    public static boolean isKuga(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) && lineSeries.equals(EURO_LINE_SERIES_KUGA);
+//    }
+//
+//    public static boolean isPuma(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String lineSeries = VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX);
+//        return WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY) && lineSeries.equals(EURO_LINE_SERIES_PUMA);
+//    }
+//
+//    // Check to see if we recognize a VIN in general
+//    public static boolean isVINRecognized(String VIN) {
+//        return isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) || isBroncoSport(VIN)
+//                || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)
+//                || isKuga(VIN) || isPuma(VIN);
+//    }
+//
+//    public static final int NA_FUEL_TYPE_START_INDEX = 8 - 1;
+//    public static final int NA_FUEL_TYPE_END_INDEX = 8;
+//
+//    public static final String NA_HYBRID_TRUCK_2_5_LITER = "3";
+//    public static final String NA_ELEC_TRUCK_EXT_BATT_REAR_MOTOR = "7";
+//    public static final String NA_HYBRID_TRUCK_3_5_LITER = "D";
+//    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
+//    public static final String NA_ELEC_TRUCK_STD_BATT_DUAL_MOTOR = "L";
+//    public static final String NA_ELEC_TRUCK_STD_BATT_REAR_MOTOR = "M";
+//    public static final String NA_ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
+//    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
+//    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_MOTOR = "V";
+//    public static final String NA_ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
+//    public static final String NA_HYBRID_TRUCK_3_3_LITER = "W";
+//    public static final String NA_PHEV_TRUCK_3_0_LITER = "Y";
+//    public static final String NA_PHEV_TRUCK_2_5_LITER = "Z";
+////    public static final String NA_ELEC_CAR_EXT_BATT_REAR_MOTOR = "7";
+////    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_LIMITED_MOTOR = "E";
+////    public static final String NA_ELEC_CAR_STD_BATT_REAR_MOTOR = "M";
+////    public static final String NA_ELEC_CAR_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "S";
+////    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR = "U";
+////    public static final String NA_ELEC_CAR_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR = "X";
+//
+//    public static final int EURO_FUEL_TYPE_START_INDEX = 10 - 1;
+//    public static final int EURO_FUEL_TYPE_END_INDEX = 10;
+//
+//    public static final String EURO_PHEV = "H";
+//
+//    public static final int FUEL_UNKNOWN = 0;
+//    public static final int FUEL_GAS = FUEL_UNKNOWN + 1;
+//    public static final int FUEL_HYBRID = FUEL_GAS + 1;
+//    public static final int FUEL_PHEV = FUEL_HYBRID + 1;
+//    public static final int FUEL_ELECTRIC = FUEL_PHEV + 1;
+//
+//    private static final Set<String> na_fuelElectric;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_DUAL_MOTOR);
+//        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_REAR_MOTOR);
+//        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_LIMITED_MOTOR);
+//        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_REAR_MOTOR);
+//        tmpSet.add(NA_ELEC_TRUCK_STD_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
+//        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_SMALLER_SECONDARY_MOTOR);
+//        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_MOTOR);
+//        tmpSet.add(NA_ELEC_TRUCK_EXT_BATT_DUAL_LARGER_SECONDARY_MOTOR);
+//        na_fuelElectric = tmpSet;
+//    }
+//
+//    private static final Set<String> na_fuelHybrid;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_HYBRID_TRUCK_2_5_LITER);
+//        tmpSet.add(NA_HYBRID_TRUCK_3_3_LITER);
+//        tmpSet.add(NA_HYBRID_TRUCK_3_5_LITER);
+//        na_fuelHybrid = tmpSet;
+//    }
+//
+//    private static final Set<String> na_fuelPHEV;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(NA_PHEV_TRUCK_2_5_LITER);
+//        tmpSet.add(NA_PHEV_TRUCK_3_0_LITER);
+//        na_fuelPHEV = tmpSet;
+//    }
+//
+//    private static final Set<String> euro_fuelPHEV;
+//
+//    static {
+//        Set<String> tmpSet = new HashSet<>();
+//        tmpSet.add(EURO_PHEV);
+//        euro_fuelPHEV = tmpSet;
+//    }
+//
+//    public static int getFuelType(String VIN) {
+//        // Default is a Mach-E
+//        if (VIN == null || VIN.equals("") || isMachE(VIN)) {
+//            return FUEL_ELECTRIC;
+//        }
+//        // Otherwise check the VIN
+//        else if (isF150(VIN) || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
+//                || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)) {
+//            String fuelType = VIN.substring(NA_FUEL_TYPE_START_INDEX, NA_FUEL_TYPE_END_INDEX);
+//            if (na_fuelElectric.contains(fuelType)) {
+//                return FUEL_ELECTRIC;
+//            } else if (na_fuelHybrid.contains(fuelType)) {
+//                return FUEL_HYBRID;
+//            } else if (na_fuelPHEV.contains(fuelType)) {
+//                return FUEL_PHEV;
+//            } else {
+//                return FUEL_GAS;
+//            }
+//        } else if (isKuga(VIN) || isPuma(VIN)) {
+//            String fuelType = VIN.substring(EURO_FUEL_TYPE_START_INDEX, EURO_FUEL_TYPE_END_INDEX);
+//            if (euro_fuelPHEV.contains(fuelType)) {
+//                return FUEL_PHEV;
+//            } else {
+//                return FUEL_GAS;
+//            }
+//        } else {
+//            return FUEL_ELECTRIC;
+//        }
+//    }
+
+//    public static final String WIREFRAME = "wireframe";
+//    public static final String HOOD = "hood";
+//    public static final String TAILGATE = "tailgate_open";
+//    public static final String LEFT_FRONT_DOOR = "lfdoor_open";
+//    public static final String RIGHT_FRONT_DOOR = "rfdoor_open";
+//    public static final String LEFT_REAR_DOOR = "lrdoor_open";
+//    public static final String RIGHT_REAR_DOOR = "rrdoor_open";
+//    public static final String LEFT_FRONT_WINDOW = "lfwindow_open";
+//    public static final String RIGHT_FRONT_WINDOW = "rfwindow_open";
+//    public static final String LEFT_REAR_WINDOW = "lrwindow_open";
+//    public static final String RIGHT_REAR_WINDOW = "rrwindow_open";
+//    public static final String BODY_PRIMARY = "body1st";
+//    public static final String BODY_SECONDARY = "body2nd";
+//
+//    // Drawables for original widget
+//
+//    // Drawables for Mach-E
+//    private static final Map<String, Integer> macheDrawables;
 //
 //    static {
 //        Map<String, Integer> tmpMap = new HashMap<>();
-//        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe);
-//        tmpMap.put(HOOD, R.drawable.raptor_hood);
-//        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate);
-//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor);
-//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor);
-//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor);
-//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor);
-//        raptorDrawables = tmpMap;
+//        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe_vert);
+//        tmpMap.put(HOOD, R.drawable.mache_frunk_vert);
+//        tmpMap.put(TAILGATE, R.drawable.mache_hatch_vert);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor_vert);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor_vert);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor_vert);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor_vert);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.mache_primary_vert);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.mache_secondary_vert);
+//        macheDrawables = tmpMap;
 //    }
-
-    // Drawables for Bronco Base 4x4
-    private static final Map<String, Integer> broncobase4x4Drawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.bronco_base_4x4_wireframe_vert);
-        tmpMap.put(HOOD, R.drawable.bronco_base_4x4_hood_vert);
-        tmpMap.put(TAILGATE, R.drawable.bronco_base_4x4_tailgate_vert);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.bronco_base_4x4_lfdoor_vert);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.bronco_base_4x4_rfdoor_vert);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.bronco_base_4x4_lrdoor_vert);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor_vert);
-        tmpMap.put(BODY_PRIMARY, R.drawable.bronco_base_4x4_primary_vert);
-        tmpMap.put(BODY_SECONDARY, R.drawable.bronco_base_4x4_secondary_vert);
-        broncobase4x4Drawables = tmpMap;
-    }
-
-    // Drawables for Explorer ST
-    private static final Map<String, Integer> explorerSTDrawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe_vert);
-        tmpMap.put(HOOD, R.drawable.explorer_hood_vert);
-        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate_vert);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor_vert);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor_vert);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor_vert);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor_vert);
-        tmpMap.put(BODY_PRIMARY, R.drawable.explorer_primary_vert);
-        tmpMap.put(BODY_SECONDARY, R.drawable.explorer_secondary_vert);
-        explorerSTDrawables = tmpMap;
-    }
-
-    // Drawables for Escape
-    private static final Map<String, Integer> escapeDrawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_vert);
-        tmpMap.put(HOOD, R.drawable.escape_hood_vert);
-        tmpMap.put(TAILGATE, R.drawable.escape_hatch_vert);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_vert);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_vert);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_vert);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_vert);
-        tmpMap.put(BODY_PRIMARY, R.drawable.escape_primary_vert);
-        tmpMap.put(BODY_SECONDARY, R.drawable.escape_secondary_vert);
-        escapeDrawables = tmpMap;
-    }
-
-    // Drawables for Edge
-    private static final Map<String, Integer> edgeDrawables;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.edge_wireframe_vert);
-        tmpMap.put(HOOD, R.drawable.edge_hood_vert);
-        tmpMap.put(TAILGATE, R.drawable.edge_liftgate_vert);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.edge_lfdoor_vert);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.edge_rfdoor_vert);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.edge_lrdoor_vert);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.edge_rrdoor_vert);
-        tmpMap.put(BODY_PRIMARY, R.drawable.edge_primary_vert);
-        tmpMap.put(BODY_SECONDARY, R.drawable.edge_secondary_vert);
-        edgeDrawables = tmpMap;
-    }
-
-    // Get the set of drawables for a particular style of vehicle
-    public static Map<String, Integer> getVehicleDrawables(String VIN) {
-        if (VIN != null && !VIN.equals("")) {
-            if (isF150(VIN)) {
-                if (isF150RegularCab(VIN)) {
-                    return regcabDrawables;
-                } else if (isF150SuperCab(VIN)) {
-                    return supercabDrawables;
-                } else if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) {
-                    return supercrewDrawables;
-//                } else if (isF150Raptor(VIN)) {
-//                    return raptorDrawables;
-                }
-            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
-                return broncobase4x4Drawables;
-            } else if (isExplorer(VIN)) {
-                return explorerSTDrawables;
-            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
-                return escapeDrawables;
-            } else if (isEdge(VIN)) {
-                return edgeDrawables;
-            } else if (isExpedition(VIN)) {
-                return explorerSTDrawables;
-            }
-        }
-        return macheDrawables;
-    }
-
-    public static Integer getLayoutByVIN(String VIN) {
-        if (VIN != null && !VIN.equals("")) {
-            if (isF150(VIN)) {
-                return R.layout.f150_widget;
-            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
-                return R.layout.bronco_widget;
-            } else if (isExplorer(VIN)) {
-                return R.layout.explorer_widget;
-            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
-                return R.layout.escape_widget;
-            } else if (isEdge(VIN)) {
-                return R.layout.edge_widget;
-            } else if (isExpedition(VIN)) {
-                return R.layout.explorer_widget;
-            }
-        }
-        return R.layout.mache_widget;
-    }
-
-    // Drawables for 1x5 widget
-
-    // Drawables for Mach-E
-    private static final Map<String, Integer> macheDrawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.mache_frunk_horz);
-        tmpMap.put(TAILGATE, R.drawable.mache_hatch_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.mache_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.mache_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.mache_lrwindow_horz);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.mache_rrwindow_horz);
-        tmpMap.put(BODY_PRIMARY, R.drawable.mache_primary_horz);
-        tmpMap.put(BODY_SECONDARY, R.drawable.mache_secondary_horz);
-        macheDrawables_1x5 = tmpMap;
-    }
-
-    // Drawables for Regular Cab (two door) F-150
-    private static final Map<String, Integer> regcabDrawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.regularcab_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.regularcab_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.regularcab_tailgate_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.regularcab_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.regularcab_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.filler);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.filler);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.regularcab_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.regularcab_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.filler);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.filler);
-        tmpMap.put(BODY_PRIMARY, R.drawable.regularcab_primary_horz);
-        tmpMap.put(BODY_SECONDARY, R.drawable.regularcab_secondary_horz);
-        regcabDrawables_1x5 = tmpMap;
-    }
-
-    // Drawables for SuperCab F-150
-    private static final Map<String, Integer> supercabDrawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.supercab_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.supercab_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.supercab_tailgate_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercab_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercab_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercab_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercab_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.supercab_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.supercab_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.filler);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.filler);
-        tmpMap.put(BODY_PRIMARY, R.drawable.supercab_primary_horz);
-        tmpMap.put(BODY_SECONDARY, R.drawable.supercab_secondary_horz);
-        supercabDrawables_1x5 = tmpMap;
-    }
-
-    // Drawables for SuperCrew F-150
-    private static final Map<String, Integer> supercrewDrawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.supercrew_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.supercrew_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.supercrew_tailgate_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercrew_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercrew_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercrew_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercrew_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.supercrew_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.supercrew_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.supercrew_lrwindow_horz);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.supercrew_rrwindow_horz);
-        tmpMap.put(BODY_PRIMARY, R.drawable.supercrew_primary_horz);
-        tmpMap.put(BODY_SECONDARY, R.drawable.supercrew_secondary_horz);
-        supercrewDrawables_1x5 = tmpMap;
-    }
-
-    // Drawables for F-150 Raptor
-//    private static final Map<String, Integer> raptorDrawables_1x5;
+//
+//    // Drawables for Regular Cab (two door) F-150
+//    private static final Map<String, Integer> regcabDrawables;
 //
 //    static {
 //        Map<String, Integer> tmpMap = new HashMap<>();
-//        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe_horz);
-//        tmpMap.put(HOOD, R.drawable.raptor_hood_horz);
-//        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate_horz);
-//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor_horz);
-//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor_horz);
-//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor_horz);
-//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor_horz);
-//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.raptor_lfwindow_horz);
-//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.raptor_rfwindow_horz);
-//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.raptor_lrwindow_horz);
-//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.raptor_rrwindow_horz);
-//        raptorDrawables_1x5 = tmpMap;
+//        tmpMap.put(WIREFRAME, R.drawable.regularcab_wireframe_vert);
+//        tmpMap.put(HOOD, R.drawable.regularcab_hood_vert);
+//        tmpMap.put(TAILGATE, R.drawable.regularcab_tailgate_vert);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.regularcab_lfdoor_vert);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.regularcab_rfdoor_vert);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.filler);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.filler);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.regularcab_primary_vert);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.regularcab_secondary_vert);
+//        regcabDrawables = tmpMap;
 //    }
-
-    // Drawables for Bronco Base 4x4
-    private static final Map<String, Integer> broncobase4x4Drawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.bronco_base_4x4_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.bronco_base_4x4_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.bronco_base_4x4_tailgate_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.bronco_base_4x4_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.bronco_base_4x4_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.bronco_base_4x4_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.bronco_base_4x4_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.bronco_base_4x4_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.bronco_base_4x4_lrwindow_horz);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.bronco_base_4x4_rrwindow_horz);
-        tmpMap.put(BODY_PRIMARY, R.drawable.bronco_base_4x4_primary_horz);
-        tmpMap.put(BODY_SECONDARY, R.drawable.bronco_base_4x4_secondary_horz);
-        broncobase4x4Drawables_1x5 = tmpMap;
-    }
-
-    // Drawables for Explorer ST
-    private static final Map<String, Integer> explorerSTDrawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.explorer_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.explorer_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.explorer_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.explorer_lrwindow_horz);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.explorer_rrwindow_horz);
-        tmpMap.put(BODY_PRIMARY, R.drawable.explorer_primary_horz);
-        tmpMap.put(BODY_SECONDARY, R.drawable.explorer_secondary_horz);
-        explorerSTDrawables_1x5 = tmpMap;
-    }
-
-    // Drawables for Escape
-    private static final Map<String, Integer> escapeDrawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.escape_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.escape_hatch_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.escape_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.escape_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.escape_lrwindow_horz);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.escape_rrwindow_horz);
-        tmpMap.put(BODY_PRIMARY, R.drawable.escape_primary_horz);
-        tmpMap.put(BODY_SECONDARY, R.drawable.escape_secondary_horz);
-        escapeDrawables_1x5 = tmpMap;
-    }
-
-    // Drawables for Edge
-    private static final Map<String, Integer> edgeDrawables_1x5;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put(WIREFRAME, R.drawable.edge_wireframe_horz);
-        tmpMap.put(HOOD, R.drawable.edge_hood_horz);
-        tmpMap.put(TAILGATE, R.drawable.edge_liftgate_horz);
-        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.edge_lfdoor_horz);
-        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.edge_rfdoor_horz);
-        tmpMap.put(LEFT_REAR_DOOR, R.drawable.edge_lrdoor_horz);
-        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.edge_rrdoor_horz);
-        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.edge_lfwindow_horz);
-        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.edge_rfwindow_horz);
-        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.edge_lrwindow_horz);
-        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.edge_rrwindow_horz);
-        tmpMap.put(BODY_PRIMARY, R.drawable.edge_primary_horz);
-        tmpMap.put(BODY_SECONDARY, R.drawable.edge_secondary_horz);
-        edgeDrawables_1x5 = tmpMap;
-    }
-
-    // Get the set of drawables for a particular style of vehicle
-    public static Map<String, Integer> getVehicleDrawables_1x5(String VIN) {
-        if (VIN != null && !VIN.equals("")) {
-            if (isF150(VIN)) {
-                if (isF150RegularCab(VIN)) {
-                    return regcabDrawables_1x5;
-                } else if (isF150SuperCab(VIN)) {
-                    return supercabDrawables_1x5;
-                } else if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) {
-                    return supercrewDrawables_1x5;
-//                } else if (isF150Raptor(VIN)) {
-//                    return raptorDrawables_1x5;
-                }
-            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
-                return broncobase4x4Drawables_1x5;
-            } else if (isExplorer(VIN)) {
-                return explorerSTDrawables_1x5;
-            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
-                return escapeDrawables_1x5;
-            } else if (isEdge(VIN)) {
-                return edgeDrawables_1x5;
-            } else if (isExpedition(VIN)) {
-                return explorerSTDrawables_1x5;
-            }
-        }
-        return macheDrawables_1x5;
-    }
-
-    // Model year decoder
-    private static final Map<String, Integer> modelYears;
-
-    static {
-        Map<String, Integer> tmpMap = new HashMap<>();
-        tmpMap.put("G", 2016);
-        tmpMap.put("H", 2017);
-        tmpMap.put("J", 2018);
-        tmpMap.put("K", 2019);
-        tmpMap.put("L", 2020);
-        tmpMap.put("M", 2021);
-        tmpMap.put("N", 2022);
-        tmpMap.put("P", 2023);
-        tmpMap.put("R", 2024);
-        tmpMap.put("S", 2025);
-        tmpMap.put("T", 2026);
-        tmpMap.put("V", 2027);
-        tmpMap.put("W", 2028);
-        tmpMap.put("X", 2029);
-        tmpMap.put("Y", 2030);
-        modelYears = tmpMap;
-    }
-
-    public static final int NA_MODEL_YEAR_START_INDEX = 10 - 1;
-    public static final int NA_MODEL_YEAR_END_INDEX = 10;
-
-    public static final int EURO_MODEL_YEAR_START_INDEX = 11 - 1;
-    public static final int EURO_MODEL_YEAR_END_INDEX = 11;
-
-    public static int getModelYear(String VIN) {
-        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
-        String vehicleYearCode;
-        if (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY)) {
-            vehicleYearCode = VIN.substring(EURO_MODEL_YEAR_START_INDEX, EURO_MODEL_YEAR_END_INDEX);
-        } else {
-            vehicleYearCode = VIN.substring(NA_MODEL_YEAR_START_INDEX, NA_MODEL_YEAR_END_INDEX);
-        }
-        Integer year = modelYears.get(vehicleYearCode);
-        if (year != null) {
-            return year;
-        }
-        return 0;
-    }
+//
+//    // Drawables for SuperCab F-150
+//    private static final Map<String, Integer> supercabDrawables;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.supercab_wireframe_vert);
+//        tmpMap.put(HOOD, R.drawable.supercab_hood_vert);
+//        tmpMap.put(TAILGATE, R.drawable.supercab_tailgate_vert);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercab_lfdoor_vert);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercab_rfdoor_vert);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercab_lrdoor_vert);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercab_rrdoor_vert);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.supercab_primary_vert);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.supercab_secondary_vert);
+//        supercabDrawables = tmpMap;
+//    }
+//
+//    // Drawables for SuperCrew F-150
+//    private static final Map<String, Integer> supercrewDrawables;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.supercrew_wireframe_vert);
+//        tmpMap.put(HOOD, R.drawable.supercrew_hood_vert);
+//        tmpMap.put(TAILGATE, R.drawable.supercrew_tailgate_vert);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercrew_lfdoor_vert);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercrew_rfdoor_vert);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercrew_lrdoor_vert);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercrew_rrdoor_vert);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.supercrew_primary_vert);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.supercrew_secondary_vert);
+//        supercrewDrawables = tmpMap;
+//    }
+//
+//    // Drawables for F-150 Raptor
+////    private static final Map<String, Integer> raptorDrawables;
+////
+////    static {
+////        Map<String, Integer> tmpMap = new HashMap<>();
+////        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe);
+////        tmpMap.put(HOOD, R.drawable.raptor_hood);
+////        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate);
+////        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor);
+////        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor);
+////        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor);
+////        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor);
+////        raptorDrawables = tmpMap;
+////    }
+//
+//    // Drawables for Bronco Base 4x4
+//    private static final Map<String, Integer> broncobase4x4Drawables;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.bronco_base_4x4_wireframe_vert);
+//        tmpMap.put(HOOD, R.drawable.bronco_base_4x4_hood_vert);
+//        tmpMap.put(TAILGATE, R.drawable.bronco_base_4x4_tailgate_vert);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.bronco_base_4x4_lfdoor_vert);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.bronco_base_4x4_rfdoor_vert);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.bronco_base_4x4_lrdoor_vert);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor_vert);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.bronco_base_4x4_primary_vert);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.bronco_base_4x4_secondary_vert);
+//        broncobase4x4Drawables = tmpMap;
+//    }
+//
+//    // Drawables for Explorer ST
+//    private static final Map<String, Integer> explorerSTDrawables;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe_vert);
+//        tmpMap.put(HOOD, R.drawable.explorer_hood_vert);
+//        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate_vert);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor_vert);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor_vert);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor_vert);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor_vert);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.explorer_primary_vert);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.explorer_secondary_vert);
+//        explorerSTDrawables = tmpMap;
+//    }
+//
+//    // Drawables for Escape
+//    private static final Map<String, Integer> escapeDrawables;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_vert);
+//        tmpMap.put(HOOD, R.drawable.escape_hood_vert);
+//        tmpMap.put(TAILGATE, R.drawable.escape_hatch_vert);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_vert);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_vert);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_vert);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_vert);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.escape_primary_vert);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.escape_secondary_vert);
+//        escapeDrawables = tmpMap;
+//    }
+//
+//    // Drawables for Edge
+//    private static final Map<String, Integer> edgeDrawables;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.edge_wireframe_vert);
+//        tmpMap.put(HOOD, R.drawable.edge_hood_vert);
+//        tmpMap.put(TAILGATE, R.drawable.edge_liftgate_vert);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.edge_lfdoor_vert);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.edge_rfdoor_vert);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.edge_lrdoor_vert);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.edge_rrdoor_vert);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.edge_primary_vert);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.edge_secondary_vert);
+//        edgeDrawables = tmpMap;
+//    }
+//
+//    // Get the set of drawables for a particular style of vehicle
+//    public static Map<String, Integer> getVehicleDrawables(String VIN) {
+//        if (VIN != null && !VIN.equals("")) {
+//            if (isF150(VIN)) {
+//                if (isF150RegularCab(VIN)) {
+//                    return regcabDrawables;
+//                } else if (isF150SuperCab(VIN)) {
+//                    return supercabDrawables;
+//                } else if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) {
+//                    return supercrewDrawables;
+////                } else if (isF150Raptor(VIN)) {
+////                    return raptorDrawables;
+//                }
+//            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
+//                return broncobase4x4Drawables;
+//            } else if (isExplorer(VIN)) {
+//                return explorerSTDrawables;
+//            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
+//                return escapeDrawables;
+//            } else if (isEdge(VIN)) {
+//                return edgeDrawables;
+//            } else if (isExpedition(VIN)) {
+//                return explorerSTDrawables;
+//            }
+//        }
+//        return macheDrawables;
+//    }
+//
+//    public static Integer getLayoutByVIN(String VIN) {
+//        if (VIN != null && !VIN.equals("")) {
+//            if (isF150(VIN)) {
+//                return R.layout.f150_widget;
+//            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
+//                return R.layout.bronco_widget;
+//            } else if (isExplorer(VIN)) {
+//                return R.layout.explorer_widget;
+//            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
+//                return R.layout.escape_widget;
+//            } else if (isEdge(VIN)) {
+//                return R.layout.edge_widget;
+//            } else if (isExpedition(VIN)) {
+//                return R.layout.explorer_widget;
+//            }
+//        }
+//        return R.layout.mache_widget;
+//    }
+//
+//    // Drawables for 1x5 widget
+//
+//    // Drawables for Mach-E
+//    private static final Map<String, Integer> macheDrawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.mache_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.mache_frunk_horz);
+//        tmpMap.put(TAILGATE, R.drawable.mache_hatch_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.mache_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.mache_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.mache_lrdoor_horz);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.mache_rrdoor_horz);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.mache_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.mache_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.mache_lrwindow_horz);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.mache_rrwindow_horz);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.mache_primary_horz);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.mache_secondary_horz);
+//        macheDrawables_1x5 = tmpMap;
+//    }
+//
+//    // Drawables for Regular Cab (two door) F-150
+//    private static final Map<String, Integer> regcabDrawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.regularcab_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.regularcab_hood_horz);
+//        tmpMap.put(TAILGATE, R.drawable.regularcab_tailgate_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.regularcab_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.regularcab_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.filler);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.filler);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.regularcab_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.regularcab_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.filler);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.filler);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.regularcab_primary_horz);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.regularcab_secondary_horz);
+//        regcabDrawables_1x5 = tmpMap;
+//    }
+//
+//    // Drawables for SuperCab F-150
+//    private static final Map<String, Integer> supercabDrawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.supercab_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.supercab_hood_horz);
+//        tmpMap.put(TAILGATE, R.drawable.supercab_tailgate_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercab_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercab_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercab_lrdoor_horz);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercab_rrdoor_horz);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.supercab_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.supercab_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.filler);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.filler);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.supercab_primary_horz);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.supercab_secondary_horz);
+//        supercabDrawables_1x5 = tmpMap;
+//    }
+//
+//    // Drawables for SuperCrew F-150
+//    private static final Map<String, Integer> supercrewDrawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.supercrew_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.supercrew_hood_horz);
+//        tmpMap.put(TAILGATE, R.drawable.supercrew_tailgate_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.supercrew_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.supercrew_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.supercrew_lrdoor_horz);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.supercrew_rrdoor_horz);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.supercrew_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.supercrew_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.supercrew_lrwindow_horz);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.supercrew_rrwindow_horz);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.supercrew_primary_horz);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.supercrew_secondary_horz);
+//        supercrewDrawables_1x5 = tmpMap;
+//    }
+//
+//    // Drawables for F-150 Raptor
+////    private static final Map<String, Integer> raptorDrawables_1x5;
+////
+////    static {
+////        Map<String, Integer> tmpMap = new HashMap<>();
+////        tmpMap.put(WIREFRAME, R.drawable.raptor_wireframe_horz);
+////        tmpMap.put(HOOD, R.drawable.raptor_hood_horz);
+////        tmpMap.put(TAILGATE, R.drawable.raptor_tailgate_horz);
+////        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.raptor_lfdoor_horz);
+////        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.raptor_rfdoor_horz);
+////        tmpMap.put(LEFT_REAR_DOOR, R.drawable.raptor_lrdoor_horz);
+////        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.raptor_rrdoor_horz);
+////        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.raptor_lfwindow_horz);
+////        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.raptor_rfwindow_horz);
+////        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.raptor_lrwindow_horz);
+////        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.raptor_rrwindow_horz);
+////        raptorDrawables_1x5 = tmpMap;
+////    }
+//
+//    // Drawables for Bronco Base 4x4
+//    private static final Map<String, Integer> broncobase4x4Drawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.bronco_base_4x4_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.bronco_base_4x4_hood_horz);
+//        tmpMap.put(TAILGATE, R.drawable.bronco_base_4x4_tailgate_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.bronco_base_4x4_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.bronco_base_4x4_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.bronco_base_4x4_lrdoor_horz);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.bronco_base_4x4_rrdoor_horz);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.bronco_base_4x4_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.bronco_base_4x4_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.bronco_base_4x4_lrwindow_horz);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.bronco_base_4x4_rrwindow_horz);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.bronco_base_4x4_primary_horz);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.bronco_base_4x4_secondary_horz);
+//        broncobase4x4Drawables_1x5 = tmpMap;
+//    }
+//
+//    // Drawables for Explorer ST
+//    private static final Map<String, Integer> explorerSTDrawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.explorer_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.explorer_hood_horz);
+//        tmpMap.put(TAILGATE, R.drawable.explorer_tailgate_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.explorer_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.explorer_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.explorer_lrdoor_horz);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.explorer_rrdoor_horz);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.explorer_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.explorer_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.explorer_lrwindow_horz);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.explorer_rrwindow_horz);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.explorer_primary_horz);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.explorer_secondary_horz);
+//        explorerSTDrawables_1x5 = tmpMap;
+//    }
+//
+//    // Drawables for Escape
+//    private static final Map<String, Integer> escapeDrawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.escape_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.escape_hood_horz);
+//        tmpMap.put(TAILGATE, R.drawable.escape_hatch_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.escape_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.escape_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.escape_lrdoor_horz);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.escape_rrdoor_horz);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.escape_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.escape_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.escape_lrwindow_horz);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.escape_rrwindow_horz);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.escape_primary_horz);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.escape_secondary_horz);
+//        escapeDrawables_1x5 = tmpMap;
+//    }
+//
+//    // Drawables for Edge
+//    private static final Map<String, Integer> edgeDrawables_1x5;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put(WIREFRAME, R.drawable.edge_wireframe_horz);
+//        tmpMap.put(HOOD, R.drawable.edge_hood_horz);
+//        tmpMap.put(TAILGATE, R.drawable.edge_liftgate_horz);
+//        tmpMap.put(LEFT_FRONT_DOOR, R.drawable.edge_lfdoor_horz);
+//        tmpMap.put(RIGHT_FRONT_DOOR, R.drawable.edge_rfdoor_horz);
+//        tmpMap.put(LEFT_REAR_DOOR, R.drawable.edge_lrdoor_horz);
+//        tmpMap.put(RIGHT_REAR_DOOR, R.drawable.edge_rrdoor_horz);
+//        tmpMap.put(LEFT_FRONT_WINDOW, R.drawable.edge_lfwindow_horz);
+//        tmpMap.put(RIGHT_FRONT_WINDOW, R.drawable.edge_rfwindow_horz);
+//        tmpMap.put(LEFT_REAR_WINDOW, R.drawable.edge_lrwindow_horz);
+//        tmpMap.put(RIGHT_REAR_WINDOW, R.drawable.edge_rrwindow_horz);
+//        tmpMap.put(BODY_PRIMARY, R.drawable.edge_primary_horz);
+//        tmpMap.put(BODY_SECONDARY, R.drawable.edge_secondary_horz);
+//        edgeDrawables_1x5 = tmpMap;
+//    }
+//
+//    // Get the set of drawables for a particular style of vehicle
+//    public static Map<String, Integer> getVehicleDrawables_1x5(String VIN) {
+//        if (VIN != null && !VIN.equals("")) {
+//            if (isF150(VIN)) {
+//                if (isF150RegularCab(VIN)) {
+//                    return regcabDrawables_1x5;
+//                } else if (isF150SuperCab(VIN)) {
+//                    return supercabDrawables_1x5;
+//                } else if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) {
+//                    return supercrewDrawables_1x5;
+////                } else if (isF150Raptor(VIN)) {
+////                    return raptorDrawables_1x5;
+//                }
+//            } else if (isBronco(VIN) || isBroncoSport(VIN)) {
+//                return broncobase4x4Drawables_1x5;
+//            } else if (isExplorer(VIN)) {
+//                return explorerSTDrawables_1x5;
+//            } else if (isEscape(VIN) || isKuga(VIN) || isPuma(VIN)) {
+//                return escapeDrawables_1x5;
+//            } else if (isEdge(VIN)) {
+//                return edgeDrawables_1x5;
+//            } else if (isExpedition(VIN)) {
+//                return explorerSTDrawables_1x5;
+//            }
+//        }
+//        return macheDrawables_1x5;
+//    }
+//
+//    // Model year decoder
+//    private static final Map<String, Integer> modelYears;
+//
+//    static {
+//        Map<String, Integer> tmpMap = new HashMap<>();
+//        tmpMap.put("G", 2016);
+//        tmpMap.put("H", 2017);
+//        tmpMap.put("J", 2018);
+//        tmpMap.put("K", 2019);
+//        tmpMap.put("L", 2020);
+//        tmpMap.put("M", 2021);
+//        tmpMap.put("N", 2022);
+//        tmpMap.put("P", 2023);
+//        tmpMap.put("R", 2024);
+//        tmpMap.put("S", 2025);
+//        tmpMap.put("T", 2026);
+//        tmpMap.put("V", 2027);
+//        tmpMap.put("W", 2028);
+//        tmpMap.put("X", 2029);
+//        tmpMap.put("Y", 2030);
+//        modelYears = tmpMap;
+//    }
+//
+//    public static final int NA_MODEL_YEAR_START_INDEX = 10 - 1;
+//    public static final int NA_MODEL_YEAR_END_INDEX = 10;
+//
+//    public static final int EURO_MODEL_YEAR_START_INDEX = 11 - 1;
+//    public static final int EURO_MODEL_YEAR_END_INDEX = 11;
+//
+//    public static int getModelYear(String VIN) {
+//        String WMI = VIN.substring(WORLD_MANUFACTURING_IDENTIFIER_START_INDEX, WORLD_MANUFACTURING_IDENTIFIER_END_INDEX);
+//        String vehicleYearCode;
+//        if (WMI.equals(WORLD_MANUFACTURING_IDENTIFIER_GERMANY)) {
+//            vehicleYearCode = VIN.substring(EURO_MODEL_YEAR_START_INDEX, EURO_MODEL_YEAR_END_INDEX);
+//        } else {
+//            vehicleYearCode = VIN.substring(NA_MODEL_YEAR_START_INDEX, NA_MODEL_YEAR_END_INDEX);
+//        }
+//        Integer year = modelYears.get(vehicleYearCode);
+//        if (year != null) {
+//            return year;
+//        }
+//        return 0;
+//    }
 
     // Mapping from long state/territory names to abbreviations
     public static final Map<String, String> states;
@@ -1475,31 +1475,31 @@ public class Utils {
         // Based on the vehicle type, choose a small image patch to sample
         int startx;
         int starty;
-        if (isMachE(VIN)) {
+        if (VINInfo.isMachE(VIN)) {
             startx = 352; // 324;
             starty = 288; // 244;
-        } else if (isF150(VIN)) {
+        } else if (VINInfo.isF150(VIN)) {
             startx = 344; // 460;
             starty = 220; // 220;
-        } else if (isBronco(VIN) || isBroncoSport(VIN)) {
+        } else if (VINInfo.isBronco(VIN) || VINInfo.isBroncoSport(VIN)) {
             startx = 244; // 572;
             starty = 200; // 188;
-        } else if (isExplorer(VIN)) {
+        } else if (VINInfo.isExplorer(VIN)) {
             startx = 320; // 628;
             starty = 280; // 176;
-        } else if (isEscape(VIN)) {
+        } else if (VINInfo.isEscape(VIN)) {
             startx = 340; // 300;
             starty = 244; // 204;
-        } else if (isKuga(VIN)) {
+        } else if (VINInfo.isKuga(VIN)) {
             startx = 340;
             starty = 280;
-        } else if (isPuma(VIN)) {
+        } else if (VINInfo.isPuma(VIN)) {
             startx = 172;
             starty = 288;
-        } else if (isEdge(VIN)) {
+        } else if (VINInfo.isEdge(VIN)) {
             startx = 240; // 284;
             starty = 200; // 208;
-        } else if (isExpedition(VIN)) {
+        } else if (VINInfo.isExpedition(VIN)) {
             startx = 324; // 628;
             starty = 304; // 176;
         } else {
@@ -1531,7 +1531,7 @@ public class Utils {
     // Examine image to see if this is a Mach-E First Edition
     public static boolean isFirstEdition(Context context, String VIN ) {
         // If the vehicle isn't a Mach-E, nevermind
-        if (!isMachE(VIN)) {
+        if (!VINInfo.isMachE(VIN)) {
             return false;
         }
 
@@ -1565,8 +1565,8 @@ public class Utils {
         Bitmap bmp2;
         Canvas canvas2;
 
-        Drawable drawable = AppCompatResources.getDrawable(context, vehicleImages.get(Utils.BODY_PRIMARY));
-        if (vehicleImages.get(Utils.BODY_PRIMARY) != null && useColor) {
+        Drawable drawable = AppCompatResources.getDrawable(context, vehicleImages.get(VehicleDrawables.BODY_PRIMARY));
+        if (vehicleImages.get(VehicleDrawables.BODY_PRIMARY) != null && useColor) {
             bmp2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
                     drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             canvas2 = new Canvas(bmp2);
@@ -1585,7 +1585,7 @@ public class Utils {
             canvas.drawBitmap(bmp2, 0, 0, paint);
 
             // If secondary colors exist, add them
-            Integer secondary = vehicleImages.get((Utils.BODY_SECONDARY));
+            Integer secondary = vehicleImages.get((VehicleDrawables.BODY_SECONDARY));
             if (secondary != null) {
                 icon = AppCompatResources.getDrawable(context, secondary);
                 icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -1625,7 +1625,7 @@ public class Utils {
         canvas2.drawPaint(paint);
 
         // Draw the wireframe body
-        drawable = AppCompatResources.getDrawable(context, vehicleImages.get(Utils.WIREFRAME));
+        drawable = AppCompatResources.getDrawable(context, vehicleImages.get(VehicleDrawables.WIREFRAME));
         Bitmap bmp3 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
                 drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas3 = new Canvas(bmp3);

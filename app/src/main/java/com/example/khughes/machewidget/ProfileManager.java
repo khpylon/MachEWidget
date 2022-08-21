@@ -256,7 +256,7 @@ public class ProfileManager extends AppCompatActivity {
         // Before getting started, find and remove any unrecognized VINs.
         HashSet<String> unknownVINs = new HashSet<>();
         for (String VIN : vehicles.keySet()) {
-            if (!Utils.isVINRecognized(VIN)) {
+            if (!VINInfo.isVINRecognized(VIN)) {
                 unknownVINs.add(VIN);
             }
         }
@@ -305,7 +305,7 @@ public class ProfileManager extends AppCompatActivity {
                 info.setUserId(userId);
                 infoDao.insertVehicleInfo(info);
                 // Disable extra earlier vehicles which likely don't have FordPass Connect
-                info.setEnabled(vehicles.size() == 1 || Utils.getModelYear(VIN) >= 2018);
+                info.setEnabled(vehicles.size() == 1 || VINInfo.getModelYear(VIN) >= 2018);
             }
             LogFile.d(context, MainActivity.CHANNEL_ID, "info is " + info + ", info.userId = " + info.getUserId());
         }

@@ -286,14 +286,14 @@ public class CarStatusWidget extends AppWidgetProvider {
                                  double distanceConversion, String distanceUnits, boolean twoLines) {
         boolean isICEOrHybrid;
         boolean isPHEV;
-        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
-            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
-            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
-            isPHEV = (fuelType == Utils.FUEL_PHEV);
-        } else {
+//        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
+//            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
+//            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
+//            isPHEV = (fuelType == Utils.FUEL_PHEV);
+//        } else {
             isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
             isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
-        }
+//        }
 
         String rangeCharge = "N/A";
         if (!isICEOrHybrid) {
@@ -565,16 +565,16 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         // Find anything that's open
-        whatsOpen.add(isDoorClosed(carStatus.getFrunk()) ? null : vehicleImages.get(Utils.HOOD));
-        whatsOpen.add(isDoorClosed(carStatus.getTailgate()) ? null : vehicleImages.get(Utils.TAILGATE));
-        whatsOpen.add(isDoorClosed(carStatus.getDriverDoor()) ? null : vehicleImages.get(Utils.LEFT_FRONT_DOOR));
-        whatsOpen.add(isDoorClosed(carStatus.getPassengerDoor()) ? null : vehicleImages.get(Utils.RIGHT_FRONT_DOOR));
-        whatsOpen.add(isDoorClosed(carStatus.getLeftRearDoor()) ? null : vehicleImages.get(Utils.LEFT_REAR_DOOR));
-        whatsOpen.add(isDoorClosed(carStatus.getRightRearDoor()) ? null : vehicleImages.get(Utils.RIGHT_REAR_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getFrunk()) ? null : vehicleImages.get(VehicleDrawables.HOOD));
+        whatsOpen.add(isDoorClosed(carStatus.getTailgate()) ? null : vehicleImages.get(VehicleDrawables.TAILGATE));
+        whatsOpen.add(isDoorClosed(carStatus.getDriverDoor()) ? null : vehicleImages.get(VehicleDrawables.LEFT_FRONT_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getPassengerDoor()) ? null : vehicleImages.get(VehicleDrawables.RIGHT_FRONT_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getLeftRearDoor()) ? null : vehicleImages.get(VehicleDrawables.LEFT_REAR_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getRightRearDoor()) ? null : vehicleImages.get(VehicleDrawables.RIGHT_REAR_DOOR));
         whatsOpen.removeAll(Collections.singleton(null));
 
         // Determine the orientation of the image
-        Drawable icon = context.getDrawable(vehicleImages.get(Utils.WIREFRAME));
+        Drawable icon = context.getDrawable(vehicleImages.get(VehicleDrawables.WIREFRAME));
         int width = icon.getIntrinsicWidth();
         int height = icon.getIntrinsicHeight();
         if (width > height) {

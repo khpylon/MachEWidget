@@ -611,7 +611,7 @@ public class NetworkCalls {
         if (!imageDir.exists()) {
             imageDir.mkdir();
         }
-        String modelYear = String.valueOf(Utils.getModelYear(VIN));
+        String modelYear = String.valueOf(VINInfo.getModelYear(VIN));
         DigitalServicesService vehicleImageClient = NetworkServiceGenerators.createDIGITALSERVICESService(DigitalServicesService.class, context);
 
         if (checkInternetConnection(context)) {

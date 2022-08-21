@@ -78,7 +78,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
     // Based on the VIN, find the right widget layout
     private RemoteViews getWidgetView(Context context) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        return new RemoteViews(context.getPackageName(), Utils.getLayoutByVIN(VIN));
+        return new RemoteViews(context.getPackageName(), VehicleDrawables.getLayoutByVIN(VIN));
     }
 
     protected void drawIcons(RemoteViews views, CarStatus carStatus) {
@@ -153,11 +153,11 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
             views.setImageViewBitmap(R.id.logo, bmp);
         } else {
             String VIN = vehicleInfo.getVIN();
-            if (Utils.isF150(VIN)) {
+            if (VINInfo.isF150(VIN)) {
                 views.setImageViewResource(R.id.logo, R.drawable.ford_f150_logo);
-            } else if (Utils.isBronco(VIN) || Utils.isBroncoSport(VIN)) {
+            } else if (VINInfo.isBronco(VIN) || VINInfo.isBroncoSport(VIN)) {
                     views.setImageViewResource(R.id.logo, R.drawable.bronco_logo);
-            } else if (Utils.isExplorer(VIN)) {
+            } else if (VINInfo.isExplorer(VIN)) {
                 views.setImageViewResource(R.id.logo, R.drawable.ford_explorer_logo);
             } else {
                 views.setImageViewResource(R.id.logo, R.drawable.mache_logo);
@@ -180,14 +180,14 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
         boolean isICEOrHybrid;
         boolean isPHEV;
-        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
-            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
-            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
-            isPHEV = (fuelType == Utils.FUEL_PHEV);
-        } else {
+//        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
+//            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
+//            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
+//            isPHEV = (fuelType == Utils.FUEL_PHEV);
+//        } else {
             isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
             isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
-        }
+//        }
         views.setViewVisibility(R.id.lock_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
         views.setViewVisibility(R.id.bottom_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
         views.setViewVisibility(R.id.lock_electric, isICEOrHybrid ? View.GONE : View.VISIBLE);
@@ -268,7 +268,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
                 isWindowClosed(carStatus.getRightRearWindow()) ? R.drawable.filler : R.drawable.icons8_right_rear_window_down_red);
 
         // Get the right images to use for this vehicle
-        Map<String, Integer> vehicleImages = Utils.getVehicleDrawables(vehicleInfo.getVIN());
+        Map<String, Integer> vehicleImages = VehicleDrawables.getVehicleDrawables(vehicleInfo.getVIN());
 
         // See if we should guess vehicle color
         if (Utils.scanImageForColor(context, vehicleInfo)) {
@@ -277,7 +277,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
         // If vehicle is a Mach-E First Edition, show mirrors in body color
         if(Utils.isFirstEdition(context, vehicleInfo.getVIN())) {
-            vehicleImages.put(Utils.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_vert);
+            vehicleImages.put(VehicleDrawables.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_vert);
         }
 
         // Draw the vehicle image
