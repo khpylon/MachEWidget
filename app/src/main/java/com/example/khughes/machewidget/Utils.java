@@ -1228,7 +1228,7 @@ public class Utils {
         return result.toString();
     }
 
-    private static final int JSON_SETTINGS_VERSION = 2;
+    private static final int JSON_SETTINGS_VERSION = 3;
 
     public static void savePrefs(Context context) {
 
@@ -1253,6 +1253,10 @@ public class Utils {
                 Object value = prefs.get(key);
                 if (value instanceof String) {
                     prefData.put(key, new String[]{"String", value.toString()});
+                } else if (value instanceof Long) {
+                    prefData.put(key, new String[]{"Long", value.toString()});
+                } else if (value instanceof Integer) {
+                    prefData.put(key, new String[]{"Integer", value.toString()});
                 } else {
                     prefData.put(key, new String[]{"Boolean", value.toString()});
                 }
@@ -1390,10 +1394,26 @@ public class Utils {
             for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
                 String key = item.getKey();
                 JsonArray value = item.getValue().getAsJsonArray();
-                if (value.get(0).getAsString().equals("String")) {
-                    edit.putString(key, value.get(1).getAsString()).commit();
-                } else {
-                    edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+                // Fix error when "Integer" types weren't supported
+                if(key.equals("surveyVersion") && version == 2) {
+                    JsonElement x = value.get(1);
+                    value = new JsonArray();
+                    value.add("Integer");
+                    value.add(x);
+                }
+                switch (value.get(0).getAsString()) {
+                    case "String":
+                        edit.putString(key, value.get(1).getAsString()).commit();
+                        break;
+                    case "Long":
+                        edit.putLong(key, value.get(1).getAsLong()).commit();
+                        break;
+                    case "Integer":
+                        edit.putInt(key, value.get(1).getAsInt()).commit();
+                        break;
+                    default:
+                        edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+                        break;
                 }
             }
 
