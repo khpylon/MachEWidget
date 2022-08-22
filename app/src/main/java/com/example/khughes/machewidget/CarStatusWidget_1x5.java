@@ -29,10 +29,10 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
 
     protected void drawVehicleImage(Context context, RemoteViews views, CarStatus carStatus, int vehicleColor, ArrayList<Integer> whatsOpen, Map<String, Integer> vehicleImages) {
         whatsOpen = new ArrayList<>();
-        whatsOpen.add(isWindowClosed(carStatus.getDriverWindow()) ? null : vehicleImages.get(VehicleDrawables.LEFT_FRONT_WINDOW));
-        whatsOpen.add(isWindowClosed(carStatus.getPassengerWindow()) ? null : vehicleImages.get(VehicleDrawables.RIGHT_FRONT_WINDOW));
-        whatsOpen.add(isWindowClosed(carStatus.getLeftRearWindow()) ? null : vehicleImages.get(VehicleDrawables.LEFT_REAR_WINDOW));
-        whatsOpen.add(isWindowClosed(carStatus.getRightRearWindow()) ? null : vehicleImages.get(VehicleDrawables.RIGHT_REAR_WINDOW));
+        whatsOpen.add(isWindowClosed(carStatus.getDriverWindow()) ? null : vehicleImages.get(Vehicle.LEFT_FRONT_WINDOW));
+        whatsOpen.add(isWindowClosed(carStatus.getPassengerWindow()) ? null : vehicleImages.get(Vehicle.RIGHT_FRONT_WINDOW));
+        whatsOpen.add(isWindowClosed(carStatus.getLeftRearWindow()) ? null : vehicleImages.get(Vehicle.LEFT_REAR_WINDOW));
+        whatsOpen.add(isWindowClosed(carStatus.getRightRearWindow()) ? null : vehicleImages.get(Vehicle.RIGHT_REAR_WINDOW));
 
         super.drawVehicleImage(context, views, carStatus, vehicleColor, whatsOpen, vehicleImages);
     }
@@ -132,7 +132,7 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
                 pressureUnits, pressureConversion, R.id.rt_rr_tire);
 
         // Get the right images to use for this vehicle
-        Map<String, Integer> vehicleImages = VehicleDrawables.getHorizontalVehicleDrawable(vehicleInfo.getVIN());
+        Map<String, Integer> vehicleImages = Vehicle.getVehicle(vehicleInfo.getVIN()).getHorizontalDrawables();
 
         // See if we should guess vehicle color
         if( VehicleColor.scanImageForColor (context, vehicleInfo) ) {
@@ -141,7 +141,7 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
 
         // If vehicle is a Mach-E First Edition, show mirrors in body color
         if(VehicleColor.isFirstEdition(context, vehicleInfo.getVIN())) {
-           vehicleImages.put(VehicleDrawables.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_horz);
+           vehicleImages.put(Vehicle.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_horz);
         }
 
         // Draw the vehicle image

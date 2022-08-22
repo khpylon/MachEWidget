@@ -78,7 +78,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
     // Based on the VIN, find the right widget layout
     private RemoteViews getWidgetView(Context context) {
         String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-        return new RemoteViews(context.getPackageName(), VehicleDrawables.getLayoutByVIN(VIN));
+        return new RemoteViews(context.getPackageName(), Vehicle.getVehicle(VIN).getLayoutID());
     }
 
     protected void drawIcons(RemoteViews views, CarStatus carStatus) {
@@ -152,16 +152,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         if (useImage && bmp != null) {
             views.setImageViewBitmap(R.id.logo, bmp);
         } else {
-            String VIN = vehicleInfo.getVIN();
-            if (VINInfo.isF150(VIN)) {
-                views.setImageViewResource(R.id.logo, R.drawable.ford_f150_logo);
-            } else if (VINInfo.isBronco(VIN) || VINInfo.isBroncoSport(VIN)) {
-                    views.setImageViewResource(R.id.logo, R.drawable.bronco_logo);
-            } else if (VINInfo.isExplorer(VIN)) {
-                views.setImageViewResource(R.id.logo, R.drawable.ford_explorer_logo);
-            } else {
-                views.setImageViewResource(R.id.logo, R.drawable.mache_logo);
-            }
+            views.setImageViewResource(R.id.logo, Vehicle.getVehicle(vehicleInfo.getVIN()).getLogoID());
         }
 
         // Display the vehicle's nickname
@@ -268,7 +259,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
                 isWindowClosed(carStatus.getRightRearWindow()) ? R.drawable.filler : R.drawable.icons8_right_rear_window_down_red);
 
         // Get the right images to use for this vehicle
-        Map<String, Integer> vehicleImages = VehicleDrawables.getVerticalVehicleDrawables(vehicleInfo.getVIN());
+        Map<String, Integer> vehicleImages = Vehicle.getVehicle(vehicleInfo.getVIN()).getVerticalDrawables();
 
         // See if we should guess vehicle color
         if (VehicleColor.scanImageForColor(context, vehicleInfo)) {
@@ -277,7 +268,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
         // If vehicle is a Mach-E First Edition, show mirrors in body color
         if(VehicleColor.isFirstEdition(context, vehicleInfo.getVIN())) {
-            vehicleImages.put(VehicleDrawables.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_vert);
+            vehicleImages.put(Vehicle.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_vert);
         }
 
         // Draw the vehicle image

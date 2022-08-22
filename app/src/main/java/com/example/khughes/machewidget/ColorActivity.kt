@@ -133,7 +133,7 @@ class ColorActivity : AppCompatActivity() {
 
     private fun drawVehicle(color: Int) {
         mVehicleInfo?.let {
-            val vehicleImages = VehicleDrawables.getHorizontalVehicleDrawable(it.vin)
+            val vehicleImages = Vehicle.getVehicle(it.vin).horizontalDrawables
 
             // Create base bitmap the size of the image
             val bmp = Bitmap.createBitmap(225, 100, Bitmap.Config.ARGB_8888)

@@ -565,16 +565,16 @@ public class CarStatusWidget extends AppWidgetProvider {
         }
 
         // Find anything that's open
-        whatsOpen.add(isDoorClosed(carStatus.getFrunk()) ? null : vehicleImages.get(VehicleDrawables.HOOD));
-        whatsOpen.add(isDoorClosed(carStatus.getTailgate()) ? null : vehicleImages.get(VehicleDrawables.TAILGATE));
-        whatsOpen.add(isDoorClosed(carStatus.getDriverDoor()) ? null : vehicleImages.get(VehicleDrawables.LEFT_FRONT_DOOR));
-        whatsOpen.add(isDoorClosed(carStatus.getPassengerDoor()) ? null : vehicleImages.get(VehicleDrawables.RIGHT_FRONT_DOOR));
-        whatsOpen.add(isDoorClosed(carStatus.getLeftRearDoor()) ? null : vehicleImages.get(VehicleDrawables.LEFT_REAR_DOOR));
-        whatsOpen.add(isDoorClosed(carStatus.getRightRearDoor()) ? null : vehicleImages.get(VehicleDrawables.RIGHT_REAR_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getFrunk()) ? null : vehicleImages.get(Vehicle.HOOD));
+        whatsOpen.add(isDoorClosed(carStatus.getTailgate()) ? null : vehicleImages.get(Vehicle.TAILGATE));
+        whatsOpen.add(isDoorClosed(carStatus.getDriverDoor()) ? null : vehicleImages.get(Vehicle.LEFT_FRONT_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getPassengerDoor()) ? null : vehicleImages.get(Vehicle.RIGHT_FRONT_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getLeftRearDoor()) ? null : vehicleImages.get(Vehicle.LEFT_REAR_DOOR));
+        whatsOpen.add(isDoorClosed(carStatus.getRightRearDoor()) ? null : vehicleImages.get(Vehicle.RIGHT_REAR_DOOR));
         whatsOpen.removeAll(Collections.singleton(null));
 
         // Determine the orientation of the image
-        Drawable icon = context.getDrawable(vehicleImages.get(VehicleDrawables.WIREFRAME));
+        Drawable icon = context.getDrawable(vehicleImages.get(Vehicle.WIREFRAME));
         int width = icon.getIntrinsicWidth();
         int height = icon.getIntrinsicHeight();
         if (width > height) {

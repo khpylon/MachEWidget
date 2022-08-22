@@ -96,7 +96,7 @@ class VehicleActivity : AppCompatActivity() {
 
             // if VIN isn't recognized, denote with a strike-through
             val text = SpannableString(VIN)
-            if (!VINInfo.isVINRecognized(VIN)) {
+            if (!Vehicle.isVINRecognized(VIN)) {
                 text.setSpan(StrikethroughSpan(), 0, VIN.length, 0)
             }
             holder.VINItemView.text = text
