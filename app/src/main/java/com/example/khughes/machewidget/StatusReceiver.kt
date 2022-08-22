@@ -163,8 +163,14 @@ class StatusReceiver : BroadcastReceiver() {
                             val encrypt = Encryption(context)
                             val username = encrypt.getPlaintextString(userInfo.username)
                             val password = encrypt.getPlaintextString(userInfo.password)
-                            getAccess(context, username, password)
-                            appInfo.incCounter(StoredData.STATUS_LOG_IN)
+                            if(username != null && password != null ) {
+                                getAccess(context, username, password)
+                                appInfo.incCounter(StoredData.STATUS_LOG_IN)
+                            } else {
+                                cancelAlarm(context)
+                                Notifications.loginRequired(context)
+                                appInfo.incCounter(StoredData.STATUS_LOG_OUT)
+                            }
                         } else {
                             userInfo.programState = Constants.STATE_INITIAL_STATE
                             LogFile.d(
@@ -246,6 +252,12 @@ class StatusReceiver : BroadcastReceiver() {
                             val username = encrypt.getPlaintextString(userInfo.username)
                             val password = encrypt.getPlaintextString(userInfo.password)
                             getAccess(context, username, password)
+                            if(username != null && password != null ) {
+                                getAccess(context, username, password)
+                            } else {
+                                cancelAlarm(context)
+                                Notifications.loginRequired(context)
+                            }
                         } else {
                             LogFile.d(
                                 context,
