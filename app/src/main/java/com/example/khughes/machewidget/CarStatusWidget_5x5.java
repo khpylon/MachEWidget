@@ -268,15 +268,15 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
                 isWindowClosed(carStatus.getRightRearWindow()) ? R.drawable.filler : R.drawable.icons8_right_rear_window_down_red);
 
         // Get the right images to use for this vehicle
-        Map<String, Integer> vehicleImages = VehicleDrawables.getVehicleDrawables(vehicleInfo.getVIN());
+        Map<String, Integer> vehicleImages = VehicleDrawables.getVerticalVehicleDrawables(vehicleInfo.getVIN());
 
         // See if we should guess vehicle color
-        if (Utils.scanImageForColor(context, vehicleInfo)) {
+        if (VehicleColor.scanImageForColor(context, vehicleInfo)) {
             info.setVehicle(vehicleInfo);
         }
 
         // If vehicle is a Mach-E First Edition, show mirrors in body color
-        if(Utils.isFirstEdition(context, vehicleInfo.getVIN())) {
+        if(VehicleColor.isFirstEdition(context, vehicleInfo.getVIN())) {
             vehicleImages.put(VehicleDrawables.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_vert);
         }
 

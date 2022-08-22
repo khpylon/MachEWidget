@@ -21,7 +21,7 @@ private var mVehicleInfo: VehicleInfo? = null
 private lateinit var info: InfoRepository
 private lateinit var arrayList: MutableList<String>
 
-private var wireframeMode = Utils.WIREFRAME_WHITE
+private var wireframeMode = VehicleColor.WIREFRAME_WHITE
 
 class ColorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,9 +32,9 @@ class ColorActivity : AppCompatActivity() {
         binding.radiogroup.setOnCheckedChangeListener { radioGroup: RadioGroup, i: Int ->
             val radioButton = radioGroup.findViewById<View>(i)
             wireframeMode = when (radioGroup.indexOfChild(radioButton)) {
-                0 -> Utils.WIREFRAME_WHITE
-                1 -> Utils.WIREFRAME_BLACK
-                else -> Utils.WIREFRAME_AUTO
+                0 -> VehicleColor.WIREFRAME_WHITE
+                1 -> VehicleColor.WIREFRAME_BLACK
+                else -> VehicleColor.WIREFRAME_AUTO
             }
             binding.colorPickerView.setInitialColor(binding.colorPickerView.color)
         }
@@ -42,7 +42,7 @@ class ColorActivity : AppCompatActivity() {
         binding.ok.setOnClickListener {
             mVehicleInfo?.let {
                     it.colorValue =
-                        binding.colorPickerView.color and Utils.ARGB_MASK or wireframeMode
+                        binding.colorPickerView.color and VehicleColor.ARGB_MASK or wireframeMode
                     info.setVehicle(it)
                     CarStatusWidget.updateWidget(applicationContext)
                 }
@@ -59,7 +59,7 @@ class ColorActivity : AppCompatActivity() {
             mVehicleInfo?.let {
                 val oldColor = it.colorValue
                 it.colorValue = Color.WHITE
-                if (Utils.scanImageForColor(this, it)) {
+                if (VehicleColor.scanImageForColor(this, it)) {
                     binding.colorPickerView.setInitialColor(it.colorValue)
                 }
                 it.colorValue = oldColor
@@ -70,7 +70,7 @@ class ColorActivity : AppCompatActivity() {
         binding.colorPickerView.setColorListener(ColorListener { color: Int, _: Boolean ->
             binding.colorValue.text = "RGB value: #" + Integer.toHexString(color).uppercase()
                 .substring(2)
-            drawVehicle(color and Utils.ARGB_MASK or wireframeMode)
+            drawVehicle(color and VehicleColor.ARGB_MASK or wireframeMode)
         } )
         binding.colorPickerView.attachBrightnessSlider(binding.brightnessSlide)
 
@@ -123,9 +123,9 @@ class ColorActivity : AppCompatActivity() {
 
     private fun setCheckedButton(color: Int) {
         val index: Int
-        when (color and Utils.WIREFRAME_MASK) {
-            Utils.WIREFRAME_WHITE -> 0
-            Utils.WIREFRAME_BLACK -> 1
+        when (color and VehicleColor.WIREFRAME_MASK) {
+            VehicleColor.WIREFRAME_WHITE -> 0
+            VehicleColor.WIREFRAME_BLACK -> 1
             else -> 2
         }.also { index = it }
         (binding.radiogroup.getChildAt(index) as RadioButton).isChecked = true
@@ -133,11 +133,11 @@ class ColorActivity : AppCompatActivity() {
 
     private fun drawVehicle(color: Int) {
         mVehicleInfo?.let {
-            val vehicleImages = VehicleDrawables.getVehicleDrawables_1x5(it.vin)
+            val vehicleImages = VehicleDrawables.getHorizontalVehicleDrawable(it.vin)
 
             // Create base bitmap the size of the image
             val bmp = Bitmap.createBitmap(225, 100, Bitmap.Config.ARGB_8888)
-            Utils.drawColoredVehicle(
+            VehicleColor.drawColoredVehicle(
                 applicationContext,
                 bmp,
                 color,

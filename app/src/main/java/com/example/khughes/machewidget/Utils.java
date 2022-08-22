@@ -7,12 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.drawable.Drawable;
 import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -27,8 +21,6 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
@@ -59,12 +51,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -1459,187 +1449,187 @@ public class Utils {
     }
 
 
-    public static boolean scanImageForColor(Context context, VehicleInfo vehicleInfo) {
-        // If vehicle color has been set, do nothing
-        if ((vehicleInfo.getColorValue() & ARGB_MASK) != (Color.WHITE & ARGB_MASK)) {
-            return false;
-        }
+//    public static boolean scanImageForColor(Context context, VehicleInfo vehicleInfo) {
+//        // If vehicle color has been set, do nothing
+//        if ((vehicleInfo.getColorValue() & ARGB_MASK) != (Color.WHITE & ARGB_MASK)) {
+//            return false;
+//        }
+//
+//        // If the vehicle image doesn't exist, do nothing
+//        String VIN = vehicleInfo.getVIN();
+//        Bitmap bmp = Utils.getVehicleImage(context, VIN, 4);
+//        if (bmp == null || vehicleInfo.getColorValue() != Color.WHITE) {
+//            return false;
+//        }
+//
+//        // Based on the vehicle type, choose a small image patch to sample
+//        int startx;
+//        int starty;
+//        if (VINInfo.isMachE(VIN)) {
+//            startx = 352; // 324;
+//            starty = 288; // 244;
+//        } else if (VINInfo.isF150(VIN)) {
+//            startx = 344; // 460;
+//            starty = 220; // 220;
+//        } else if (VINInfo.isBronco(VIN) || VINInfo.isBroncoSport(VIN)) {
+//            startx = 244; // 572;
+//            starty = 200; // 188;
+//        } else if (VINInfo.isExplorer(VIN)) {
+//            startx = 320; // 628;
+//            starty = 280; // 176;
+//        } else if (VINInfo.isEscape(VIN)) {
+//            startx = 340; // 300;
+//            starty = 244; // 204;
+//        } else if (VINInfo.isKuga(VIN)) {
+//            startx = 340;
+//            starty = 280;
+//        } else if (VINInfo.isPuma(VIN)) {
+//            startx = 172;
+//            starty = 288;
+//        } else if (VINInfo.isEdge(VIN)) {
+//            startx = 240; // 284;
+//            starty = 200; // 208;
+//        } else if (VINInfo.isExpedition(VIN)) {
+//            startx = 324; // 628;
+//            starty = 304; // 176;
+//        } else {
+//            return false;
+//        }
+//        int[] RGB = new int[3];
+//        final int patchSize = 10;
+//
+//        // get the RBG value of each pixel in the patch
+//        for (int y = 0; y < patchSize; ++y) {
+//            for (int x = 0; x < patchSize; ++x) {
+//                int color = bmp.getPixel(startx + x, starty + y);
+//                RGB[0] += (color >> 16) & 0xff;
+//                RGB[1] += (color >> 8) & 0xff;
+//                RGB[2] += color & 0xff;
+//            }
+//        }
+//
+//        // average the components
+//        RGB[0] /= patchSize * patchSize;
+//        RGB[1] /= patchSize * patchSize;
+//        RGB[2] /= patchSize * patchSize;
+//
+//        // Set the color and exit
+//        vehicleInfo.setColorValue((RGB[0] << 16 | RGB[1] << 8 | RGB[2]) & ARGB_MASK | WIREFRAME_AUTO);
+//        return true;
+//    }
+//
+//    // Examine image to see if this is a Mach-E First Edition
+//    public static boolean isFirstEdition(Context context, String VIN ) {
+//        // If the vehicle isn't a Mach-E, nevermind
+//        if (!VINInfo.isMachE(VIN)) {
+//            return false;
+//        }
+//
+//        // If the vehicle image doesn't exist, do nothing
+//        Bitmap bmp = Utils.getVehicleImage(context, VIN, 4);
+//        if (bmp == null) {
+//            return false;
+//        }
+//
+//        // Check if a pixel on the side view mirror is black or colored
+//        int color = bmp.getPixel(220 , 152 );
+//        int[] RGB = new int[3];
+//        RGB[0] = (color >> 16) & 0xff;
+//        RGB[1] = (color >> 8) & 0xff;
+//        RGB[2] = color & 0xff;
+//        return ( RGB[0] > 0x08 || RGB[1] > 0x08 || RGB[2] > 0x08 );
+//    }
+//
+//    public static final int ARGB_MASK = 0xffffff;  // only use RGB components
+//    public static final int WIREFRAME_MASK = 0x03 << 24;
+//    public static final int WIREFRAME_WHITE = 0;
+//    public static final int WIREFRAME_BLACK = 1 << 24;
+//    public static final int WIREFRAME_AUTO = 2 << 24;
 
-        // If the vehicle image doesn't exist, do nothing
-        String VIN = vehicleInfo.getVIN();
-        Bitmap bmp = Utils.getVehicleImage(context, VIN, 4);
-        if (bmp == null || vehicleInfo.getColorValue() != Color.WHITE) {
-            return false;
-        }
-
-        // Based on the vehicle type, choose a small image patch to sample
-        int startx;
-        int starty;
-        if (VINInfo.isMachE(VIN)) {
-            startx = 352; // 324;
-            starty = 288; // 244;
-        } else if (VINInfo.isF150(VIN)) {
-            startx = 344; // 460;
-            starty = 220; // 220;
-        } else if (VINInfo.isBronco(VIN) || VINInfo.isBroncoSport(VIN)) {
-            startx = 244; // 572;
-            starty = 200; // 188;
-        } else if (VINInfo.isExplorer(VIN)) {
-            startx = 320; // 628;
-            starty = 280; // 176;
-        } else if (VINInfo.isEscape(VIN)) {
-            startx = 340; // 300;
-            starty = 244; // 204;
-        } else if (VINInfo.isKuga(VIN)) {
-            startx = 340;
-            starty = 280;
-        } else if (VINInfo.isPuma(VIN)) {
-            startx = 172;
-            starty = 288;
-        } else if (VINInfo.isEdge(VIN)) {
-            startx = 240; // 284;
-            starty = 200; // 208;
-        } else if (VINInfo.isExpedition(VIN)) {
-            startx = 324; // 628;
-            starty = 304; // 176;
-        } else {
-            return false;
-        }
-        int[] RGB = new int[3];
-        final int patchSize = 10;
-
-        // get the RBG value of each pixel in the patch
-        for (int y = 0; y < patchSize; ++y) {
-            for (int x = 0; x < patchSize; ++x) {
-                int color = bmp.getPixel(startx + x, starty + y);
-                RGB[0] += (color >> 16) & 0xff;
-                RGB[1] += (color >> 8) & 0xff;
-                RGB[2] += color & 0xff;
-            }
-        }
-
-        // average the components
-        RGB[0] /= patchSize * patchSize;
-        RGB[1] /= patchSize * patchSize;
-        RGB[2] /= patchSize * patchSize;
-
-        // Set the color and exit
-        vehicleInfo.setColorValue((RGB[0] << 16 | RGB[1] << 8 | RGB[2]) & ARGB_MASK | WIREFRAME_AUTO);
-        return true;
-    }
-
-    // Examine image to see if this is a Mach-E First Edition
-    public static boolean isFirstEdition(Context context, String VIN ) {
-        // If the vehicle isn't a Mach-E, nevermind
-        if (!VINInfo.isMachE(VIN)) {
-            return false;
-        }
-
-        // If the vehicle image doesn't exist, do nothing
-        Bitmap bmp = Utils.getVehicleImage(context, VIN, 4);
-        if (bmp == null) {
-            return false;
-        }
-
-        // Check if a pixel on the side view mirror is black or colored
-        int color = bmp.getPixel(220 , 152 );
-        int[] RGB = new int[3];
-        RGB[0] = (color >> 16) & 0xff;
-        RGB[1] = (color >> 8) & 0xff;
-        RGB[2] = color & 0xff;
-        return ( RGB[0] > 0x08 || RGB[1] > 0x08 || RGB[2] > 0x08 );
-    }
-
-    public static final int ARGB_MASK = 0xffffff;  // only use RGB components
-    public static final int WIREFRAME_MASK = 0x03 << 24;
-    public static final int WIREFRAME_WHITE = 0;
-    public static final int WIREFRAME_BLACK = 1 << 24;
-    public static final int WIREFRAME_AUTO = 2 << 24;
-
-    public static void drawColoredVehicle(Context context, Bitmap bmp, int color, ArrayList<Integer> whatsOpen,
-                                          boolean useColor, Map<String, Integer> vehicleImages) {
-        // Create base canvas the size of the image
-        Canvas canvas = new Canvas(bmp);
-        Paint paint = new Paint();
-        Drawable icon;
-        Bitmap bmp2;
-        Canvas canvas2;
-
-        Drawable drawable = AppCompatResources.getDrawable(context, vehicleImages.get(VehicleDrawables.BODY_PRIMARY));
-        if (vehicleImages.get(VehicleDrawables.BODY_PRIMARY) != null && useColor) {
-            bmp2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            canvas2 = new Canvas(bmp2);
-
-            // Fill with the primary color mask
-            paint.setColor(color & Utils.ARGB_MASK);
-            // Set the alpha based on whether something is open
-            paint.setAlpha(whatsOpen.isEmpty() ? 0xff : 0xbf);
-            paint.setStyle(Paint.Style.FILL);
-            canvas.drawPaint(paint);
-
-            // Draw the primary body in color
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas2);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
-            canvas.drawBitmap(bmp2, 0, 0, paint);
-
-            // If secondary colors exist, add them
-            Integer secondary = vehicleImages.get((VehicleDrawables.BODY_SECONDARY));
-            if (secondary != null) {
-                icon = AppCompatResources.getDrawable(context, secondary);
-                icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                icon.draw(canvas);
-            }
-        }
-
-        // Draw anything that's open
-        for (Integer id : whatsOpen) {
-            icon = context.getDrawable(id);
-            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            icon.draw(canvas);
-        }
-
-        // Create a second bitmap the same size as the primary
-        bmp2 = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
-        canvas2 = new Canvas(bmp2);
-
-        // If not using colors, draw wireframe in white
-        if (!useColor) {
-            paint.setColor(Color.WHITE);
-        }
-        // Figure out whether wireframe should be drawn light or dark
-        else {
-            float[] hsl = new float[3];
-            ColorUtils.colorToHSL(color & ARGB_MASK, hsl);
-            int wireframeMode = color & WIREFRAME_MASK;
-            paint.setColor(wireframeMode == WIREFRAME_WHITE ? Color.WHITE :
-                    wireframeMode == WIREFRAME_BLACK ? Color.BLACK :
-                            hsl[2] > 0.5 ? Color.BLACK : Color.WHITE);
-        }
-        paint.setAlpha(0xff);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
-
-        // Fill with a contrasting color
-        paint.setStyle(Paint.Style.FILL);
-        canvas2.drawPaint(paint);
-
-        // Draw the wireframe body
-        drawable = AppCompatResources.getDrawable(context, vehicleImages.get(VehicleDrawables.WIREFRAME));
-        Bitmap bmp3 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas3 = new Canvas(bmp3);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas3);
-
-        // Set the wireframe's color
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
-        canvas2.drawBitmap(bmp3, 0, 0, paint);
-
-        // Draw wireframe over the colored body
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-        canvas.drawBitmap(bmp2, 0, 0, paint);
-    }
+//    public static void drawColoredVehicle(Context context, Bitmap bmp, int color, ArrayList<Integer> whatsOpen,
+//                                          boolean useColor, Map<String, Integer> vehicleImages) {
+//        // Create base canvas the size of the image
+//        Canvas canvas = new Canvas(bmp);
+//        Paint paint = new Paint();
+//        Drawable icon;
+//        Bitmap bmp2;
+//        Canvas canvas2;
+//
+//        Drawable drawable = AppCompatResources.getDrawable(context, vehicleImages.get(VehicleDrawables.BODY_PRIMARY));
+//        if (vehicleImages.get(VehicleDrawables.BODY_PRIMARY) != null && useColor) {
+//            bmp2 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+//                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+//            canvas2 = new Canvas(bmp2);
+//
+//            // Fill with the primary color mask
+//            paint.setColor(color & Utils.ARGB_MASK);
+//            // Set the alpha based on whether something is open
+//            paint.setAlpha(whatsOpen.isEmpty() ? 0xff : 0xbf);
+//            paint.setStyle(Paint.Style.FILL);
+//            canvas.drawPaint(paint);
+//
+//            // Draw the primary body in color
+//            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//            drawable.draw(canvas2);
+//            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+//            canvas.drawBitmap(bmp2, 0, 0, paint);
+//
+//            // If secondary colors exist, add them
+//            Integer secondary = vehicleImages.get((VehicleDrawables.BODY_SECONDARY));
+//            if (secondary != null) {
+//                icon = AppCompatResources.getDrawable(context, secondary);
+//                icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//                icon.draw(canvas);
+//            }
+//        }
+//
+//        // Draw anything that's open
+//        for (Integer id : whatsOpen) {
+//            icon = context.getDrawable(id);
+//            icon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//            icon.draw(canvas);
+//        }
+//
+//        // Create a second bitmap the same size as the primary
+//        bmp2 = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+//        canvas2 = new Canvas(bmp2);
+//
+//        // If not using colors, draw wireframe in white
+//        if (!useColor) {
+//            paint.setColor(Color.WHITE);
+//        }
+//        // Figure out whether wireframe should be drawn light or dark
+//        else {
+//            float[] hsl = new float[3];
+//            ColorUtils.colorToHSL(color & ARGB_MASK, hsl);
+//            int wireframeMode = color & WIREFRAME_MASK;
+//            paint.setColor(wireframeMode == WIREFRAME_WHITE ? Color.WHITE :
+//                    wireframeMode == WIREFRAME_BLACK ? Color.BLACK :
+//                            hsl[2] > 0.5 ? Color.BLACK : Color.WHITE);
+//        }
+//        paint.setAlpha(0xff);
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+//
+//        // Fill with a contrasting color
+//        paint.setStyle(Paint.Style.FILL);
+//        canvas2.drawPaint(paint);
+//
+//        // Draw the wireframe body
+//        drawable = AppCompatResources.getDrawable(context, vehicleImages.get(VehicleDrawables.WIREFRAME));
+//        Bitmap bmp3 = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+//                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas3 = new Canvas(bmp3);
+//        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//        drawable.draw(canvas3);
+//
+//        // Set the wireframe's color
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+//        canvas2.drawBitmap(bmp3, 0, 0, paint);
+//
+//        // Draw wireframe over the colored body
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+//        canvas.drawBitmap(bmp2, 0, 0, paint);
+//    }
 
     public static Bitmap getVehicleImage(Context context, String VIN, int angle) {
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);

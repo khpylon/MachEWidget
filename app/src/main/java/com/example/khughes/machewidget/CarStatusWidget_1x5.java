@@ -132,15 +132,15 @@ public class CarStatusWidget_1x5 extends CarStatusWidget {
                 pressureUnits, pressureConversion, R.id.rt_rr_tire);
 
         // Get the right images to use for this vehicle
-        Map<String, Integer> vehicleImages = VehicleDrawables.getVehicleDrawables_1x5(vehicleInfo.getVIN());
+        Map<String, Integer> vehicleImages = VehicleDrawables.getHorizontalVehicleDrawable(vehicleInfo.getVIN());
 
         // See if we should guess vehicle color
-        if( Utils.scanImageForColor (context, vehicleInfo) ) {
+        if( VehicleColor.scanImageForColor (context, vehicleInfo) ) {
             info.setVehicle(vehicleInfo);
         }
 
         // If vehicle is a Mach-E First Edition, show mirrors in body color
-        if(Utils.isFirstEdition(context, vehicleInfo.getVIN())) {
+        if(VehicleColor.isFirstEdition(context, vehicleInfo.getVIN())) {
            vehicleImages.put(VehicleDrawables.BODY_SECONDARY, R.drawable.mache_secondary_no_mirrors_horz);
         }
 
