@@ -6,10 +6,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -33,10 +30,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
-import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
-import androidx.webkit.WebViewFeature;
 
 import java.io.IOException;
 
@@ -46,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private int vehicleCount = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         context = this.getApplicationContext();
 
         // If we haven't bugged about the survey before, do it once and get it over with
-        if (Utils.doSurvey(context)) {
+        if (Misc.doSurvey(context)) {
             WebView surveyWebview = new WebView(this);
             surveyWebview.loadUrl(context.getResources().getString(R.string.survey_uri));
             surveyWebview.getSettings().setJavaScriptEnabled(true);
@@ -67,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // First thing, check logcat for a crash and save if so
-        String crashMessage = Utils.checkLogcat(context);
+        String crashMessage = Misc.checkLogcat(context);
         if (crashMessage != null) {
             Toast.makeText(context, crashMessage, Toast.LENGTH_SHORT).show();
         }
@@ -125,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create the webview containing instruction for use.
         WebView mWebView = findViewById(R.id.main_description);
-        Utils.checkDarkMode(context, mWebView);
+        Misc.checkDarkMode(context, mWebView);
         final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
                 .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))

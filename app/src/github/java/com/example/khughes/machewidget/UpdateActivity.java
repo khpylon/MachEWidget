@@ -171,7 +171,7 @@ public class UpdateActivity extends AppCompatActivity {
             File apkFile;
             HttpURLConnection urlConnection = null;
             try {
-                apkFile = Utils.removeAPK(context);
+                apkFile = Misc.removeAPK(context);
                 apkFile.createNewFile();
                 URL url = new URL(urls[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();

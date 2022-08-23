@@ -1,7 +1,5 @@
 package com.example.khughes.machewidget;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -89,7 +87,7 @@ public class Notifications extends BroadcastReceiver {
     public static void checkTPMSStatus(Context context, CarStatus carStatus, VehicleInfo vehInfo) {
         String lastTPMSStatus = vehInfo.getLastTPMSStatus();
 
-        Map<String, String> currentTPMSStatus = new HashMap<String, String>();
+        Map<String, String> currentTPMSStatus = new HashMap<>();
         currentTPMSStatus.put(LEFT_FRONT_TIRE, carStatus.getLeftFrontTireStatus());
         currentTPMSStatus.put(RIGHT_FRONT_TIRE, carStatus.getRightFrontTireStatus());
         currentTPMSStatus.put(LEFT_REAR_TIRE, carStatus.getLeftRearTireStatus());
@@ -167,7 +165,7 @@ public class Notifications extends BroadcastReceiver {
         StoredData appInfo = new StoredData(context);
         boolean batteryNotification = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.batteryNotification_key), true);
 
-        if (batteryNotification && !Utils.ignoringBatteryOptimizations(context)) {
+        if (batteryNotification && !Misc.ignoringBatteryOptimizations(context)) {
             long lastBatteryNotification = appInfo.getBatteryNotification();
             LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
             long nowTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
@@ -264,12 +262,16 @@ public class Notifications extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (action.equals(LVB_NOTIFICATION)) {
-            LVBNotificationVisible = false;
-        } else if (action.equals(TPMS_NOTIFICATION)) {
-            TPMSNotificationVisible = false;
-        } else if (action.equals(CHARGE_NOTIFICATION)) {
-            ChargeNotificationVisible = false;
+        switch (action) {
+            case LVB_NOTIFICATION:
+                LVBNotificationVisible = false;
+                break;
+            case TPMS_NOTIFICATION:
+                TPMSNotificationVisible = false;
+                break;
+            case CHARGE_NOTIFICATION:
+                ChargeNotificationVisible = false;
+                break;
         }
     }
 

@@ -1,12 +1,22 @@
 package com.example.khughes.machewidget
 
+import android.content.ContentValues
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.*
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.os.PowerManager
+import android.provider.MediaStore
+import android.util.Log
+import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.ColorUtils
 import androidx.preference.PreferenceManager
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import com.example.khughes.machewidget.db.UserInfoDatabase
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
 import com.google.gson.*
@@ -14,6 +24,9 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import java.io.*
 import java.nio.charset.StandardCharsets
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.function.Predicate
 import java.util.stream.Collectors
@@ -212,7 +225,7 @@ class PrefManagement {
                     StandardCharsets.UTF_8
                 )
             )
-            val outputFilename = Utils.writeExternalFile(
+            val outputFilename = Misc.writeExternalFile(
                 context,
                 inStream,
                 "fsw_settings-",
@@ -467,5 +480,220 @@ class VehicleImages {
             }
             return null
         }
+    }
+}
+
+class Misc {
+
+    companion object {
+
+        @JvmStatic
+        fun copyStreams(inStream: InputStream, outStream: OutputStream) {
+            try {
+                var len: Int
+                val buffer = ByteArray(65536)
+                while (inStream.read(buffer).also { len = it } != -1) {
+                    outStream.write(buffer, 0, len)
+                }
+            } catch (e: IOException) {
+                Log.e(MainActivity.CHANNEL_ID, "exception in LogFile.copyStream()", e)
+            }
+        }
+
+        @JvmStatic
+        fun writeExternalFile(
+            context: Context,
+            inStream: InputStream,
+            baseFilename: String,
+            mimeType: String?
+        ): String {
+            val time = LocalDateTime.now(ZoneId.systemDefault())
+            val outputFilename =
+                baseFilename + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US))
+            try {
+                val outStream: OutputStream?
+                val fileCollection: Uri
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    fileCollection =
+                        MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                    val contentValues = ContentValues()
+                    contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename)
+                    contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeType)
+                    val resolver = context.contentResolver
+                    val uri = resolver.insert(fileCollection, contentValues)
+                        ?: throw IOException("Couldn't create MediaStore Entry")
+                    outStream = resolver.openOutputStream(uri)
+                } else {
+                    val extension: String
+                    extension =
+                        when (mimeType) {
+                            Constants.APPLICATION_JSON -> ".json"
+                            Constants.APPLICATION_ZIP -> ".zip"
+                            Constants.TEXT_HTML -> ".html"
+                            else -> ".txt"
+                        }
+                    val outputFile = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                        outputFilename + extension
+                    )
+                    outputFile.delete()
+                    outputFile.createNewFile()
+                    outStream = FileOutputStream(outputFile)
+                }
+                outStream?.let {
+                    copyStreams(inStream, outStream)
+                    outStream.close()
+                }
+            } catch (e: IOException) {
+            }
+            return outputFilename
+        }
+
+        // See if there was a crash, and if so dump the logcat output to a file
+        @JvmStatic
+        fun checkLogcat(context: Context): String? {
+            try {
+                // Dump the crash buffer and exit
+                val process = Runtime.getRuntime().exec("logcat -d -b crash")
+                val bufferedReader = BufferedReader(
+                    InputStreamReader(process.inputStream)
+                )
+                val log = java.lang.StringBuilder()
+                var line: String?
+                while (bufferedReader.readLine().also { line = it } != null) {
+                    log.append( "${line}\n")
+                }
+
+                // If we find something, write to logcat.txt file
+                if (log.length > 0) {
+                    val inStream: InputStream = ByteArrayInputStream(
+                        log.toString().toByteArray(
+                            StandardCharsets.UTF_8
+                        )
+                    )
+                    val outputFilename = writeExternalFile(
+                        context,
+                        inStream,
+                        "fsw_logcat-",
+                        Constants.TEXT_PLAINTEXT
+                    )
+
+                    // Clear the crash log.
+                    Runtime.getRuntime().exec("logcat -c")
+                    return "Logcat crash file \"${outputFilename}.txt\" copied to Download folder."
+                }
+            } catch (e: IOException) {
+            }
+            return null
+        }
+
+        @JvmStatic
+        fun elapsedSecondsToDescription(seconds: Long): String {
+            val result = java.lang.StringBuilder()
+            val minutes = seconds / 60
+            val hours = minutes / 60
+            // less than 1 minute
+            if (minutes == 0L) {
+                result.append("$seconds sec")
+            } else if (hours == 0L) {
+                result.append("$minutes min")
+                // not right on the minute
+                if (seconds % 60 != 0L) {
+                    result.append(", " + seconds % 60 + " sec")
+                }
+            } else {
+                result.append(if (hours == 1L) "1 hr" else "$hours hrs")
+                // not right on the hour
+                if (minutes % 60 != 0L) {
+                    result.append(", " + minutes % 60 + " min")
+                }
+            }
+            return result.toString()
+        }
+
+        @JvmStatic
+        fun elapsedMinutesToDescription(minutes: Long): String {
+            val result = java.lang.StringBuilder()
+
+            // less than an hour
+            if (minutes < 60) {
+                result.append("$minutes min")
+                // less than a day
+            } else if (minutes / 60 < 24) {
+                result.append((minutes / 60).toString() + " hr")
+                // right on the hour
+                if (minutes % 60 == 0L) {
+                    if (minutes != 60L) {
+                        result.append("s")
+                    }
+                    // hours and minutes
+                } else {
+                    if (minutes >= 120) {
+                        result.append("s")
+                    }
+                    result.append(", " + minutes % 60 + " min")
+                }
+            } else {
+                val days = minutes / (24 * 60)
+                result.append(if (days == 1L) "1 day" else "$days days")
+            }
+            return result.toString()
+        }
+
+        @JvmStatic
+        fun OTASupportCheck(alertStatus: String?): Boolean {
+            return alertStatus == null || !alertStatus.lowercase(Locale.getDefault())
+                .replace("[^a-z0-9]".toRegex(), "").contains("doesntsupport")
+        }
+
+        @JvmStatic
+        fun removeAPK(context: Context): File {
+            val apkFile = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                "app-release.apk"
+            )
+            apkFile.delete()
+            return apkFile
+        }
+
+        // Check if we should display most recent survey information.
+        @JvmStatic
+        fun doSurvey(context: Context): Boolean {
+            val surveyVersion_key = context.resources.getString(R.string.surveyVersion_key)
+            val currentSurveyVersion =
+                PreferenceManager.getDefaultSharedPreferences(context).getInt(surveyVersion_key, 0)
+            return if (currentSurveyVersion <= Constants.SURVEY_VERSION) {
+                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                    .putInt(surveyVersion_key, Constants.SURVEY_VERSION + 1).apply()
+                true
+            } else {
+                false
+            }
+        }
+
+        @JvmStatic
+        fun checkDarkMode(context: Context, view: WebView) {
+            val nightModeFlags =
+                context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(
+                    WebViewFeature.FORCE_DARK
+                )
+            ) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    @Suppress("DEPRECATION")
+                    WebSettingsCompat.setForceDark(view.settings, WebSettingsCompat.FORCE_DARK_ON)
+                } else {
+                    WebSettingsCompat.setAlgorithmicDarkeningAllowed(view.settings, true)
+                }
+            }
+        }
+
+        @JvmStatic
+        fun ignoringBatteryOptimizations(context: Context): Boolean {
+            val packageName = context.packageName
+            val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            return pm.isIgnoringBatteryOptimizations(packageName)
+        }
+
     }
 }

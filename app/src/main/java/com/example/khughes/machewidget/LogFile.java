@@ -36,7 +36,7 @@ public class LogFile {
             if (moveBackup) {
                 InputStream inStream = new FileInputStream(logFile);
                 OutputStream outStream = new FileOutputStream(backupLogFile);
-                Utils.copyStreams(inStream, outStream);
+                Misc.copyStreams(inStream, outStream);
                 inStream.close();
                 outStream.close();
             }
@@ -97,17 +97,17 @@ public class LogFile {
             File backupLogFile = new File(context.getDataDir(), BACKUPLOGFILENAME);
             if (backupLogFile.exists()) {
                 InputStream inputStream = new FileInputStream(backupLogFile);
-                Utils.copyStreams(inputStream, outStream);
+                Misc.copyStreams(inputStream, outStream);
                 inputStream.close();
             }
             File logFile = new File(context.getDataDir(), LOGFILENAME);
             InputStream inputStream = new FileInputStream(logFile);
-            Utils.copyStreams(inputStream, outStream);
+            Misc.copyStreams(inputStream, outStream);
             inputStream.close();
             outStream.close();
 
             // Copy the temp file to the output file, then get rid of the temp file.
-            String outputFilename = Utils.writeExternalFile (context,  new FileInputStream(tmpLogfile), LOGFILENAME+"-", Constants.TEXT_PLAINTEXT);
+            String outputFilename = Misc.writeExternalFile (context,  new FileInputStream(tmpLogfile), LOGFILENAME+"-", Constants.TEXT_PLAINTEXT);
             tmpLogfile.delete();
 
             return MessageFormat.format("Log file \"{0}.txt\" copied to Download folder.", outputFilename);

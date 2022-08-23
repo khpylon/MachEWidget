@@ -1,11 +1,8 @@
 package com.example.khughes.machewidget;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.webkit.WebSettingsCompat;
-import androidx.webkit.WebViewFeature;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -67,7 +64,6 @@ public class OTAViewActivity extends AppCompatActivity {
     }
 
     private static long currentOTATime = 0;
-    private static long lastOTATime;
 
     private static InfoRepository info;
     private static VehicleInfo mVehicleInfo;
@@ -82,7 +78,7 @@ public class OTAViewActivity extends AppCompatActivity {
         Context context = getApplicationContext();
 
         WebView mWebView = findViewById(R.id.ota_webview);
-        Utils.checkDarkMode(context, mWebView);
+        Misc.checkDarkMode(context, mWebView);
 
         Button clear = findViewById(R.id.button);
         clear.setOnClickListener(view -> {
@@ -156,7 +152,7 @@ public class OTAViewActivity extends AppCompatActivity {
             Button clear = mClear.get();
             mVehicleInfo = vehicleInfo;
             OTAStatus ota = vehicleInfo.toOTAStatus();
-            lastOTATime = vehicleInfo.getLastOTATime();
+            long lastOTATime = vehicleInfo.getLastOTATime();
 
             StringBuilder unencodedHtml = new StringBuilder("<html><body>");
             if (ota != null && ota.getFuseResponse() != null) {

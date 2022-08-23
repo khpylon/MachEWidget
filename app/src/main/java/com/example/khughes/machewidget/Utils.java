@@ -994,240 +994,7 @@ public class Utils {
 //        }
 //        return 0;
 //    }
-
-    // Mapping from long state/territory names to abbreviations
-    public static final Map<String, String> states;
-
-    static {
-        Map<String, String> tmpStates = new HashMap<>();
-        tmpStates.put("Alabama", "AL");
-        tmpStates.put("Alaska", "AK");
-        tmpStates.put("Alberta", "AB");
-        tmpStates.put("American Samoa", "AS");
-        tmpStates.put("Arizona", "AZ");
-        tmpStates.put("Arkansas", "AR");
-        tmpStates.put("Armed Forces (AE)", "AE");
-        tmpStates.put("Armed Forces Americas", "AA");
-        tmpStates.put("Armed Forces Pacific", "AP");
-        tmpStates.put("British Columbia", "BC");
-        tmpStates.put("California", "CA");
-        tmpStates.put("Colorado", "CO");
-        tmpStates.put("Connecticut", "CT");
-        tmpStates.put("Delaware", "DE");
-        tmpStates.put("District Of Columbia", "DC");
-        tmpStates.put("Florida", "FL");
-        tmpStates.put("Georgia", "GA");
-        tmpStates.put("Guam", "GU");
-        tmpStates.put("Hawaii", "HI");
-        tmpStates.put("Idaho", "ID");
-        tmpStates.put("Illinois", "IL");
-        tmpStates.put("Indiana", "IN");
-        tmpStates.put("Iowa", "IA");
-        tmpStates.put("Kansas", "KS");
-        tmpStates.put("Kentucky", "KY");
-        tmpStates.put("Louisiana", "LA");
-        tmpStates.put("Maine", "ME");
-        tmpStates.put("Manitoba", "MB");
-        tmpStates.put("Maryland", "MD");
-        tmpStates.put("Massachusetts", "MA");
-        tmpStates.put("Michigan", "MI");
-        tmpStates.put("Minnesota", "MN");
-        tmpStates.put("Mississippi", "MS");
-        tmpStates.put("Missouri", "MO");
-        tmpStates.put("Montana", "MT");
-        tmpStates.put("Nebraska", "NE");
-        tmpStates.put("Nevada", "NV");
-        tmpStates.put("New Brunswick", "NB");
-        tmpStates.put("New Hampshire", "NH");
-        tmpStates.put("New Jersey", "NJ");
-        tmpStates.put("New Mexico", "NM");
-        tmpStates.put("New York", "NY");
-        tmpStates.put("Newfoundland", "NF");
-        tmpStates.put("North Carolina", "NC");
-        tmpStates.put("North Dakota", "ND");
-        tmpStates.put("Northwest Territories", "NT");
-        tmpStates.put("Nova Scotia", "NS");
-        tmpStates.put("Nunavut", "NU");
-        tmpStates.put("Ohio", "OH");
-        tmpStates.put("Oklahoma", "OK");
-        tmpStates.put("Ontario", "ON");
-        tmpStates.put("Oregon", "OR");
-        tmpStates.put("Pennsylvania", "PA");
-        tmpStates.put("Prince Edward Island", "PE");
-        tmpStates.put("Puerto Rico", "PR");
-        tmpStates.put("Quebec", "QC");
-        tmpStates.put("Rhode Island", "RI");
-        tmpStates.put("Saskatchewan", "SK");
-        tmpStates.put("South Carolina", "SC");
-        tmpStates.put("South Dakota", "SD");
-        tmpStates.put("Tennessee", "TN");
-        tmpStates.put("Texas", "TX");
-        tmpStates.put("Utah", "UT");
-        tmpStates.put("Vermont", "VT");
-        tmpStates.put("Virgin Islands", "VI");
-        tmpStates.put("Virginia", "VA");
-        tmpStates.put("Washington", "WA");
-        tmpStates.put("West Virginia", "WV");
-        tmpStates.put("Wisconsin", "WI");
-        tmpStates.put("Wyoming", "WY");
-        tmpStates.put("Yukon Territory", "YT");
-        states = tmpStates;
-    }
-
-    public static void copyStreams(InputStream inStream, OutputStream outStream) {
-        try {
-            int len;
-            byte[] buffer = new byte[65536];
-            while ((len = inStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, len);
-            }
-        } catch (IOException e) {
-            Log.e(MainActivity.CHANNEL_ID, "exception in LogFile.copyStream()", e);
-        }
-    }
-
-    public static String writeExternalFile(Context context, InputStream inStream, String baseFilename, String mimeType) {
-        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
-        String outputFilename = baseFilename + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
-
-        try {
-            OutputStream outStream;
-            Uri fileCollection;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
-                contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeType);
-                ContentResolver resolver = context.getContentResolver();
-                Uri uri = resolver.insert(fileCollection, contentValues);
-                if (uri == null) {
-                    throw new IOException("Couldn't create MediaStore Entry");
-                }
-                outStream = resolver.openOutputStream(uri);
-            } else {
-                String extension;
-                switch (mimeType) {
-                    case Constants.APPLICATION_JSON:
-                        extension = ".json";
-                        break;
-                    case Constants.APPLICATION_ZIP:
-                        extension = ".zip";
-                        break;
-                    case Constants.TEXT_HTML:
-                        extension = ".html";
-                        break;
-                    default:
-                        extension = ".txt";
-                        break;
-                }
-                File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename + extension);
-                outputFile.delete();
-                outputFile.createNewFile();
-                outStream = new FileOutputStream(outputFile);
-            }
-            copyStreams(inStream, outStream);
-            outStream.close();
-        } catch (IOException e) {
-        }
-        return outputFilename;
-    }
-
-
-    // See if there was a crash, and if so dump the logcat output to a file
-    public static String checkLogcat(Context context) {
-        try {
-            // Dump the crash buffer and exit
-            Process process = Runtime.getRuntime().exec("logcat -d -b crash");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-            StringBuilder log = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                log.append(line + "\n");
-            }
-
-            // If we find something, write to logcat.txt file
-            if (log.length() > 0) {
-                InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
-
-                String outputFilename = writeExternalFile(context, inStream, "fsw_logcat-", Constants.TEXT_PLAINTEXT);
-
-                // Clear the crash log.
-                Runtime.getRuntime().exec("logcat -c");
-
-                return java.text.MessageFormat.format("Logcat crash file \"{0}.txt\" copied to Download folder.", outputFilename);
-            }
-        } catch (IOException e) {
-        }
-        return null;
-    }
-
-    public static boolean OTASupportCheck(String alertStatus) {
-        return alertStatus == null || !alertStatus.toLowerCase().replaceAll("[^a-z0-9]", "").contains("doesntsupport");
-    }
-
-    public static File removeAPK(Context context) {
-        File apkFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "app-release.apk");
-        apkFile.delete();
-        return apkFile;
-    }
-
-    public static String elapsedSecondsToDescription(long seconds) {
-        StringBuilder result = new StringBuilder();
-
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        // less than 1 minute
-        if (minutes == 0) {
-            result.append(seconds + " sec");
-        }
-        // less than an hour
-        else if (hours == 0) {
-            result.append(minutes + " min");
-            // not right on the minute
-            if ((seconds % 60) != 0) {
-                result.append(", " + (seconds % 60) + " sec");
-            }
-        }
-        // more than an hour
-        else {
-            result.append(hours == 1 ? "1 hr" : hours + " hrs");
-            // not right on the hour
-            if ((minutes % 60) != 0) {
-                result.append(", " + (minutes % 60) + " min");
-            }
-        }
-        return result.toString();
-    }
-
-    public static String elapsedMinutesToDescription(long minutes) {
-        StringBuilder result = new StringBuilder();
-
-        // less than an hour
-        if (minutes < 60) {
-            result.append(minutes + " min");
-            // less than a day
-        } else if (minutes / 60 < 24) {
-            result.append((minutes / 60) + " hr");
-            // right on the hour
-            if ((minutes % 60) == 0) {
-                if (minutes != 60) {
-                    result.append("s");
-                }
-                // hours and minutes
-            } else {
-                if (minutes >= 120) {
-                    result.append("s");
-                }
-                result.append(", " + (minutes % 60) + " min");
-            }
-        } else {
-            long days = minutes / (24 * 60);
-            result.append(days == 1 ? "1 day" : days + " days");
-        }
-        return result.toString();
-    }
-
+//
 //    private static final int JSON_SETTINGS_VERSION = 3;
 //
 //    public static void savePrefs(Context context) {
@@ -1444,31 +1211,7 @@ public class Utils {
 //            handler.sendEmptyMessage(0);
 //        }).start();
 //    }
-
-    // Check if we should display most recent survey information.
-    public static boolean doSurvey (Context context) {
-        String surveyVersion_key = context.getResources().getString(R.string.surveyVersion_key);
-        int currentSurveyVersion = PreferenceManager.getDefaultSharedPreferences(context).getInt(surveyVersion_key, 0);
-        if (currentSurveyVersion <= Constants.SURVEY_VERSION) {
-            PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(surveyVersion_key, Constants.SURVEY_VERSION + 1).apply();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static void checkDarkMode(Context context, WebView view) {
-        int nightModeFlags = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-            if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                WebSettingsCompat.setForceDark(view.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
-            } else {
-                WebSettingsCompat.setAlgorithmicDarkeningAllowed(view.getSettings(), true);
-            }
-        }
-    }
-
-
+//
 //    public static boolean scanImageForColor(Context context, VehicleInfo vehicleInfo) {
 //        // If vehicle color has been set, do nothing
 //        if ((vehicleInfo.getColorValue() & ARGB_MASK) != (Color.WHITE & ARGB_MASK)) {
@@ -1682,12 +1425,265 @@ public class Utils {
 //            }
 //        }
 //    }
+//
+//    // Mapping from long state/territory names to abbreviations
+//    public static final Map<String, String> states;
+//
+//    static {
+//        Map<String, String> tmpStates = new HashMap<>();
+//        tmpStates.put("Alabama", "AL");
+//        tmpStates.put("Alaska", "AK");
+//        tmpStates.put("Alberta", "AB");
+//        tmpStates.put("American Samoa", "AS");
+//        tmpStates.put("Arizona", "AZ");
+//        tmpStates.put("Arkansas", "AR");
+//        tmpStates.put("Armed Forces (AE)", "AE");
+//        tmpStates.put("Armed Forces Americas", "AA");
+//        tmpStates.put("Armed Forces Pacific", "AP");
+//        tmpStates.put("British Columbia", "BC");
+//        tmpStates.put("California", "CA");
+//        tmpStates.put("Colorado", "CO");
+//        tmpStates.put("Connecticut", "CT");
+//        tmpStates.put("Delaware", "DE");
+//        tmpStates.put("District Of Columbia", "DC");
+//        tmpStates.put("Florida", "FL");
+//        tmpStates.put("Georgia", "GA");
+//        tmpStates.put("Guam", "GU");
+//        tmpStates.put("Hawaii", "HI");
+//        tmpStates.put("Idaho", "ID");
+//        tmpStates.put("Illinois", "IL");
+//        tmpStates.put("Indiana", "IN");
+//        tmpStates.put("Iowa", "IA");
+//        tmpStates.put("Kansas", "KS");
+//        tmpStates.put("Kentucky", "KY");
+//        tmpStates.put("Louisiana", "LA");
+//        tmpStates.put("Maine", "ME");
+//        tmpStates.put("Manitoba", "MB");
+//        tmpStates.put("Maryland", "MD");
+//        tmpStates.put("Massachusetts", "MA");
+//        tmpStates.put("Michigan", "MI");
+//        tmpStates.put("Minnesota", "MN");
+//        tmpStates.put("Mississippi", "MS");
+//        tmpStates.put("Missouri", "MO");
+//        tmpStates.put("Montana", "MT");
+//        tmpStates.put("Nebraska", "NE");
+//        tmpStates.put("Nevada", "NV");
+//        tmpStates.put("New Brunswick", "NB");
+//        tmpStates.put("New Hampshire", "NH");
+//        tmpStates.put("New Jersey", "NJ");
+//        tmpStates.put("New Mexico", "NM");
+//        tmpStates.put("New York", "NY");
+//        tmpStates.put("Newfoundland", "NF");
+//        tmpStates.put("North Carolina", "NC");
+//        tmpStates.put("North Dakota", "ND");
+//        tmpStates.put("Northwest Territories", "NT");
+//        tmpStates.put("Nova Scotia", "NS");
+//        tmpStates.put("Nunavut", "NU");
+//        tmpStates.put("Ohio", "OH");
+//        tmpStates.put("Oklahoma", "OK");
+//        tmpStates.put("Ontario", "ON");
+//        tmpStates.put("Oregon", "OR");
+//        tmpStates.put("Pennsylvania", "PA");
+//        tmpStates.put("Prince Edward Island", "PE");
+//        tmpStates.put("Puerto Rico", "PR");
+//        tmpStates.put("Quebec", "QC");
+//        tmpStates.put("Rhode Island", "RI");
+//        tmpStates.put("Saskatchewan", "SK");
+//        tmpStates.put("South Carolina", "SC");
+//        tmpStates.put("South Dakota", "SD");
+//        tmpStates.put("Tennessee", "TN");
+//        tmpStates.put("Texas", "TX");
+//        tmpStates.put("Utah", "UT");
+//        tmpStates.put("Vermont", "VT");
+//        tmpStates.put("Virgin Islands", "VI");
+//        tmpStates.put("Virginia", "VA");
+//        tmpStates.put("Washington", "WA");
+//        tmpStates.put("West Virginia", "WV");
+//        tmpStates.put("Wisconsin", "WI");
+//        tmpStates.put("Wyoming", "WY");
+//        tmpStates.put("Yukon Territory", "YT");
+//        states = tmpStates;
+//    }
 
-    public static Boolean ignoringBatteryOptimizations(Context context) {
-        String packageName = context.getPackageName();
-        PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
-        return pm.isIgnoringBatteryOptimizations(packageName);
-    }
-
-
+//    public static void copyStreams(InputStream inStream, OutputStream outStream) {
+//        try {
+//            int len;
+//            byte[] buffer = new byte[65536];
+//            while ((len = inStream.read(buffer)) != -1) {
+//                outStream.write(buffer, 0, len);
+//            }
+//        } catch (IOException e) {
+//            Log.e(MainActivity.CHANNEL_ID, "exception in LogFile.copyStream()", e);
+//        }
+//    }
+//
+//    public static String writeExternalFile(Context context, InputStream inStream, String baseFilename, String mimeType) {
+//        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault());
+//        String outputFilename = baseFilename + time.format(DateTimeFormatter.ofPattern("MM-dd-HH:mm:ss", Locale.US));
+//
+//        try {
+//            OutputStream outStream;
+//            Uri fileCollection;
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+//                fileCollection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+//                ContentValues contentValues = new ContentValues();
+//                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, outputFilename);
+//                contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeType);
+//                ContentResolver resolver = context.getContentResolver();
+//                Uri uri = resolver.insert(fileCollection, contentValues);
+//                if (uri == null) {
+//                    throw new IOException("Couldn't create MediaStore Entry");
+//                }
+//                outStream = resolver.openOutputStream(uri);
+//            } else {
+//                String extension;
+//                switch (mimeType) {
+//                    case Constants.APPLICATION_JSON:
+//                        extension = ".json";
+//                        break;
+//                    case Constants.APPLICATION_ZIP:
+//                        extension = ".zip";
+//                        break;
+//                    case Constants.TEXT_HTML:
+//                        extension = ".html";
+//                        break;
+//                    default:
+//                        extension = ".txt";
+//                        break;
+//                }
+//                File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), outputFilename + extension);
+//                outputFile.delete();
+//                outputFile.createNewFile();
+//                outStream = new FileOutputStream(outputFile);
+//            }
+//            copyStreams(inStream, outStream);
+//            outStream.close();
+//        } catch (IOException e) {
+//        }
+//        return outputFilename;
+//    }
+//
+//    // See if there was a crash, and if so dump the logcat output to a file
+//    public static String checkLogcat(Context context) {
+//        try {
+//            // Dump the crash buffer and exit
+//            Process process = Runtime.getRuntime().exec("logcat -d -b crash");
+//            BufferedReader bufferedReader = new BufferedReader(
+//                    new InputStreamReader(process.getInputStream()));
+//            StringBuilder log = new StringBuilder();
+//            String line;
+//            while ((line = bufferedReader.readLine()) != null) {
+//                log.append(line + "\n");
+//            }
+//
+//            // If we find something, write to logcat.txt file
+//            if (log.length() > 0) {
+//                InputStream inStream = new ByteArrayInputStream(log.toString().getBytes(StandardCharsets.UTF_8));
+//
+//                String outputFilename = writeExternalFile(context, inStream, "fsw_logcat-", Constants.TEXT_PLAINTEXT);
+//
+//                // Clear the crash log.
+//                Runtime.getRuntime().exec("logcat -c");
+//
+//                return java.text.MessageFormat.format("Logcat crash file \"{0}.txt\" copied to Download folder.", outputFilename);
+//            }
+//        } catch (IOException e) {
+//        }
+//        return null;
+//    }
+//
+//    public static boolean OTASupportCheck(String alertStatus) {
+//        return alertStatus == null || !alertStatus.toLowerCase().replaceAll("[^a-z0-9]", "").contains("doesntsupport");
+//    }
+//
+//    public static File removeAPK(Context context) {
+//        File apkFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "app-release.apk");
+//        apkFile.delete();
+//        return apkFile;
+//    }
+//
+//    public static String elapsedSecondsToDescription(long seconds) {
+//        StringBuilder result = new StringBuilder();
+//
+//        long minutes = seconds / 60;
+//        long hours = minutes / 60;
+//        // less than 1 minute
+//        if (minutes == 0) {
+//            result.append(seconds + " sec");
+//        }
+//        // less than an hour
+//        else if (hours == 0) {
+//            result.append(minutes + " min");
+//            // not right on the minute
+//            if ((seconds % 60) != 0) {
+//                result.append(", " + (seconds % 60) + " sec");
+//            }
+//        }
+//        // more than an hour
+//        else {
+//            result.append(hours == 1 ? "1 hr" : hours + " hrs");
+//            // not right on the hour
+//            if ((minutes % 60) != 0) {
+//                result.append(", " + (minutes % 60) + " min");
+//            }
+//        }
+//        return result.toString();
+//    }
+//
+//    public static String elapsedMinutesToDescription(long minutes) {
+//        StringBuilder result = new StringBuilder();
+//
+//        // less than an hour
+//        if (minutes < 60) {
+//            result.append(minutes + " min");
+//            // less than a day
+//        } else if (minutes / 60 < 24) {
+//            result.append((minutes / 60) + " hr");
+//            // right on the hour
+//            if ((minutes % 60) == 0) {
+//                if (minutes != 60) {
+//                    result.append("s");
+//                }
+//                // hours and minutes
+//            } else {
+//                if (minutes >= 120) {
+//                    result.append("s");
+//                }
+//                result.append(", " + (minutes % 60) + " min");
+//            }
+//        } else {
+//            long days = minutes / (24 * 60);
+//            result.append(days == 1 ? "1 day" : days + " days");
+//        }
+//        return result.toString();
+//    }
+//
+//    // Check if we should display most recent survey information.
+//    public static boolean doSurvey (Context context) {
+//        String surveyVersion_key = context.getResources().getString(R.string.surveyVersion_key);
+//        int currentSurveyVersion = PreferenceManager.getDefaultSharedPreferences(context).getInt(surveyVersion_key, 0);
+//        if (currentSurveyVersion <= Constants.SURVEY_VERSION) {
+//            PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(surveyVersion_key, Constants.SURVEY_VERSION + 1).apply();
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+//
+//    public static void checkDarkMode(Context context, WebView view) {
+//        int nightModeFlags = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+//        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+//            if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+//                WebSettingsCompat.setForceDark(view.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
+//            } else {
+//                WebSettingsCompat.setAlgorithmicDarkeningAllowed(view.getSettings(), true);
+//            }
+//        }
+//    }
+//
+//    public static Boolean ignoringBatteryOptimizations(Context context) {
+//        String packageName = context.getPackageName();
+//        PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
+//        return pm.isIgnoringBatteryOptimizations(packageName);
+//    }
 }

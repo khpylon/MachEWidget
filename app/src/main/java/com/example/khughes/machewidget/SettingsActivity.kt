@@ -166,7 +166,7 @@ class SettingsActivity : AppCompatActivity() {
 
     companion object {
         fun displayOptimizationMessage(context: Context) {
-            if (Utils.ignoringBatteryOptimizations(context)) {
+            if (Misc.ignoringBatteryOptimizations(context)) {
                 battery.summary = "Off (recommended)"
             } else {
                 battery.summary = "On (may cause issues)"

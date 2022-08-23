@@ -131,7 +131,7 @@ class StatusReceiver : BroadcastReceiver() {
                         "StatusReceiver: time({0}), state({1}), battery optimization({2})",
                         (timeout - nowtime) / MILLIS,
                         state,
-                        Utils.ignoringBatteryOptimizations(context)
+                        Misc.ignoringBatteryOptimizations(context)
                     )
                 )
 

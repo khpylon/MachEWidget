@@ -38,7 +38,7 @@ class BootComplete : BroadcastReceiver() {
 
         if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED, ignoreCase = true)) {
             LogFile.d(context, MainActivity.CHANNEL_ID, "BootComplete: running package updates")
-            Utils.removeAPK(context)
+            Misc.removeAPK(context)
             AppUpdates.performUpdates(context)
             CarStatusWidget.updateWidget(context)
         }

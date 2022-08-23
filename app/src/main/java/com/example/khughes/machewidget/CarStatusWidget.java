@@ -37,6 +37,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -94,6 +95,84 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setInt(id, "setBackgroundResource", drawable);
     }
 
+    // Mapping from long state/territory names to abbreviations
+    private static final Map<String, String> states;
+
+    static {
+        Map<String, String> tmpStates = new HashMap<>();
+        tmpStates.put("Alabama", "AL");
+        tmpStates.put("Alaska", "AK");
+        tmpStates.put("Alberta", "AB");
+        tmpStates.put("American Samoa", "AS");
+        tmpStates.put("Arizona", "AZ");
+        tmpStates.put("Arkansas", "AR");
+        tmpStates.put("Armed Forces (AE)", "AE");
+        tmpStates.put("Armed Forces Americas", "AA");
+        tmpStates.put("Armed Forces Pacific", "AP");
+        tmpStates.put("British Columbia", "BC");
+        tmpStates.put("California", "CA");
+        tmpStates.put("Colorado", "CO");
+        tmpStates.put("Connecticut", "CT");
+        tmpStates.put("Delaware", "DE");
+        tmpStates.put("District Of Columbia", "DC");
+        tmpStates.put("Florida", "FL");
+        tmpStates.put("Georgia", "GA");
+        tmpStates.put("Guam", "GU");
+        tmpStates.put("Hawaii", "HI");
+        tmpStates.put("Idaho", "ID");
+        tmpStates.put("Illinois", "IL");
+        tmpStates.put("Indiana", "IN");
+        tmpStates.put("Iowa", "IA");
+        tmpStates.put("Kansas", "KS");
+        tmpStates.put("Kentucky", "KY");
+        tmpStates.put("Louisiana", "LA");
+        tmpStates.put("Maine", "ME");
+        tmpStates.put("Manitoba", "MB");
+        tmpStates.put("Maryland", "MD");
+        tmpStates.put("Massachusetts", "MA");
+        tmpStates.put("Michigan", "MI");
+        tmpStates.put("Minnesota", "MN");
+        tmpStates.put("Mississippi", "MS");
+        tmpStates.put("Missouri", "MO");
+        tmpStates.put("Montana", "MT");
+        tmpStates.put("Nebraska", "NE");
+        tmpStates.put("Nevada", "NV");
+        tmpStates.put("New Brunswick", "NB");
+        tmpStates.put("New Hampshire", "NH");
+        tmpStates.put("New Jersey", "NJ");
+        tmpStates.put("New Mexico", "NM");
+        tmpStates.put("New York", "NY");
+        tmpStates.put("Newfoundland", "NF");
+        tmpStates.put("North Carolina", "NC");
+        tmpStates.put("North Dakota", "ND");
+        tmpStates.put("Northwest Territories", "NT");
+        tmpStates.put("Nova Scotia", "NS");
+        tmpStates.put("Nunavut", "NU");
+        tmpStates.put("Ohio", "OH");
+        tmpStates.put("Oklahoma", "OK");
+        tmpStates.put("Ontario", "ON");
+        tmpStates.put("Oregon", "OR");
+        tmpStates.put("Pennsylvania", "PA");
+        tmpStates.put("Prince Edward Island", "PE");
+        tmpStates.put("Puerto Rico", "PR");
+        tmpStates.put("Quebec", "QC");
+        tmpStates.put("Rhode Island", "RI");
+        tmpStates.put("Saskatchewan", "SK");
+        tmpStates.put("South Carolina", "SC");
+        tmpStates.put("South Dakota", "SD");
+        tmpStates.put("Tennessee", "TN");
+        tmpStates.put("Texas", "TX");
+        tmpStates.put("Utah", "UT");
+        tmpStates.put("Vermont", "VT");
+        tmpStates.put("Virgin Islands", "VI");
+        tmpStates.put("Virginia", "VA");
+        tmpStates.put("Washington", "WA");
+        tmpStates.put("West Virginia", "WV");
+        tmpStates.put("Wisconsin", "WI");
+        tmpStates.put("Wyoming", "WY");
+        tmpStates.put("Yukon Territory", "YT");
+        states = tmpStates;
+    }
 
     protected void updateLocation(Context context, RemoteViews views, String latitude, String longitude) {
         List<Address> addresses = null;
@@ -127,8 +206,8 @@ public class CarStatusWidget extends AppWidgetProvider {
             // Other locality info (state, province, etc)
             if (address.getLocality() != null && address.getAdminArea() != null) {
                 String adminArea = address.getAdminArea();
-                if (Utils.states.containsKey(adminArea)) {
-                    adminArea = Utils.states.get(adminArea);
+                if (states.containsKey(adminArea)) {
+                    adminArea = states.get(adminArea);
                 }
                 cityState = PADDING + address.getLocality() + ", " + adminArea;
             }
@@ -477,7 +556,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             if (minutes < 1) {
                 refresh += "just now";
             } else {
-                refresh += Utils.elapsedMinutesToDescription(minutes) + " ago";
+                refresh += Misc.elapsedMinutesToDescription(minutes) + " ago";
             }
         }
         views.setTextViewText(R.id.lastRefresh, refresh);
@@ -503,7 +582,7 @@ public class CarStatusWidget extends AppWidgetProvider {
         views.setViewVisibility(R.id.ota_container, displayOTA ? View.VISIBLE : View.GONE);
         if (displayOTA && otaStatus != null) {
             // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
-            if (Utils.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
+            if (Misc.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
                 views.setTextViewText(R.id.ota_line1, "OTA Status:");
                 String OTArefresh;
                 if (otaStatus.getFuseResponse() == null) {
@@ -858,13 +937,13 @@ public class CarStatusWidget extends AppWidgetProvider {
                                                     forceUpdate(context, VIN);
                                                 }
                                             } else if (count < FIRST_LIMIT) {
-                                                Toast.makeText(context, "Cannot force update for another " + Utils.elapsedSecondsToDescription(2 * 60 - seconds) + ".", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, "Cannot force update for another " + Misc.elapsedSecondsToDescription(2 * 60 - seconds) + ".", Toast.LENGTH_SHORT).show();
                                             } else if (count < SECOND_LIMIT) {
-                                                Toast.makeText(context, "Cannot force update for another " + Utils.elapsedSecondsToDescription(10 * 60 - seconds) + "", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, "Cannot force update for another " + Misc.elapsedSecondsToDescription(10 * 60 - seconds) + "", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 long remainingMinutes = ((firstTime - nowTime) / MILLIS + TIMEOUT_INTERVAL) / SECONDS;
                                                 Toast.makeText(context, "Too many forced updates; feature disabled for " +
-                                                        Utils.elapsedMinutesToDescription(remainingMinutes) + ".", Toast.LENGTH_SHORT).show();
+                                                        Misc.elapsedMinutesToDescription(remainingMinutes) + ".", Toast.LENGTH_SHORT).show();
                                             }
                                         } else {
                                             Toast.makeText(context, "The LVB status is not good.", Toast.LENGTH_SHORT).show();
