@@ -48,7 +48,7 @@ Observations from users have noticed this progression:
 2. request_delivery_queued (OTAM_S1001)
 3. artifact_retrieval_in_progress (OTAM_S1023)
 4. installation_queued  (OTAM_S1007)
-5. deploying  (OTAM_S1021)
+5. deploying  (OTAM_S1016 or OTAM_S1021)
 6. success (OTAM_S1010), or alternately  
 7. failure (OTAM_E1016)
 
@@ -75,11 +75,11 @@ Go to "Settings" in the three-dot menu, scroll to the bottom, and click on "GitH
 
 #### Q: Why does my vehicle have the wrong status image/wrong fuel type/no OTA information/etc etc etc?
 
-The app decodes each vehicle's VIN information (which is retrieved when you log into your Ford account) to determine the model and engine/motor type.  
-The model information is used to determine what image to use, and the engine/motor type to determine if the vehicle is a gasoline/hybrid, electric, or plug-in hybrid.
+The app decodes each vehicle's VIN information (which is retrieved when you log into your Ford account) to determine the  model information,
+which is then used to determine what image to use.  It uses the vechicle's status information to determine if the vehicle is a gasoline/hybrid, electric, or plug-in hybrid.
 I've only added support for the vehicles users have requested, and even then it's limited to what graphics I'm able to obtain. 
 
-#### Q: How can I get you to support my vehicle?
+#### Q: How can I get support for my vehicle?
 
 I'm happy to expand support to other Ford/Lincoln vehicles which are supported by FordPass; all that's needed is to open a new Issue on GitHub.  But I will need a couple of things:
 1. I need logs from the app to see the status information about the vehicle (status and OTA capabilities).  The best way to get this for me is to place the widget on your homescreen,
