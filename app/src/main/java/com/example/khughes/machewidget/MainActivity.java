@@ -232,7 +232,8 @@ public class MainActivity extends AppCompatActivity {
                                     if (type.equals(Constants.APPLICATION_JSON) ||
                                             (type.equals(Constants.APPLICATION_OCTETSTREAM) &&
                                                     uri.getPath().endsWith(".json"))) {
-                                        Utils.restorePrefs(context, uri);
+//                                        Utils.restorePrefs(context, uri);
+                                        new PrefManagement().restorePrefs(context, uri);
                                     } else {
                                         return;
                                     }
@@ -287,7 +288,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_backup) {
-            Utils.savePrefs(context);
+//            Utils.savePrefs(context);
+            new PrefManagement().savePrefs(context);
             return true;
         } else if (id == R.id.action_restore) {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);

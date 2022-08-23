@@ -101,7 +101,7 @@ class VehicleActivity : AppCompatActivity() {
             }
             holder.VINItemView.text = text
             holder.nicknameItemView.text = current.nickname
-            val bmp = Utils.getRandomVehicleImage(context, VIN)
+            val bmp = VehicleImages.getRandomImage(context, VIN)
             if (bmp != null) {
                 holder.imageView.setImageBitmap(bmp)
                 holder.imageView.visibility = VISIBLE

@@ -148,7 +148,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
         // If the vehicle image has been downloaded, update it
         boolean useImage = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_image_key), true);
-        Bitmap bmp = Utils.getRandomVehicleImage(context, vehicleInfo.getVIN());
+        Bitmap bmp = VehicleImages.getRandomImage(context, vehicleInfo.getVIN());
         if (useImage && bmp != null) {
             views.setImageViewBitmap(R.id.logo, bmp);
         } else {

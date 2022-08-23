@@ -117,7 +117,7 @@ class ColorActivity : AppCompatActivity() {
     }
 
     private fun setAutoButton(VIN: String) {
-        val bmp = Utils.getVehicleImage(applicationContext, VIN, 4)
+        val bmp = VehicleImages.getImage(applicationContext, VIN, 4)
         binding.autoImage.visibility = if (bmp != null) View.VISIBLE else View.GONE
     }
 

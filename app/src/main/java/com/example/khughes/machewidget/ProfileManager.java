@@ -266,7 +266,7 @@ public class ProfileManager extends AppCompatActivity {
             if (!vehicle.getUserId().equals(userId)) {
                 String VIN = vehicle.getVIN();
                 infoDao.deleteVehicleInfoByVIN(VIN);
-                Utils.deleteVehicleImages(context,VIN);
+                VehicleImages.deleteImages(context,VIN);
                 UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(vehicle.getUserId());
             }
         }

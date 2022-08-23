@@ -104,17 +104,17 @@ class StatusReceiver : BroadcastReceiver() {
             try {
                 // Non-zero when DnD is on
                 if( Settings.Global.getInt(context.contentResolver, "zen_mode") != 0 ) {
-                    return;
+                    return
                 }
             } catch (e: SettingNotFoundException) {
             }
         }
 
         // Do the actual update
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.Main).launch {
             info = getInfo(context)
 
-            val userInfo = info.getUser()
+            val userInfo = info.user
             if (userInfo == null) {
                 LogFile.d(context, MainActivity.CHANNEL_ID, "StatusReceiver: no userinfo found")
             } else {

@@ -1228,222 +1228,222 @@ public class Utils {
         return result.toString();
     }
 
-    private static final int JSON_SETTINGS_VERSION = 3;
-
-    public static void savePrefs(Context context) {
-
-        Handler handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                String jsonOutput = bundle.getString("json");
-                InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
-                String outputFilename = writeExternalFile(context, inStream, "fsw_settings-", Constants.APPLICATION_JSON);
-                Toast.makeText(context, MessageFormat.format("Settings file \"{0}.json\" copied to Download folder.", outputFilename), Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        new Thread(() -> {
-            LinkedHashMap<String, Object> jsonData = new LinkedHashMap<>();
-            jsonData.put("version", JSON_SETTINGS_VERSION);
-            Map<String, ?> prefs = PreferenceManager.getDefaultSharedPreferences(context).getAll();
-            LinkedHashMap<String, Object> prefData = new LinkedHashMap<>();
-
-            for (String key : prefs.keySet()) {
-                Object value = prefs.get(key);
-                if (value instanceof String) {
-                    prefData.put(key, new String[]{"String", value.toString()});
-                } else if (value instanceof Long) {
-                    prefData.put(key, new String[]{"Long", value.toString()});
-                } else if (value instanceof Integer) {
-                    prefData.put(key, new String[]{"Integer", value.toString()});
-                } else {
-                    prefData.put(key, new String[]{"Boolean", value.toString()});
-                }
-            }
-            jsonData.put("prefs", prefData.clone());
-            prefData.clear();
-
-            prefs = context.getSharedPreferences(StoredData.TAG, MODE_PRIVATE).getAll();
-            for (String key : prefs.keySet()) {
-                Object value = prefs.get(key);
-                if (value instanceof String) {
-                    prefData.put(key, new String[]{"String", value.toString()});
-                } else if (value instanceof Long) {
-                    prefData.put(key, new String[]{"Long", value.toString()});
-                } else if (value instanceof Integer) {
-                    prefData.put(key, new String[]{"Integer", value.toString()});
-                } else {
-                    prefData.put(key, new String[]{"Boolean", value.toString()});
-                }
-            }
-            jsonData.put(StoredData.TAG, prefData.clone());
-            prefData.clear();
-
-            jsonData.put("users", UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo());
-            jsonData.put("vehicles", VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo());
-
-            Bundle bundle = new Bundle();
-            bundle.putString("json", new GsonBuilder().create().toJson(jsonData));
-            Message m = Message.obtain();
-            m.setData(bundle);
-            handler.sendMessage(m);
-        }).start();
-    }
-
-    public static void restorePrefs(Context context, Uri jsonFile) throws IOException {
-        InputStream inStream = context.getContentResolver().openInputStream(jsonFile);
-        StringBuilder json = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            json.append(line);
-        }
-
-        final JsonObject jsonObject = JsonParser.parseString(json.toString()).getAsJsonObject();
-
-        Handler handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                Toast.makeText(context, "Settings restored.", Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        new Thread(() -> {
-            Gson gson = new GsonBuilder().create();
-            final File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
-            if (!imageDir.exists()) {
-                imageDir.mkdir();
-            }
-
-            JsonPrimitive versionItem = jsonObject.getAsJsonPrimitive("version");
-            int version = versionItem.getAsInt();
-
-            // Get the current set of user IDs and VINs
-            ArrayList<String> userIds = new ArrayList<>();
-            for (UserInfo info : UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
-                userIds.add(info.getUserId());
-            }
-            ArrayList<String> VINs = new ArrayList<>();
-            for (VehicleInfo info : VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {
-                VINs.add(info.getVIN());
-            }
-
-            // Update users in the database, and remove all IDs from the current list
-            JsonArray users = jsonObject.getAsJsonArray("users");
-            for (JsonElement items : users) {
-                UserInfo info = gson.fromJson(items.toString(), new TypeToken<UserInfo>() {
-                }.getType());
-                UserInfo current = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
-                if (current == null) {
-                    info.setId(0);
-                    UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info);
-                } else {
-                    UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info);
-                }
-                userIds.remove(info.getUserId());
-            }
-
-            String newVIN = "";
-            String newUserId = "";
-            // Insert missing VINs into the database, and remove all VINs from the current list
-            JsonArray vehicles = jsonObject.getAsJsonArray("vehicles");
-            for (JsonElement items : vehicles) {
-                VehicleInfo info = gson.fromJson(items.toString(), new TypeToken<VehicleInfo>() {
-                }.getType());
-                // Save a valid VIN in case we need to change the current VIN
-                newVIN = info.getVIN();
-                newUserId = info.getUserId();
-                VehicleInfo current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(info.getVIN());
-                if (current == null) {
-                    info.setId(0);
-                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().insertVehicleInfo(info);
-                }
-                UserInfo user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
-                if (user != null) {
-                    NetworkCalls.getVehicleImage(context, user.getAccessToken(), newVIN, user.getCountry());
-                }
-                VINs.remove(info.getVIN());
-            }
-
-            // If the current VIN is still in the current list, change it to one of the "good" VINs
-            String VINkey = context.getResources().getString(R.string.VIN_key);
-            String currentVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "");
-            if (VINs.contains(currentVIN)) {
-                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(VINkey, newVIN).apply();
-            }
-
-            // Version 1 preferences didn't include user Id
-            if (version == 1) {
-                String UserIdkey = context.getResources().getString(R.string.userId_key);
-                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(UserIdkey, newUserId).apply();
-            }
-
-            // Any user IDs or VINs which weren't restored get deleted
-            for (String VIN : VINs) {
-                VehicleInfoDatabase.getInstance(context).vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
-                deleteVehicleImages(context, VIN);
-            }
-            for (String user : userIds) {
-                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user);
-            }
-
-            // Update all the default preferences
-            SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-            JsonObject prefs = jsonObject.getAsJsonObject("prefs");
-            for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
-                String key = item.getKey();
-                JsonArray value = item.getValue().getAsJsonArray();
-                // Fix error when "Integer" types weren't supported
-                if(key.equals("surveyVersion") && version == 2) {
-                    JsonElement x = value.get(1);
-                    value = new JsonArray();
-                    value.add("Integer");
-                    value.add(x);
-                }
-                switch (value.get(0).getAsString()) {
-                    case "String":
-                        edit.putString(key, value.get(1).getAsString()).commit();
-                        break;
-                    case "Long":
-                        edit.putLong(key, value.get(1).getAsLong()).commit();
-                        break;
-                    case "Integer":
-                        edit.putInt(key, value.get(1).getAsInt()).commit();
-                        break;
-                    default:
-                        edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
-                        break;
-                }
-            }
-
-            // Update all the shared preferences
-            edit = context.getSharedPreferences(StoredData.TAG, MODE_PRIVATE).edit();
-            prefs = jsonObject.getAsJsonObject(StoredData.TAG);
-            for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
-                String key = item.getKey();
-                JsonArray value = item.getValue().getAsJsonArray();
-                switch (value.get(0).getAsString()) {
-                    case "String":
-                        edit.putString(key, value.get(1).getAsString()).commit();
-                        break;
-                    case "Long":
-                        edit.putLong(key, value.get(1).getAsLong()).commit();
-                        break;
-                    case "Integer":
-                        edit.putInt(key, value.get(1).getAsInt()).commit();
-                        break;
-                    default:
-                        edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
-                        break;
-                }
-            }
-
-            // Tell the widget to update
-            CarStatusWidget.updateWidget(context);
-            handler.sendEmptyMessage(0);
-        }).start();
-    }
+//    private static final int JSON_SETTINGS_VERSION = 3;
+//
+//    public static void savePrefs(Context context) {
+//
+//        Handler handler = new Handler(Looper.getMainLooper()) {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                Bundle bundle = msg.getData();
+//                String jsonOutput = bundle.getString("json");
+//                InputStream inStream = new ByteArrayInputStream(jsonOutput.getBytes(StandardCharsets.UTF_8));
+//                String outputFilename = writeExternalFile(context, inStream, "fsw_settings-", Constants.APPLICATION_JSON);
+//                Toast.makeText(context, MessageFormat.format("Settings file \"{0}.json\" copied to Download folder.", outputFilename), Toast.LENGTH_SHORT).show();
+//            }
+//        };
+//
+//        new Thread(() -> {
+//            LinkedHashMap<String, Object> jsonData = new LinkedHashMap<>();
+//            jsonData.put("version", JSON_SETTINGS_VERSION);
+//            Map<String, ?> prefs = PreferenceManager.getDefaultSharedPreferences(context).getAll();
+//            LinkedHashMap<String, Object> prefData = new LinkedHashMap<>();
+//
+//            for (String key : prefs.keySet()) {
+//                Object value = prefs.get(key);
+//                if (value instanceof String) {
+//                    prefData.put(key, new String[]{"String", value.toString()});
+//                } else if (value instanceof Long) {
+//                    prefData.put(key, new String[]{"Long", value.toString()});
+//                } else if (value instanceof Integer) {
+//                    prefData.put(key, new String[]{"Integer", value.toString()});
+//                } else {
+//                    prefData.put(key, new String[]{"Boolean", value.toString()});
+//                }
+//            }
+//            jsonData.put("prefs", prefData.clone());
+//            prefData.clear();
+//
+//            prefs = context.getSharedPreferences(StoredData.TAG, MODE_PRIVATE).getAll();
+//            for (String key : prefs.keySet()) {
+//                Object value = prefs.get(key);
+//                if (value instanceof String) {
+//                    prefData.put(key, new String[]{"String", value.toString()});
+//                } else if (value instanceof Long) {
+//                    prefData.put(key, new String[]{"Long", value.toString()});
+//                } else if (value instanceof Integer) {
+//                    prefData.put(key, new String[]{"Integer", value.toString()});
+//                } else {
+//                    prefData.put(key, new String[]{"Boolean", value.toString()});
+//                }
+//            }
+//            jsonData.put(StoredData.TAG, prefData.clone());
+//            prefData.clear();
+//
+//            jsonData.put("users", UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo());
+//            jsonData.put("vehicles", VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo());
+//
+//            Bundle bundle = new Bundle();
+//            bundle.putString("json", new GsonBuilder().create().toJson(jsonData));
+//            Message m = Message.obtain();
+//            m.setData(bundle);
+//            handler.sendMessage(m);
+//        }).start();
+//    }
+//
+//    public static void restorePrefs(Context context, Uri jsonFile) throws IOException {
+//        InputStream inStream = context.getContentResolver().openInputStream(jsonFile);
+//        StringBuilder json = new StringBuilder();
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+//        String line;
+//        while ((line = reader.readLine()) != null) {
+//            json.append(line);
+//        }
+//
+//        final JsonObject jsonObject = JsonParser.parseString(json.toString()).getAsJsonObject();
+//
+//        Handler handler = new Handler(Looper.getMainLooper()) {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                Toast.makeText(context, "Settings restored.", Toast.LENGTH_SHORT).show();
+//            }
+//        };
+//
+//        new Thread(() -> {
+//            Gson gson = new GsonBuilder().create();
+//            final File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+//            if (!imageDir.exists()) {
+//                imageDir.mkdir();
+//            }
+//
+//            JsonPrimitive versionItem = jsonObject.getAsJsonPrimitive("version");
+//            int version = versionItem.getAsInt();
+//
+//            // Get the current set of user IDs and VINs
+//            ArrayList<String> userIds = new ArrayList<>();
+//            for (UserInfo info : UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
+//                userIds.add(info.getUserId());
+//            }
+//            ArrayList<String> VINs = new ArrayList<>();
+//            for (VehicleInfo info : VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()) {
+//                VINs.add(info.getVIN());
+//            }
+//
+//            // Update users in the database, and remove all IDs from the current list
+//            JsonArray users = jsonObject.getAsJsonArray("users");
+//            for (JsonElement items : users) {
+//                UserInfo info = gson.fromJson(items.toString(), new TypeToken<UserInfo>() {
+//                }.getType());
+//                UserInfo current = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
+//                if (current == null) {
+//                    info.setId(0);
+//                    UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info);
+//                } else {
+//                    UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info);
+//                }
+//                userIds.remove(info.getUserId());
+//            }
+//
+//            String newVIN = "";
+//            String newUserId = "";
+//            // Insert missing VINs into the database, and remove all VINs from the current list
+//            JsonArray vehicles = jsonObject.getAsJsonArray("vehicles");
+//            for (JsonElement items : vehicles) {
+//                VehicleInfo info = gson.fromJson(items.toString(), new TypeToken<VehicleInfo>() {
+//                }.getType());
+//                // Save a valid VIN in case we need to change the current VIN
+//                newVIN = info.getVIN();
+//                newUserId = info.getUserId();
+//                VehicleInfo current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfoByVIN(info.getVIN());
+//                if (current == null) {
+//                    info.setId(0);
+//                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().insertVehicleInfo(info);
+//                }
+//                UserInfo user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.getUserId());
+//                if (user != null) {
+//                    NetworkCalls.getVehicleImage(context, user.getAccessToken(), newVIN, user.getCountry());
+//                }
+//                VINs.remove(info.getVIN());
+//            }
+//
+//            // If the current VIN is still in the current list, change it to one of the "good" VINs
+//            String VINkey = context.getResources().getString(R.string.VIN_key);
+//            String currentVIN = PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "");
+//            if (VINs.contains(currentVIN)) {
+//                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(VINkey, newVIN).apply();
+//            }
+//
+//            // Version 1 preferences didn't include user Id
+//            if (version == 1) {
+//                String UserIdkey = context.getResources().getString(R.string.userId_key);
+//                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(UserIdkey, newUserId).apply();
+//            }
+//
+//            // Any user IDs or VINs which weren't restored get deleted
+//            for (String VIN : VINs) {
+//                VehicleInfoDatabase.getInstance(context).vehicleInfoDao().deleteVehicleInfoByVIN(VIN);
+//                deleteVehicleImages(context, VIN);
+//            }
+//            for (String user : userIds) {
+//                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user);
+//            }
+//
+//            // Update all the default preferences
+//            SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+//            JsonObject prefs = jsonObject.getAsJsonObject("prefs");
+//            for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
+//                String key = item.getKey();
+//                JsonArray value = item.getValue().getAsJsonArray();
+//                // Fix error when "Integer" types weren't supported
+//                if(key.equals("surveyVersion") && version == 2) {
+//                    JsonElement x = value.get(1);
+//                    value = new JsonArray();
+//                    value.add("Integer");
+//                    value.add(x);
+//                }
+//                switch (value.get(0).getAsString()) {
+//                    case "String":
+//                        edit.putString(key, value.get(1).getAsString()).commit();
+//                        break;
+//                    case "Long":
+//                        edit.putLong(key, value.get(1).getAsLong()).commit();
+//                        break;
+//                    case "Integer":
+//                        edit.putInt(key, value.get(1).getAsInt()).commit();
+//                        break;
+//                    default:
+//                        edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+//                        break;
+//                }
+//            }
+//
+//            // Update all the shared preferences
+//            edit = context.getSharedPreferences(StoredData.TAG, MODE_PRIVATE).edit();
+//            prefs = jsonObject.getAsJsonObject(StoredData.TAG);
+//            for (Map.Entry<String, JsonElement> item : prefs.entrySet()) {
+//                String key = item.getKey();
+//                JsonArray value = item.getValue().getAsJsonArray();
+//                switch (value.get(0).getAsString()) {
+//                    case "String":
+//                        edit.putString(key, value.get(1).getAsString()).commit();
+//                        break;
+//                    case "Long":
+//                        edit.putLong(key, value.get(1).getAsLong()).commit();
+//                        break;
+//                    case "Integer":
+//                        edit.putInt(key, value.get(1).getAsInt()).commit();
+//                        break;
+//                    default:
+//                        edit.putBoolean(key, value.get(1).getAsBoolean()).commit();
+//                        break;
+//                }
+//            }
+//
+//            // Tell the widget to update
+//            CarStatusWidget.updateWidget(context);
+//            handler.sendEmptyMessage(0);
+//        }).start();
+//    }
 
     // Check if we should display most recent survey information.
     public static boolean doSurvey (Context context) {
@@ -1651,37 +1651,37 @@ public class Utils {
 //        canvas.drawBitmap(bmp2, 0, 0, paint);
 //    }
 
-    public static Bitmap getVehicleImage(Context context, String VIN, int angle) {
-        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
-        File image = new File(imageDir, VIN + "_angle" + angle + ".png");
-        if (image.exists()) {
-            return BitmapFactory.decodeFile(image.getPath());
-        }
-        return null;
-    }
-
-    public static Bitmap getRandomVehicleImage(Context context, String VIN) {
-        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
-        ArrayList<String> allImages = new ArrayList<>(Arrays.asList(imageDir.list()));
-        Predicate<String> byVIN = thisVIN -> thisVIN.contains(VIN);
-        ArrayList<String> myImages = new ArrayList<>(allImages.stream().filter(byVIN).collect(Collectors.toList()));
-        if (!myImages.isEmpty()) {
-            int angle = new Random(System.currentTimeMillis()).nextInt(myImages.size());
-            File image = new File(imageDir, myImages.get(angle));
-            return BitmapFactory.decodeFile(image.getPath());
-        }
-        return null;
-    }
-
-    public static void deleteVehicleImages(Context context, String VIN) {
-        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
-        for (int angle = 1; angle <= 5; ++angle) {
-            File image = new File(imageDir, VIN + "_angle" + angle + ".png");
-            if (image.exists()) {
-                image.delete();
-            }
-        }
-    }
+//    public static Bitmap getVehicleImage(Context context, String VIN, int angle) {
+//        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+//        File image = new File(imageDir, VIN + "_angle" + angle + ".png");
+//        if (image.exists()) {
+//            return BitmapFactory.decodeFile(image.getPath());
+//        }
+//        return null;
+//    }
+//
+//    public static Bitmap getRandomVehicleImage(Context context, String VIN) {
+//        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+//        ArrayList<String> allImages = new ArrayList<>(Arrays.asList(imageDir.list()));
+//        Predicate<String> byVIN = thisVIN -> thisVIN.contains(VIN);
+//        ArrayList<String> myImages = new ArrayList<>(allImages.stream().filter(byVIN).collect(Collectors.toList()));
+//        if (!myImages.isEmpty()) {
+//            int angle = new Random(System.currentTimeMillis()).nextInt(myImages.size());
+//            File image = new File(imageDir, myImages.get(angle));
+//            return BitmapFactory.decodeFile(image.getPath());
+//        }
+//        return null;
+//    }
+//
+//    public static void deleteVehicleImages(Context context, String VIN) {
+//        File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
+//        for (int angle = 1; angle <= 5; ++angle) {
+//            File image = new File(imageDir, VIN + "_angle" + angle + ".png");
+//            if (image.exists()) {
+//                image.delete();
+//            }
+//        }
+//    }
 
     public static Boolean ignoringBatteryOptimizations(Context context) {
         String packageName = context.getPackageName();
