@@ -182,9 +182,11 @@ public class OTAViewActivity extends AppCompatActivity {
                         unencodedHtml.append(((tmp = fuse.getCommunicationPriority()) != null ? tmp : ""));
                         unencodedHtml.append("<li><b>Type:</b> ");
                         unencodedHtml.append(((tmp = fuse.getType()) != null ? tmp : ""));
+                        unencodedHtml.append("<li><b>Alert Status:</b> \"");
+                        unencodedHtml.append((((tmp = ota.getOtaAlertStatus()) != null ? tmp : "") + "\""));
                         unencodedHtml.append("<li><b>Final action:</b> \"");
-                        unencodedHtml.append(((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : ""));
-                        unencodedHtml.append("\"</ul><hr>");
+                        unencodedHtml.append((((tmp = fuse.getDeploymentFinalConsumerAction()) != null ? tmp : "") + "\""));
+                        unencodedHtml.append("</ul><hr>");
                     } else {
                         unencodedHtml.append("<b>No specific information found</b><p>");
                     }
