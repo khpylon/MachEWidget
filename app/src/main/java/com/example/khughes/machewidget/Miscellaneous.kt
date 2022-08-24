@@ -673,16 +673,21 @@ class Misc {
 
         @JvmStatic
         fun checkDarkMode(context: Context, view: WebView) {
-            val nightModeFlags =
-                context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(
-                    WebViewFeature.FORCE_DARK
+            val webViewPackageInfo = WebView.getCurrentWebViewPackage()
+            val (major , _ , _)  = webViewPackageInfo!!.versionName.split(".")
+            if( major < "76") {
+                LogFile.i(
+                    context,
+                    MainActivity.CHANNEL_ID,
+                    "WebView version is ${webViewPackageInfo.versionName}, too old to support dark mode."
                 )
-            ) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                    @Suppress("DEPRECATION")
-                    WebSettingsCompat.setForceDark(view.settings, WebSettingsCompat.FORCE_DARK_ON)
-                } else {
+            } else {
+                val nightModeFlags =
+                    context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(
+                        WebViewFeature.FORCE_DARK
+                    )
+                ) {
                     WebSettingsCompat.setAlgorithmicDarkeningAllowed(view.settings, true)
                 }
             }
