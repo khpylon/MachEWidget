@@ -55,7 +55,7 @@ class VehicleColor {
             }
 
             // Based on the vehicle type, choose a small image patch to sample
-            val(startx,starty) = Vehicle.getVehicle(VIN).offsetPositions
+            val (startx, starty) = Vehicle.getVehicle(VIN).offsetPositions
 
             // get the RBG value of each pixel in the patch
             val RGB = IntArray(3)
@@ -233,7 +233,7 @@ class PrefManagement {
             )
             Toast.makeText(
                 context,
-                    "Settings file $outputFilename copied to Download folder.",
+                "Settings file $outputFilename copied to Download folder.",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -258,189 +258,198 @@ class PrefManagement {
     }
 
     private suspend fun writeSettingInfo(context: Context, jsonObject: JsonObject) =
-    coroutineScope{
-        withContext(Dispatchers.IO) {
-            val gson = GsonBuilder().create()
-            val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
-            if (!imageDir.exists()) {
-                imageDir.mkdir()
-            }
-
-            // Get the version of the backed-up data
-            val versionItem: JsonPrimitive = jsonObject.getAsJsonPrimitive("version")
-            val version = versionItem.asInt
-
-            // Get the current set of user IDs and VINs
-            val userIds = ArrayList<String>()
-            for (info in UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
-                userIds.add(info.userId)
-            }
-            val VINs = ArrayList<String>()
-            for (info in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                .findVehicleInfo()) {
-                VINs.add(info.vin)
-            }
-
-            // Update users in the database, and remove all IDs from the current list
-            val users = jsonObject.getAsJsonArray("users")
-            for (items in users) {
-                val info = gson.fromJson<UserInfo>(
-                    items.toString(),
-                    object : TypeToken<UserInfo?>() {}.type
-                )
-                val current =
-                    UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.userId)
-                if (current == null) {
-                    info.id = 0
-                    UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info)
-                } else {
-                    UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info)
+        coroutineScope {
+            withContext(Dispatchers.IO) {
+                val gson = GsonBuilder().create()
+                val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
+                if (!imageDir.exists()) {
+                    imageDir.mkdir()
                 }
-                userIds.remove(info.userId)
-            }
 
-            var newVIN = ""
-            var newUserId = ""
-            // Insert missing VINs into the database, and remove all VINs from the current list
-            // Insert missing VINs into the database, and remove all VINs from the current list
-            val vehicles = jsonObject.getAsJsonArray("vehicles")
-            for (items in vehicles) {
-                val info = gson.fromJson<VehicleInfo>(
-                    items.toString(),
-                    object : TypeToken<VehicleInfo?>() {}.type
-                )
-                // Save a valid VIN in case we need to change the current VIN
-                newVIN = info.vin
-                newUserId = info.userId
-                val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                    .findVehicleInfoByVIN(info.vin)
-                if (current == null) {
-                    info.id = 0
+                // Get the version of the backed-up data
+                val versionItem: JsonPrimitive = jsonObject.getAsJsonPrimitive("version")
+                val version = versionItem.asInt
+
+                // Get the current set of user IDs and VINs
+                val userIds = ArrayList<String>()
+                for (info in UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
+                    userIds.add(info.userId)
+                }
+                val VINs = ArrayList<String>()
+                for (info in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                    .findVehicleInfo()) {
+                    VINs.add(info.vin)
+                }
+
+                // Update users in the database, and remove all IDs from the current list
+                val users = jsonObject.getAsJsonArray("users")
+                for (items in users) {
+                    val info = gson.fromJson<UserInfo>(
+                        items.toString(),
+                        object : TypeToken<UserInfo?>() {}.type
+                    )
+                    val current =
+                        UserInfoDatabase.getInstance(context).userInfoDao()
+                            .findUserInfo(info.userId)
+                    if (current == null) {
+                        info.id = 0
+                        UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info)
+                    } else {
+                        UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info)
+                    }
+                    userIds.remove(info.userId)
+                }
+
+                var newVIN = ""
+                var newUserId = ""
+                // Insert missing VINs into the database, and remove all VINs from the current list
+                // Insert missing VINs into the database, and remove all VINs from the current list
+                val vehicles = jsonObject.getAsJsonArray("vehicles")
+                for (items in vehicles) {
+                    val info = gson.fromJson<VehicleInfo>(
+                        items.toString(),
+                        object : TypeToken<VehicleInfo?>() {}.type
+                    )
+                    // Save a valid VIN in case we need to change the current VIN
+                    newVIN = info.vin
+                    newUserId = info.userId
+                    val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                        .findVehicleInfoByVIN(info.vin)
+                    if (current == null) {
+                        info.id = 0
+                        VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                            .insertVehicleInfo(info)
+                    }
+                    val user =
+                        UserInfoDatabase.getInstance(context).userInfoDao()
+                            .findUserInfo(info.userId)
+                    if (user != null) {
+                        NetworkCalls.getVehicleImage(
+                            context,
+                            user.accessToken,
+                            newVIN,
+                            user.country
+                        )
+                    }
+                    VINs.remove(info.vin)
+                }
+
+                // If the current VIN is still in the current list, change it to one of the "good" VINs
+
+                // If the current VIN is still in the current list, change it to one of the "good" VINs
+                val VINkey = context.resources.getString(R.string.VIN_key)
+                val currentVIN =
+                    PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "")
+                if (VINs.contains(currentVIN)) {
+                    PreferenceManager.getDefaultSharedPreferences(context).edit()
+                        .putString(VINkey, newVIN).apply()
+                }
+
+                // Version 1 preferences didn't include user Id
+                if (version == 1) {
+                    val userIdkey = context.resources.getString(R.string.userId_key)
+                    PreferenceManager.getDefaultSharedPreferences(context).edit()
+                        .putString(userIdkey, newUserId).apply()
+                }
+
+                // Any user IDs or VINs which weren't restored get deleted
+                for (VIN in VINs) {
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                        .insertVehicleInfo(info)
+                        .deleteVehicleInfoByVIN(VIN)
+                    VehicleImages.deleteImages(context, VIN)
                 }
-                val user =
-                    UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(info.userId)
-                if (user != null) {
-                    NetworkCalls.getVehicleImage(context, user.accessToken, newVIN, user.country)
+                for (user in userIds) {
+                    UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user)
                 }
-                VINs.remove(info.vin)
-            }
 
-            // If the current VIN is still in the current list, change it to one of the "good" VINs
+                // Update all the default preferences
+                var edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
+                var prefs = jsonObject.getAsJsonObject("prefs")
+                for (item in prefs.entrySet()) {
+                    val key = item.key
+                    var value = item.value.asJsonArray
 
-            // If the current VIN is still in the current list, change it to one of the "good" VINs
-            val VINkey = context.resources.getString(R.string.VIN_key)
-            val currentVIN =
-                PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "")
-            if (VINs.contains(currentVIN)) {
-                PreferenceManager.getDefaultSharedPreferences(context).edit()
-                    .putString(VINkey, newVIN).apply()
-            }
-
-            // Version 1 preferences didn't include user Id
-            if (version == 1) {
-                val userIdkey = context.resources.getString(R.string.userId_key)
-                PreferenceManager.getDefaultSharedPreferences(context).edit()
-                    .putString(userIdkey, newUserId).apply()
-            }
-
-            // Any user IDs or VINs which weren't restored get deleted
-            for (VIN in VINs) {
-                VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                    .deleteVehicleInfoByVIN(VIN)
-                VehicleImages.deleteImages(context, VIN)
-            }
-            for (user in userIds) {
-                UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user)
-            }
-
-            // Update all the default preferences
-            var edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
-            var prefs = jsonObject.getAsJsonObject("prefs")
-            for (item in prefs.entrySet()) {
-                val key = item.key
-                var value = item.value.asJsonArray
-
-                // Version 2 didn't support "Integer" types
-                if (key == "surveyVersion" && version == 2) {
-                    val tmp = value[1]
-                    value = JsonArray()
-                    value.add("Integer")
-                    value.add(tmp)
+                    // Version 2 didn't support "Integer" types
+                    if (key == "surveyVersion" && version == 2) {
+                        val tmp = value[1]
+                        value = JsonArray()
+                        value.add("Integer")
+                        value.add(tmp)
+                    }
+                    when (value[0].asString) {
+                        "String" -> edit.putString(key, value[1].asString).commit()
+                        "Long" -> edit.putLong(key, value[1].asLong).commit()
+                        "Integer" -> edit.putInt(key, value[1].asInt).commit()
+                        else -> edit.putBoolean(key, value[1].asBoolean).commit()
+                    }
                 }
-                when (value[0].asString) {
-                    "String" -> edit.putString(key, value[1].asString).commit()
-                    "Long" -> edit.putLong(key, value[1].asLong).commit()
-                    "Integer" -> edit.putInt(key, value[1].asInt).commit()
-                    else -> edit.putBoolean(key, value[1].asBoolean).commit()
+
+                // Update all the shared preferences
+
+                // Update all the shared preferences
+                edit = context.getSharedPreferences(StoredData.TAG, Context.MODE_PRIVATE).edit()
+                prefs = jsonObject.getAsJsonObject(StoredData.TAG)
+                for (item in prefs.entrySet()) {
+                    val key = item.key
+                    val value = item.value.asJsonArray
+                    when (value[0].asString) {
+                        "String" -> edit.putString(key, value[1].asString).commit()
+                        "Long" -> edit.putLong(key, value[1].asLong).commit()
+                        "Integer" -> edit.putInt(key, value[1].asInt).commit()
+                        else -> edit.putBoolean(key, value[1].asBoolean).commit()
+                    }
                 }
+
+                // Tell the widget to update
+                CarStatusWidget.updateWidget(context)
             }
-
-            // Update all the shared preferences
-
-            // Update all the shared preferences
-            edit = context.getSharedPreferences(StoredData.TAG, Context.MODE_PRIVATE).edit()
-            prefs = jsonObject.getAsJsonObject(StoredData.TAG)
-            for (item in prefs.entrySet()) {
-                val key = item.key
-                val value = item.value.asJsonArray
-                when (value[0].asString) {
-                    "String" -> edit.putString(key, value[1].asString).commit()
-                    "Long" -> edit.putLong(key, value[1].asLong).commit()
-                    "Integer" -> edit.putInt(key, value[1].asInt).commit()
-                    else -> edit.putBoolean(key, value[1].asBoolean).commit()
-                }
-            }
-
-            // Tell the widget to update
-            CarStatusWidget.updateWidget(context)
         }
-    }
 
     private suspend fun readSettingInfo(context: Context): String =
-    coroutineScope {
-        withContext(Dispatchers.IO) {
-            val jsonData = LinkedHashMap<String, Any>()
-            jsonData["version"] = JSON_SETTINGS_VERSION
+        coroutineScope {
+            withContext(Dispatchers.IO) {
+                val jsonData = LinkedHashMap<String, Any>()
+                jsonData["version"] = JSON_SETTINGS_VERSION
 
-            // Save the default preferences
-            var prefs = PreferenceManager.getDefaultSharedPreferences(context).all
-            val prefData = LinkedHashMap<String, Array<String>>()
-            for(key in prefs.keys) {
-                val value = prefs[key]
-                val dataType = when (value) {
-                    is String -> "String"
-                    is Long -> "Long"
-                    is Int -> "Integer"
-                    else -> "Boolean"
+                // Save the default preferences
+                var prefs = PreferenceManager.getDefaultSharedPreferences(context).all
+                val prefData = LinkedHashMap<String, Array<String>>()
+                for (key in prefs.keys) {
+                    val value = prefs[key]
+                    val dataType = when (value) {
+                        is String -> "String"
+                        is Long -> "Long"
+                        is Int -> "Integer"
+                        else -> "Boolean"
+                    }
+                    prefData[key] = arrayOf(dataType, value.toString())
                 }
-                prefData[key] = arrayOf( dataType, value.toString())
-            }
-            jsonData["prefs"] = prefData.clone()
-            prefData.clear()
+                jsonData["prefs"] = prefData.clone()
+                prefData.clear()
 
-            // Save the shared preferences
-            prefs = context.getSharedPreferences(StoredData.TAG, Context.MODE_PRIVATE).all
-            for(key in prefs.keys) {
-                val value = prefs[key]
-                val dataType = when (value) {
-                    is String -> "String"
-                    is Long -> "Long"
-                    is Int -> "Integer"
-                    else -> "Boolean"
+                // Save the shared preferences
+                prefs = context.getSharedPreferences(StoredData.TAG, Context.MODE_PRIVATE).all
+                for (key in prefs.keys) {
+                    val value = prefs[key]
+                    val dataType = when (value) {
+                        is String -> "String"
+                        is Long -> "Long"
+                        is Int -> "Integer"
+                        else -> "Boolean"
+                    }
+                    prefData[key] = arrayOf(dataType, value.toString())
                 }
-                prefData[key] = arrayOf( dataType, value.toString())
-            }
-            jsonData[StoredData.TAG] = prefData.clone()
-            prefData.clear()
+                jsonData[StoredData.TAG] = prefData.clone()
+                prefData.clear()
 
-            // Save database entries
-            jsonData["users"] = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()
-            jsonData["vehicles"] = VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()
-            GsonBuilder().create().toJson(jsonData)
-       }
-    }
+                // Save database entries
+                jsonData["users"] =
+                    UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()
+                jsonData["vehicles"] =
+                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()
+                GsonBuilder().create().toJson(jsonData)
+            }
+        }
 }
 
 class VehicleImages {
@@ -461,7 +470,7 @@ class VehicleImages {
         fun getImage(context: Context, VIN: String, angle: Int): Bitmap? {
             val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
             val image = File(imageDir, "${VIN}_angle${angle}.png")
-            return if (image.exists())  BitmapFactory.decodeFile(image.path) else null
+            return if (image.exists()) BitmapFactory.decodeFile(image.path) else null
         }
 
         @JvmStatic
@@ -561,7 +570,7 @@ class Misc {
                 val log = java.lang.StringBuilder()
                 var line: String?
                 while (bufferedReader.readLine().also { line = it } != null) {
-                    log.append( "${line}\n")
+                    log.append("${line}\n")
                 }
 
                 // If we find something, write to logcat.txt file
@@ -671,11 +680,13 @@ class Misc {
             }
         }
 
+        @Suppress("DEPRECATION")
         @JvmStatic
         fun checkDarkMode(context: Context, view: WebView) {
             val webViewPackageInfo = WebView.getCurrentWebViewPackage()
-            val (major , _ , _)  = webViewPackageInfo!!.versionName.split(".")
-            if( major < "76") {
+            val (major, _, _) = webViewPackageInfo!!.versionName.split(".").map { it.toInt() }
+                .toTypedArray()
+            if (major < 75) {
                 LogFile.i(
                     context,
                     MainActivity.CHANNEL_ID,
@@ -684,11 +695,19 @@ class Misc {
             } else {
                 val nightModeFlags =
                     context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-                if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(
-                        WebViewFeature.FORCE_DARK
-                    )
-                ) {
-                    WebSettingsCompat.setAlgorithmicDarkeningAllowed(view.settings, true)
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+                        && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)
+                    ) {
+                        WebSettingsCompat.setForceDark( view.settings, WebSettingsCompat.FORCE_DARK_ON )
+                    }
+                } else {
+                    if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+                        && WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING
+                        )
+                    ) {
+                        WebSettingsCompat.setAlgorithmicDarkeningAllowed(view.settings, true)
+                    }
                 }
             }
         }
