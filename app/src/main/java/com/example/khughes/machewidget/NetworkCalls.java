@@ -20,6 +20,8 @@ import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.CarStatus.CarStatus;
 import com.example.khughes.machewidget.OTAStatus.OTAStatus;
+import com.example.khughes.machewidget.db.OTAInfoDao;
+import com.example.khughes.machewidget.db.OTAInfoDatabase;
 import com.example.khughes.machewidget.db.UserInfoDao;
 import com.example.khughes.machewidget.db.UserInfoDatabase;
 import com.example.khughes.machewidget.db.VehicleInfoDao;
@@ -37,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -69,14 +72,14 @@ public class NetworkCalls {
             return networkInfo != null && networkInfo.isConnected() && networkInfo.isAvailable();
         } else {
             Network networkInfo = connManager.getActiveNetwork();
-            if(networkInfo == null) {
+            if (networkInfo == null) {
                 return false;
             }
             NetworkCapabilities networkCapabilities = connManager.getNetworkCapabilities(networkInfo);
             return networkCapabilities != null &&
                     (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                    || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                    || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+                            || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                            || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
         }
     }
 
@@ -386,6 +389,8 @@ public class NetworkCalls {
                 .userInfoDao();
         VehicleInfoDao infoDao = VehicleInfoDatabase.getInstance(context)
                 .vehicleInfoDao();
+        OTAInfoDao otaDao = OTAInfoDatabase.getInstance(context)
+                .otaInfoDao();
 
         UserInfo userInfo = userDao.findUserInfo(userId);
         final String token = userInfo.getAccessToken();
@@ -492,6 +497,43 @@ public class NetworkCalls {
                                 }
                                 // Only save the status if there is something in the fuseResponse
                                 else if (status.getOtaAlertStatus() != null && status.getFuseResponseList() != null) {
+
+                                    // Look for an OTA record for this vehicle and correlation Id
+                                    List<OTAInfo> otaInfoList = otaDao.findOTAStatusByCorrelationId(
+                                            status.getFuseResponse().getFuseResponseList().get(0).getOemCorrelationId(), VIN);
+                                    Boolean match = false;
+
+                                    // If there are records, see if anything matches the current OTA information
+                                    if (otaInfoList != null && otaInfoList.size() > 0) {
+                                        String date = status.getFuseResponse().getFuseResponseList().get(0).getDeploymentCreationDate();
+                                        String currentUTCOTATime = status.getOTADateTime();
+                                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+                                        // Look for a matching OTA update on this vehicle
+
+                                        for (OTAInfo otaInfo : otaInfoList) {
+                                            // If the deployment creation dates are equal, we have a match
+                                            if (otaInfo.getResponseList().getDeploymentCreationDate().equals(date)) {
+                                                // If the information is newer, update the database
+                                                String thisUTCOTATime = otaInfo.toOTAStatus().getOTADateTime();
+                                                long thisOTATime = OTAViewActivity.convertDateToMillis(thisUTCOTATime);
+                                                if (currentOTATime > thisOTATime) {
+                                                    otaInfo.fromOTAStatus(status);
+                                                    otaDao.updateOTAInfo(otaInfo);
+                                                }
+
+                                                // In any case, don't create a new database entry
+                                                match = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    // If there wasn't a match, create a new entry
+                                    if (match == false) {
+                                        OTAInfo otaInfo = new OTAInfo(VIN);
+                                        otaInfo.fromOTAStatus(status);
+                                        otaDao.insertOTAInfo(otaInfo);
+                                    }
                                     info.fromOTAStatus(status);
                                 }
                                 statusUpdated = true;
