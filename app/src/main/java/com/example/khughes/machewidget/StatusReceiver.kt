@@ -251,7 +251,6 @@ class StatusReceiver : BroadcastReceiver() {
                             val encrypt = Encryption(context)
                             val username = encrypt.getPlaintextString(userInfo.username)
                             val password = encrypt.getPlaintextString(userInfo.password)
-                            getAccess(context, username, password)
                             if(username != null && password != null ) {
                                 getAccess(context, username, password)
                             } else {
