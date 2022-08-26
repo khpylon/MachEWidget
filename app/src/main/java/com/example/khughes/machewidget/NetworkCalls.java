@@ -31,7 +31,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.time.Instant;
@@ -499,7 +498,7 @@ public class NetworkCalls {
                                 else if (status.getOtaAlertStatus() != null && status.getFuseResponseList() != null) {
 
                                     // Look for an OTA record for this vehicle and correlation Id
-                                    List<OTAInfo> otaInfoList = otaDao.findOTAStatusByCorrelationId(
+                                    List<OTAInfo> otaInfoList = otaDao.findOTAInfoByCorrelationId(
                                             status.getFuseResponse().getFuseResponseList().get(0).getOemCorrelationId(), VIN);
                                     Boolean match = false;
 
