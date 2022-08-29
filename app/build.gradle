@@ -5,6 +5,7 @@ plugins {
     id "org.ajoberstar.grgit" version "1.7.2"
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -14,8 +15,8 @@ android {
         applicationId "com.example.khughes.machewidget"
         minSdkVersion 28
         targetSdkVersion 33
-        versionCode 45
-        versionName "2022.08.25"
+        versionCode 46
+        versionName "2022.08.29"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -127,14 +128,18 @@ dependencies {
     implementation 'androidx.core:core:1.7.0'
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'org.commonmark:commonmark:0.18.2'
-    implementation 'androidx.room:room-runtime:2.5.0-alpha01'
+
+    // Room components
+    implementation "androidx.room:room-ktx:$rootProject.roomVersion"
+    kapt "androidx.room:room-compiler:$rootProject.roomVersion"
+    androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
+
     implementation 'com.github.jozefchmelar:persistentcookiejar:1.0.1'
     implementation 'com.github.skydoves:colorpickerview:2.2.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
 
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.4.1'
-    annotationProcessor 'androidx.room:room-compiler:2.5.0-alpha01'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
