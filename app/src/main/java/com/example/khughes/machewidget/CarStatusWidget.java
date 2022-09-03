@@ -363,16 +363,8 @@ public class CarStatusWidget extends AppWidgetProvider {
     protected void drawRangeFuel(Context context, RemoteViews views, CarStatus carStatus,
                                  InfoRepository info, VehicleInfo vehicleInfo,
                                  double distanceConversion, String distanceUnits, boolean twoLines) {
-        boolean isICEOrHybrid;
-        boolean isPHEV;
-//        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
-//            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
-//            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
-//            isPHEV = (fuelType == Utils.FUEL_PHEV);
-//        } else {
-            isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
-            isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
-//        }
+        boolean isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
+        boolean isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
 
         String rangeCharge = "N/A";
         if (!isICEOrHybrid) {

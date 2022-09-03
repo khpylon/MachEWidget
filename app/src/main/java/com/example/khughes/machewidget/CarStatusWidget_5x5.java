@@ -169,16 +169,9 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
             return;
         }
 
-        boolean isICEOrHybrid;
-        boolean isPHEV;
-//        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.use_old_engine_key), false)) {
-//            int fuelType = Utils.getFuelType(vehicleInfo.getVIN());
-//            isICEOrHybrid = (fuelType == Utils.FUEL_GAS || fuelType == Utils.FUEL_HYBRID);
-//            isPHEV = (fuelType == Utils.FUEL_PHEV);
-//        } else {
-            isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
-            isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
-//        }
+        boolean isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.getPropulsion());
+        boolean isPHEV = carStatus.isPropulsionPHEV(carStatus.getPropulsion());
+
         views.setViewVisibility(R.id.lock_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
         views.setViewVisibility(R.id.bottom_gasoline, isICEOrHybrid ? View.VISIBLE : View.GONE);
         views.setViewVisibility(R.id.lock_electric, isICEOrHybrid ? View.GONE : View.VISIBLE);
