@@ -605,7 +605,36 @@ public class CarStatusWidget extends AppWidgetProvider {
                                 views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
                             }
                             OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
-                            Notifications.newOTA(context);
+                            String message;
+                            switch(otaStatus.getOTAAggregateStatus()) {
+                                case "request_delivery_queued":
+                                    message = "Your vehicle has requested the update to be downloaded.";
+                                    break;
+                                case "artifact_retrieval_in_progress":
+                                    message = "Your vehicle is downloading the update.";
+                                    break;
+                                case "installation_queued":
+                                    if(otaStatus.getOtaAlertStatus().equals("UPDATE REMINDER")) {
+                                        message = "Your vehicle has downloaded the update but requires your attention.";
+                                    } else {
+                                        message = "Your vehicle has downloaded the update; you should turn on the ignition.";
+                                    }
+                                    break;
+                                case "deploying":
+                                    message = "Your vehicle is installing the update.";
+                                    break;
+                                case "success":
+                                    message = "The update was successful.";
+                                    break;
+                                case "failure":
+                                    message = "The update was not successful.";
+                                    break;
+                                case "requested":
+                                default:
+                                    message = "New OTA information was found.";
+                                    break;
+                            }
+                            Notifications.newOTA(context, message);
                         } else {
                             views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
                             OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);

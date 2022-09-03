@@ -21,14 +21,14 @@ import java.util.Map;
 public class Notifications extends BroadcastReceiver {
     private static final int OTA_NOTIFICATION = 935;
 
-    public static void newOTA(Context context) {
+    public static void newOTA(Context context, String message) {
         Intent intent = new Intent(context, OTAViewActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("OTA information")
-                .setContentText("New OTA information was found.")
+                .setContentText(message)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
