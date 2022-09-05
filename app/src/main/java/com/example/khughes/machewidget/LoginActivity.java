@@ -174,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if (username != null && password != null) {
                                     getAccess(username, password);
                                 } else {
-                                    Toast.makeText(context, "Unable to retrive user data", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Unable to retrieve user data", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         };
