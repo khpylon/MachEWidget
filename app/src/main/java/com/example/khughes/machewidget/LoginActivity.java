@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private Boolean profilesActive;
     private Boolean savingCredentials;
 
-//    private String VIN;
+    //    private String VIN;
     private String alias;
 
     private void updateDisclamer(TextView view, boolean saved) {
@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         profilesActive = sharedPref.getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
         appInfo = new StoredData(this);
 
-        setContentView( R.layout.login_activity);
+        setContentView(R.layout.login_activity);
 
         savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
 
@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordWidget = findViewById(R.id.password);
 
         aliasWidget = findViewById(R.id.alias);
-        if (aliasWidget != null ) {
+        if (aliasWidget != null) {
             aliasWidget.setVisibility(profilesActive ? View.VISIBLE : View.GONE);
         }
         alias = getIntent().getStringExtra(PROFILENAME);
@@ -171,7 +171,11 @@ public class LoginActivity extends AppCompatActivity {
                                 Encryption encrypt = new Encryption(context);
                                 String username = encrypt.getPlaintextString(bundle.getString("username"));
                                 String password = encrypt.getPlaintextString(bundle.getString("password"));
-                                getAccess(username, password);
+                                if (username != null && password != null) {
+                                    getAccess(username, password);
+                                } else {
+                                    Toast.makeText(context, "Unable to retrive user data", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         };
 
@@ -181,8 +185,10 @@ public class LoginActivity extends AppCompatActivity {
                                 Bundle bundle = new Bundle();
                                 UserInfo userInfo = UserInfoDatabase.getInstance(context)
                                         .userInfoDao().findUserInfo(userId);
-                                bundle.putString("username", userInfo.getUsername());
-                                bundle.putString("password", userInfo.getPassword());
+                                if (userInfo != null) {
+                                    bundle.putString("username", userInfo.getUsername());
+                                    bundle.putString("password", userInfo.getPassword());
+                                }
                                 Message m = Message.obtain();
                                 m.setData(bundle);
                                 handler.sendMessage(m);
@@ -194,8 +200,8 @@ public class LoginActivity extends AppCompatActivity {
                 fingerprint.setOnClickListener(v -> {
                     // There is a fingerprint registered
                     if (fingerprintSaved) {
-                            biometricPrompt.authenticate(new BiometricPrompt.PromptInfo.Builder().setTitle("Fingerprint required.")
-                                    .setDescription("Use your fingerprint to authenticate.").setNegativeButtonText("Cancel").build());
+                        biometricPrompt.authenticate(new BiometricPrompt.PromptInfo.Builder().setTitle("Fingerprint required.")
+                                .setDescription("Use your fingerprint to authenticate.").setNegativeButtonText("Cancel").build());
                     }
                     // Uh, no there isn't.  Explain why they can't use this
                     else {
@@ -208,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
         Button login = findViewById(R.id.login);
         login.setOnClickListener(view -> {
             if (usernameWidget == null || usernameWidget.getEditText() == null ||
-                    passwordWidget == null || passwordWidget.getEditText() == null ) {
+                    passwordWidget == null || passwordWidget.getEditText() == null) {
                 return;
             }
 
@@ -288,7 +294,7 @@ public class LoginActivity extends AppCompatActivity {
                 LogFile.i(context, MainActivity.CHANNEL_ID, "UserVehicles: " + action);
                 if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
                     Toast.makeText(getApplicationContext(), "Vehicles list obtained; updating in 5 seconds.", Toast.LENGTH_SHORT).show();
-                    StatusReceiver.nextAlarm(context,5);
+                    StatusReceiver.nextAlarm(context, 5);
                     Intent data = new Intent();
 //                    data.putExtra(VINIDENTIFIER, VIN);
                     setResult(Activity.RESULT_OK, data);
