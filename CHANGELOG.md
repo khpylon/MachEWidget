@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.09.05
+### Changed
+- Made a minor tweak to Mach-E images.
+
+### Added
+- Display more informative notifications when new OTA information is found.
+- 
+### Fixed
+- Fix more null pointer exceptions.
+
 ## 2022.08.29
 ### Fixed
 - Fix null pointer exception when trying to authenticate the user's account in the background.
