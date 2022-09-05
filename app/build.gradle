@@ -15,8 +15,8 @@ android {
         applicationId "com.example.khughes.machewidget"
         minSdkVersion 28
         targetSdkVersion 33
-        versionCode 46
-        versionName "2022.08.29"
+        versionCode 47
+        versionName "2022.09.05"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -130,9 +130,9 @@ dependencies {
     implementation 'org.commonmark:commonmark:0.18.2'
 
     // Room components
-    implementation "androidx.room:room-ktx:$rootProject.roomVersion"
-    kapt "androidx.room:room-compiler:$rootProject.roomVersion"
-    androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
+    implementation "androidx.room:room-ktx:2.5.0-alpha01"
+    kapt "androidx.room:room-compiler:2.5.0-alpha01"
+    androidTestImplementation "androidx.room:room-testing:2.5.0-alpha01"
 
     implementation 'com.github.jozefchmelar:persistentcookiejar:1.0.1'
     implementation 'com.github.skydoves:colorpickerview:2.2.4'
@@ -140,6 +140,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
 
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.4.1'
+    annotationProcessor 'androidx.room:room-compiler:2.5.0-alpha01'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
