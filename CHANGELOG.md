@@ -11,7 +11,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 
 ### Added
 - Display more informative notifications when new OTA information is found.
-- 
+
 ### Fixed
 - Fix more null pointer exceptions.
 
