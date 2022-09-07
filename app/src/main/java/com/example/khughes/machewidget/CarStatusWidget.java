@@ -600,7 +600,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                             String message;
                             switch(otaStatus.getOTAAggregateStatus()) {
                                 case "request_delivery_queued":
-                                    message = "Your vehicle has requested the update to be downloaded.";
+                                    message = "An update is ready for download to your vehicle.";
                                     break;
                                 case "artifact_retrieval_in_progress":
                                     message = "Your vehicle is downloading the update.";
@@ -710,7 +710,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             @Override
             public void handleMessage(Message msg) {
                 String result = msg.getData().getString("action");
-                if (result != null && result.equals(NetworkCalls.COMMAND_SUCCESSFUL)) {
+                if (result != null && result.equals(NetworkCallsJava.COMMAND_SUCCESSFUL)) {
                     StatusReceiver.nextAlarm(context, 2);
                 }
                 Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
@@ -719,28 +719,28 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     protected void remoteStart(Context context, String VIN) {
-        NetworkCalls.remoteStart(getHandler(context), context, VIN);
+        NetworkCallsJava.remoteStart(getHandler(context), context, VIN);
     }
 
     protected void remoteStop(Context context, String VIN) {
-        NetworkCalls.remoteStop(getHandler(context), context, VIN);
+        NetworkCallsJava.remoteStop(getHandler(context), context, VIN);
     }
 
     protected void lock(Context context, String VIN) {
-        NetworkCalls.lockDoors(getHandler(context), context, VIN);
+        NetworkCallsJava.lockDoors(getHandler(context), context, VIN);
     }
 
     protected void unlock(Context context, String VIN) {
-        NetworkCalls.unlockDoors(getHandler(context), context, VIN);
+        NetworkCallsJava.unlockDoors(getHandler(context), context, VIN);
     }
 
     protected void forceUpdate(Context context, String VIN) {
-        NetworkCalls.updateStatus(
+        NetworkCallsJava.updateStatus(
                 new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message msg) {
                         String result = msg.getData().getString("action");
-                        if (result != null && result.equals(NetworkCalls.COMMAND_SUCCESSFUL)) {
+                        if (result != null && result.equals(NetworkCallsJava.COMMAND_SUCCESSFUL)) {
                             StatusReceiver.nextAlarm(context, 2);
                         }
                     }
