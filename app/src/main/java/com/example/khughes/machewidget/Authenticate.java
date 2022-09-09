@@ -34,6 +34,8 @@ public class Authenticate {
 
     private static Context mContext;
 
+    public static final String ACCOUNT_DISABLED_CODE = "CSIAH0320E";
+
     private static final HttpLoggingInterceptor logging =
             new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                 public void log(String message) {
@@ -192,6 +194,15 @@ public class Authenticate {
                         .cookieJar(cookieJar)
                         .build();
                 response = client.newCall(request).execute();
+                if (response.code() == 200) {
+                    thing = response.body().string();
+                    final String errorString = "data-ibm-login-error-text=\"";
+                    thing = thing.substring(thing.indexOf(errorString) + errorString.length());
+//                    thing = thing.substring(0, thing.indexOf("\""));
+                    if (thing.startsWith(ACCOUNT_DISABLED_CODE)) {
+                        return ACCOUNT_DISABLED_CODE;
+                    }
+                }
                 if (response.code() != 302) {
                     LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: fourth POST request didn't return 302 response");
                     return null;

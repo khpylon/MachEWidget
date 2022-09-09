@@ -130,6 +130,9 @@ public class NetworkCalls {
                         token = Authenticate.newAuthenticate(context, username, password);
                         if (token == null) {
                             continue;
+                        } else if (token.equals(Authenticate.ACCOUNT_DISABLED_CODE)) {
+                            nextState = Constants.STATE_ACCOUNT_DISABLED;
+                            break;
                         }
                         stage = 2;
                     }
@@ -485,7 +488,7 @@ public class NetworkCalls {
                             // Try to get the OTA update status
                             Call<OTAStatus> callOTA = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
                             Response<OTAStatus> responseOTA = callOTA.execute();
-                            if (responseStatus.isSuccessful()) {
+                            if (responseOTA.isSuccessful()) {
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful.");
                                 OTAStatus status = responseOTA.body();
 
@@ -538,7 +541,7 @@ public class NetworkCalls {
                                 statusUpdated = true;
                             } else {
                                 try {
-                                    if (responseStatus.errorBody().string().contains("UpstreamException")) {
+                                    if (responseOTA.errorBody().string().contains("UpstreamException")) {
                                         OTAStatus status = new OTAStatus();
                                         status.setError("UpstreamException");
                                     }

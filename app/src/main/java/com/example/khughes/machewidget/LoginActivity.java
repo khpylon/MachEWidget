@@ -22,7 +22,6 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.khughes.machewidget.db.UserInfoDatabase;
-import com.example.khughes.machewidget.db.VehicleInfoDatabase;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import java.util.concurrent.Executor;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String VINIDENTIFIER = "VIN";
     public static final String PROFILENAME = "ProfileName";
 
     private TextInputLayout aliasWidget, usernameWidget, passwordWidget;
@@ -112,9 +110,6 @@ public class LoginActivity extends AppCompatActivity {
             if (aliasWidget != null && aliasWidget.getEditText() != null) {
                 aliasWidget.getEditText().setText(alias);
             }
-//            VIN = getIntent().getStringExtra(VINIDENTIFIER);
-        } else {
-//            VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
         }
 
         // If the user has stored credentials, allow to reuse if they have registered a fingerprint
@@ -275,6 +270,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     Toast.makeText(getApplicationContext(), "Log-in successful; requesting vehicle list.", Toast.LENGTH_SHORT).show();
                     getUserVehicles(userId);
+                } else if(action.equals(Constants.STATE_ACCOUNT_DISABLED)) {
+                    Toast.makeText(getApplicationContext(), "Your account has been disabled (error "
+                            + Authenticate.ACCOUNT_DISABLED_CODE + "): contact Ford via the FordPass app to reactivate.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Unable to login to server: check your username and/or password?", Toast.LENGTH_LONG).show();
                 }

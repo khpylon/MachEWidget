@@ -710,7 +710,7 @@ public class CarStatusWidget extends AppWidgetProvider {
             @Override
             public void handleMessage(Message msg) {
                 String result = msg.getData().getString("action");
-                if (result != null && result.equals(NetworkCallsJava.COMMAND_SUCCESSFUL)) {
+                if (result != null && result.equals(NetworkCalls.COMMAND_SUCCESSFUL)) {
                     StatusReceiver.nextAlarm(context, 2);
                 }
                 Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
@@ -719,28 +719,28 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     protected void remoteStart(Context context, String VIN) {
-        NetworkCallsJava.remoteStart(getHandler(context), context, VIN);
+        NetworkCalls.remoteStart(getHandler(context), context, VIN);
     }
 
     protected void remoteStop(Context context, String VIN) {
-        NetworkCallsJava.remoteStop(getHandler(context), context, VIN);
+        NetworkCalls.remoteStop(getHandler(context), context, VIN);
     }
 
     protected void lock(Context context, String VIN) {
-        NetworkCallsJava.lockDoors(getHandler(context), context, VIN);
+        NetworkCalls.lockDoors(getHandler(context), context, VIN);
     }
 
     protected void unlock(Context context, String VIN) {
-        NetworkCallsJava.unlockDoors(getHandler(context), context, VIN);
+        NetworkCalls.unlockDoors(getHandler(context), context, VIN);
     }
 
     protected void forceUpdate(Context context, String VIN) {
-        NetworkCallsJava.updateStatus(
+        NetworkCalls.updateStatus(
                 new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message msg) {
                         String result = msg.getData().getString("action");
-                        if (result != null && result.equals(NetworkCallsJava.COMMAND_SUCCESSFUL)) {
+                        if (result != null && result.equals(NetworkCalls.COMMAND_SUCCESSFUL)) {
                             StatusReceiver.nextAlarm(context, 2);
                         }
                     }

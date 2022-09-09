@@ -258,6 +258,22 @@ public class Notifications extends BroadcastReceiver {
         }
     }
 
+    private static final int ACCOUNT_ERROR = 943;
+
+    public static void accountError(Context context, String state) {
+        if (state == Constants.STATE_ACCOUNT_DISABLED) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
+                    .setContentTitle("FordPass account disabled!")
+                    .setContentText("The app is unable to access your information.  Contact Ford to reactivate your account.")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            // notificationId is a unique int for each notification that you must define
+            notificationManager.notify(ACCOUNT_ERROR, builder.build());
+        }
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {

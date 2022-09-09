@@ -143,6 +143,17 @@ class StatusReceiver : BroadcastReceiver() {
                     )
 
                 when ( state ) {
+                    Constants.STATE_ACCOUNT_DISABLED-> {
+                        LogFile.d(
+                            context,
+                            MainActivity.CHANNEL_ID,
+                            "Account disabled"
+                        )
+                        cancelAlarm(context)
+                        Notifications.accountError(context, state)
+                        appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
+                    }
+                    Constants.STATE_ACCOUNT_DISABLED,
                     Constants.STATE_INITIAL_STATE -> {
                         LogFile.d(
                             context,
@@ -303,6 +314,8 @@ class StatusReceiver : BroadcastReceiver() {
                 if (action == Constants.STATE_HAVE_TOKEN) {
                     val userId = bundle.getString("usedId")
                     getVehicleInfo(context, userId)
+                } else {
+                    Notifications.accountError(context, action)
                 }
             }
         }
