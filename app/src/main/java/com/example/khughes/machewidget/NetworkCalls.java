@@ -484,76 +484,77 @@ public class NetworkCalls {
                         }
 
                         // Don't bother checking the OTA status if we've seen the vehicle doesn't support them
-                        if (supportsOTA) {
-                            // Try to get the OTA update status
-                            Call<OTAStatus> callOTA = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
-                            Response<OTAStatus> responseOTA = callOTA.execute();
-                            if (responseOTA.isSuccessful()) {
-                                LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful.");
-                                OTAStatus status = responseOTA.body();
-
-                                // Check to see if it looks like the vehicle support OTA updates
-                                if (!Misc.OTASupportCheck(status.getOtaAlertStatus())) {
-                                    LogFile.i(context, MainActivity.CHANNEL_ID, "This vehicle doesn't support OTA updates.");
-                                    info.setSupportsOTA(false);
-                                }
-                                // Only save the status if there is something in the fuseResponse
-                                else if (status.getOtaAlertStatus() != null && status.getFuseResponseList() != null) {
-
-                                    // Look for an OTA record for this vehicle and correlation Id
-                                    List<OTAInfo> otaInfoList = otaDao.findOTAInfoByCorrelationId(
-                                            status.getFuseResponse().getFuseResponseList().get(0).getOemCorrelationId(), VIN);
-                                    Boolean match = false;
-
-                                    // If there are records, see if anything matches the current OTA information
-                                    if (otaInfoList != null && otaInfoList.size() > 0) {
-                                        String date = status.getFuseResponse().getFuseResponseList().get(0).getDeploymentCreationDate();
-                                        String currentUTCOTATime = status.getOTADateTime();
-                                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
-                                        // Look for a matching OTA update on this vehicle
-
-                                        for (OTAInfo otaInfo : otaInfoList) {
-                                            // If the deployment creation dates are equal, we have a match
-                                            if (otaInfo.getResponseList().getDeploymentCreationDate().equals(date)) {
-                                                // If the information is newer, update the database
-                                                String thisUTCOTATime = otaInfo.toOTAStatus().getOTADateTime();
-                                                long thisOTATime = OTAViewActivity.convertDateToMillis(thisUTCOTATime);
-                                                if (currentOTATime > thisOTATime) {
-                                                    otaInfo.fromOTAStatus(status);
-                                                    otaDao.updateOTAInfo(otaInfo);
-                                                }
-
-                                                // In any case, don't create a new database entry
-                                                match = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    // If there wasn't a match, create a new entry
-                                    if (match == false) {
-                                        OTAInfo otaInfo = new OTAInfo(VIN);
-                                        otaInfo.fromOTAStatus(status);
-                                        otaDao.insertOTAInfo(otaInfo);
-                                    }
-                                    info.fromOTAStatus(status);
-                                }
-                                statusUpdated = true;
-                            } else {
-                                try {
-                                    if (responseOTA.errorBody().string().contains("UpstreamException")) {
-                                        OTAStatus status = new OTAStatus();
-                                        status.setError("UpstreamException");
-                                    }
-                                } catch (Exception e) {
-                                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
-                                }
-                                LogFile.i(context, MainActivity.CHANNEL_ID, responseStatus.raw().toString());
-                                LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL.");
-                            }
-                        } else {
-                            LogFile.i(context, MainActivity.CHANNEL_ID, "OTA not supported: skipping check");
-                        }
+//                        if (supportsOTA) {
+//                            // Try to get the OTA update status
+//                            Call<OTAStatus> callOTA = OTAstatusClient.getOTAStatus(token, language, Constants.APID, country, VIN);
+//                            Response<OTAStatus> responseOTA = callOTA.execute();
+//                            if (responseOTA.isSuccessful()) {
+//                                LogFile.i(context, MainActivity.CHANNEL_ID, "OTA status successful.");
+//                                OTAStatus status = responseOTA.body();
+//
+//                                // Check to see if it looks like the vehicle support OTA updates
+//                                if (!Misc.OTASupportCheck(status.getOtaAlertStatus())) {
+//                                    LogFile.i(context, MainActivity.CHANNEL_ID, "This vehicle doesn't support OTA updates.");
+//                                    info.setSupportsOTA(false);
+//                                }
+//                                // Only save the status if there is something in the fuseResponse
+//                                else if (status.getOtaAlertStatus() != null && status.getFuseResponseList() != null) {
+//
+//                                    // Look for an OTA record for this vehicle and correlation Id
+//                                    List<OTAInfo> otaInfoList = otaDao.findOTAInfoByCorrelationId(
+//                                            status.getFuseResponse().getFuseResponseList().get(0).getOemCorrelationId(), VIN);
+//                                    Boolean match = false;
+//
+//                                    // If there are records, see if anything matches the current OTA information
+//                                    if (otaInfoList != null && otaInfoList.size() > 0) {
+//                                        String date = status.getFuseResponse().getFuseResponseList().get(0).getDeploymentCreationDate();
+//                                        String currentUTCOTATime = status.getOTADateTime();
+//                                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+//                                        // Look for a matching OTA update on this vehicle
+//
+//                                        for (OTAInfo otaInfo : otaInfoList) {
+//                                            // If the deployment creation dates are equal, we have a match
+//                                            if (otaInfo.getResponseList().getDeploymentCreationDate().equals(date)) {
+//                                                // If the information is newer, update the database
+//                                                String thisUTCOTATime = otaInfo.toOTAStatus().getOTADateTime();
+//                                                long thisOTATime = OTAViewActivity.convertDateToMillis(thisUTCOTATime);
+//                                                if (currentOTATime > thisOTATime) {
+//                                                    otaInfo.fromOTAStatus(status);
+//                                                    otaDao.updateOTAInfo(otaInfo);
+//                                                }
+//
+//                                                // In any case, don't create a new database entry
+//                                                match = true;
+//                                                break;
+//                                            }
+//                                        }
+//                                    }
+//
+//                                    // If there wasn't a match, create a new entry
+//                                    if (match == false) {
+//                                        OTAInfo otaInfo = new OTAInfo(VIN);
+//                                        otaInfo.fromOTAStatus(status);
+//                                        otaDao.insertOTAInfo(otaInfo);
+//                                    }
+//                                    info.fromOTAStatus(status);
+//                                }
+//                                statusUpdated = true;
+//                            } else {
+//                                try {
+//                                    if (responseOTA.errorBody().string().contains("UpstreamException")) {
+//                                        OTAStatus status = new OTAStatus();
+//                                        status.setError("UpstreamException");
+//                                    }
+//                                } catch (Exception e) {
+//                                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getStatus: ", e);
+//                                }
+//                                LogFile.i(context, MainActivity.CHANNEL_ID, responseStatus.raw().toString());
+//                                LogFile.i(context, MainActivity.CHANNEL_ID, "OTA UNSUCCESSFUL.");
+//                            }
+//                        } else {
+//                            LogFile.i(context, MainActivity.CHANNEL_ID, "OTA not supported: skipping check");
+//                        }
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "OTA currently bypassed");
 
                         // If the vehicle info changed, commit
                         if (statusUpdated) {

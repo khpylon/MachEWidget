@@ -13,7 +13,8 @@ public interface DigitalServicesService {
     @Headers({"Accept: application/json",
             "Accept-Encoding: gzip, deflate, br",
             "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
-            "Referer: https://ford.com", "Origin: https://ford.com'"})
+            "Referer: https://ford.com", "Origin: https://ford.com",
+            "Consumer-Key: Z28tbmEtZm9yZA=="})
     @GET("owner/api/v2/ota/status")
     Call<OTAStatus> getOTAStatus(@Header("auth-token") String token,
                                  @Header("Accept-Language") String language,
