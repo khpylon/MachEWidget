@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.09.10
+### Added
+- Display notifications if the FordPass account becomes disabled.
+
+### Changed
+- Remove check for OTA information until a new method for retrieving is available.  The app and widget will still show the last stored info.
+
+### Fixed
+- Fix bug for possible out of range index when determining vehicle color from images
+
 ## 2022.09.05
 ### Changed
 - Made a minor tweak to Mach-E images.
