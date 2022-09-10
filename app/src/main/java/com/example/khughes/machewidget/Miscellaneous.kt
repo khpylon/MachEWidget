@@ -23,6 +23,7 @@ import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import java.io.*
+import java.lang.Integer.min
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -62,7 +63,7 @@ class VehicleColor {
             val patchSize = 10
             for (y in 0..patchSize) {
                 for (x in 0..patchSize) {
-                    val color = bmp.getPixel(startx + x, starty + y)
+                    val color = bmp.getPixel(min(startx + x, bmp.width-1), min(starty + y, bmp.height-1))
                     RGB[0] += color.shr(16) and 0xff
                     RGB[1] += color.shr(8) and 0xff
                     RGB[2] += color and 0xff
