@@ -666,7 +666,7 @@ public class NetworkCalls {
                     final int a = angle;
                     Thread t = new Thread(() -> {
                         for (int retry = 2; retry >= 0; --retry) {
-                            Call<ResponseBody> call = vehicleImageClient.getVehicleImage(token, Constants.APID, VIN, modelYear, country, String.valueOf(a));
+                            Call<ResponseBody> call = vehicleImageClient.getVehicleImage(Constants.APID, VIN, modelYear, country, String.valueOf(a));
                             try {
                                 Response<ResponseBody> response = call.execute();
                                 if (response.isSuccessful()) {
