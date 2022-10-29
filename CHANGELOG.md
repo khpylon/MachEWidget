@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.10.29
+### Added
+- Ford F-250 vehicles are now recognized (uses the F-150 silhouettes).
+
 ## 2022.10.06
 ### Fixed
 - Changes to make downloading vehicle images work again. 
@@ -99,7 +103,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 
 ## 2022.07.13
 ### Added
-- Ford Expedition VINs are now recognized (uses the Explorer silhouette).
+- Ford Expedition vehicles are now recognized (uses the Explorer silhouette).
 
 ### Fixed
 - Corrected bug with initially not drawing silhouette when vehicle color not enabled.  
