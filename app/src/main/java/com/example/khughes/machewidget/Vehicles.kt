@@ -38,6 +38,13 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_F150_SUPERCAB_4X2 = "X1C" // 4x2, SuperCab
         private const val NA_LINE_SERIES_F150_SUPERCAB_4X4 = "X1E" // 4x4, SuperCab
 
+        private const val NA_LINE_SERIES_F250_REGULAR_4X2 = "F2A" // 4x2 chassis, regular cab
+        private const val NA_LINE_SERIES_F250_REGULAR_4X4 = "F2B" // 4x4 chassis, regular cab
+        private const val NA_LINE_SERIES_F250_CREWCAB_4X2 = "W2A" // 4x2, CrewCab
+        private const val NA_LINE_SERIES_F250_CREWCAB_4X4 = "W2B" // 4x4, CrewCab
+        private const val NA_LINE_SERIES_F250_SUPERCAB_4X2 = "X2A" // 4x2, SuperCab
+        private const val NA_LINE_SERIES_F250_SUPERCAB_4X4 = "X2B" // 4x4, SuperCab
+
         private const val NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4 = "E5A" //
         private const val NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B" //
         private const val NA_LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C" //
@@ -167,14 +174,13 @@ open class Vehicle(val VIN: String) {
             return lineSeries == NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR
         }
 
-        private val f150SuperCabsLineSeries: Set<String> = setOf(
-            NA_LINE_SERIES_F150_SUPERCAB_4X2,
-            NA_LINE_SERIES_F150_SUPERCAB_4X4,
-        )
-
         private fun isF150SuperCab(VIN: String): Boolean {
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            val f150SuperCabsLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_F150_SUPERCAB_4X2,
+                NA_LINE_SERIES_F150_SUPERCAB_4X4,
+            )
             return f150SuperCabsLineSeries.contains(lineSeries)
         }
 
@@ -187,6 +193,45 @@ open class Vehicle(val VIN: String) {
                     (isF150RegularCab(VIN) || isF150SuperCab(VIN) || isF150SuperCrew(VIN) || isF150Raptor(
                         VIN
                     ))
+        }
+
+        private fun isF250RegularCab(VIN: String): Boolean {
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            val f250RegularCabsLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_F250_REGULAR_4X2,
+                NA_LINE_SERIES_F250_REGULAR_4X4,
+            )
+            return f250RegularCabsLineSeries.contains(lineSeries)
+        }
+
+        private fun isF250CrewCab(VIN: String): Boolean {
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            val f250CrewCabsLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_F250_CREWCAB_4X2,
+                NA_LINE_SERIES_F250_CREWCAB_4X4,
+            )
+            return f250CrewCabsLineSeries.contains(lineSeries)
+        }
+
+        private fun isF250SuperCab(VIN: String): Boolean {
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            val f250SuperCabsLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_F250_SUPERCAB_4X2,
+                NA_LINE_SERIES_F250_SUPERCAB_4X4,
+            )
+            return f250SuperCabsLineSeries.contains(lineSeries)
+        }
+
+        private fun isF250(VIN: String): Boolean {
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK &&
+                    (isF250RegularCab(VIN) || isF250SuperCab(VIN) || isF250CrewCab(VIN) )
         }
 
         private val explorerLineSeries: Set<String> = setOf(
@@ -365,9 +410,9 @@ open class Vehicle(val VIN: String) {
         // Check to see if we recognize a VIN in general
         @JvmStatic
         fun isVINRecognized(VIN: String): Boolean =
-            isMachE(VIN) || isF150(VIN) || isBronco(VIN) || isExplorer(VIN) || isBroncoSport(VIN)
-                    || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN) || isKuga(VIN)
-                    || isPuma(VIN)
+            isMachE(VIN) || isF150(VIN) || isF250(VIN) || isBronco(VIN) || isExplorer(VIN) 
+                    || isBroncoSport(VIN) || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN) 
+                    || isKuga(VIN) || isPuma(VIN)
 
 
         @JvmStatic
@@ -383,6 +428,11 @@ open class Vehicle(val VIN: String) {
             if (isF150RegularCab(VIN))  return F150RegularCab(VIN)
             if (isF150SuperCab(VIN)) return F150SuperCab(VIN)
             if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) return F150SuperCrew(VIN)
+
+            // Next check for F-250 variants
+            if (isF250RegularCab(VIN)) return F250RegularCab(VIN)
+            if (isF250SuperCab(VIN)) return F250SuperCab(VIN)
+            if (isF250CrewCab(VIN)) return F250CrewCab(VIN)
 
             // Check everything else
             if (isBronco(VIN)) return Bronco(VIN)
@@ -448,7 +498,6 @@ open class Vehicle(val VIN: String) {
         const val RIGHT_REAR_WINDOW = "rrwindow_open"
         const val BODY_PRIMARY = "body1st"
         const val BODY_SECONDARY = "body2nd"
-
     }
 }
 
@@ -552,6 +601,102 @@ class F150SuperCab(VIN: String) : F150(VIN) {
 }
 
 class F150SuperCrew(VIN: String) : F150(VIN) {
+    override val verticalDrawables: Map<String, Int> = mapOf(
+        WIREFRAME to R.drawable.supercrew_wireframe_vert,
+        HOOD to R.drawable.supercrew_hood_vert,
+        TAILGATE to R.drawable.supercrew_tailgate_vert,
+        LEFT_FRONT_DOOR to R.drawable.supercrew_lfdoor_vert,
+        RIGHT_FRONT_DOOR to R.drawable.supercrew_rfdoor_vert,
+        LEFT_REAR_DOOR to R.drawable.supercrew_lrdoor_vert,
+        RIGHT_REAR_DOOR to R.drawable.supercrew_rrdoor_vert,
+        BODY_PRIMARY to R.drawable.supercrew_primary_vert,
+        BODY_SECONDARY to R.drawable.supercrew_secondary_vert,
+    )
+
+    override val horizontalDrawables: Map<String, Int> = mapOf(
+        WIREFRAME to R.drawable.supercrew_wireframe_horz,
+        HOOD to R.drawable.supercrew_hood_horz,
+        TAILGATE to R.drawable.supercrew_tailgate_horz,
+        LEFT_FRONT_DOOR to R.drawable.supercrew_lfdoor_horz,
+        RIGHT_FRONT_DOOR to R.drawable.supercrew_rfdoor_horz,
+        LEFT_REAR_DOOR to R.drawable.supercrew_lrdoor_horz,
+        RIGHT_REAR_DOOR to R.drawable.supercrew_rrdoor_horz,
+        LEFT_FRONT_WINDOW to R.drawable.supercrew_lfwindow_horz,
+        RIGHT_FRONT_WINDOW to R.drawable.supercrew_rfwindow_horz,
+        LEFT_REAR_WINDOW to R.drawable.supercrew_lrwindow_horz,
+        RIGHT_REAR_WINDOW to R.drawable.supercrew_rrwindow_horz,
+        BODY_PRIMARY to R.drawable.supercrew_primary_horz,
+        BODY_SECONDARY to R.drawable.supercrew_secondary_horz,
+    )
+}
+
+open class F250(VIN: String) : Vehicle(VIN) {
+    override val layoutID = R.layout.f150_widget
+    override val offsetPositions = arrayOf(400, 272)
+    override val logoID = R.drawable.ford_f150_logo
+}
+
+class F250RegularCab(VIN: String) : F250(VIN) {
+    override val verticalDrawables: Map<String, Int> = mapOf(
+        WIREFRAME to R.drawable.regularcab_wireframe_vert,
+        HOOD to R.drawable.regularcab_hood_vert,
+        TAILGATE to R.drawable.regularcab_tailgate_vert,
+        LEFT_FRONT_DOOR to R.drawable.regularcab_lfdoor_vert,
+        RIGHT_FRONT_DOOR to R.drawable.regularcab_rfdoor_vert,
+        LEFT_REAR_DOOR to R.drawable.filler,
+        RIGHT_REAR_DOOR to R.drawable.filler,
+        BODY_PRIMARY to R.drawable.regularcab_primary_vert,
+        BODY_SECONDARY to R.drawable.regularcab_secondary_vert,
+    )
+
+    override val horizontalDrawables: Map<String, Int> = mapOf(
+        WIREFRAME to R.drawable.regularcab_wireframe_horz,
+        HOOD to R.drawable.regularcab_hood_horz,
+        TAILGATE to R.drawable.regularcab_tailgate_horz,
+        LEFT_FRONT_DOOR to R.drawable.regularcab_lfdoor_horz,
+        RIGHT_FRONT_DOOR to R.drawable.regularcab_rfdoor_horz,
+        LEFT_REAR_DOOR to R.drawable.filler,
+        RIGHT_REAR_DOOR to R.drawable.filler,
+        LEFT_FRONT_WINDOW to R.drawable.regularcab_lfwindow_horz,
+        RIGHT_FRONT_WINDOW to R.drawable.regularcab_rfwindow_horz,
+        LEFT_REAR_WINDOW to R.drawable.filler,
+        RIGHT_REAR_WINDOW to R.drawable.filler,
+        BODY_PRIMARY to R.drawable.regularcab_primary_horz,
+        BODY_SECONDARY to R.drawable.regularcab_secondary_horz,
+    )
+}
+
+class F250SuperCab(VIN: String) : F250(VIN) {
+    override val verticalDrawables: Map<String, Int> = mapOf(
+        WIREFRAME to R.drawable.supercab_wireframe_vert,
+        HOOD to R.drawable.supercab_hood_vert,
+        TAILGATE to R.drawable.supercab_tailgate_vert,
+        LEFT_FRONT_DOOR to R.drawable.supercab_lfdoor_vert,
+        RIGHT_FRONT_DOOR to R.drawable.supercab_rfdoor_vert,
+        LEFT_REAR_DOOR to R.drawable.supercab_lrdoor_vert,
+        RIGHT_REAR_DOOR to R.drawable.supercab_rrdoor_vert,
+        BODY_PRIMARY to R.drawable.supercab_primary_vert,
+        BODY_SECONDARY to R.drawable.supercab_secondary_vert,
+    )
+
+    override val horizontalDrawables: Map<String, Int> = mapOf(
+        WIREFRAME to R.drawable.supercab_wireframe_horz,
+        HOOD to R.drawable.supercab_hood_horz,
+        TAILGATE to R.drawable.supercab_tailgate_horz,
+        LEFT_FRONT_DOOR to R.drawable.supercab_lfdoor_horz,
+        RIGHT_FRONT_DOOR to R.drawable.supercab_rfdoor_horz,
+        LEFT_REAR_DOOR to R.drawable.supercab_lrdoor_horz,
+        RIGHT_REAR_DOOR to R.drawable.supercab_rrdoor_horz,
+        LEFT_FRONT_WINDOW to R.drawable.supercab_lfwindow_horz,
+        RIGHT_FRONT_WINDOW to R.drawable.supercab_rfwindow_horz,
+        LEFT_REAR_WINDOW to R.drawable.filler,
+        RIGHT_REAR_WINDOW to R.drawable.filler,
+        BODY_PRIMARY to R.drawable.supercab_primary_horz,
+        BODY_SECONDARY to R.drawable.supercab_secondary_horz,
+    )
+}
+
+class F250CrewCab(VIN: String) : F250(VIN) {
     override val verticalDrawables: Map<String, Int> = mapOf(
         WIREFRAME to R.drawable.supercrew_wireframe_vert,
         HOOD to R.drawable.supercrew_hood_vert,
