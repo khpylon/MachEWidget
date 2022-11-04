@@ -69,7 +69,8 @@
         app:key="@string/show_OTA_key"
         app:defaultValue="true"
         app:singleLineTitle="false"
-        app:title="@string/show_OTA" />
+        app:title="@string/show_OTA"
+        app:summary="(This feature is currently unavailable)"/>
 
     <SwitchPreferenceCompat
         app:key="@string/enable_commands_key"

@@ -7,11 +7,13 @@
         android:orderInCategory="10"
         android:title="@string/action_login"
         app:showAsAction="never" />
+    <!--
     <item
         android:id="@+id/action_ota_view"
         android:orderInCategory="20"
         android:title="@string/action_OTA"
         app:showAsAction="never" />
+    -->
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="20"

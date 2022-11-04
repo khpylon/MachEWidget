@@ -567,75 +567,75 @@ public class CarStatusWidget extends AppWidgetProvider {
 
     // OTA status
     protected void drawOTAInfo(Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat) {
-        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
-        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
-
-        views.setViewVisibility(R.id.ota_container, displayOTA ? View.VISIBLE : View.GONE);
-        if (displayOTA && otaStatus != null) {
-            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
-            if (Misc.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
-                views.setTextViewText(R.id.ota_line1, "OTA Status:");
-                String OTArefresh;
-                if (otaStatus.getFuseResponse() == null) {
-                    OTArefresh = "No OTA data";
-                } else {
-                    long lastOTATime = vehicleInfo.getLastOTATime();
-                    String currentUTCOTATime = otaStatus.getOTADateTime();
-                    if (currentUTCOTATime == null) {
-                        OTArefresh = "No date specified";
-                    } else {
-                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
-
-                        // If there's new information, display that data/time in a different color
-                        if (currentOTATime > lastOTATime) {
-                            // if OTA failed, show it in red (that means something bad)
-                            String OTAResult = otaStatus.getOTAAggregateStatus();
-                            if (OTAResult != null && OTAResult.equals("failure")) {
-                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
-                            } else {
-                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
-                            }
-                            OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
-                            String message;
-                            switch(otaStatus.getOTAAggregateStatus()) {
-                                case "request_delivery_queued":
-                                    message = "An update is ready for download to your vehicle.";
-                                    break;
-                                case "artifact_retrieval_in_progress":
-                                    message = "Your vehicle is downloading the update.";
-                                    break;
-                                case "installation_queued":
-                                    if(otaStatus.getOtaAlertStatus().equals("UPDATE REMINDER")) {
-                                        message = "Your vehicle has downloaded the update but requires your attention.";
-                                    } else {
-                                        message = "Your vehicle has downloaded the update; you should turn on the ignition.";
-                                    }
-                                    break;
-                                case "deploying":
-                                    message = "Your vehicle is installing the update.";
-                                    break;
-                                case "success":
-                                    message = "The update was successful.";
-                                    break;
-                                case "failure":
-                                    message = "The update was not successful.";
-                                    break;
-                                case "requested":
-                                default:
-                                    message = "New OTA information was found.";
-                                    break;
-                            }
-                            Notifications.newOTA(context, message);
-                        } else {
-                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
-                            OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
-                        }
-                    }
-                }
-                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
-            }
-        }
+        views.setViewVisibility(R.id.ota_container, View.GONE);
+//        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
+//        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
+//                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
+//
+//        if (displayOTA && otaStatus != null) {
+//            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
+//            if (Misc.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
+//                views.setTextViewText(R.id.ota_line1, "OTA Status:");
+//                String OTArefresh;
+//                if (otaStatus.getFuseResponse() == null) {
+//                    OTArefresh = "No OTA data";
+//                } else {
+//                    long lastOTATime = vehicleInfo.getLastOTATime();
+//                    String currentUTCOTATime = otaStatus.getOTADateTime();
+//                    if (currentUTCOTATime == null) {
+//                        OTArefresh = "No date specified";
+//                    } else {
+//                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+//
+//                        // If there's new information, display that data/time in a different color
+//                        if (currentOTATime > lastOTATime) {
+//                            // if OTA failed, show it in red (that means something bad)
+//                            String OTAResult = otaStatus.getOTAAggregateStatus();
+//                            if (OTAResult != null && OTAResult.equals("failure")) {
+//                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
+//                            } else {
+//                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
+//                            }
+//                            OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
+//                            String message;
+//                            switch(otaStatus.getOTAAggregateStatus()) {
+//                                case "request_delivery_queued":
+//                                    message = "An update is ready for download to your vehicle.";
+//                                    break;
+//                                case "artifact_retrieval_in_progress":
+//                                    message = "Your vehicle is downloading the update.";
+//                                    break;
+//                                case "installation_queued":
+//                                    if(otaStatus.getOtaAlertStatus().equals("UPDATE REMINDER")) {
+//                                        message = "Your vehicle has downloaded the update but requires your attention.";
+//                                    } else {
+//                                        message = "Your vehicle has downloaded the update; you should turn on the ignition.";
+//                                    }
+//                                    break;
+//                                case "deploying":
+//                                    message = "Your vehicle is installing the update.";
+//                                    break;
+//                                case "success":
+//                                    message = "The update was successful.";
+//                                    break;
+//                                case "failure":
+//                                    message = "The update was not successful.";
+//                                    break;
+//                                case "requested":
+//                                default:
+//                                    message = "New OTA information was found.";
+//                                    break;
+//                            }
+//                            Notifications.newOTA(context, message);
+//                        } else {
+//                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
+//                            OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
+//                        }
+//                    }
+//                }
+//                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
+//            }
+//        }
     }
 
     protected void setAppBitmap(Context context, RemoteViews views, String appPackageName, int id) {

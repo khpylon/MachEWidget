@@ -273,10 +273,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ReminderActivity.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.action_ota_view) {
-            Intent intent = new Intent(this, OTAViewActivity.class);
-            startActivity(intent);
-            return true;
+//        } else if (id == R.id.action_ota_view) {
+//            Intent intent = new Intent(this, OTAViewActivity.class);
+//            startActivity(intent);
+//            return true;
         } else if (id == R.id.action_copylog) {
             String result = LogFile.copyLogFile(context);
             Toast.makeText(context, result, Toast.LENGTH_SHORT).show();

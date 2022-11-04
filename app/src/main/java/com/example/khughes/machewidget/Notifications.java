@@ -19,23 +19,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Notifications extends BroadcastReceiver {
-    private static final int OTA_NOTIFICATION = 935;
-
-    public static void newOTA(Context context, String message) {
-        Intent intent = new Intent(context, OTAViewActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("OTA information")
-                .setContentText(message)
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(OTA_NOTIFICATION, builder.build());
-    }
+//    private static final int OTA_NOTIFICATION = 935;
+//
+//    public static void newOTA(Context context, String message) {
+//        Intent intent = new Intent(context, OTAViewActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+//                .setSmallIcon(R.mipmap.ic_launcher)
+//                .setContentTitle("OTA information")
+//                .setContentText(message)
+//                .setContentIntent(pendingIntent)
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                .setAutoCancel(true);
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+//        // notificationId is a unique int for each notification that you must define
+//        notificationManager.notify(OTA_NOTIFICATION, builder.build());
+//    }
 
     private static final int LVB_STATUS = 936;
     private static final String LVB_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.LVB";
