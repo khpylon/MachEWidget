@@ -39,6 +39,7 @@ If you find this really annoying, there are some things you can do:
 2. Open the FordPass app, and pull down in the main screen.  This will force the vehicle to perform an update.
 Be aware that Ford has discouraged forcing status updates too frequently as it can drain the 12V battery.
 
+<!--
 #### Q: What does all the OTA update information mean?
 
 I'm not sure there is any consensus on this; it's all speculation.  Ford defines a deployment window of one week for the update to take place.  If the update fails, it's unclear when the next deployment window happens.
@@ -57,6 +58,7 @@ Observations from users have noticed this progression:
 
 The OTA information from Ford's servers is apparently removed some number of days after the update (again, there is no consensus as far as I know
 what the number of days is).  WHen this happens, the app can tell the vehicle is OTA capable, but simply doesn't receive any information to display. 
+-->
 
 #### Q: Why do the vehicle and app show different odometer readings?
 
@@ -92,5 +94,5 @@ vehicle; if I do, please consider paying it forward for others.
 
 #### Q: Why don't you charge for the app?
 
-There are a number of reasons, but the primary one is I started doing this for myself as a hobby.   I only request donations to offset my expenses needed to expand the app; as of 
-June 2022 I've spent about $130 to purchase graphic content and a developer's account on Google Play.  Eventually any unused funds will be donated to charities.
+There are a number of reasons, but the primary one is I started doing this for myself as a hobby.   I only request donations to offset my expenses needed to expand the app; as of
+November 2022 I've spent about $150 to purchase graphic content, a developer's account on Google Play, and various other development tools.  Eventually any unused funds will be donated to charities.

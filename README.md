@@ -9,7 +9,7 @@ This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/
 [David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps](https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
 .  It is not a complete implementation of the functionality of their widgets, as it:
 - is only intended for the Ford Mustang Mach-E, as that's the only Ford I own (capabilities have been extended to support 
-  F-150, Bronco/Bronco Sport, Explorer, Escape, Edge, Expedition, Kuga, and Puma owners as well, but feedback is encouraged)
+  F-150/F-250/F-350, Bronco/Bronco Sport, Explorer, Escape, Edge, Expedition, Kuga, and Puma owners as well, but feedback is encouraged)
 - does not include all the function of tonesto7's Apple/iOS widget
 - does not currently support accounts outside of the United States, although it may still work
 
@@ -32,7 +32,6 @@ this [app-release.apk](https://github.com/khpylon/MachEWidget/blob/master/app/gi
 ## Features
 
 - Will automatically fetch data from servers (default is every 10 minutes, but configurable)
-- Shows recent OTA information
 - Send commands to car to lock or unlock doors, perform remote start, and force refresh
 - Assign "short cuts" to other related apps such as FordPass, Waze, etc
 - Can display all supported vehicles assigned to a single log-in on individual widgets
@@ -40,15 +39,15 @@ this [app-release.apk](https://github.com/khpylon/MachEWidget/blob/master/app/gi
 
 ## Known Issues & Limitations
 
-As listed above, this app
-- does not include all the function of tonesto7's Apple/iOS widget
-- is not guaranteed to support accounts outside of the United States
+- Does not include all the function of tonesto7's Apple/iOS widget
+- Is not guaranteed to support accounts outside of the United States
+- Currently does not show OTA information, as Ford's API changed
 
 ## Contributing Help for Unsupported Vehicles
 
 If you would like to use the app but your vehicle is not currently supported, there are a few things you can do:
 
-1. Load the app onto your phone and gather log data about your vehicle.  See the "Bug Report" section for how to gather log data.  The two important pieces of data are JSON responses for car status and OTA status.
+1. Load the app onto your phone and gather log data about your vehicle.  See the "Bug Report" section for how to gather log data.  The important piece of data is the JSON responses for car status.
 2. Consider contributing the necessary graphics for your vehicle.  Free drawings would be great (provided they are usable and *actually free*), but chipping in a donation towards the purchase of SVG CAD drawings is also encouraged.
 3. Encourage fellow owners to do the same.
 
