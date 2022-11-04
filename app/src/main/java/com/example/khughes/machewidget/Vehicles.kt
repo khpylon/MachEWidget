@@ -45,6 +45,31 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_F250_SUPERCAB_4X2 = "X2A" // 4x2, SuperCab
         private const val NA_LINE_SERIES_F250_SUPERCAB_4X4 = "X2B" // 4x4, SuperCab
 
+        private const val NA_LINE_SERIES_F350_REGULAR_SRW_4X2_A = "F3A"
+        private const val NA_LINE_SERIES_F350_REGULAR_SRW_4X4_B = "F3B"
+        private const val NA_LINE_SERIES_F350_REGULAR_DRW_4X2_C = "F3C"
+        private const val NA_LINE_SERIES_F350_REGULAR_DRW_4X4_D = "F3D"
+        private const val NA_LINE_SERIES_F350_REGULAR_SRW_4X2_E = "F3E"
+        private const val NA_LINE_SERIES_F350_REGULAR_SRW_4X4_F = "F3F"
+        private const val NA_LINE_SERIES_F350_REGULAR_DRW_4X2_G = "F3G"
+        private const val NA_LINE_SERIES_F350_REGULAR_DRW_4X4_H = "F3H"
+        private const val NA_LINE_SERIES_F350_CREWCAB_SRW_4X2_A = "W3A"
+        private const val NA_LINE_SERIES_F350_CREWCAB_SRW_4X4_B = "W3B"
+        private const val NA_LINE_SERIES_F350_CREWCAB_DRW_4X2_C = "W3C"
+        private const val NA_LINE_SERIES_F350_CREWCAB_DRW_4X4_D = "W3D"
+        private const val NA_LINE_SERIES_F350_CREWCAB_SRW_4X2_E = "W3E"
+        private const val NA_LINE_SERIES_F350_CREWCAB_SRW_4X4_F = "W3F"
+        private const val NA_LINE_SERIES_F350_CREWCAB_DRW_4X2_G = "W3G"
+        private const val NA_LINE_SERIES_F350_CREWCAB_DRW_4X4_H = "W3H"
+        private const val NA_LINE_SERIES_F350_SUPERCAB_SRW_4X2_A = "X3A"
+        private const val NA_LINE_SERIES_F350_SUPERCAB_SRW_4X4_B = "X3B"
+        private const val NA_LINE_SERIES_F350_SUPERCAB_DRW_4X2_C = "X3C"
+        private const val NA_LINE_SERIES_F350_SUPERCAB_DRW_4X4_D = "X3D"
+        private const val NA_LINE_SERIES_F350_SUPERCAB_SRW_4X2_E = "X3E"
+        private const val NA_LINE_SERIES_F350_SUPERCAB_SRW_4X4_F = "X3F"
+        private const val NA_LINE_SERIES_F350_SUPERCAB_DRW_4X2_G = "X3G"
+        private const val NA_LINE_SERIES_F350_SUPERCAB_DRW_4X4_H = "X3H"
+
         private const val NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4 = "E5A" //
         private const val NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4 = "E5B" //
         private const val NA_LINE_SERIES_BRONCO_BASE_2DOOR_AWD = "E5C" //
@@ -234,6 +259,60 @@ open class Vehicle(val VIN: String) {
                     (isF250RegularCab(VIN) || isF250SuperCab(VIN) || isF250CrewCab(VIN) )
         }
 
+        private fun isF350RegularCab(VIN: String): Boolean {
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            return setOf(
+                NA_LINE_SERIES_F350_REGULAR_SRW_4X2_A,
+                NA_LINE_SERIES_F350_REGULAR_SRW_4X4_B,
+                NA_LINE_SERIES_F350_REGULAR_DRW_4X2_C,
+                NA_LINE_SERIES_F350_REGULAR_DRW_4X4_D,
+                NA_LINE_SERIES_F350_REGULAR_SRW_4X2_E,
+                NA_LINE_SERIES_F350_REGULAR_SRW_4X4_F,
+                NA_LINE_SERIES_F350_REGULAR_DRW_4X2_G,
+                NA_LINE_SERIES_F350_REGULAR_DRW_4X4_H,
+            ).contains(lineSeries)
+        }
+
+        private fun isF350CrewCab(VIN: String): Boolean {
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            return setOf(
+                NA_LINE_SERIES_F350_CREWCAB_SRW_4X2_A,
+                NA_LINE_SERIES_F350_CREWCAB_SRW_4X4_B,
+                NA_LINE_SERIES_F350_CREWCAB_DRW_4X2_C,
+                NA_LINE_SERIES_F350_CREWCAB_DRW_4X4_D,
+                NA_LINE_SERIES_F350_CREWCAB_SRW_4X2_E,
+                NA_LINE_SERIES_F350_CREWCAB_SRW_4X4_F,
+                NA_LINE_SERIES_F350_CREWCAB_DRW_4X2_G,
+                NA_LINE_SERIES_F350_CREWCAB_DRW_4X4_H,
+            ).contains(lineSeries)
+        }
+
+        private fun isF350SuperCab(VIN: String): Boolean {
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            return setOf(
+                NA_LINE_SERIES_F350_SUPERCAB_SRW_4X2_A,
+                NA_LINE_SERIES_F350_SUPERCAB_SRW_4X4_B,
+                NA_LINE_SERIES_F350_SUPERCAB_DRW_4X2_C,
+                NA_LINE_SERIES_F350_SUPERCAB_DRW_4X4_D,
+                NA_LINE_SERIES_F350_SUPERCAB_SRW_4X2_E,
+                NA_LINE_SERIES_F350_SUPERCAB_SRW_4X4_F,
+                NA_LINE_SERIES_F350_SUPERCAB_DRW_4X2_G,
+                NA_LINE_SERIES_F350_SUPERCAB_DRW_4X4_H,
+            ).contains(lineSeries)
+        }
+
+        private fun isF350(VIN: String): Boolean {
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK &&
+                    (isF350RegularCab(VIN) || isF350SuperCab(VIN) || isF350CrewCab(VIN) )
+        }
+
         private val explorerLineSeries: Set<String> = setOf(
             NA_LINE_SERIES_EXPLORER_BASE_RWD,
             NA_LINE_SERIES_EXPLORER_XLT_RWD,
@@ -410,8 +489,9 @@ open class Vehicle(val VIN: String) {
         // Check to see if we recognize a VIN in general
         @JvmStatic
         fun isVINRecognized(VIN: String): Boolean =
-            isMachE(VIN) || isF150(VIN) || isF250(VIN) || isBronco(VIN) || isExplorer(VIN) 
-                    || isBroncoSport(VIN) || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN) 
+            isMachE(VIN) || isF150(VIN) || isF250(VIN) || isF350(VIN)
+                    || isBronco(VIN)|| isBroncoSport(VIN) || isExplorer(VIN)
+                    || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)
                     || isKuga(VIN) || isPuma(VIN)
 
 
@@ -434,11 +514,19 @@ open class Vehicle(val VIN: String) {
             if (isF250SuperCab(VIN)) return F250SuperCab(VIN)
             if (isF250CrewCab(VIN)) return F250CrewCab(VIN)
 
+            // How about F-350 variants?
+            if (isF350RegularCab(VIN)) return F250RegularCab(VIN)
+            if (isF350SuperCab(VIN)) return F250SuperCab(VIN)
+            if (isF350CrewCab(VIN)) return F250CrewCab(VIN)
+
             // Check everything else
             if (isBronco(VIN)) return Bronco(VIN)
             if (isEdge(VIN)) return Edge(VIN)
             if (isEscape(VIN)) return Escape(VIN)
             if (isExplorer(VIN)) return Explorer(VIN)
+
+            // If none of the above, then see if it's a "truck"
+            if(VIN.startsWith(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK)) return F150RegularCab(VIN)
 
             // Default to the Mach-E
             return MachE(VIN)
