@@ -2,8 +2,8 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.example.khughes.machewidget.db.VehicleInfoDatabase
 import com.example.khughes.machewidget.db.UserInfoDatabase
+import com.example.khughes.machewidget.db.VehicleInfoDatabase
 import java.io.File
 
 object AppUpdates {
@@ -98,6 +98,16 @@ object AppUpdates {
                         }
                     }
                 }.start()
+            }
+
+            if (lastVersion < "2022.12.07") {
+                // Disable saving credentials
+                prefs.edit()
+                    .putBoolean(
+                        context.resources.getString(R.string.save_credentials_key),
+                        false
+                    )
+                    .commit()
             }
         }
 

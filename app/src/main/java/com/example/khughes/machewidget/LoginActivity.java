@@ -66,16 +66,17 @@ public class LoginActivity extends AppCompatActivity {
         Button fingerprint = findViewById(R.id.fingerprint);
 
         Switch credentials = findViewById(R.id.storeCredentials);
-        credentials.setChecked(savingCredentials);
-        credentials.setOnCheckedChangeListener((button, value) -> {
-            savingCredentials = value;
-            sharedPref.edit().putBoolean(context.getResources().getString(R.string.save_credentials_key), value).commit();
-            if (!savingCredentials) {
-                new Encryption(context).clearCredentials();
-            }
-            fingerprint.setVisibility(View.GONE);
-            updateDisclamer(disclaimerView, savingCredentials);
-        });
+        credentials.setVisibility(View.GONE);
+//        credentials.setChecked(savingCredentials);
+//        credentials.setOnCheckedChangeListener((button, value) -> {
+//            savingCredentials = value;
+//            sharedPref.edit().putBoolean(context.getResources().getString(R.string.save_credentials_key), value).commit();
+//            if (!savingCredentials) {
+//                new Encryption(context).clearCredentials();
+//            }
+//            fingerprint.setVisibility(View.GONE);
+//            updateDisclamer(disclaimerView, savingCredentials);
+//        });
 
         updateDisclamer(disclaimerView, savingCredentials);
 
