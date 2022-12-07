@@ -24,11 +24,6 @@
         app:useSimpleSummaryProvider="true" />
 
     <SwitchPreferenceCompat
-        app:key="@string/save_credentials_key"
-        app:defaultValue="false"
-        app:title="@string/save_credentials" />
-
-    <SwitchPreferenceCompat
         app:key="@string/zenmode_key"
         app:defaultValue="false"
         app:singleLineTitle="false"
