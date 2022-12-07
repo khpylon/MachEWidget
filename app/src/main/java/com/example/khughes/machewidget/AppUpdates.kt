@@ -108,6 +108,21 @@ object AppUpdates {
                         false
                     )
                     .commit()
+
+                // If applicable, change update frequency to 15 minute minimum
+                val delayInMillis = prefs.getString(
+                    context.resources.getString(R.string.update_frequency_key),
+                    "15"
+                )!!.toInt()
+                if( delayInMillis > 0 && delayInMillis < 15)
+                {
+                    prefs.edit()
+                        .putString(
+                            context.resources.getString(R.string.update_frequency_key),
+                            "15"
+                        )
+                        .commit()
+                }
             }
         }
 

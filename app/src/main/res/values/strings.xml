@@ -100,11 +100,8 @@
 
     <!-- survey values -->
     <string name="surveyVersion_key">surveyVersion</string>
-    <string name="survey_description">Please take this short survey about app usage details.</string>
-    <string name="survey_uri">https://www.surveymonkey.com/r/VWG5TRZ</string>
-
-
-
+    <string name="survey_description">Please review details about sharing your FordPass login.</string>
+    <string name="survey_uri">https://github.com/khpylon/MachEWidget/blob/master/FAQ.md</string>
 
     <string name="clear_alert">Clear Alert</string>
     <string name="install_update">Install Update</string>
