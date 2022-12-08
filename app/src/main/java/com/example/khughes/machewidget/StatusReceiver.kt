@@ -35,7 +35,11 @@ class StatusReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         // Set the next alarm
-        nextAlarm(context)
+        if(!Misc.isHibernating(context) ) {
+            nextAlarm(context)
+        } else {
+            LogFile.d(context, MainActivity.CHANNEL_ID, "StatusReceiver: hibernating so no next alarm")
+        }
 
         // Store time when we run the update;
         val appInfo = StoredData(context)

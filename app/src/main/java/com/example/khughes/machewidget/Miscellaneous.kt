@@ -720,5 +720,10 @@ class Misc {
             return pm.isIgnoringBatteryOptimizations(packageName)
         }
 
+        @JvmStatic
+        fun isHibernating(context: Context): Boolean {
+            return PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
+                .getBoolean(context.resources.getString(R.string.hibernate_api_key), false)
+        }
     }
 }

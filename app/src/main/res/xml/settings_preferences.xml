@@ -13,9 +13,18 @@
         app:useSimpleSummaryProvider="true"
         app:enabled="false" />
 
+    <SwitchPreferenceCompat
+        app:key="@string/hibernate_api_key"
+        app:defaultValue="false"
+        app:singleLineTitle="false"
+        app:disableDependentsState="true"
+        app:title="@string/hibernate_api"
+        app:summary="@string/hibernate_api_summary"/>
+
     <ListPreference
         app:key="@string/update_frequency_key"
         app:defaultValue="30"
+        app:dependency="@string/hibernate_api_key"
         app:entries="@array/pref_update_titles"
         app:entryValues="@array/pref_update_values"
         app:negativeButtonText="@null"

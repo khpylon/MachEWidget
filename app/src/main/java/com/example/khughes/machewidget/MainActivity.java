@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -41,6 +40,27 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private int vehicleCount = 0;
 
+
+    private void FordPassInfo(Context context) {
+        WebView surveyWebview = new WebView(this);
+        surveyWebview.getSettings().setJavaScriptEnabled(true);
+
+        Misc.checkDarkMode(context, surveyWebview);
+        final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))
+                .build();
+        surveyWebview.setWebViewClient(new LocalContentWebViewClient(assetLoader));
+        String indexPage = "https://appassets.androidplatform.net/assets/fordpass.html";
+        surveyWebview.loadUrl(indexPage);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.fordpass_description)
+                .setNegativeButton("Close", (dialog, id) -> dialog.dismiss())
+                .setView(surveyWebview).show();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,15 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         // If we haven't bugged about the survey before, do it once and get it over with
         if (Misc.doSurvey(context)) {
-            WebView surveyWebview = new WebView(this);
-            surveyWebview.loadUrl(context.getResources().getString(R.string.survey_uri));
-            surveyWebview.getSettings().setJavaScriptEnabled(true);
-            surveyWebview.setWebViewClient(new WebViewClient() {});
-
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.survey_description)
-                    .setNegativeButton("Close", (dialog, id) -> dialog.dismiss())
-                    .setView(surveyWebview).show();
+            FordPassInfo(context);
         }
 
         // First thing, check logcat for a crash and save if so
@@ -304,6 +316,8 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_fordpass) {
+            FordPassInfo(context);
         }
         return super.onOptionsItemSelected(item);
     }

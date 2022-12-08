@@ -22,7 +22,7 @@ class BootComplete : BroadcastReceiver() {
                 "15"
             )!!.toInt()
 
-            if (delayInMillis > 0) {
+            if (!Misc.isHibernating(context) && delayInMillis > 0) {
                 // Check the car's status as soon as possible.
                 val pendingIntent =
                     PendingIntent.getBroadcast(

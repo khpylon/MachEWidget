@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.khughes.machewidget.MainActivity">
     <item
+        android:id="@+id/action_fordpass"
+        android:orderInCategory="5"
+        android:title="@string/action_fordpass"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_login"
         android:orderInCategory="10"
         android:title="@string/action_login"

@@ -17,6 +17,7 @@
     <string name="action_vehicle">Manage Vehicles</string>
     <string name="action_color">Set Vehicle Color</string>
     <string name="action_reminder">Set Charging Reminder</string>
+    <string name="action_fordpass">FordPass Alert</string>
     <string name="update_info">Update Information</string>
 
     <!-- Widget things -->
@@ -63,6 +64,8 @@
     <string name="use_image">Display vehicle photo instead of logo on full-size widget</string>
     <string name="use_old_engine">Use older methods to determine fuel type</string>
     <string name="zenmode">Do not update while Do Not Disturb is active</string>
+    <string name="hibernate_api">Hibernate app</string>
+    <string name="hibernate_api_summary">Don\'t pull data until public API is released</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
@@ -92,6 +95,7 @@
     <string name="use_image_key">useImage</string>
     <string name="use_old_engine_key">useOldEngine</string>
     <string name="zenmode_key">zenMode</string>
+    <string name="hibernate_api_key">hibernateAPI</string>
 
     <!-- Values for setting units (see arrays.xml) -->
     <string name="units_system">0</string>
@@ -100,8 +104,8 @@
 
     <!-- survey values -->
     <string name="surveyVersion_key">surveyVersion</string>
-    <string name="survey_description">Please review details about sharing your FordPass login.</string>
-    <string name="survey_uri">https://github.com/khpylon/MachEWidget/blob/master/FAQ.md</string>
+    <string name="fordpass_description">Please review this info about sharing your FordPass login.</string>
+    <!-- <string name="survey_uri">https://github.com/khpylon/MachEWidget/blob/master/FAQ.md</string> -->
 
     <string name="clear_alert">Clear Alert</string>
     <string name="install_update">Install Update</string>
