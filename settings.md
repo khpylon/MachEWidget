@@ -25,7 +25,7 @@ If it exists, copy the ***somestring*** value.  If it doesn't exist, create it a
 10) Look for the "*vehicles*" section.  This is the data for your vehicles.  It is an array, so each vehicle needs its own entry.
 - If this section exists, then for each vehicle change the "userId" value to the one you found in Step 8.
 - If it doesn't exist, create an entry for each vehicle containing a "*VIN*" and "*userId*" key, as shown below (separate each entry with a comma):
-   *{"VIN":"your vehicle's vin","us*`enter code here`*erId":"userId from Step 8"}*
+> {"VIN":"your vehicle's vin","userId":"userId from Step 8"}*
 11) After you confirm the JSON formatting is OK, save the file then upload to your phone.
 12) Wipe the app's data, or uninstall/reinstall the app.
 13) Restore settings.
