@@ -1,33 +1,16 @@
 package com.example.khughes.machewidget;
 
 import android.content.Context;
-
-import com.franmontiel.persistentcookiejar.PersistentCookieJar;
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class NetworkServiceGenerators {
 
     private static Context mContext;
 
-    private static final String IBMCLOUD_BASE_URL = "https://fcis.ice.ibmcloud.com/v1.0/endpoint/default/";
-
-    private static final String SSOCI_BASE_URL = "https://sso.ci.ford.com/";
+//    private static final String SSOCI_BASE_URL = "https://sso.ci.ford.com/";
 
     private static final String APIMPS_BASE_URL = "https://api.mps.ford.com/api/";
     private static final String USAPICV_BASE_URL = "https://usapi.cv.ford.com/api/";
@@ -55,52 +38,31 @@ public class NetworkServiceGenerators {
             })
                     .setLevel(HttpLoggingInterceptor.Level.BODY);
 
-    private static final Retrofit.Builder ibmCloudBuilder =
-            new Retrofit.Builder()
-                    .baseUrl(IBMCLOUD_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create());
-
-    private static Retrofit ibmCloudRetrofit = ibmCloudBuilder.build();
-
-    private static final OkHttpClient.Builder ibmCloudHttpClient =
-            new OkHttpClient.Builder();
-
-    public static <S> S createIBMCloudService(
-            Class<S> serviceClass, Context context) {
-        mContext = context;
-        if (!ibmCloudHttpClient.interceptors().contains(logging)) {
-            ibmCloudHttpClient.addInterceptor(logging);
-            ibmCloudBuilder.client(ibmCloudHttpClient.build());
-            ibmCloudRetrofit = ibmCloudBuilder.build();
-        }
-        return ibmCloudRetrofit.create(serviceClass);
-    }
-
-    private static final Retrofit.Builder ssoCiBuilder =
-            new Retrofit.Builder()
-                    .baseUrl(SSOCI_BASE_URL);
-
-    private static Retrofit ssoCiRetrofit = ssoCiBuilder
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build();
-
-    private static final OkHttpClient.Builder ssoCiHttpClient =
-            new OkHttpClient.Builder();
-
-    public static <S> S createSsoCiService(
-            Class<S> serviceClass, Context context, boolean redirects) {
-        mContext = context;
-        if (!ssoCiHttpClient.interceptors().contains(logging)) {
-            ssoCiHttpClient.addInterceptor(logging);
-            ssoCiBuilder.client(ssoCiHttpClient.build());
-            ssoCiRetrofit = ssoCiBuilder.build();
-        }
-        return ssoCiRetrofit.create(serviceClass);
-    }
-
-    public static void ssoCiHttpClientSetFollowRedirects(boolean follow) {
-        ssoCiHttpClient.followRedirects( follow );
-    }
+//    private static final Retrofit.Builder ssoCiBuilder =
+//            new Retrofit.Builder()
+//                    .baseUrl(SSOCI_BASE_URL);
+//
+//    private static Retrofit ssoCiRetrofit = ssoCiBuilder
+//            .addConverterFactory(ScalarsConverterFactory.create())
+//            .build();
+//
+//    private static final OkHttpClient.Builder ssoCiHttpClient =
+//            new OkHttpClient.Builder();
+//
+//    public static <S> S createSsoCiService(
+//            Class<S> serviceClass, Context context, boolean redirects) {
+//        mContext = context;
+//        if (!ssoCiHttpClient.interceptors().contains(logging)) {
+//            ssoCiHttpClient.addInterceptor(logging);
+//            ssoCiBuilder.client(ssoCiHttpClient.build());
+//            ssoCiRetrofit = ssoCiBuilder.build();
+//        }
+//        return ssoCiRetrofit.create(serviceClass);
+//    }
+//
+//    public static void ssoCiHttpClientSetFollowRedirects(boolean follow) {
+//        ssoCiHttpClient.followRedirects( follow );
+//    }
 
     private static final Retrofit.Builder APIMPS =
             new Retrofit.Builder()
@@ -128,16 +90,53 @@ public class NetworkServiceGenerators {
                     .baseUrl(USAPICV_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create());
 
+//    public static class TokenAuthenticator implements Authenticator {
+//
+//        private Context context;
+//        private UserInfo user;
+//
+//        public TokenAuthenticator(Context context, UserInfo user) {
+//            this.context = context;
+//            this.user = user;
+//        }
+//
+//        @Override
+//        public Request authenticate(Route route, Response response) throws IOException {
+//            // Refresh your access_token using a synchronous api request
+//
+//            AccessToken token = getNewToken(context);
+//            user.setAccessToken(token.getAccessToken());
+//            user.setRefreshToken(token.getRefreshToken());
+//            return response.request().newBuilder()
+//                    .header("auth-token", token.getAccessToken())
+//                    .build();
+//        }
+//
+//        private AccessToken getNewToken(Context context) throws IOException{
+//            Map<String, String> jsonParams = new ArrayMap<>();
+//            jsonParams.put("refresh_token", user.getRefreshToken());
+//            RequestBody body = RequestBody.create((new JSONObject(jsonParams)).toString(), okhttp3.MediaType.parse("application/json; charset=utf-8"));
+//            APIMPSService OAuth2Client = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
+//
+//            Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
+//            retrofit2.Response<AccessToken> response = call.execute();
+//            return response.body();
+//        }
+//    }
+
     private static Retrofit USAPICVRetrofit = USAPICVBuilder.build();
 
     private static final OkHttpClient.Builder USASPICVHttpClient =
             new OkHttpClient.Builder();
 
     public static <S> S createUSAPICVService(
-            Class<S> serviceClass, Context context) {
+            Class<S> serviceClass, Context context
+            //, UserInfo user
+             ) {
         mContext = context;
         if (!USASPICVHttpClient.interceptors().contains(logging)) {
             USASPICVHttpClient.addInterceptor(logging);
+//            USASPICVHttpClient.authenticator(new TokenAuthenticator(context,user));
             USAPICVBuilder.client(USASPICVHttpClient.build());
             USAPICVRetrofit = USAPICVBuilder.build();
         }
