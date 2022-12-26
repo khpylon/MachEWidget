@@ -115,7 +115,7 @@ class VehicleActivity : AppCompatActivity() {
 
                 val VIN = newVINWidget.editText?.text.toString().uppercase(Locale.getDefault())
 
-                if (VIN.length != 17 || VIN.matches("^[A-Z0-9]*$".toRegex())) {
+                if (VIN.length != 17 || !VIN.matches("^[A-Z0-9]*$".toRegex())) {
                     Toast.makeText(context, "The VIN is not valid.", Toast.LENGTH_LONG).show()
                     return@OnClickListener
                 }
