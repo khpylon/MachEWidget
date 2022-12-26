@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.login_activity);
 
-        savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), true);
+        savingCredentials = sharedPref.getBoolean(context.getResources().getString(R.string.save_credentials_key), false);
 
         TextView disclaimerView = findViewById(R.id.credentials);
         Button fingerprint = findViewById(R.id.fingerprint);
@@ -258,20 +258,28 @@ public class LoginActivity extends AppCompatActivity {
                 Bundle bb = msg.getData();
                 String action = bb.getString("action");
                 LogFile.i(context, MainActivity.CHANNEL_ID, "Access: " + action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN)) {
 
-                    // Log in was successful, so update global userId key
+                // Log in was successful, and vehicles associated with user ID exists, so update them.
+                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
+                    Toast.makeText(getApplicationContext(), "Login successful; updating in 5 seconds.", Toast.LENGTH_SHORT).show();
+                    StatusReceiver.nextAlarm(context, 5);
+                    Intent data = new Intent();
+                    setResult(Activity.RESULT_OK, data);
+                    finish();
+                }
+
+                // Log in was successful but no vehicles found
+                else if (action.equals(Constants.STATE_HAVE_TOKEN)) {
+                    // Update global userId key
                     String userId = bb.getString("userId");
                     sharedPref.edit().putString(context.getResources().getString(R.string.userId_key), userId).apply();
 
-                    // If profiles are not being used, update the VIN list.
-//                    if (!profilesActive) {
-//                        new StoredData(getApplicationContext()).addProfile(VIN, alias);
-//                    }
-
-                    Toast.makeText(getApplicationContext(), "Log-in successful; requesting vehicle list.", Toast.LENGTH_SHORT).show();
-                    getUserVehicles(userId);
-                } else if(action.equals(Constants.STATE_ACCOUNT_DISABLED)) {
+                    // Prompt the user to add vehicles
+                    Intent intent = new Intent(context, VehicleActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                } else if (action.equals(Constants.STATE_ACCOUNT_DISABLED)) {
                     Toast.makeText(getApplicationContext(), "Your account has been disabled (error "
                             + Authenticate.ACCOUNT_DISABLED_CODE + "): contact Ford via the FordPass app to reactivate.", Toast.LENGTH_LONG).show();
                 } else {
@@ -279,30 +287,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         };
+        Toast.makeText(getApplicationContext(), "Attempting to log in...", Toast.LENGTH_SHORT).show();
         NetworkCalls.getAccessToken(h, getApplicationContext(), username, password);
     }
 
-    private void getUserVehicles(String userId) {
-        Context context = getApplicationContext();
-
-        Handler h = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                Bundle bb = msg.getData();
-                String action = bb.getString("action");
-                LogFile.i(context, MainActivity.CHANNEL_ID, "UserVehicles: " + action);
-                if (action.equals(Constants.STATE_HAVE_TOKEN_AND_VIN)) {
-                    Toast.makeText(getApplicationContext(), "Vehicles list obtained; updating in 5 seconds.", Toast.LENGTH_SHORT).show();
-                    StatusReceiver.nextAlarm(context, 5);
-                    Intent data = new Intent();
-//                    data.putExtra(VINIDENTIFIER, VIN);
-                    setResult(Activity.RESULT_OK, data);
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Unable to get vehicles; will attempt again on next refresh.", Toast.LENGTH_LONG).show();
-                }
-            }
-        };
-        NetworkCalls.getUserVehicles(h, getApplicationContext(), userId);
-    }
 }

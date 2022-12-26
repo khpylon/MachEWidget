@@ -19,7 +19,7 @@
     </string-array>
 
     <string-array name="units_titles">
-        <item>Use FordPass settings</item>
+        <item>Use locale settings</item>
         <item>Metric (km, kPa)</item>
         <item>Imperial (miles, psi)</item>
     </string-array>

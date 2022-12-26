@@ -8,9 +8,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.icu.text.MessageFormat
-import android.icu.text.SimpleDateFormat
-import android.icu.util.Calendar
-import android.icu.util.TimeZone
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -20,7 +17,6 @@ import android.text.format.DateUtils
 import android.util.Log
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
-import java.text.ParseException
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -125,8 +121,6 @@ class StatusReceiver : BroadcastReceiver() {
                 val timeout = userInfo.expiresIn
                 val time = LocalDateTime.now(ZoneId.systemDefault())
                 val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-
-                val userId = userInfo.userId
                 val state = userInfo.programState
 
                 LogFile.d(
@@ -139,13 +133,6 @@ class StatusReceiver : BroadcastReceiver() {
                     )
                 )
 
-                // Check whether credentials are being saved
-                val savingCredentials = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(
-                        context.resources.getString(R.string.save_credentials_key),
-                        true
-                    )
-
                 when ( state ) {
                     Constants.STATE_ACCOUNT_DISABLED-> {
                         LogFile.d(
@@ -157,7 +144,6 @@ class StatusReceiver : BroadcastReceiver() {
                         Notifications.accountError(context, state)
                         appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
                     }
-                    Constants.STATE_ACCOUNT_DISABLED,
                     Constants.STATE_INITIAL_STATE -> {
                         LogFile.d(
                             context,
@@ -168,117 +154,27 @@ class StatusReceiver : BroadcastReceiver() {
                         Notifications.loginRequired(context)
                         appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
                     }
-                    Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN -> {
-                        if (savingCredentials) {
-                            LogFile.d(
-                                context,
-                                MainActivity.CHANNEL_ID,
-                                "Ok, trying to log in; wish me luck"
-                            )
-                            val encrypt = Encryption(context)
-                            val username = encrypt.getPlaintextString(userInfo.username)
-                            val password = encrypt.getPlaintextString(userInfo.password)
-                            if(username != null && password != null ) {
-                                getAccess(context, username, password)
-                                appInfo.incCounter(StoredData.STATUS_LOG_IN)
-                            } else {
-                                cancelAlarm(context)
-                                Notifications.loginRequired(context)
-                                appInfo.incCounter(StoredData.STATUS_LOG_OUT)
-                            }
-                        } else {
-                            userInfo.programState = Constants.STATE_INITIAL_STATE
-                            LogFile.d(
-                                context,
-                                MainActivity.CHANNEL_ID,
-                                "Log-in required but credentials are not being saved: cancelling alarm"
-                            )
-                            cancelAlarm(context)
-                            Notifications.loginRequired(context)
-                            appInfo.incCounter(StoredData.STATUS_LOG_OUT)
-                        }
-                    }
                     Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN -> {
                         LogFile.d(context, MainActivity.CHANNEL_ID, "STILL need to refresh token")
-                        getRefresh(context, userId, userInfo.refreshToken)
+//                        getRefresh(context, userId, userInfo.refreshToken)
                         appInfo.incCounter(StoredData.STATUS_UPDATED)
                     }
                     Constants.STATE_HAVE_TOKEN -> {
                         LogFile.d(context, MainActivity.CHANNEL_ID, "need to get vehicle info")
-                        getVehicleInfo(context, userId)
+//                        getVehicleInfo(context, userId)
                         appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
                     }
                     Constants.STATE_HAVE_TOKEN_AND_VIN -> {
-                        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-                        val delayInMillis = sharedPref.getString(
-                            context.resources.getString(R.string.update_frequency_key),
-                            "10"
-                        )!!.toInt() * 60 * MILLIS
-
-                        // Find out when the list of vehicles was updated
-                        var thenTime: Long = 0
-                        val lastModified = userInfo.lastModified
-                        lastModified?.let {
-                            val cal = Calendar.getInstance()
-                            val sdf = SimpleDateFormat(Constants.LASTMODIFIEDFORMAT, Locale.ENGLISH)
-                            sdf.timeZone = TimeZone.getTimeZone("GMT")
-                            try {
-                                cal.time = sdf.parse(it)
-                            } catch (e: ParseException) {
-                            }
-                            thenTime = cal.timeInMillis
-                        }
-
-                        // Since actions such as "Refresh" don't check the token's expiration, be sure to refresh if it would expire before
-                        // the next update.
-                        val calculation = timeout - delayInMillis - 5 * MILLIS - nowtime
-                        LogFile.d(
-                            context, MainActivity.CHANNEL_ID,
-                            "Calculating time as $calculation"
-                        )
-                        if (timeout - delayInMillis - 5 * MILLIS < nowtime) {
-                            LogFile.d(context, MainActivity.CHANNEL_ID, "Need to refresh token")
-                            getRefresh(context, userId, userInfo.refreshToken)
-                        } else if ((nowtime - thenTime) / (1000 * 60 * 60) > 1) {
-                            LogFile.d(
-                                context,
-                                MainActivity.CHANNEL_ID,
-                                "Going to check for vehicle changes"
-                            )
-                            getVehicleInfo(context, userId)
-                        } else {
-                            LogFile.d(
-                                context,
-                                MainActivity.CHANNEL_ID,
-                                "Token good? Just grab info"
-                            )
-                            getStatus(context, userId)
-                        }
+                        LogFile.d(context, MainActivity.CHANNEL_ID,"Grab status info" )
+                        getStatus(context, userInfo)
                         appInfo.incCounter(StoredData.STATUS_UPDATED)
                     }
                     else -> {
-                        if (savingCredentials) {
-                            LogFile.d(
-                                context,
-                                MainActivity.CHANNEL_ID,
-                                "Hmmm... How did I get here. Trying to login"
-                            )
-                            val encrypt = Encryption(context)
-                            val username = encrypt.getPlaintextString(userInfo.username)
-                            val password = encrypt.getPlaintextString(userInfo.password)
-                            if(username != null && password != null ) {
-                                getAccess(context, username, password)
-                            } else {
-                                cancelAlarm(context)
-                                Notifications.loginRequired(context)
-                            }
-                        } else {
                             LogFile.d(
                                 context,
                                 MainActivity.CHANNEL_ID,
                                 "Hmmm... How did I get here. Wish I could login"
                             )
-                        }
                         appInfo.incCounter(StoredData.STATUS_UNKNOWN)
                     }
                 }
@@ -306,62 +202,8 @@ class StatusReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun getAccess(context: Context, username: String, password: String) {
-        val h: Handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message) {
-                val bundle = msg.data
-                val action = bundle.getString("action")
-                LogFile.i(
-                    context, MainActivity.CHANNEL_ID,
-                    "Access: $action"
-                )
-                if (action == Constants.STATE_HAVE_TOKEN) {
-                    val userId = bundle.getString("usedId")
-                    getVehicleInfo(context, userId)
-                } else {
-                    Notifications.accountError(context, action)
-                }
-            }
-        }
-        NetworkCalls.getAccessToken(h, context, username, password)
-    }
-
-    private fun getRefresh(context: Context, userId: String, refreshToken: String) {
-        val h: Handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message) {
-                val bundle = msg.data
-                val action = bundle.getString("action")
-                LogFile.i(
-                    context, MainActivity.CHANNEL_ID,
-                    "Refresh: $action"
-                )
-                if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    getStatus(context, userId)
-                }
-            }
-        }
-        NetworkCalls.refreshAccessToken(h, context, userId, refreshToken)
-    }
-
-    private fun getVehicleInfo(context: Context, userId: String?) {
-        val h: Handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message) {
-                val bundle = msg.data
-                val action = bundle.getString("action")
-                if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    getStatus(context, userId)
-                }
-                LogFile.i(
-                    context, MainActivity.CHANNEL_ID,
-                    "VehicleInfo: $action"
-                )
-            }
-        }
-        NetworkCalls.getUserVehicles(h, context, userId)
-    }
-
-    private fun getStatus(context: Context, userId: String?) {
-        val h: Handler = object : Handler(Looper.getMainLooper()) {
+    private fun getStatus(context: Context, userInfo: UserInfo) {
+        val statusHandler: Handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 val bundle = msg.data
                 val action = bundle.getString("action")
@@ -373,11 +215,39 @@ class StatusReceiver : BroadcastReceiver() {
                 CarStatusWidget.updateWidget(context)
             }
         }
-        NetworkCalls.getStatus(h, context, userId)
+
+        val refreshHandler: Handler = object : Handler(Looper.getMainLooper()) {
+            override fun handleMessage(msg: Message) {
+                val bundle = msg.data
+                val action = bundle.getString("action")
+                LogFile.i(
+                    context, MainActivity.CHANNEL_ID,
+                    "Refresh: $action"
+                )
+                if(action == Constants.STATE_HAVE_TOKEN) {
+                    NetworkCalls.getStatus(statusHandler, context, bundle.getString("userId"))
+                }
+            }
+        }
+
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val delayInMillis = sharedPref.getString(
+            context.resources.getString(R.string.update_frequency_key),
+            "10"
+        )!!.toInt() * 60 * MILLIS
+
+        val userId = userInfo.userId
+        val timeout = userInfo.expiresIn
+        val time = LocalDateTime.now(ZoneId.systemDefault())
+        val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        if (timeout - delayInMillis - 5 * MILLIS < nowtime) {
+            NetworkCalls.refreshAccessToken(refreshHandler,context, userId, userInfo.refreshToken)
+        } else {
+            NetworkCalls.getStatus(statusHandler, context, userId)
+        }
     }
 
     companion object {
-
         private fun getIntent(context: Context): Intent {
             return Intent(context, StatusReceiver::class.java).setAction("StatusReceiver")
         }

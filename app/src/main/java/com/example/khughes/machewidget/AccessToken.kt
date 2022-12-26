@@ -26,6 +26,10 @@ class AccessToken {
     @Expose
     var expiresIn: Int? = null
 
+    @SerializedName("ford_consumer_id")
+    @Expose
+    var userId: String? = null
+
     @SerializedName("profile")
     @Expose
     var userProfile: UserProfile? = null

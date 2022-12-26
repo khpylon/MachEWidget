@@ -214,11 +214,6 @@ public class MainActivity extends AppCompatActivity {
             menu.findItem(R.id.action_update).setVisible(false);
         }
 
-        // If there aren't multiple vehicles, don't display manage vehicles option.
-        if (vehicleCount < 2) {
-            menu.findItem(R.id.action_vehicle).setVisible(false);
-        }
-
         return true;
     }
 

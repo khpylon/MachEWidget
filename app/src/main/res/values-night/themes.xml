@@ -16,6 +16,7 @@
 
     <style name="AlertDialogCustom" parent="android:Theme">
         <item name="buttonBarPositiveButtonStyle">@style/mybutton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/mybutton</item>
     </style>
 
     <style name="mybutton" parent="android:style/Widget.Button">

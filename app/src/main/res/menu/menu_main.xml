@@ -12,6 +12,11 @@
         android:orderInCategory="10"
         android:title="@string/action_login"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_vehicle"
+        android:orderInCategory="15"
+        android:title="@string/action_vehicle"
+        app:showAsAction="never" />
     <!--
     <item
         android:id="@+id/action_ota_view"
@@ -28,11 +33,6 @@
         android:id="@+id/action_chooseapp"
         android:orderInCategory="30"
         android:title="@string/action_chooseapp"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_vehicle"
-        android:orderInCategory="30"
-        android:title="@string/action_vehicle"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_color"
