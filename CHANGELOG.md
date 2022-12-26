@@ -5,12 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2022.12.26
+### Changed
+- A new interface has been added for managing the vehicles monitored by the widget.  This is due changes in portions of
+  the FordPass API.  Look at "Manage Vehicles" in the three-dot menu, and click on the "+" icon to add a new vehicle.  If you've 
+  been using the app in the past, you may need to login with your FordPass credentials first for everything to work again.
+
 ## 2022.12.07
 ### Added
 - Display explanation about unauthorized third party apps.
 - Implement a "hibernation" setting that disables automatic API usage until Ford releases a "public" API.
 
-# Changed
+### Changed
 - Remove use of stored credentials.
 - Change minimum update interval to 15 minutes.
 

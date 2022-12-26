@@ -15,8 +15,8 @@ android {
         applicationId "com.example.khughes.machewidget"
         minSdkVersion 28
         targetSdkVersion 33
-        versionCode 52
-        versionName "2022.12.07"
+        versionCode 53
+        versionName "2022.12.26"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -128,6 +128,8 @@ dependencies {
     implementation 'androidx.core:core:1.7.0'
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'org.commonmark:commonmark:0.18.2'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.7"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 
     // Room components
     implementation "androidx.room:room-ktx:2.5.0-alpha01"
