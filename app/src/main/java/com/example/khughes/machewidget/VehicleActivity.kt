@@ -7,8 +7,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.text.Editable
 import android.text.SpannableString
+import android.text.TextWatcher
 import android.text.style.StrikethroughSpan
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +41,7 @@ private lateinit var context: Context
 private lateinit var activity: AppCompatActivity
 private lateinit var userId: String
 private lateinit var userInfo: UserInfo
+private lateinit var newVINWidget: TextInputLayout
 
 class VehicleActivity : AppCompatActivity() {
 
@@ -96,8 +100,10 @@ class VehicleActivity : AppCompatActivity() {
 
         binding.addVehicle.setOnClickListener {
             val layout = layoutInflater.inflate(R.layout.newvehicle, null)
-            val newVINWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_vin)
+            newVINWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_vin)
             val newNicknameWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_nickname)
+//            newVINWidget.editText?.addTextChangedListener (textWatcher)
+
 
             val dialog = AlertDialog.Builder(
                 ContextThemeWrapper(
@@ -111,14 +117,9 @@ class VehicleActivity : AppCompatActivity() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .create()
             dialog.show()
+
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(View.OnClickListener {
-
                 val VIN = newVINWidget.editText?.text.toString().uppercase(Locale.getDefault())
-
-                if (VIN.length != 17 || !VIN.matches("^[A-Z0-9]*$".toRegex())) {
-                    Toast.makeText(context, "The VIN is not valid.", Toast.LENGTH_LONG).show()
-                    return@OnClickListener
-                }
 
                 val nickname = newNicknameWidget.editText?.text.toString()
 
@@ -141,6 +142,19 @@ class VehicleActivity : AppCompatActivity() {
                 getStatus(context, VIN, nickname)
                 dialog.dismiss()
             })
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+
+            newVINWidget.editText?.addTextChangedListener( object: TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    val size = s.toString().length
+                    newVINWidget.helperText = if (size == 17) "" else context.resources.getString(R.string.correct_VIN_length)
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = size == 17
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
+            } )
         }
 
         val adapter = VehicleListAdapter(VehicleDiff())
@@ -258,5 +272,4 @@ class VehicleActivity : AppCompatActivity() {
             return oldItem == newItem
         }
     }
-
 }

@@ -1,29 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/new_vehicle_vin"
+        android:layout_marginHorizontal="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/new_vehicle_vin"
-        android:hint="Vehicle's VIN">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:helperText="@string/correct_VIN_length"
+        app:counterMaxLength="17"
+        app:counterEnabled="true"
+        app:helperTextTextColor="@android:color/holo_red_light" >
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"/>
+            android:layout_height="match_parent"
+            android:lines="1"
+            android:maxLength="17"
+            android:inputType="text"
+            android:digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            android:hint="Vehicle's VIN"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/new_vehicle_nickname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/new_vehicle_nickname"
-        android:hint="Vehicle's Nickname">
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/new_vehicle_vin" >
+
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"/>
+            android:layout_height="match_parent"
+            android:lines="1"
+            android:inputType="textCapWords"
+            android:hint="Vehicle's Nickname" />
     </com.google.android.material.textfield.TextInputLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
