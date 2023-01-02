@@ -188,7 +188,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
         double distanceConversion;
         String distanceUnits;
-        if ((units == Constants.UNITS_SYSTEM && userInfo.getUomSpeed().equals("MPH")) || units == Constants.UNITS_IMPERIAL) {
+        if ((units == Constants.UNITS_SYSTEM && userInfo.getUomSpeed() != null && userInfo.getUomSpeed().equals("MPH")) || units == Constants.UNITS_IMPERIAL) {
             distanceConversion = Constants.KMTOMILES;
             distanceUnits = "miles";
         } else {
@@ -197,10 +197,10 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         }
         double pressureConversion;
         String pressureUnits;
-        if ((units == Constants.UNITS_SYSTEM && userInfo.getUomPressure().equals("PSI")) || units == Constants.UNITS_IMPERIAL) {
+        if ((units == Constants.UNITS_SYSTEM && userInfo.getUomPressure() != null && userInfo.getUomPressure().equals("PSI")) || units == Constants.UNITS_IMPERIAL) {
             pressureConversion = Constants.KPATOPSI;
             pressureUnits = "psi";
-        } else if (units == Constants.UNITS_SYSTEM && userInfo.getUomPressure().equals("BAR")) {
+        } else if (units == Constants.UNITS_SYSTEM && userInfo.getUomPressure() != null && userInfo.getUomPressure().equals("BAR")) {
             pressureConversion = Constants.KPATOBAR;
             pressureUnits = "bar";
         } else {
