@@ -14,6 +14,7 @@ open class Vehicle(val VIN: String) {
         private const val WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3
         private const val WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV = "3FM"
         private const val WORLD_MANUFACTURING_IDENTIFIER_GERMANY = "WF0"
+        private const val WORLD_MANUFACTURING_IDENTIFIER_USA_CAR = "1FA"
         private const val WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK = "1FT"
         private const val WORLD_MANUFACTURING_IDENTIFIER_USA_MPV = "1FM"
 
@@ -144,6 +145,13 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2 = "U1L"
         private const val NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4 = "U1M"
         private const val NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4 = "U1R"
+
+        private const val NA_LINE_SERIES_MUSTANG_GT_COUPE = "P8C"
+        private const val NA_LINE_SERIES_MUSTANG_GT_CONVERTABLE = "P8F"
+        private const val NA_LINE_SERIES_MUSTANG_ECOBOOST_COUPE = "P8T"
+        private const val NA_LINE_SERIES_MUSTANG_ECOBOOST_CONVERTABLE = "P8U"
+        private const val NA_LINE_SERIES_MUSTANG_MACH1_COUPE = "P8R"
+        private const val NA_LINE_SERIES_MUSTANG_SHELBY_GT600_COUPE = "P8S"
 
         private const val EURO_LINE_SERIES_START_INDEX = 7 - 1
         private const val EURO_LINE_SERIES_END_INDEX = 9
@@ -455,6 +463,26 @@ open class Vehicle(val VIN: String) {
             NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4,
         )
 
+        private fun isMustang(VIN: String): Boolean {
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_CAR
+                    && mustangLineSeries.contains(lineSeries)
+        }
+
+        private val mustangLineSeries: Set<String> = setOf(
+            NA_LINE_SERIES_MUSTANG_GT_COUPE,
+            NA_LINE_SERIES_MUSTANG_GT_CONVERTABLE,
+            NA_LINE_SERIES_MUSTANG_ECOBOOST_COUPE,
+            NA_LINE_SERIES_MUSTANG_ECOBOOST_CONVERTABLE,
+            NA_LINE_SERIES_MUSTANG_MACH1_COUPE,
+            NA_LINE_SERIES_MUSTANG_SHELBY_GT600_COUPE
+        )
+
         private fun isExpedition(VIN: String): Boolean {
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
@@ -465,6 +493,7 @@ open class Vehicle(val VIN: String) {
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_MPV
                     && expeditionLineSeries.contains(lineSeries)
         }
+
 
         private fun isKuga(VIN: String): Boolean {
             val wmi = VIN.substring(
@@ -492,8 +521,7 @@ open class Vehicle(val VIN: String) {
             isMachE(VIN) || isF150(VIN) || isF250(VIN) || isF350(VIN)
                     || isBronco(VIN)|| isBroncoSport(VIN) || isExplorer(VIN)
                     || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)
-                    || isKuga(VIN) || isPuma(VIN)
-
+                    || isMustang(VIN) || isKuga(VIN) || isPuma(VIN)
 
         @JvmStatic
         fun getVehicle(VIN: String): Vehicle {
@@ -501,6 +529,7 @@ open class Vehicle(val VIN: String) {
             if (VIN == null || VIN == "" ) return MachE(VIN)
             if (isBroncoSport(VIN)) return BroncoSport(VIN)
             if (isExpedition(VIN)) return Expedition(VIN)
+            if (isMustang(VIN)) return Mustang(VIN)
             if (isKuga(VIN)) return Kuga(VIN)
             if (isPuma(VIN)) return Puma(VIN)
 
@@ -912,7 +941,39 @@ open class Escape(VIN: String) : Vehicle(VIN) {
 
     override val layoutID = R.layout.escape_widget
     override val offsetPositions = arrayOf(340, 244)
+}
 
+class Mustang (VIN: String) : Vehicle(VIN) {
+    override val verticalDrawables: Map<String, Int> = mapOf(
+        WIREFRAME to R.drawable.mustang_wireframe_vert,
+        HOOD to R.drawable.mustang_hood_vert,
+        TAILGATE to R.drawable.mustang_hatch_vert,
+        LEFT_FRONT_DOOR to R.drawable.mustang_lfdoor_vert,
+        RIGHT_FRONT_DOOR to R.drawable.mustang_rfdoor_vert,
+        LEFT_REAR_DOOR to R.drawable.filler,
+        RIGHT_REAR_DOOR to R.drawable.filler,
+        BODY_PRIMARY to R.drawable.mustang_primary_vert,
+        BODY_SECONDARY to R.drawable.mustang_secondary_vert,
+    )
+
+    override val horizontalDrawables: Map<String, Int> = mapOf(
+        WIREFRAME to R.drawable.mustang_wireframe_horz,
+        HOOD to R.drawable.mustang_hood_horz,
+        TAILGATE to R.drawable.mustang_hatch_horz,
+        LEFT_FRONT_DOOR to R.drawable.mustang_lfdoor_horz,
+        RIGHT_FRONT_DOOR to R.drawable.mustang_rfdoor_horz,
+        LEFT_REAR_DOOR to R.drawable.filler,
+        RIGHT_REAR_DOOR to R.drawable.filler,
+        LEFT_FRONT_WINDOW to R.drawable.mustang_lfwindow_horz,
+        RIGHT_FRONT_WINDOW to R.drawable.mustang_rfwindow_horz,
+        LEFT_REAR_WINDOW to R.drawable.filler,
+        RIGHT_REAR_WINDOW to R.drawable.filler,
+        BODY_PRIMARY to R.drawable.mustang_primary_horz,
+        BODY_SECONDARY to R.drawable.mustang_secondary_horz,
+    )
+
+    override val layoutID = R.layout.mustang_widget
+    override val offsetPositions = arrayOf(164,232)
 }
 
 open class Explorer(VIN: String) : Vehicle(VIN) {
