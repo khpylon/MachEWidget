@@ -1,14 +1,11 @@
 <resources>
     <string name="app_name">Ford Status Widget</string>
-    <string name="f150_app_name">F-150 Info</string>
-    <string name="bronco_app_name">Bronco Info</string>
-    <string name="explorer_app_name">Explorer Info</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="action_login">Ford Log-in</string>
+    <string name="action_fordpass">FordPass Alert</string>
+    <string name="action_login">FordPass Log-in</string>
+    <string name="action_profile">Manage Profiles</string>
     <string name="action_OTA">OTA Update Info</string>
     <string name="action_chooseapp">Choose Linked Apps</string>
-    <string name="action_profile">Manage Profiles</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_backup">Save Settings</string>
     <string name="action_restore">Restore Settings</string>
@@ -17,8 +14,8 @@
     <string name="action_vehicle">Manage Vehicles</string>
     <string name="action_color">Set Vehicle Color</string>
     <string name="action_reminder">Set Charging Reminder</string>
-    <string name="action_fordpass">FordPass Alert</string>
     <string name="update_info">Update Information</string>
+    <string name="action_settings">Settings</string>
 
     <!-- Widget things -->
     <string name="add_widget">Add widget</string>
@@ -112,10 +109,7 @@
     <string name="install_update">Install Update</string>
 
     <string name="disclamer">
-        Your login credentials are only used to gain access to the Ford website.  They are stored encrypted in the app.
-    </string>
-    <string name="other_disclamer">
-        Your login credentials are only used to gain access to the Ford website.  They are not stored in the app.
+        Your login credentials are only used to gain access to your FordPass account.  They are not stored in the app.
     </string>
 
     <string name="fordpassPackage">"com.ford.fordpass"</string>
@@ -128,5 +122,9 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="correct_VIN_length">The VIN must be 17 characters long.</string>
+    <string name="username_or_e_mail">Username or E-mail</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
 
 </resources>
