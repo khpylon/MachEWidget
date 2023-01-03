@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.01.03
+### Added
+- Ford Mustang vehicles are now officially supported.  Just need someone with a Mustang to test it out...
+
+### Changed
+- Changes to Manage Vehicles activity when entering a new VIN:
+-- the user must enter a 17-character alphanumeric entry before being allowed to add the vehicle.
+-- when a vehicle type is recognized, it is displayed.
+
 ## 2022.12.26
 ### Changed
 - A new interface has been added for managing the vehicles monitored by the widget.  This is due changes in portions of
