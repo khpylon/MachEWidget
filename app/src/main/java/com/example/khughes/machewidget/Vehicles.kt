@@ -2,11 +2,12 @@ package com.example.khughes.machewidget
 
 open class Vehicle(val VIN: String) {
 
-    open val horizontalDrawables: Map<String,Int> = mapOf()
-    open val verticalDrawables: Map<String,Int> = mapOf()
+    open val horizontalDrawables: Map<String, Int> = mapOf()
+    open val verticalDrawables: Map<String, Int> = mapOf()
     open val layoutID = R.layout.mache_widget
-    open val offsetPositions = arrayOf(0,0)
+    open val offsetPositions = arrayOf(0, 0)
     open val logoID = R.drawable.mache_logo
+    open val name = ""
 
     companion object {
 
@@ -160,6 +161,7 @@ open class Vehicle(val VIN: String) {
         private const val EURO_LINE_SERIES_PUMA = "ERK"
 
         private fun isMachE(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -179,6 +181,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF150RegularCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             val f150RegularCabsLineSeries: Set<String> = setOf(
@@ -189,6 +192,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF150SuperCrew(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             val f150SuperCrewsLineSeries: Set<String> = setOf(
@@ -202,12 +206,14 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF150Raptor(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             return lineSeries == NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR
         }
 
         private fun isF150SuperCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             val f150SuperCabsLineSeries: Set<String> = setOf(
@@ -218,6 +224,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF150(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -229,6 +236,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF250RegularCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             val f250RegularCabsLineSeries: Set<String> = setOf(
@@ -239,6 +247,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF250CrewCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             val f250CrewCabsLineSeries: Set<String> = setOf(
@@ -249,6 +258,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF250SuperCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             val f250SuperCabsLineSeries: Set<String> = setOf(
@@ -259,15 +269,17 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF250(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
             )
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK &&
-                    (isF250RegularCab(VIN) || isF250SuperCab(VIN) || isF250CrewCab(VIN) )
+                    (isF250RegularCab(VIN) || isF250SuperCab(VIN) || isF250CrewCab(VIN))
         }
 
         private fun isF350RegularCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             return setOf(
@@ -283,6 +295,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF350CrewCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             return setOf(
@@ -313,6 +326,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF350(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -341,6 +355,7 @@ open class Vehicle(val VIN: String) {
         )
 
         private fun isExplorer(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -362,6 +377,7 @@ open class Vehicle(val VIN: String) {
         )
 
         private fun isBronco(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -381,6 +397,7 @@ open class Vehicle(val VIN: String) {
         )
 
         private fun isBroncoSport(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -411,6 +428,7 @@ open class Vehicle(val VIN: String) {
         )
 
         private fun isEscape(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -429,6 +447,7 @@ open class Vehicle(val VIN: String) {
         )
 
         private fun isEdge(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -464,6 +483,7 @@ open class Vehicle(val VIN: String) {
         )
 
         private fun isMustang(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -484,6 +504,7 @@ open class Vehicle(val VIN: String) {
         )
 
         private fun isExpedition(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -496,6 +517,7 @@ open class Vehicle(val VIN: String) {
 
 
         private fun isKuga(VIN: String): Boolean {
+            if (VIN.length < EURO_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -506,6 +528,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isPuma(VIN: String): Boolean {
+            if (VIN.length < EURO_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
@@ -519,14 +542,14 @@ open class Vehicle(val VIN: String) {
         @JvmStatic
         fun isVINRecognized(VIN: String): Boolean =
             isMachE(VIN) || isF150(VIN) || isF250(VIN) || isF350(VIN)
-                    || isBronco(VIN)|| isBroncoSport(VIN) || isExplorer(VIN)
+                    || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
                     || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)
                     || isMustang(VIN) || isKuga(VIN) || isPuma(VIN)
 
         @JvmStatic
         fun getVehicle(VIN: String): Vehicle {
             // Check all the inherited classes first
-            if (VIN == null || VIN == "" ) return MachE(VIN)
+            if (VIN == null || VIN == "") return MachE(VIN)
             if (isBroncoSport(VIN)) return BroncoSport(VIN)
             if (isExpedition(VIN)) return Expedition(VIN)
             if (isMustang(VIN)) return Mustang(VIN)
@@ -534,7 +557,7 @@ open class Vehicle(val VIN: String) {
             if (isPuma(VIN)) return Puma(VIN)
 
             // Next check for F-150 variants
-            if (isF150RegularCab(VIN))  return F150RegularCab(VIN)
+            if (isF150RegularCab(VIN)) return F150RegularCab(VIN)
             if (isF150SuperCab(VIN)) return F150SuperCab(VIN)
             if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) return F150SuperCrew(VIN)
 
@@ -555,7 +578,7 @@ open class Vehicle(val VIN: String) {
             if (isExplorer(VIN)) return Explorer(VIN)
 
             // If none of the above, then see if it's a "truck"
-            if(VIN.startsWith(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK)) return F150RegularCab(VIN)
+            if (VIN.startsWith(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK)) return F150RegularCab(VIN)
 
             // Default to the Mach-E
             return MachE(VIN)
@@ -649,12 +672,14 @@ class MachE(VIN: String) : Vehicle(VIN) {
 
     override val layoutID = R.layout.mache_widget
     override val offsetPositions = arrayOf(352, 288)
+    override val name = "Mustang Mach-E"
 }
 
 open class F150(VIN: String) : Vehicle(VIN) {
     override val layoutID = R.layout.f150_widget
     override val offsetPositions = arrayOf(344, 220)
     override val logoID = R.drawable.ford_f150_logo
+    override val name = "F-150"
 }
 
 class F150RegularCab(VIN: String) : F150(VIN) {
@@ -685,6 +710,8 @@ class F150RegularCab(VIN: String) : F150(VIN) {
         BODY_PRIMARY to R.drawable.regularcab_primary_horz,
         BODY_SECONDARY to R.drawable.regularcab_secondary_horz,
     )
+
+    override val name = "F-150 Regular Cab"
 }
 
 class F150SuperCab(VIN: String) : F150(VIN) {
@@ -715,6 +742,8 @@ class F150SuperCab(VIN: String) : F150(VIN) {
         BODY_PRIMARY to R.drawable.supercab_primary_horz,
         BODY_SECONDARY to R.drawable.supercab_secondary_horz,
     )
+
+    override val name = "F-150 Super Cab"
 }
 
 class F150SuperCrew(VIN: String) : F150(VIN) {
@@ -745,6 +774,8 @@ class F150SuperCrew(VIN: String) : F150(VIN) {
         BODY_PRIMARY to R.drawable.supercrew_primary_horz,
         BODY_SECONDARY to R.drawable.supercrew_secondary_horz,
     )
+
+    override val name = "F-150 Super Crew"
 }
 
 open class F250(VIN: String) : Vehicle(VIN) {
@@ -781,6 +812,8 @@ class F250RegularCab(VIN: String) : F250(VIN) {
         BODY_PRIMARY to R.drawable.regularcab_primary_horz,
         BODY_SECONDARY to R.drawable.regularcab_secondary_horz,
     )
+
+    override val name = "F-250 Regular Cab"
 }
 
 class F250SuperCab(VIN: String) : F250(VIN) {
@@ -811,6 +844,8 @@ class F250SuperCab(VIN: String) : F250(VIN) {
         BODY_PRIMARY to R.drawable.supercab_primary_horz,
         BODY_SECONDARY to R.drawable.supercab_secondary_horz,
     )
+
+    override val name = "F-250 Super Cab"
 }
 
 class F250CrewCab(VIN: String) : F250(VIN) {
@@ -841,6 +876,8 @@ class F250CrewCab(VIN: String) : F250(VIN) {
         BODY_PRIMARY to R.drawable.supercrew_primary_horz,
         BODY_SECONDARY to R.drawable.supercrew_secondary_horz,
     )
+
+    override val name = "F-250 Crew Cab"
 }
 
 open class Bronco(VIN: String) : Vehicle(VIN) {
@@ -875,6 +912,7 @@ open class Bronco(VIN: String) : Vehicle(VIN) {
     override val layoutID = R.layout.bronco_widget
     override val offsetPositions = arrayOf(244, 200)
     override val logoID = R.drawable.bronco_logo
+    override val name = "Bronco"
 }
 
 class Edge(VIN: String) : Vehicle(VIN) {
@@ -908,6 +946,7 @@ class Edge(VIN: String) : Vehicle(VIN) {
 
     override val layoutID = R.layout.edge_widget
     override val offsetPositions = arrayOf(240, 200)
+    override val name = "Edge"
 }
 
 open class Escape(VIN: String) : Vehicle(VIN) {
@@ -941,9 +980,10 @@ open class Escape(VIN: String) : Vehicle(VIN) {
 
     override val layoutID = R.layout.escape_widget
     override val offsetPositions = arrayOf(340, 244)
+    override val name = "Escape"
 }
 
-class Mustang (VIN: String) : Vehicle(VIN) {
+class Mustang(VIN: String) : Vehicle(VIN) {
     override val verticalDrawables: Map<String, Int> = mapOf(
         WIREFRAME to R.drawable.mustang_wireframe_vert,
         HOOD to R.drawable.mustang_hood_vert,
@@ -973,7 +1013,8 @@ class Mustang (VIN: String) : Vehicle(VIN) {
     )
 
     override val layoutID = R.layout.mustang_widget
-    override val offsetPositions = arrayOf(164,232)
+    override val offsetPositions = arrayOf(164, 232)
+    override val name = "Mustang"
 }
 
 open class Explorer(VIN: String) : Vehicle(VIN) {
@@ -1008,20 +1049,26 @@ open class Explorer(VIN: String) : Vehicle(VIN) {
     override val layoutID = R.layout.explorer_widget
     override val offsetPositions = arrayOf(320, 280)
     override val logoID = R.drawable.ford_explorer_logo
+    override val name = "Explorer"
 }
 
 class Expedition(VIN: String) : Explorer(VIN) {
     override val offsetPositions = arrayOf(324, 304)
+    override val name = "Expedition"
 }
 
-class BroncoSport(VIN: String) : Bronco(VIN)
+class BroncoSport(VIN: String) : Bronco(VIN) {
+    override val name = "Bronco Sport"
+}
 
 class Kuga(VIN: String) : Escape(VIN) {
     override val offsetPositions = arrayOf(340, 280)
+    override val name = "Kuga"
 }
 
 class Puma(VIN: String) : Escape(VIN) {
     override val offsetPositions = arrayOf(172, 288)
+    override val name = "Puma"
 }
 
 
