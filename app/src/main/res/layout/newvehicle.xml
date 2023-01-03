@@ -15,9 +15,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:helperText="@string/correct_VIN_length"
+        app:helperTextTextColor="@android:color/holo_red_light"
         app:counterMaxLength="17"
         app:counterEnabled="true"
-        app:helperTextTextColor="@android:color/holo_red_light" >
+        app:hintTextColor="@color/light_blue_600" >
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,7 +26,7 @@
             android:maxLength="17"
             android:inputType="text"
             android:digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            android:hint="Vehicle's VIN"/>
+            android:hint="@string/vehicles_vin" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -36,14 +37,14 @@
         android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/new_vehicle_vin" >
-
+        app:layout_constraintTop_toBottomOf="@id/new_vehicle_vin"
+        app:hintTextColor="@color/light_blue_600" >
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:lines="1"
             android:inputType="textCapWords"
-            android:hint="Vehicle's Nickname" />
+            android:hint="@string/vehicle_s_nickname" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

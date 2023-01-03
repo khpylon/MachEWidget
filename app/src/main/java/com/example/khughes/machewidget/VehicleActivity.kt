@@ -11,7 +11,6 @@ import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.StrikethroughSpan
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
@@ -31,19 +31,21 @@ import com.example.khughes.machewidget.databinding.ActivityVehicleBinding
 import com.example.khughes.machewidget.db.UserInfoDatabase
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.*
+import java.lang.ref.WeakReference
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 
-private lateinit var binding: ActivityVehicleBinding
 private lateinit var mVehicleViewModel: VehicleViewModel
-private lateinit var context: Context
 private lateinit var activity: AppCompatActivity
 private lateinit var userId: String
 private lateinit var userInfo: UserInfo
-private lateinit var newVINWidget: TextInputLayout
 
 class VehicleActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityVehicleBinding
+    private lateinit var context: Context
+    private lateinit var newVINWidget: TextInputLayout
 
     private fun getStatus(context: Context, VIN: String?, nickname: String?) {
         val statusHandler: Handler = object : Handler(Looper.getMainLooper()) {
@@ -51,11 +53,8 @@ class VehicleActivity : AppCompatActivity() {
                 val bundle = msg.data
                 val action = bundle.getString("action")
                 if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    Toast.makeText(
-                        context,
-                        "Vehicle status successfully retrieved.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(context, "Vehicle status successfully retrieved.", Toast.LENGTH_LONG)
+                        .show()
                     NetworkCalls.getVehicleImage(context, userInfo.accessToken, VIN, userInfo.country)
                 } else {
                     Toast.makeText(context, "Unable to retrieve vehicle status.", Toast.LENGTH_LONG)
@@ -102,9 +101,6 @@ class VehicleActivity : AppCompatActivity() {
             val layout = layoutInflater.inflate(R.layout.newvehicle, null)
             newVINWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_vin)
             val newNicknameWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_nickname)
-//            newVINWidget.editText?.addTextChangedListener (textWatcher)
-
-
             val dialog = AlertDialog.Builder(
                 ContextThemeWrapper(
                     activity,
@@ -130,11 +126,8 @@ class VehicleActivity : AppCompatActivity() {
                                 .show()
                             return@OnClickListener
                         } else if (tmp.nickname == nickname) {
-                            Toast.makeText(
-                                context,
-                                "This nickname is already in use.",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            Toast.makeText(context, "This nickname is already in use.", Toast.LENGTH_LONG)
+                                .show()
                             return@OnClickListener
                         }
                     }
@@ -144,20 +137,40 @@ class VehicleActivity : AppCompatActivity() {
             })
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
 
-            newVINWidget.editText?.addTextChangedListener( object: TextWatcher {
+            newVINWidget.editText?.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
+                    val VIN = s.toString()
+
+                    // When we recognize something in the VIN, display a specific hint
+                    var message: String
+                    if (Vehicle.isVINRecognized(VIN)) {
+                        message = Vehicle.getVehicle(VIN).name
+                        if (message != "") {
+                            message = "VIN appears to be for " +
+                                    (if ("AEIOU".contains(message.subSequence(0,1))) "an " else "a ") + message
+                        }
+                        newVINWidget.hintTextColor = ContextCompat.getColorStateList(context,R.color.light_blue_200)
+                    } else {
+                        message = context.resources.getString(R.string.vehicles_vin)
+                        newVINWidget.hintTextColor = ContextCompat.getColorStateList(context,R.color.light_blue_600)
+                    }
+                    newVINWidget.hint = message
+
+                    // Display helper text if VIN string is too short; otherwise, enable the OK button
                     val size = s.toString().length
                     newVINWidget.helperText = if (size == 17) "" else context.resources.getString(R.string.correct_VIN_length)
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = size == 17
                 }
+
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 }
+
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 }
-            } )
+            })
         }
 
-        val adapter = VehicleListAdapter(VehicleDiff())
+        val adapter = VehicleListAdapter(VehicleDiff(), context)
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
@@ -204,9 +217,11 @@ class VehicleActivity : AppCompatActivity() {
         }
     }
 
-    class VehicleListAdapter(diffCallback: DiffUtil.ItemCallback<VehicleIds>) :
+    class VehicleListAdapter(diffCallback: DiffUtil.ItemCallback<VehicleIds>, context: Context) :
         ListAdapter<VehicleIds, VehicleViewHolder>(diffCallback) {
+        private val mContext: WeakReference<Context> = WeakReference(context)
         private var changing = false
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VehicleViewHolder {
             val tmp = VehicleViewHolder.create(parent)
             tmp.enabledView.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -239,7 +254,7 @@ class VehicleActivity : AppCompatActivity() {
             }
             holder.VINItemView.text = text
             holder.nicknameItemView.text = current.nickname
-            val bmp = VehicleImages.getRandomImage(context, VIN)
+            val bmp = VehicleImages.getRandomImage(mContext.get()!!, VIN)
             if (bmp != null) {
                 holder.imageView.setImageBitmap(bmp)
                 holder.imageView.visibility = VISIBLE

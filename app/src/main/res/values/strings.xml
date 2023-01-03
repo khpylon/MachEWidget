@@ -126,5 +126,7 @@
     <string name="username_or_e_mail">Username or E-mail</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="vehicles_vin">Vehicle\'s VIN</string>
+    <string name="vehicle_s_nickname">Vehicle\'s Nickname</string>
 
 </resources>
