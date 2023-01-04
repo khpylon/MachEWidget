@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.text.Editable
+import android.text.InputFilter
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.StrikethroughSpan
@@ -137,6 +138,10 @@ class VehicleActivity : AppCompatActivity() {
             })
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
 
+            // Force text to uppercase
+            newVINWidget.editText?.let{ it.filters += InputFilter.AllCaps() }
+
+            // Process VIN text as it's typed
             newVINWidget.editText?.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                     val VIN = s.toString()
