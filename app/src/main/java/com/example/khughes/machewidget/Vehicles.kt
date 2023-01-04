@@ -781,7 +781,7 @@ class F150SuperCrew(VIN: String) : F150(VIN) {
 open class F250(VIN: String) : Vehicle(VIN) {
     override val layoutID = R.layout.f150_widget
     override val offsetPositions = arrayOf(400, 272)
-    override val logoID = R.drawable.ford_f150_logo
+    override val logoID = R.drawable.ford_f250_logo
 }
 
 class F250RegularCab(VIN: String) : F250(VIN) {
