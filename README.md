@@ -9,7 +9,7 @@ This app/widget is based on the work of [Anthony (tonesto7)](https://github.com/
 [David Schablowsky](https://github.com/dschablowsky/FordPassWidget), and also the work of [@DevSecOps](https://www.macheforum.com/site/threads/guide-android-mme-widget-more-complex.13588/)
 .  It is not a complete implementation of the functionality of their widgets, as it:
 - is only intended for the Ford Mustang Mach-E, as that's the only Ford I own (capabilities have been extended to support 
-  F-150/F-250/F-350, Bronco/Bronco Sport, Explorer, Escape, Edge, Expedition, Kuga, and Puma owners as well, but feedback is encouraged)
+  F-150/F-250/F-350, Bronco/Bronco Sport, Explorer, Escape, Edge, Expedition, Mustang, Kuga, and Puma owners as well, but feedback is encouraged)
 - does not include all the function of tonesto7's Apple/iOS widget
 - does not currently support accounts outside of the United States, although it may still work
 
