@@ -1,6 +1,7 @@
 package com.example.khughes.machewidget
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
@@ -99,6 +100,7 @@ class VehicleActivity : AppCompatActivity() {
             prefs.getString(context.resources.getString(R.string.userId_key), "") as String
 
         binding.addVehicle.setOnClickListener {
+            // Create the alert dialog
             val layout = layoutInflater.inflate(R.layout.newvehicle, null)
             newVINWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_vin)
             val newNicknameWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_nickname)
@@ -126,7 +128,7 @@ class VehicleActivity : AppCompatActivity() {
                             Toast.makeText(context, "This VIN already exists.", Toast.LENGTH_LONG)
                                 .show()
                             return@OnClickListener
-                        } else if (tmp.nickname == nickname) {
+                        } else if (nickname != "" && tmp.nickname == nickname) {
                             Toast.makeText(context, "This nickname is already in use.", Toast.LENGTH_LONG)
                                 .show()
                             return@OnClickListener
@@ -187,15 +189,32 @@ class VehicleActivity : AppCompatActivity() {
         }
         CoroutineScope(Dispatchers.Main).launch {
             userInfo = getUserInfo(context, userId)
+            if(userInfo.userId == null) {
+                binding.addVehicle.hide()
+                AlertDialog.Builder(
+                    ContextThemeWrapper(activity, R.style.AlertDialogCustom))
+                    .setTitle("Error")
+                    .setMessage("Vehicles can't be added without a valid user; please log in first.")
+                    .setPositiveButton(
+                        android.R.string.ok
+                    ) { _: DialogInterface?, _: Int -> finish() }
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show()
+            }
         }
     }
 
     private suspend fun getUserInfo(context: Context, userId: String): UserInfo =
         coroutineScope {
             withContext(Dispatchers.IO) {
-                val userInfo =
-                    UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId)
-                userInfo
+                val user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId)
+                if (user == null) {
+                    val tmp = UserInfo()
+                    tmp.userId = null
+                    tmp
+                } else {
+                    user
+                }
             }
         }
 
