@@ -62,15 +62,6 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
 
-            // No matter the choice, erase the username and password for all profiles
-            val cred: Preference? =
-                findPreference(this.resources.getString(R.string.save_credentials_key))
-            cred?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _: Preference?, _: Any? ->
-                    Encryption(context).clearCredentials()
-                    true
-                }
-
             // Erase the old log file on enable.
             val verbose: Preference? = findPreference(this.resources.getString(R.string.logging_key))
             verbose?.onPreferenceChangeListener =

@@ -190,29 +190,6 @@ public class StoredData {
         commitWait(edit);
     }
 
-    public String getSecretPassword() {
-        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-        if (!pref.contains(PASSWORD)) {
-            byte[] array = new byte[64];
-            new Random().nextBytes(array);
-            commitWait(pref.edit().putString(PASSWORD, new String(array, StandardCharsets.UTF_8)));
-        }
-        return pref.getString(PASSWORD, "");
-    }
-
-    private String getCryptoString(String VIN, String tag) {
-        SharedPreferences pref = mContext.getSharedPreferences(VIN, MODE_PRIVATE);
-        String cipher = pref.getString(tag, null);
-        Encryption encrypt = new Encryption(mContext);
-        return encrypt.getPlaintextString( cipher);
-    }
-
-    public String getUsername(String VIN) { return getCryptoString(VIN, USERNAME); }
-
-    public String getPassword(String VIN) {
-        return getCryptoString(VIN, PASSWORD);
-    }
-
     public String getLatestVersion() {
         SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
         return pref.getString(LATESTVERSION, "");

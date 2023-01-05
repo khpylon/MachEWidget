@@ -11,14 +11,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.khughes.machewidget.UserInfo;
 
-@Database(entities = UserInfo.class, version = 2)
+@Database(entities = UserInfo.class, version = 3)
 public abstract class UserInfoDatabase extends RoomDatabase {
     private static UserInfoDatabase instance;
 
     public static synchronized UserInfoDatabase getInstance(Context context) {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(), UserInfoDatabase.class, "userinfo_db")
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_2_3)
                     .setJournalMode(JournalMode.TRUNCATE)
                     .build();
         }
@@ -35,15 +35,15 @@ public abstract class UserInfoDatabase extends RoomDatabase {
     public abstract UserInfoDao userInfoDao();
 
     private static final String newTable = "CREATE TABLE `new_user_info` ( `id` INTEGER NOT NULL, `userId` TEXT, " +
-            "`username` TEXT, `password` TEXT, `programState` TEXT, `accessToken` TEXT, `refreshToken` TEXT, " +
+            "`programState` TEXT, `accessToken` TEXT, `refreshToken` TEXT, " +
             "`expiresIn` INTEGER NOT NULL, `country` TEXT, `language` TEXT, `uomSpeed` TEXT, " +
             "`uomDistance` INTEGER NOT NULL, `uomPressure` TEXT, `lastModified` TEXT, " +
             "PRIMARY KEY(`id`)) ";
 
-    private static final String fields = "`userId`, `username`, `password`, `programState`, `accessToken`, `refreshToken`, `expiresIn`, " +
+    private static final String fields = "`userId`, `programState`, `accessToken`, `refreshToken`, `expiresIn`, " +
             "`country`, `language`, `uomSpeed`, `uomDistance`, `uomPressure`, `lastModified`";
 
-    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             // Create the new table
@@ -57,4 +57,6 @@ public abstract class UserInfoDatabase extends RoomDatabase {
             database.execSQL("ALTER TABLE new_user_info RENAME TO user_info");
         }
     };
+
+
 }

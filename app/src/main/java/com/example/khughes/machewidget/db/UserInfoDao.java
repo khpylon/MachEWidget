@@ -21,9 +21,6 @@ public interface UserInfoDao {
     @Query("SELECT * FROM user_info WHERE userId LIKE :userId")
     UserInfo findUserInfo(String userId);
 
-    @Query("UPDATE user_info SET username = '', password = ''")
-    void clearCredentials();
-
     @Delete
     void deleteUserInfo(UserInfo user);
 
