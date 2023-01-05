@@ -213,7 +213,7 @@ class VehicleColor {
 class PrefManagement {
 
     companion object {
-        private const val JSON_SETTINGS_VERSION = 3
+        private const val JSON_SETTINGS_VERSION = 4
     }
 
     private lateinit var jsonOutput: String
@@ -282,60 +282,61 @@ class PrefManagement {
                     VINs.add(info.vin)
                 }
 
-                // Update users in the database, and remove all IDs from the current list
-                val users = jsonObject.getAsJsonArray("users")
-                for (items in users) {
-                    val info = gson.fromJson<UserInfo>(
-                        items.toString(),
-                        object : TypeToken<UserInfo?>() {}.type
-                    )
-                    val current =
-                        UserInfoDatabase.getInstance(context).userInfoDao()
-                            .findUserInfo(info.userId)
-                    if (current == null) {
-                        info.id = 0
-                        UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info)
-                    } else {
-                        UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info)
-                    }
-                    userIds.remove(info.userId)
-                }
-
                 var newVIN = ""
                 var newUserId = ""
-                // Insert missing VINs into the database, and remove all VINs from the current list
-                // Insert missing VINs into the database, and remove all VINs from the current list
-                val vehicles = jsonObject.getAsJsonArray("vehicles")
-                for (items in vehicles) {
-                    val info = gson.fromJson<VehicleInfo>(
-                        items.toString(),
-                        object : TypeToken<VehicleInfo?>() {}.type
-                    )
-                    // Save a valid VIN in case we need to change the current VIN
-                    newVIN = info.vin
-                    newUserId = info.userId
-                    val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                        .findVehicleInfoByVIN(info.vin)
-                    if (current == null) {
-                        info.id = 0
-                        VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                            .insertVehicleInfo(info)
-                    }
-                    val user =
-                        UserInfoDatabase.getInstance(context).userInfoDao()
-                            .findUserInfo(info.userId)
-                    if (user != null) {
-                        NetworkCalls.getVehicleImage(
-                            context,
-                            user.accessToken,
-                            newVIN,
-                            user.country
-                        )
-                    }
-                    VINs.remove(info.vin)
-                }
 
-                // If the current VIN is still in the current list, change it to one of the "good" VINs
+                // Update users in the database, and remove all IDs from the current list
+                // Don't try to restore for older user IDs
+                if (version > 3) {
+                    val users = jsonObject.getAsJsonArray("users")
+                    for (items in users) {
+                        val info = gson.fromJson<UserInfo>(
+                            items.toString(),
+                            object : TypeToken<UserInfo?>() {}.type
+                        )
+                        val current =
+                            UserInfoDatabase.getInstance(context).userInfoDao()
+                                .findUserInfo(info.userId)
+                        if (current == null) {
+                            info.id = 0
+                            UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info)
+                        } else {
+                            UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info)
+                        }
+                        userIds.remove(info.userId)
+                    }
+
+                    // Insert missing VINs into the database, and remove all VINs from the current list
+                    val vehicles = jsonObject.getAsJsonArray("vehicles")
+                    for (items in vehicles) {
+                        val info = gson.fromJson<VehicleInfo>(
+                            items.toString(),
+                            object : TypeToken<VehicleInfo?>() {}.type
+                        )
+                        // Save a valid VIN in case we need to change the current VIN
+                        newVIN = info.vin
+                        newUserId = info.userId
+                        val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                            .findVehicleInfoByVIN(info.vin)
+                        if (current == null) {
+                            info.id = 0
+                            VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                                .insertVehicleInfo(info)
+                        }
+                        val user =
+                            UserInfoDatabase.getInstance(context).userInfoDao()
+                                .findUserInfo(info.userId)
+                        if (user != null) {
+                            NetworkCalls.getVehicleImage(
+                                context,
+                                user.accessToken,
+                                newVIN,
+                                user.country
+                            )
+                        }
+                        VINs.remove(info.vin)
+                    }
+                }
 
                 // If the current VIN is still in the current list, change it to one of the "good" VINs
                 val VINkey = context.resources.getString(R.string.VIN_key)
@@ -366,6 +367,8 @@ class PrefManagement {
                 // Update all the default preferences
                 var edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
                 var prefs = jsonObject.getAsJsonObject("prefs")
+                val currentUserId = PreferenceManager.getDefaultSharedPreferences(context).getString("userId", "")
+
                 for (item in prefs.entrySet()) {
                     val key = item.key
                     var value = item.value.asJsonArray
@@ -384,8 +387,6 @@ class PrefManagement {
                         else -> edit.putBoolean(key, value[1].asBoolean).commit()
                     }
                 }
-
-                // Update all the shared preferences
 
                 // Update all the shared preferences
                 edit = context.getSharedPreferences(StoredData.TAG, Context.MODE_PRIVATE).edit()
