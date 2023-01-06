@@ -17,6 +17,7 @@
 .cxx
 output-metadata.json
 /playstore/release/app-playstore-release.apk
-/schemas/com.example.khughes.machewidget.db.UserInfoDatabase/2.json
-/schemas/com.example.khughes.machewidget.db.UserInfoDatabase/3.json
 /github/release/app-github-release.aab
+/schemas/com.example.khughes.machewidget.db.UserInfoDatabase
+/schemas/com.example.khughes.machewidget.db.OTADatabase
+/schemas/com.example.khughes.machewidget.db.OTAInfoDatabase
