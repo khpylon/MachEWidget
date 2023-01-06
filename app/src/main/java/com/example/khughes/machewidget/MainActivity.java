@@ -256,8 +256,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_login) {
             // Depending on whether profiles are being used, either start the profile manager or go straight to login screen
-            boolean profiles = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.show_profiles_key), false);
-            Intent intent = new Intent(this, profiles ? ProfileManager.class : LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.action_refresh) {
@@ -280,16 +279,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ReminderActivity.class);
             startActivity(intent);
             return true;
-//        } else if (id == R.id.action_ota_view) {
-//            Intent intent = new Intent(this, OTAViewActivity.class);
-//            startActivity(intent);
-//            return true;
         } else if (id == R.id.action_copylog) {
             String result = LogFile.copyLogFile(context);
             Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_backup) {
-//            Utils.savePrefs(context);
             new PrefManagement().savePrefs(context);
             return true;
         } else if (id == R.id.action_restore) {

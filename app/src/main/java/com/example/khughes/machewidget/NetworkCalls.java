@@ -611,59 +611,6 @@ public class NetworkCalls {
         return data;
     }
 
-
-//    public static void getChargeStation(Handler handler, Context context, String token) {
-//        Thread t = new Thread(() -> {
-//            NetworkCalls.getChargeStation(context, token);
-//            Message m = Message.obtain();
-//            handler.sendMessage(m);
-//        });
-//        t.start();
-//    }
-//
-//    private static void getChargeStation(Context context, String token) {
-//        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
-//
-//        if (MainActivity.checkInternetConnection(context)) {
-//            APIMPSService chargeStationClient = NetworkServiceGenerators.createAPIMPSService(APIMPSService.class, context);
-//            for (int retry = 2; retry >= 0; --retry) {
-//                Call<ChargeStation> call = chargeStationClient.getChargeStation(token, Constants.APID, VIN);
-//                try {
-//                    Response<ChargeStation> response = call.execute();
-//                    if (response.isSuccessful()) {
-//                        LogFile.i(context, MainActivity.CHANNEL_ID, "charge station successful.");
-////                        appInfo.setChargeStation(VIN, response.body());
-//                    } else {
-//                        try {
-//                            if (response.errorBody().string().contains("UpstreamException")) {
-//                                OTAStatus status = new OTAStatus();
-//                                status.setError("UpstreamException");
-//                            }
-//                        } catch (Exception e) {
-//                            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getChargeStation: ", e);
-//                        }
-//                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-//                        LogFile.i(context, MainActivity.CHANNEL_ID, "charge station UNSUCCESSFUL.");
-//                    }
-//                    break;
-//                } catch (java.net.SocketTimeoutException ee) {
-//                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.SocketTimeoutException in NetworkCalls.getChargeStation");
-//                    LogFile.e(context, MainActivity.CHANNEL_ID, MessageFormat.format("    {0} retries remaining", retry));
-//                    try {
-//                        Thread.sleep(3 * 1000);
-//                    } catch (InterruptedException e) {
-//                    }
-//                } catch (java.net.UnknownHostException e3) {
-//                    LogFile.e(context, MainActivity.CHANNEL_ID, "java.net.UnknownHostException in NetworkCalls.getChargeStation");
-//                    break;
-//                } catch (Exception e) {
-//                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.getChargeStation: ", e);
-//                    break;
-//                }
-//            }
-//        }
-//    }
-
     public static void getVehicleImage(Context context, String token, String VIN, String country) {
         // Create the images folder if necessary
         File imageDir = new File(context.getDataDir(), Constants.IMAGES_FOLDER);
