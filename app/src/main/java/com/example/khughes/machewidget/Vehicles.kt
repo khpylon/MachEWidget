@@ -311,6 +311,7 @@ open class Vehicle(val VIN: String) {
         }
 
         private fun isF350SuperCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             return setOf(
