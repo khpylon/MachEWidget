@@ -44,8 +44,6 @@
     <string name="transparent_back">Use transparent background</string>
     <string name="last_refresh_time">Show time of last refresh instead of elapsed time</string>
     <string name="show_location">Display location on widget</string>
-    <string name="show_OTA">Display OTA info on widget</string>
-    <string name="show_profiles">Enable multiple user profiles</string>
     <string name="save_credentials">Save log-in credentials</string>
     <string name="use_credentials">Use stored credentials</string>
     <string name="logging">Enable logging</string>
@@ -76,8 +74,6 @@
     <string name="show_all_apps_key">"showAllApps"</string>
     <string name="last_refresh_time_key">refreshDisplayTime</string>
     <string name="show_location_key">showLocation</string>
-    <string name="show_OTA_key">showOTA</string>
-    <string name="show_profiles_key">showProfiles</string>
     <string name="logging_key">logging</string>
     <string name="save_credentials_key">saveCredentials</string>
     <string name="github_repo_key">githubRepo</string>

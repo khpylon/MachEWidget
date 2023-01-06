@@ -76,8 +76,8 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
     }
 
     // Based on the VIN, find the right widget layout
-    private RemoteViews getWidgetView(Context context) {
-        String VIN = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getResources().getString(R.string.VIN_key), "");
+    private RemoteViews getWidgetView(Context context, String widget_VIN) {
+        String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, "");
         return new RemoteViews(context.getPackageName(), Vehicle.getVehicle(VIN).getLayoutID());
     }
 
@@ -122,7 +122,8 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId, InfoRepository info) {
-        RemoteViews views = getWidgetView(context);
+        String widget_VIN = Constants.VIN_KEY + appWidgetId;
+        RemoteViews views = getWidgetView(context, widget_VIN);
 
         // Make sure the left side is visible depending on the widget width
         Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
@@ -326,9 +327,13 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
-        RemoteViews views = getWidgetView(context);
-        onResize(newOptions, views);
-        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+        String widget_VIN = Constants.VIN_KEY + appWidgetId;
+        String VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).getString(widget_VIN, "");
+        if (!VIN.equals("")) {
+            RemoteViews views = getWidgetView(context, widget_VIN);
+            onResize(newOptions, views);
+            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views);
+        }
     }
 
     @Override
@@ -356,7 +361,7 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
             case PHEVTOGGLE_CLICK:
                 String mode = intent.getStringExtra("nextMode");
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                RemoteViews views = getWidgetView(context);
+                RemoteViews views = getWidgetView(context, widget_VIN);
                 String nextMode;
                 if (mode.equals("showGasoline")) {
                     nextMode = "showElectric";

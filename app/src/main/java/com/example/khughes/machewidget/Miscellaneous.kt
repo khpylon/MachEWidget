@@ -338,15 +338,6 @@ class PrefManagement {
                     }
                 }
 
-                // If the current VIN is still in the current list, change it to one of the "good" VINs
-                val VINkey = context.resources.getString(R.string.VIN_key)
-                val currentVIN =
-                    PreferenceManager.getDefaultSharedPreferences(context).getString(VINkey, "")
-                if (VINs.contains(currentVIN)) {
-                    PreferenceManager.getDefaultSharedPreferences(context).edit()
-                        .putString(VINkey, newVIN).apply()
-                }
-
                 // Version 1 preferences didn't include user Id
                 if (version == 1) {
                     val userIdkey = context.resources.getString(R.string.userId_key)

@@ -78,7 +78,6 @@ class SettingsActivity : AppCompatActivity() {
                 R.string.transp_bg_key,
                 R.string.enable_commands_key,
                 R.string.last_refresh_time_key,
-                R.string.show_OTA_key,
                 R.string.show_location_key,
                 R.string.user_forcedUpdate_key,
                 R.string.use_colors_key,
