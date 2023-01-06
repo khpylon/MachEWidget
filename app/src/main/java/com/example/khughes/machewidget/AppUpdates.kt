@@ -22,50 +22,6 @@ object AppUpdates {
             // Add operations here
 
             // Re-enable OTA support on all vehicles, and add userId to settings.
-            if (lastVersion < "2022.05.25") {
-                LogFile.d(context, MainActivity.CHANNEL_ID, "running 2022.05.25 updates")
-                PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true)
-                val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-                val VIN = sharedPrefs.getString(context.resources.getString(R.string.VIN_key), null)
-                Thread {
-                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao().updateSupportOTA()
-                    if (VIN != null) {
-                        val info = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                            .findVehicleInfoByVIN(VIN)
-                        var userId = info.userId
-                        // Some vehicle entries had missing userID value.  If so, get the user ID from the first entry
-                        // of the user database and update all vehicles
-                        if (userId == null) {
-                            LogFile.d(
-                                context,
-                                MainActivity.CHANNEL_ID,
-                                "2022.05.25 update: adding user ID to vehicles"
-                            )
-                            val userInfo =
-                                UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()
-                            if (userInfo.isNotEmpty()) {
-                                userId = userInfo[0].userId
-                                for (vehInfo in VehicleInfoDatabase.getInstance(context)
-                                    .vehicleInfoDao().findVehicleInfo()) {
-                                    vehInfo.userId = userId
-                                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                                        .updateVehicleInfo(vehInfo)
-                                }
-                            }
-                        }
-                        sharedPrefs.edit()
-                            .putString(context.resources.getString(R.string.userId_key), userId)
-                            .commit()
-                    }
-                }.start()
-            }
-
-            // Re-enable OTA support on all vehicles, and add userId to settings.
-            if (lastVersion < "2022.05.31" || lastVersion < "2022.06.04a") {
-                PreferenceManager.setDefaultValues(context, R.xml.settings_preferences, true)
-            }
-
-            // Re-enable OTA support on all vehicles, and add userId to settings.
             if (lastVersion < "2022.06.20") {
                 Thread {
                     for (userInfo in UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
