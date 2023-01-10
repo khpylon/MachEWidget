@@ -357,12 +357,18 @@ class PrefManagement {
 
                 // Update all the default preferences
                 var edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
+                val currentPrefs = PreferenceManager.getDefaultSharedPreferences(context).all
                 var prefs = jsonObject.getAsJsonObject("prefs")
                 val currentUserId = PreferenceManager.getDefaultSharedPreferences(context).getString("userId", "")
 
                 for (item in prefs.entrySet()) {
                     val key = item.key
                     var value = item.value.asJsonArray
+
+                    // If the key isn't used anymore, ignore it
+                    if (!(key in currentPrefs.keys)) {
+                        continue
+                    }
 
                     // Version 2 didn't support "Integer" types
                     if (key == "surveyVersion" && version == 2) {
@@ -381,10 +387,17 @@ class PrefManagement {
 
                 // Update all the shared preferences
                 edit = context.getSharedPreferences(StoredData.TAG, Context.MODE_PRIVATE).edit()
+                val currentKeys = StoredData.getKeys()
                 prefs = jsonObject.getAsJsonObject(StoredData.TAG)
                 for (item in prefs.entrySet()) {
                     val key = item.key
                     val value = item.value.asJsonArray
+
+                    // If the key isn't used anymore, ignore it
+                    if (!(key in currentKeys)) {
+                        continue
+                    }
+
                     when (value[0].asString) {
                         "String" -> edit.putString(key, value[1].asString).commit()
                         "Long" -> edit.putLong(key, value[1].asLong).commit()
