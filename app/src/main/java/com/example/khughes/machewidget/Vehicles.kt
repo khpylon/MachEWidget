@@ -6,7 +6,7 @@ open class Vehicle(val VIN: String) {
     open val verticalDrawables: Map<String, Int> = mapOf()
     open val layoutID = R.layout.mache_widget
     open val offsetPositions = arrayOf(0, 0)
-    open val logoID = R.drawable.mache_logo
+    open val logoID = R.drawable.generic_logo
     open val name = ""
 
     companion object {
@@ -673,6 +673,7 @@ class MachE(VIN: String) : Vehicle(VIN) {
 
     override val layoutID = R.layout.mache_widget
     override val offsetPositions = arrayOf(352, 288)
+    override val logoID = R.drawable.mache_logo
     override val name = "Mustang Mach-E"
 }
 
@@ -947,6 +948,7 @@ class Edge(VIN: String) : Vehicle(VIN) {
 
     override val layoutID = R.layout.edge_widget
     override val offsetPositions = arrayOf(240, 200)
+    override val logoID = R.drawable.edge_logo
     override val name = "Edge"
 }
 
@@ -981,6 +983,7 @@ open class Escape(VIN: String) : Vehicle(VIN) {
 
     override val layoutID = R.layout.escape_widget
     override val offsetPositions = arrayOf(340, 244)
+    override val logoID = R.drawable.escape_logo
     override val name = "Escape"
 }
 
@@ -1015,6 +1018,7 @@ class Mustang(VIN: String) : Vehicle(VIN) {
 
     override val layoutID = R.layout.mustang_widget
     override val offsetPositions = arrayOf(164, 232)
+    override val logoID = R.drawable.mustang_logo
     override val name = "Mustang"
 }
 
@@ -1055,6 +1059,7 @@ open class Explorer(VIN: String) : Vehicle(VIN) {
 
 class Expedition(VIN: String) : Explorer(VIN) {
     override val offsetPositions = arrayOf(324, 304)
+    override val logoID = R.drawable.expedition_logo
     override val name = "Expedition"
 }
 
