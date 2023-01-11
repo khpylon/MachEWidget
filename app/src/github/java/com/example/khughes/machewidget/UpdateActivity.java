@@ -67,6 +67,7 @@ public class UpdateActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
 
         WebView mWebView = findViewById(R.id.changelog_webview);
+        Misc.checkDarkMode(context, mWebView);
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
             WebSettingsCompat.setForceDark(mWebView.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
