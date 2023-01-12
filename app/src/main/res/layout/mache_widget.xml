@@ -19,7 +19,7 @@
             android:layout_height="60dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:src="@drawable/mache_logo" />
+            android:src="@drawable/generic_logo" />
 
         <ImageView
             android:id="@+id/leftanchor"
