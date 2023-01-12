@@ -122,6 +122,13 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
 
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId, InfoRepository info) {
+
+        // Find the vehicle for this widget
+        VehicleInfo vehicleInfo = getVehicleInfo(context, info, appWidgetId);
+        if (vehicleInfo == null) {
+            return;
+        }
+
         String widget_VIN = Constants.VIN_KEY + appWidgetId;
         RemoteViews views = getWidgetView(context, widget_VIN);
 
@@ -138,12 +145,6 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         // Find which user is active.
         UserInfo userInfo = info.getUser();
         if (userInfo == null) {
-            return;
-        }
-
-        // Find the vehicle for this widget
-        VehicleInfo vehicleInfo = getVehicleInfo(context, info, appWidgetId);
-        if (vehicleInfo == null) {
             return;
         }
 
