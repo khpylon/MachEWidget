@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.01.12
+### Added
+- More vehicle-specific logos in the large widget, which are used when vehicle images are not available.
+
+### Changed
+- Don't allow vehicles to be added if there is a valid user is not found in the databases.
+- Automatically convert lower-case letters to upper-case when entering a VIN.
+- Don't restore some info in settings files created with older app versions.
+
 ## 2023.01.03
 ### Added
 - Ford Mustang vehicles are now officially supported.  Just need someone with a Mustang to test it out...
