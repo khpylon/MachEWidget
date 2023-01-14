@@ -157,6 +157,7 @@ class StatusReceiver : BroadcastReceiver() {
                     Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN -> {
                         LogFile.d(context, MainActivity.CHANNEL_ID, "STILL need to refresh token")
 //                        getRefresh(context, userId, userInfo.refreshToken)
+                        getStatus(context, userInfo)
                         appInfo.incCounter(StoredData.STATUS_UPDATED)
                     }
                     Constants.STATE_HAVE_TOKEN -> {
