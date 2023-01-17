@@ -914,6 +914,12 @@ public class CarStatusWidget extends AppWidgetProvider {
                                         }
                                         break;
                                     case UPDATE_CLICK:
+                                        // If user is undefined, don't do anything
+                                        UserInfo user = info[0].getUser();
+                                        if (user == null) {
+                                            break;
+                                        }
+
                                         if (carStatus.getLVBStatus().equals("STATUS_GOOD")) {
                                             long nowTime = Instant.now().toEpochMilli();
                                             long firstTime = vehInfo.getInitialForcedRefreshTime();
@@ -933,7 +939,7 @@ public class CarStatusWidget extends AppWidgetProvider {
                                             // The first three refreshes must have 2 minutes between them; the next
                                             // two refreshes must have 10 minutes
                                             if ((count < FIRST_LIMIT && seconds > FIRST_INTERVAL) || (count < SECOND_LIMIT && seconds > SECOND_INTERVAL)) {
-                                                long timeout = info[0].getUser().getExpiresIn();
+                                                long timeout = user.getExpiresIn();
                                                 seconds = (timeout - nowTime) / MILLIS;
                                                 // If the access token has expired, or is about to, do a refresh first
                                                 if (seconds < 30) {

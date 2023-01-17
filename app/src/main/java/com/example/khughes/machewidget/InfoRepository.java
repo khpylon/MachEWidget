@@ -48,10 +48,12 @@ public class InfoRepository {
     }
 
     public VehicleInfo getVehicleByVIN(String VIN) {
-        ArrayList<String> VINs = new ArrayList<>();
-        for(VehicleInfo vehicleInfo: mVehicleList) {
-            if(VIN.equals(vehicleInfo.getVIN())) {
-                return vehicleInfo;
+        if (VIN != null) {
+            for (VehicleInfo vehicleInfo : mVehicleList) {
+                String newVIN = vehicleInfo.getVIN();
+                if (VIN.equals(vehicleInfo.getVIN())) {
+                    return vehicleInfo;
+                }
             }
         }
         return null;
