@@ -269,10 +269,10 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         // Draw the vehicle image
         drawVehicleImage(context, views, carStatus, vehicleInfo.getColorValue(), null, vehicleImages);
 
-        views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
+//        views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
 
         // OTA status
-        drawOTAInfo(context, views, vehicleInfo, timeFormat);
+//        drawOTAInfo(context, views, vehicleInfo, timeFormat);
 
         // Location
         if (PreferenceManager.getDefaultSharedPreferences(context)

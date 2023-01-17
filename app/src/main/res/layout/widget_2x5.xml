@@ -20,13 +20,13 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:text="Nicknake"
+            android:text="Nickname"
             android:textColor="@color/white"
             android:textSize="10sp" />
 
         <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="140dp"
+           android:layout_width="match_parent"
+           android:layout_height="140dp"
             android:gravity="center_vertical">
 
             <TextView
@@ -38,107 +38,113 @@
                 android:textColor="@color/white"
                 android:textSize="10sp" />
 
-        <TextView
-            android:id="@+id/odometer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/lastRefresh"
-            android:gravity="left"
-            android:text="Odo: N/A"
-            android:textColor="@color/white"
-            android:textSize="10sp" />
+            <TextView
+                android:id="@+id/odometer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/lastRefresh"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:text="Odo: N/A"
+                android:textColor="@color/white"
+                android:textSize="10sp" />
 
-
-        <TextView
-            android:id="@+id/LVBVoltage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/odometer"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:text="LVB Volts: N/A"
-            android:textColor="@color/white"
-            android:textSize="10sp" />
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/LVBVoltage"
-            android:id="@+id/ota_container">
 
             <TextView
-                android:id="@+id/ota_line1"
+                android:id="@+id/LVBVoltage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/odometer"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="LVB Volts: N/A"
+                android:textColor="@color/white"
+                android:textSize="10sp" />
+
+                <!--
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="OTA Status:"
-                android:textColor="@color/white"
-                android:textSize="10dp" />
+                android:layout_below="@id/LVBVoltage"
+                android:id="@+id/ota_container">
 
-            <TextView
-                android:id="@+id/ota_line2"
-                android:layout_width="120dp"
+                <TextView
+                    android:id="@+id/ota_line1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="OTA Status:"
+                    android:textColor="@color/white"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/ota_line2"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ota_line1"
+                    android:layout_alignParentLeft="true"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="left"
+                    android:maxLines="1"
+                    android:text="   N/A"
+                    android:textColor="@color/white"
+                    android:textSize="10dp" />
+
+            </RelativeLayout>
+            -->
+
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ota_line1"
-                android:layout_alignParentLeft="true"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="left"
-                android:maxLines="1"
-                android:text="   N/A"
-                android:textColor="@color/white"
-                android:textSize="10dp" />
+                android:layout_below="@id/LVBVoltage"
+                android:layout_marginTop="10dp"
+                android:id="@+id/location_container">
+
+                <TextView
+                    android:id="@+id/location_line1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Location:"
+                    android:textColor="@color/white"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/location_line2"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/location_line1"
+                    android:layout_alignParentLeft="true"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="10dp"
+                    android:text="   N/A" />
+
+                <TextView
+                    android:id="@+id/location_line3"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/location_line2"
+                    android:layout_alignParentLeft="true"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="10dp"
+                    android:text="" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ota_container"
-            android:id="@+id/location_container">
-
-            <TextView
-                android:id="@+id/location_line1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="Location:"
-                android:textColor="@color/white"
-                android:textSize="10dp" />
-
-            <TextView
-                android:id="@+id/location_line2"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/location_line1"
-                android:layout_alignParentLeft="true"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/white"
-                android:textSize="10dp"
-                android:text="   N/A" />
-
-            <TextView
-                android:id="@+id/location_line3"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/location_line2"
-                android:layout_alignParentLeft="true"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/white"
-                android:textSize="10dp"
-                android:text="" />
-
-        </RelativeLayout>
-
-    </RelativeLayout>
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="32dp"

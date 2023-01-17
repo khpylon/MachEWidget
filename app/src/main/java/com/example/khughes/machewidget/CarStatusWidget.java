@@ -566,8 +566,8 @@ public class CarStatusWidget extends AppWidgetProvider {
     }
 
     // OTA status
-    protected void drawOTAInfo(Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat) {
-        views.setViewVisibility(R.id.ota_container, View.GONE);
+//    protected void drawOTAInfo(Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat) {
+//        views.setViewVisibility(R.id.ota_container, View.GONE);
 //        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
 //        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
 //                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
@@ -636,7 +636,7 @@ public class CarStatusWidget extends AppWidgetProvider {
 //                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
 //            }
 //        }
-    }
+//    }
 
     protected void setAppBitmap(Context context, RemoteViews views, String appPackageName, int id) {
         try {

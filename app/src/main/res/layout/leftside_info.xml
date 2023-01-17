@@ -27,6 +27,7 @@
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/lastRefresh"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:gravity="left"
         android:text="Odo: N/A"
@@ -52,12 +53,14 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/odometer"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:gravity="left"
         android:text="LVB Volts: N/A"
         android:textColor="@color/white"
         android:textSize="12dp" />
 
+    <!--
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -89,11 +92,13 @@
             android:textSize="12dp" />
 
     </RelativeLayout>
+    -->
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ota_container"
+        android:layout_below="@id/LVBVoltage"
+        android:layout_marginTop="10dp"
         android:id="@+id/location_container">
 
         <TextView

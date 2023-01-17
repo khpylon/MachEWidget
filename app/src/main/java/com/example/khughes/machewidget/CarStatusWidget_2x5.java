@@ -119,7 +119,7 @@ public class CarStatusWidget_2x5 extends CarStatusWidget {
         String timeFormat = userInfo.getCountry().equals("USA") ? Constants.LOCALTIMEFORMATUS : Constants.LOCALTIMEFORMAT;
         drawLastRefresh(context, views, carStatus, timeFormat);
         drawOdometer(views, carStatus, distanceConversion, distanceUnits);
-        drawOTAInfo(context, views, vehicleInfo, timeFormat);
+//        drawOTAInfo(context, views, vehicleInfo, timeFormat);
 
         // Location
         if (PreferenceManager.getDefaultSharedPreferences(context)
