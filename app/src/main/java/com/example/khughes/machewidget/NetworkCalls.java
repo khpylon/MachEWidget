@@ -576,8 +576,8 @@ public class NetworkCalls {
                             LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
                             nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                         } else {
-                            nextState = Constants.STATE_HAVE_TOKEN;
                             LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle status is null");
+                            nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                         }
                     } else {
                         LogFile.i(context, MainActivity.CHANNEL_ID, responseStatus.raw().toString());

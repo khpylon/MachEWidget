@@ -161,7 +161,7 @@ class StatusReceiver : BroadcastReceiver() {
                         appInfo.incCounter(StoredData.STATUS_UPDATED)
                     }
                     Constants.STATE_HAVE_TOKEN -> {
-                        LogFile.d(context, MainActivity.CHANNEL_ID, "need to get vehicle info")
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
 //                        getVehicleInfo(context, userId)
                         appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
                     }
