@@ -159,6 +159,7 @@ open class Vehicle(val VIN: String) {
 
         private const val EURO_LINE_SERIES_KUGA = "WPM"
         private const val EURO_LINE_SERIES_PUMA = "ERK"
+        private const val EURO_LINE_SERIES_FOCUS = "GCH"
 
         private fun isMachE(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -539,13 +540,25 @@ open class Vehicle(val VIN: String) {
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY && lineSeries == EURO_LINE_SERIES_PUMA
         }
 
+        private fun isFocus(VIN: String): Boolean {
+            if (VIN.length < EURO_LINE_SERIES_END_INDEX) return false
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            val lineSeries =
+                VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX)
+            return wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY && lineSeries == EURO_LINE_SERIES_FOCUS
+        }
+
         // Check to see if we recognize a VIN in general
         @JvmStatic
         fun isVINRecognized(VIN: String): Boolean =
             isMachE(VIN) || isF150(VIN) || isF250(VIN) || isF350(VIN)
                     || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
                     || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)
-                    || isMustang(VIN) || isKuga(VIN) || isPuma(VIN)
+                    || isMustang(VIN) || isKuga(VIN) || isPuma(VIN) 
+                    || isFocus(VIN)
 
         @JvmStatic
         fun getVehicle(VIN: String): Vehicle {
@@ -556,6 +569,7 @@ open class Vehicle(val VIN: String) {
             if (isMustang(VIN)) return Mustang(VIN)
             if (isKuga(VIN)) return Kuga(VIN)
             if (isPuma(VIN)) return Puma(VIN)
+            if (isFocus(VIN)) return Focus(VIN)
 
             // Next check for F-150 variants
             if (isF150RegularCab(VIN)) return F150RegularCab(VIN)
@@ -1075,6 +1089,11 @@ class Kuga(VIN: String) : Escape(VIN) {
 class Puma(VIN: String) : Escape(VIN) {
     override val offsetPositions = arrayOf(172, 288)
     override val name = "Puma"
+}
+
+class Focus(VIN: String) : Escape(VIN) {
+    override val offsetPositions = arrayOf(316, 316)
+    override val name = "Focus"
 }
 
 
