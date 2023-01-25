@@ -359,6 +359,7 @@ class PrefManagement {
                 var edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
                 val currentPrefs = PreferenceManager.getDefaultSharedPreferences(context).all
                 var prefs = jsonObject.getAsJsonObject("prefs")
+                val currentUserId = PreferenceManager.getDefaultSharedPreferences(context).getString("userId", "")
 
                 for (item in prefs.entrySet()) {
                     val key = item.key
@@ -404,9 +405,6 @@ class PrefManagement {
                         else -> edit.putBoolean(key, value[1].asBoolean).commit()
                     }
                 }
-
-                // Make sure units use the new values
-                Misc.updateUnits(context)
 
                 // Tell the widget to update
                 CarStatusWidget.updateWidget(context)
@@ -732,35 +730,5 @@ class Misc {
             return PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
                 .getBoolean(context.resources.getString(R.string.hibernate_api_key), false)
         }
-
-        // Units used to be read from user settings until the API was removed.  If these settings are using "FordPass settings" or "locale settings",
-        // then examine the strings stored for the user and choose the appropriate setting value.
-        @JvmStatic
-        fun updateUnits (context: Context) {
-            val prefs = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
-            val unitsKey = context.resources.getString(R.string.units_key)
-            val units = Integer.parseInt(prefs.getString(unitsKey, context.resources.getString(R.string.units_mphpsi)))
-            if (units == 0) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val info = getInfo(context)
-                    info.user.let {
-                        val map = mapOf("MPHPSI" to context.resources.getString(R.string.units_mphpsi),
-                            "KPHPSI" to context.resources.getString(R.string.units_kphpsi),
-                            "KPHKPA" to context.resources.getString(R.string.units_kphkpa),
-                            "KPHBAR" to context.resources.getString(R.string.units_kphbar))
-                        val speed = it.uomSpeed
-                        val pressure = it.uomPressure
-                        val value = map.getOrDefault(speed + pressure, "2")
-                        prefs.edit().putString(unitsKey, value).apply()
-                    }
-                }
-            }
-        }
-
-        private suspend fun getInfo(context: Context): InfoRepository =
-            coroutineScope {
-                withContext(Dispatchers.IO) { InfoRepository(context) }
-            }
-
     }
 }

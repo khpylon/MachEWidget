@@ -91,11 +91,10 @@
     <string name="zenmode_key">zenMode</string>
     <string name="hibernate_api_key">hibernateAPI</string>
 
-    <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
-    <string name="units_kphkpa">1</string>
-    <string name="units_mphpsi">2</string>
-    <string name="units_kphpsi">3</string>
-    <string name="units_kphbar">4</string>
+    <!-- Values for setting units (see arrays.xml) -->
+    <string name="units_system">0</string>
+    <string name="units_metric">1</string>
+    <string name="units_imperial">2</string>
 
     <!-- survey values -->
     <string name="surveyVersion_key">surveyVersion</string>

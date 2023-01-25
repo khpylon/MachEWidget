@@ -80,12 +80,6 @@ object AppUpdates {
                         .commit()
                 }
             }
-
-            // Convert old unit display settings to new settings
-            if (lastVersion < "2023.01.24") {
-                Misc.updateUnits(context)
-            }
-
         }
 
         // Update internally

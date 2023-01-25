@@ -84,7 +84,7 @@
 
     <ListPreference
         app:key="@string/units_key"
-        app:defaultValue="1"
+        app:defaultValue="0"
         app:entries="@array/units_titles"
         app:entryValues="@array/units_values"
         app:negativeButtonText="@null"

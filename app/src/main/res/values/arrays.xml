@@ -19,18 +19,16 @@
     </string-array>
 
     <string-array name="units_titles">
-        <item>MPH, PSI</item>
-        <item>KPH, PSI</item>
-        <item>KPH, kPa</item>
-        <item>KPH, Bar</item>
+        <item>Use locale settings</item>
+        <item>Metric (km, kPa)</item>
+        <item>Imperial (miles, psi)</item>
     </string-array>
 
     <!-- make sure these match values in Constants.java -->
     <string-array name="units_values">
-        <item>@string/units_mphpsi</item>
-        <item>@string/units_kphpsi</item>
-        <item>@string/units_kphkpa</item>
-        <item>@string/units_kphbar</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="packages">
