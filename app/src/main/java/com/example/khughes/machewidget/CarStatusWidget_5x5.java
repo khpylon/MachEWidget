@@ -181,16 +181,15 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         views.setViewVisibility(R.id.plug, isICEOrHybrid ? View.GONE : View.VISIBLE);
         setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline");
 
-        // Get conversion factors for Metric vs Imperial measurement units
+        // Get conversion factors and descriptions for measurement units
         int units = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(
-                        context.getResources().getString(R.string.units_key),
-                        context.getResources().getString(R.string.units_system)
+                        context.getResources().getString(R.string.units_key), context.getResources().getString(R.string.units_mphpsi)
                 ));
 
         double distanceConversion;
         String distanceUnits;
-        if ((units == Constants.UNITS_SYSTEM && userInfo.getUomSpeed() != null && userInfo.getUomSpeed().equals("MPH")) || units == Constants.UNITS_IMPERIAL) {
+        if (units == Constants.UNITS_MPHPSI) {
             distanceConversion = Constants.KMTOMILES;
             distanceUnits = "miles";
         } else {
@@ -199,10 +198,10 @@ public class CarStatusWidget_5x5 extends CarStatusWidget {
         }
         double pressureConversion;
         String pressureUnits;
-        if ((units == Constants.UNITS_SYSTEM && userInfo.getUomPressure() != null && userInfo.getUomPressure().equals("PSI")) || units == Constants.UNITS_IMPERIAL) {
+        if (units == Constants.UNITS_KPHPSI || units == Constants.UNITS_MPHPSI) {
             pressureConversion = Constants.KPATOPSI;
             pressureUnits = "psi";
-        } else if (units == Constants.UNITS_SYSTEM && userInfo.getUomPressure() != null && userInfo.getUomPressure().equals("BAR")) {
+        } else if (units == Constants.UNITS_KPHBAR) {
             pressureConversion = Constants.KPATOBAR;
             pressureUnits = "bar";
         } else {

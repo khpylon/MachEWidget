@@ -27,6 +27,14 @@ public class CarStatus {
         }
     }
 
+    public Double getLVBFillLevel() {
+        try {
+            return getVehiclestatus().getBatteryFillLevel().getValue();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
     public Double getElVehDTE() {
         try {
             return getVehiclestatus().getElVehDTE().getValue();

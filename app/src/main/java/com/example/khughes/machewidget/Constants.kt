@@ -26,10 +26,12 @@ object Constants {
     const val HTTP_UNAUTHORIZED = 401
     const val HTTP_SERVER_ERROR = 402
 
-    // Make sure these match values in arrays.xml
-    const val UNITS_SYSTEM = 0
-    const val UNITS_METRIC = 1
-    const val UNITS_IMPERIAL = 2
+    // Make sure these match values in strings.xml
+    // const val UNITS_SYSTEM = 0
+    const val UNITS_KPHKPA = 1
+    const val UNITS_MPHPSI = 2
+    const val UNITS_KPHPSI = 3
+    const val UNITS_KPHBAR = 4
 
     const val CHARGING_STATUS_NOT_READY = "NotReady"
     const val CHARGING_STATUS_CHARGING_AC = "ChargingAC"
