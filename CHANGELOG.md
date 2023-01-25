@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.01.25
+### Added
+- European Ford Focus vehicles are now recognized (uses the Escape silhouettes).
+
+### Changed
+- Support more combinations of displayed units (MPG/KPH, PSI/kPa/BAR).  These are configurable in Settings.
+
 ## 2023.01.22
 ### Changed
 - Adjusted the widget layouts to spread out textual info. 
