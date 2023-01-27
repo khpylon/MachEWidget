@@ -82,7 +82,7 @@ object AppUpdates {
             }
 
             // Convert old unit display settings to new settings
-            if (lastVersion < "2023.01.24") {
+            if (lastVersion < "2023.01.27") {
                 Misc.updateUnits(context)
             }
 
