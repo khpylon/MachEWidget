@@ -743,7 +743,7 @@ class Misc {
             if (units == 0) {
                 CoroutineScope(Dispatchers.Main).launch {
                     val info = getInfo(context)
-                    info.user.let {
+                    info.user?.let {
                         val map = mapOf("MPHPSI" to context.resources.getString(R.string.units_mphpsi),
                             "KPHPSI" to context.resources.getString(R.string.units_kphpsi),
                             "KPHKPA" to context.resources.getString(R.string.units_kphkpa),
