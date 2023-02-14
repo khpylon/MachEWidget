@@ -69,7 +69,7 @@ class VehicleActivity : AppCompatActivity() {
             override fun handleMessage(msg: Message) {
                 val bundle = msg.data
                 val action = bundle.getString("action")
-                if (action == Constants.STATE_HAVE_TOKEN) {
+                if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
                     NetworkCalls.getStatus(statusHandler, context, userInfo, VIN, nickname)
                 } else {
                     Toast.makeText(context, "Unable to refresh access token.", Toast.LENGTH_LONG)

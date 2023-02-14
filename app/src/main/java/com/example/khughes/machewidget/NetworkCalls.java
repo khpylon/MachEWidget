@@ -260,7 +260,7 @@ public class NetworkCalls {
 
                         dao.updateUserInfo(userInfo);
                         data.putExtra("userId", userId);
-                        nextState = Constants.STATE_HAVE_TOKEN;
+                        nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                     } else {
                         LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
                         LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
@@ -379,7 +379,7 @@ public class NetworkCalls {
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "got status");
                                 nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
                             } else {
-                                nextState = Constants.STATE_HAVE_TOKEN;
+                                nextState = Constants.STATE_INITIAL_STATE;
                                 LogFile.i(context, MainActivity.CHANNEL_ID, "vehicle status is null");
                             }
                         } else {
