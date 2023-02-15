@@ -225,7 +225,7 @@ class StatusReceiver : BroadcastReceiver() {
                     context, MainActivity.CHANNEL_ID,
                     "Refresh: $action"
                 )
-                if(action == Constants.STATE_HAVE_TOKEN) {
+                if(action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
                     NetworkCalls.getStatus(statusHandler, context, bundle.getString("userId"))
                 }
             }
