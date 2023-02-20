@@ -40,13 +40,4 @@ public interface APIMPSService {
                                       @Header("application-id") String APID,
                                       @Header("countrycode") String country,
                                       @Body RequestBody data);
-
-    @Headers({"Accept: application/json",
-            "Accept-Encoding: gzip, deflate, br",
-            "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
-            "Referer: https://ford.com", "Origin: https://ford.com'"})
-    @GET("vpoi/chargestations/v3/plugstatus")
-    Call<ChargeStation> getChargeStation(@Header("auth-token") String token,
-                                         @Header("Application-Id") String APID,
-                                         @Header("vin") String VIN);
 }
