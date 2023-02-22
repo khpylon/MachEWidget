@@ -2,8 +2,8 @@ package com.example.khughes.machewidget
 
 open class Vehicle(val VIN: String) {
 
-    open val horizontalDrawables: Map<String, Int> = mapOf()
-    open val verticalDrawables: Map<String, Int> = mapOf()
+    open val horizontalDrawables: MutableMap<String, Int> = mutableMapOf()
+    open val verticalDrawables: MutableMap<String, Int> = mutableMapOf()
     open val layoutID = R.layout.mache_widget
     open val offsetPositions = arrayOf(0, 0)
     open val logoID = R.drawable.generic_logo
@@ -657,7 +657,7 @@ open class Vehicle(val VIN: String) {
 }
 
 class MachE(VIN: String) : Vehicle(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.mache_wireframe_vert,
         HOOD to R.drawable.mache_frunk_vert,
         TAILGATE to R.drawable.mache_hatch_vert,
@@ -669,7 +669,7 @@ class MachE(VIN: String) : Vehicle(VIN) {
         BODY_SECONDARY to R.drawable.mache_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.mache_wireframe_horz,
         HOOD to R.drawable.mache_frunk_horz,
         TAILGATE to R.drawable.mache_hatch_horz,
@@ -699,7 +699,7 @@ open class F150(VIN: String) : Vehicle(VIN) {
 }
 
 class F150RegularCab(VIN: String) : F150(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.regularcab_wireframe_vert,
         HOOD to R.drawable.regularcab_hood_vert,
         TAILGATE to R.drawable.regularcab_tailgate_vert,
@@ -711,7 +711,7 @@ class F150RegularCab(VIN: String) : F150(VIN) {
         BODY_SECONDARY to R.drawable.regularcab_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.regularcab_wireframe_horz,
         HOOD to R.drawable.regularcab_hood_horz,
         TAILGATE to R.drawable.regularcab_tailgate_horz,
@@ -731,7 +731,7 @@ class F150RegularCab(VIN: String) : F150(VIN) {
 }
 
 class F150SuperCab(VIN: String) : F150(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercab_wireframe_vert,
         HOOD to R.drawable.supercab_hood_vert,
         TAILGATE to R.drawable.supercab_tailgate_vert,
@@ -743,7 +743,7 @@ class F150SuperCab(VIN: String) : F150(VIN) {
         BODY_SECONDARY to R.drawable.supercab_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercab_wireframe_horz,
         HOOD to R.drawable.supercab_hood_horz,
         TAILGATE to R.drawable.supercab_tailgate_horz,
@@ -763,7 +763,7 @@ class F150SuperCab(VIN: String) : F150(VIN) {
 }
 
 class F150SuperCrew(VIN: String) : F150(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercrew_wireframe_vert,
         HOOD to R.drawable.supercrew_hood_vert,
         TAILGATE to R.drawable.supercrew_tailgate_vert,
@@ -775,7 +775,7 @@ class F150SuperCrew(VIN: String) : F150(VIN) {
         BODY_SECONDARY to R.drawable.supercrew_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercrew_wireframe_horz,
         HOOD to R.drawable.supercrew_hood_horz,
         TAILGATE to R.drawable.supercrew_tailgate_horz,
@@ -801,7 +801,7 @@ open class F250(VIN: String) : Vehicle(VIN) {
 }
 
 class F250RegularCab(VIN: String) : F250(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.regularcab_wireframe_vert,
         HOOD to R.drawable.regularcab_hood_vert,
         TAILGATE to R.drawable.regularcab_tailgate_vert,
@@ -813,7 +813,7 @@ class F250RegularCab(VIN: String) : F250(VIN) {
         BODY_SECONDARY to R.drawable.regularcab_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.regularcab_wireframe_horz,
         HOOD to R.drawable.regularcab_hood_horz,
         TAILGATE to R.drawable.regularcab_tailgate_horz,
@@ -833,7 +833,7 @@ class F250RegularCab(VIN: String) : F250(VIN) {
 }
 
 class F250SuperCab(VIN: String) : F250(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercab_wireframe_vert,
         HOOD to R.drawable.supercab_hood_vert,
         TAILGATE to R.drawable.supercab_tailgate_vert,
@@ -845,7 +845,7 @@ class F250SuperCab(VIN: String) : F250(VIN) {
         BODY_SECONDARY to R.drawable.supercab_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercab_wireframe_horz,
         HOOD to R.drawable.supercab_hood_horz,
         TAILGATE to R.drawable.supercab_tailgate_horz,
@@ -865,7 +865,7 @@ class F250SuperCab(VIN: String) : F250(VIN) {
 }
 
 class F250CrewCab(VIN: String) : F250(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercrew_wireframe_vert,
         HOOD to R.drawable.supercrew_hood_vert,
         TAILGATE to R.drawable.supercrew_tailgate_vert,
@@ -877,7 +877,7 @@ class F250CrewCab(VIN: String) : F250(VIN) {
         BODY_SECONDARY to R.drawable.supercrew_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercrew_wireframe_horz,
         HOOD to R.drawable.supercrew_hood_horz,
         TAILGATE to R.drawable.supercrew_tailgate_horz,
@@ -897,7 +897,7 @@ class F250CrewCab(VIN: String) : F250(VIN) {
 }
 
 open class Bronco(VIN: String) : Vehicle(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.bronco_base_4x4_wireframe_vert,
         HOOD to R.drawable.bronco_base_4x4_hood_vert,
         TAILGATE to R.drawable.bronco_base_4x4_tailgate_vert,
@@ -909,7 +909,7 @@ open class Bronco(VIN: String) : Vehicle(VIN) {
         BODY_SECONDARY to R.drawable.bronco_base_4x4_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.bronco_base_4x4_wireframe_horz,
         HOOD to R.drawable.bronco_base_4x4_hood_horz,
         TAILGATE to R.drawable.bronco_base_4x4_tailgate_horz,
@@ -932,7 +932,7 @@ open class Bronco(VIN: String) : Vehicle(VIN) {
 }
 
 class Edge(VIN: String) : Vehicle(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.edge_wireframe_vert,
         HOOD to R.drawable.edge_hood_vert,
         TAILGATE to R.drawable.edge_liftgate_vert,
@@ -944,7 +944,7 @@ class Edge(VIN: String) : Vehicle(VIN) {
         BODY_SECONDARY to R.drawable.edge_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.edge_wireframe_horz,
         HOOD to R.drawable.edge_hood_horz,
         TAILGATE to R.drawable.edge_liftgate_horz,
@@ -967,7 +967,7 @@ class Edge(VIN: String) : Vehicle(VIN) {
 }
 
 open class Escape(VIN: String) : Vehicle(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.escape_wireframe_vert,
         HOOD to R.drawable.escape_hood_vert,
         TAILGATE to R.drawable.escape_hatch_vert,
@@ -979,7 +979,7 @@ open class Escape(VIN: String) : Vehicle(VIN) {
         BODY_SECONDARY to R.drawable.escape_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.escape_wireframe_horz,
         HOOD to R.drawable.escape_hood_horz,
         TAILGATE to R.drawable.escape_hatch_horz,
@@ -1002,7 +1002,7 @@ open class Escape(VIN: String) : Vehicle(VIN) {
 }
 
 class Mustang(VIN: String) : Vehicle(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.mustang_wireframe_vert,
         HOOD to R.drawable.mustang_hood_vert,
         TAILGATE to R.drawable.mustang_hatch_vert,
@@ -1014,7 +1014,7 @@ class Mustang(VIN: String) : Vehicle(VIN) {
         BODY_SECONDARY to R.drawable.mustang_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.mustang_wireframe_horz,
         HOOD to R.drawable.mustang_hood_horz,
         TAILGATE to R.drawable.mustang_hatch_horz,
@@ -1037,7 +1037,7 @@ class Mustang(VIN: String) : Vehicle(VIN) {
 }
 
 open class Explorer(VIN: String) : Vehicle(VIN) {
-    override val verticalDrawables: Map<String, Int> = mapOf(
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.explorer_wireframe_vert,
         HOOD to R.drawable.explorer_hood_vert,
         TAILGATE to R.drawable.explorer_tailgate_vert,
@@ -1049,7 +1049,7 @@ open class Explorer(VIN: String) : Vehicle(VIN) {
         BODY_SECONDARY to R.drawable.explorer_secondary_vert,
     )
 
-    override val horizontalDrawables: Map<String, Int> = mapOf(
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.explorer_wireframe_horz,
         HOOD to R.drawable.explorer_hood_horz,
         TAILGATE to R.drawable.explorer_tailgate_horz,
@@ -1095,7 +1095,3 @@ class Focus(VIN: String) : Escape(VIN) {
     override val offsetPositions = arrayOf(316, 316)
     override val name = "Focus"
 }
-
-
-
-

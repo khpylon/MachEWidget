@@ -7,25 +7,39 @@ import android.widget.RemoteViews
 import com.example.khughes.machewidget.CarStatus.CarStatus
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.os.Bundle
 import android.os.Looper
 import android.content.Intent
 import android.os.Handler
 import android.os.Message
 import android.view.View
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 /**
  * Implementation of App Widget functionality.
  */
-class CarStatusWidget_1x5 : CarStatusWidget() {
+class CarStatusWidget_2x5 : CarStatusWidget() {
+
     // Define actions for clicking on various icons, including the widget itself
     override fun setCallbacks(context: Context, views: RemoteViews, id: Int) {
         views.setOnClickPendingIntent(
             R.id.wireframe,
             getPendingSelfIntent(context, id, PROFILE_CLICK)
+        )
+        val showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(context.resources.getString(R.string.show_app_links_key), true)
+        views.setOnClickPendingIntent(
+            R.id.leftappbutton,
+            getPendingSelfIntent(context, id, if (showAppLinks) LEFT_BUTTON_CLICK else WIDGET_CLICK)
+        )
+        views.setOnClickPendingIntent(
+            R.id.rightappbutton,
+            getPendingSelfIntent(
+                context,
+                id,
+                if (showAppLinks) RIGHT_BUTTON_CLICK else WIDGET_CLICK
+            )
         )
         super.setCallbacks(context, views, id)
     }
@@ -61,7 +75,7 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
     ) {
 
         // Construct the RemoteViews object
-        val views = RemoteViews(context.packageName, R.layout.widget_1x5)
+        val views = RemoteViews(context.packageName, R.layout.widget_2x5)
 
         // Setup actions for specific widgets
         setCallbacks(context, views, appWidgetId)
@@ -74,6 +88,8 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
 
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return
+        views.setTextViewText(R.id.profile, vehicleInfo.nickname)
+        //        views.setTextViewText(R.id.profile, "My Mach-E");
 
         // Get conversion factors and descriptions for measurement units
         val units = PreferenceManager.getDefaultSharedPreferences(context)
@@ -92,15 +108,19 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         }
         val pressureConversion: Double
         val pressureUnits: String
-        if (units == Constants.UNITS_KPHPSI || units == Constants.UNITS_MPHPSI) {
-            pressureConversion = Constants.KPATOPSI
-            pressureUnits = "psi"
-        } else if (units == Constants.UNITS_KPHBAR) {
-            pressureConversion = Constants.KPATOBAR
-            pressureUnits = "bar"
-        } else {
-            pressureConversion = 1.0
-            pressureUnits = "kPa"
+        when (units) {
+            Constants.UNITS_KPHPSI, Constants.UNITS_MPHPSI -> {
+                pressureConversion = Constants.KPATOPSI
+                pressureUnits = "psi"
+            }
+            Constants.UNITS_KPHBAR -> {
+                pressureConversion = Constants.KPATOBAR
+                pressureUnits = "bar"
+            }
+            else -> {
+                pressureConversion = 1.0
+                pressureUnits = "kPa"
+            }
         }
         val carStatus = vehicleInfo.carStatus
         if (carStatus == null || carStatus.vehiclestatus == null) {
@@ -123,11 +143,28 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         views.setViewVisibility(R.id.plug, if (isICEOrHybrid) View.GONE else View.VISIBLE)
         setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline")
 
-        // Ingition, alarm/sleep, plug icons
+        // Show last refresh, odometer, OTA status
+        val timeFormat =
+            if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+        drawLastRefresh(context, views, carStatus, timeFormat)
+        drawOdometer(views, carStatus, distanceConversion, distanceUnits)
+        //        drawOTAInfo(context, views, vehicleInfo, timeFormat);
+
+        // Location
+        if (PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.resources.getString(R.string.show_location_key), true)
+        ) {
+            views.setViewVisibility(R.id.location_container, View.VISIBLE)
+            updateLocation(context, views, carStatus.latitude, carStatus.longitude)
+        } else {
+            views.setViewVisibility(R.id.location_container, View.GONE)
+        }
+
+        // Ignition, alarm/sleep, plug icons
         drawIcons(views, carStatus)
 
         // Draw range and fuel/gas stuff
-        val twoLines = true
+        val twoLines = false
         drawRangeFuel(
             context, views, carStatus, info, vehicleInfo,
             distanceConversion, distanceUnits, twoLines
@@ -166,9 +203,20 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
 
         // Draw the vehicle image
         drawVehicleImage(context, views, carStatus, vehicleInfo.colorValue, null, vehicleImages)
+        updateLinkedApps(context, views)
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views)
+    }
+
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: Bundle
+    ) {
+        val views = RemoteViews(context.packageName, R.layout.widget_2x5)
+        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
     }
 
     override fun onUpdate(
@@ -188,7 +236,7 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
                 LogFile.d(
                     context,
                     MainActivity.CHANNEL_ID,
-                    "CarStatusWidget_1x5.onUpdate(): no userinfo found"
+                    "CarStatusWidget_2x5.onUpdate(): no userinfo found"
                 )
             }
         }
@@ -207,7 +255,7 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         if (action == PHEVTOGGLE_CLICK) {
             val mode = intent.getStringExtra("nextMode")
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val views = RemoteViews(context.packageName, R.layout.widget_1x5)
+            val views = RemoteViews(context.packageName, R.layout.widget_2x5)
             val nextMode: String
             if (mode == "showGasoline") {
                 nextMode = "showElectric"
