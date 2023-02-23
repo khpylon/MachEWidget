@@ -1,125 +1,112 @@
-package com.example.khughes.machewidget;
+package com.example.khughes.machewidget
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Context
+import android.content.SharedPreferences
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.*
 
-import androidx.preference.PreferenceManager;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static android.content.Context.MODE_PRIVATE;
-
-public class StoredData {
-    public static final String TAG = "saveAppInfo";
-
-    private static final String LASTALARMTIME = "LastAlarmTime";
-    private static final String LEFTAPPPACKAGE = "LeftAppPackage";
-    private static final String RIGHTAPPPACKAGE = "RightAppPackage";
-    private static final String LATESTVERSION = "LatestVersion";
-    private static final String BATTERYNOTIFICATION = "BatteryOptNotificationTime";
-
-    public static final String STATUS_NOT_LOGGED_IN = "Logged out";
-    public static final String STATUS_LOG_OUT = "Log out";
-    public static final String STATUS_LOG_IN = "Log in";
-    public static final String STATUS_VEHICLE_INFO = "Vehicle Info";
-    public static final String STATUS_UPDATED = "Updated";
-    public static final String STATUS_UNKNOWN = "Unknown";
-
-    // When the list above changes, be sure to change this function also
-    public static final ArrayList<String> getKeys() {
-        return new ArrayList<>(Arrays.asList(
-                LASTALARMTIME, LEFTAPPPACKAGE, RIGHTAPPPACKAGE, LATESTVERSION, BATTERYNOTIFICATION,
-                STATUS_NOT_LOGGED_IN, STATUS_LOG_OUT, STATUS_LOG_IN, STATUS_VEHICLE_INFO,
-                STATUS_UPDATED, STATUS_UNKNOWN
-        ));
-    }
-
-    private final Context mContext;
-
-    public StoredData(Context context) {
-        mContext = context;
-    }
-
+class StoredData(private val mContext: Context) {
     // Getters/setters for specific attributes
-
-    private void commitWait(SharedPreferences.Editor edit) {
-        for (int i = 0; i < 10; ++i) {
+    private fun commitWait(edit: SharedPreferences.Editor) {
+        for (i in 0..9) {
             if (edit.commit()) {
-                return;
+                return
             }
         }
     }
 
-    public String getLeftAppPackage() {
-        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-        return pref.getString(LEFTAPPPACKAGE, "com.ford.fordpass");
+    var leftAppPackage: String?
+        get() {
+            val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+            return pref.getString(LEFTAPPPACKAGE, "com.ford.fordpass")
+        }
+        set(name) {
+            val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+            edit.putString(LEFTAPPPACKAGE, name)
+            commitWait(edit)
+        }
+    var rightAppPackage: String?
+        get() {
+            val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+            return pref.getString(RIGHTAPPPACKAGE, null)
+        }
+        set(name) {
+            val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+            edit.putString(RIGHTAPPPACKAGE, name)
+            commitWait(edit)
+        }
+    var latestVersion: String?
+        get() {
+            val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+            return pref.getString(LATESTVERSION, "")
+        }
+        set(name) {
+            val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+            edit.putString(LATESTVERSION, name)
+            commitWait(edit)
+        }
+
+    fun setLastAlarmTime() {
+        val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+        val nowtime =
+            LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant()
+                .toEpochMilli()
+        commitWait(edit.putLong(LASTALARMTIME, nowtime))
     }
 
-    public void setLeftAppPackage(String name) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
-        edit.putString(LEFTAPPPACKAGE, name);
-        commitWait(edit);
+    val lastAlarmTime: Long
+        get() = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).getLong(LASTALARMTIME, 0)
+    var batteryNotification: Long
+        get() = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+            .getLong(BATTERYNOTIFICATION, 0)
+        set(time) {
+            val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+            commitWait(edit.putLong(BATTERYNOTIFICATION, time))
+        }
+
+    fun getCounter(key: String?): Int {
+        val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+        return pref.getInt(key, 0)
     }
 
-    public String getRightAppPackage() {
-        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-        return pref.getString(RIGHTAPPPACKAGE, null);
+    fun incCounter(key: String?) {
+        val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+        val edit = pref.edit()
+        val value = pref.getInt(key, 0) + 1
+        commitWait(edit.putInt(key, value))
     }
 
-    public void setRightAppPackage(String name) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
-        edit.putString(RIGHTAPPPACKAGE, name);
-        commitWait(edit);
-    }
+    companion object {
+        const val TAG = "saveAppInfo"
+        private const val LASTALARMTIME = "LastAlarmTime"
+        private const val LEFTAPPPACKAGE = "LeftAppPackage"
+        private const val RIGHTAPPPACKAGE = "RightAppPackage"
+        private const val LATESTVERSION = "LatestVersion"
+        private const val BATTERYNOTIFICATION = "BatteryOptNotificationTime"
+        const val STATUS_NOT_LOGGED_IN = "Logged out"
+        const val STATUS_LOG_OUT = "Log out"
+        const val STATUS_LOG_IN = "Log in"
+        const val STATUS_VEHICLE_INFO = "Vehicle Info"
+        const val STATUS_UPDATED = "Updated"
+        const val STATUS_UNKNOWN = "Unknown"
 
-    public String getLatestVersion() {
-        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-        return pref.getString(LATESTVERSION, "");
+        // When the list above changes, be sure to change this function also
+        val keys: ArrayList<String>
+            get() = ArrayList(
+                listOf(
+                    LASTALARMTIME,
+                    LEFTAPPPACKAGE,
+                    RIGHTAPPPACKAGE,
+                    LATESTVERSION,
+                    BATTERYNOTIFICATION,
+                    STATUS_NOT_LOGGED_IN,
+                    STATUS_LOG_OUT,
+                    STATUS_LOG_IN,
+                    STATUS_VEHICLE_INFO,
+                    STATUS_UPDATED,
+                    STATUS_UNKNOWN
+                )
+            )
     }
-
-    public void setLatestVersion(String name) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
-        edit.putString(LATESTVERSION, name);
-        commitWait(edit);
-    }
-
-    public void setLastAlarmTime() {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
-        long nowtime = LocalDateTime.now(ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        commitWait(edit.putLong(LASTALARMTIME, nowtime));
-    }
-
-    public long getLastAlarmTime() {
-        return mContext.getSharedPreferences(TAG, MODE_PRIVATE).getLong(LASTALARMTIME, 0);
-    }
-
-    public void setBatteryNotification(long time) {
-        SharedPreferences.Editor edit = mContext.getSharedPreferences(TAG, MODE_PRIVATE).edit();
-        commitWait(edit.putLong(BATTERYNOTIFICATION, time));
-    }
-
-    public long getBatteryNotification() {
-        return mContext.getSharedPreferences(TAG, MODE_PRIVATE).getLong(BATTERYNOTIFICATION, 0);
-    }
-
-    public int getCounter(String key) {
-        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-        return pref.getInt(key, 0);
-    }
-
-    public void incCounter(String key) {
-        SharedPreferences pref = mContext.getSharedPreferences(TAG, MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        int value = pref.getInt(key, 0) + 1;
-        commitWait(edit.putInt(key, value));
-    }
-
 }

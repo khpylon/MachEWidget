@@ -22,7 +22,7 @@ import java.util.*
 
 class CarStatusWidget_5x5 : CarStatusWidget() {
     override fun updateTire(
-        context: Context?, views: RemoteViews, pressure: String?, status: String?,
+        context: Context, views: RemoteViews, pressure: String?, status: String?,
         units: String?, conversion: Double, id: Int
     ) {
         var result: String

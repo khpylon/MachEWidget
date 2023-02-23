@@ -42,7 +42,7 @@ import kotlin.math.roundToInt
 open class CarStatusWidget : AppWidgetProvider() {
 
     open fun updateTire(
-        context: Context?, views: RemoteViews, pressure: String?, status: String?,
+        context: Context, views: RemoteViews, pressure: String?, status: String?,
         units: String?, conversion: Double, id: Int
     ) {
         // Set the textview background color based on the status
@@ -73,7 +73,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                     LogFile.e(
                         context,
                         MainActivity.CHANNEL_ID,
-                        "java.lang.NumberFormatException in CarStatusIdget.updateTire(): pressure = $pressure"
+                        "java.lang.NumberFormatException in CarStatusWidget.updateTire(): pressure = $pressure"
                     )
                     tmpPressure = "N/A"
                 }

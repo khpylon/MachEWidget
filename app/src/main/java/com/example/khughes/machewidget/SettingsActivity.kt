@@ -100,7 +100,7 @@ class SettingsActivity : AppCompatActivity() {
             version?.summary = BuildConfig.VERSION_NAME + " " + BuildConfig.FLAVOR
             version?.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
-                    val appInfo = StoredData(getContext())
+                    val appInfo = StoredData(requireContext())
                     val units1 = MessageFormat.format(
                         "status = {0}/{1}/{2}/{3}/{4}/{5}",
                         appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),

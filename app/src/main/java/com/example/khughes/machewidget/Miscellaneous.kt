@@ -386,7 +386,7 @@ class PrefManagement {
 
                 // Update all the shared preferences
                 edit = context.getSharedPreferences(StoredData.TAG, Context.MODE_PRIVATE).edit()
-                val currentKeys = StoredData.getKeys()
+                val currentKeys = StoredData.keys
                 prefs = jsonObject.getAsJsonObject(StoredData.TAG)
                 for (item in prefs.entrySet()) {
                     val key = item.key
