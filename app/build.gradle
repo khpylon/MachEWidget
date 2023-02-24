@@ -2,7 +2,7 @@ import java.text.SimpleDateFormat
 
 plugins {
     id 'com.android.application'
-    id "org.ajoberstar.grgit" version "1.7.2"
+    id "org.ajoberstar.grgit" version "5.0.0-rc.3"
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-kapt'
@@ -20,7 +20,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
-            arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+//            arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
     }
@@ -135,15 +135,13 @@ dependencies {
 
     // Room components
     implementation "androidx.room:room-ktx:2.5.0"
-    kapt "androidx.room:room-compiler:2.5.0"
-    androidTestImplementation "androidx.room:room-testing:2.5.0"
 
     implementation 'com.github.jozefchmelar:persistentcookiejar:1.0.1'
     implementation 'com.github.skydoves:colorpickerview:2.2.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
-    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.5.1'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.5.1'
     annotationProcessor 'androidx.room:room-compiler:2.5.0'
 
     testImplementation 'junit:junit:4.+'
