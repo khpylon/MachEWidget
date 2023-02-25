@@ -36,7 +36,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -228,7 +227,6 @@ public class NetworkCalls {
                 Call<AccessToken> call = OAuth2Client.refreshAccessToken(body);
                 try {
                     Response<AccessToken> response = call.execute();
-                    LogFile.i(context, MainActivity.CHANNEL_ID, "refresh here.");
                     if (response.isSuccessful()) {
                         LogFile.i(context, MainActivity.CHANNEL_ID, "refresh successful");
                         AccessToken accessToken = response.body();
@@ -261,10 +259,18 @@ public class NetworkCalls {
                         dao.updateUserInfo(userInfo);
                         data.putExtra("userId", userId);
                         nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
+                    } else if (response.code() == Constants.HTTP_INTERNAL_SERVER_ERROR) {
+                        LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, will attempt again");
+                        try {
+                            Thread.sleep(3 * 1000);
+                        } catch (InterruptedException e) {
+                        }
+                        continue;
                     } else {
                         LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString());
-                        LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, attempting to authorize");
-                        nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
+                        LogFile.i(context, MainActivity.CHANNEL_ID, "refresh unsuccessful, will retry later");
+//                        nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN;
                     }
                     break;
                 } catch (java.net.SocketTimeoutException ee) {

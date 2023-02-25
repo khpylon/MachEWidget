@@ -25,6 +25,7 @@ object Constants {
     const val HTTP_BAD_REQUEST = 400
     const val HTTP_UNAUTHORIZED = 401
     const val HTTP_SERVER_ERROR = 402
+    const val HTTP_INTERNAL_SERVER_ERROR = 500
 
     // Make sure these match values in strings.xml
     // const val UNITS_SYSTEM = 0
