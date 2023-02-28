@@ -14,6 +14,7 @@ open class Vehicle(val VIN: String) {
         private const val WORLD_MANUFACTURING_IDENTIFIER_START_INDEX = 1 - 1
         private const val WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3
         private const val WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV = "3FM"
+        private const val WORLD_MANUFACTURING_IDENTIFIER_MEXICO_TRUCK = "3FT"
         private const val WORLD_MANUFACTURING_IDENTIFIER_GERMANY = "WF0"
         private const val WORLD_MANUFACTURING_IDENTIFIER_USA_CAR = "1FA"
         private const val WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK = "1FT"
@@ -146,6 +147,14 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2 = "U1L"
         private const val NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4 = "U1M"
         private const val NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4 = "U1R"
+
+        private const val NA_LINE_SERIES_RANGER_SUPERCAB_4x2 = "R1E"
+        private const val NA_LINE_SERIES_RANGER_SUPERCAB_4x4 = "R1F"
+        private const val NA_LINE_SERIES_RANGER_SUPERCREW_4x2 = "R4E"
+        private const val NA_LINE_SERIES_RANGER_SUPERCREW_4x4 = "R4F"
+
+        private const val NA_LINE_SERIES_MAVERICK_SUPERCREW_4x2 = "W8E"
+        private const val NA_LINE_SERIES_MAVERICK_SUPERCREW_4x4 = "W8F"
 
         private const val NA_LINE_SERIES_MUSTANG_GT_COUPE = "P8C"
         private const val NA_LINE_SERIES_MUSTANG_GT_CONVERTABLE = "P8F"
@@ -484,6 +493,54 @@ open class Vehicle(val VIN: String) {
             NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4,
         )
 
+        private fun isRangerSuperCrew(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            val rangerSuperCrewsLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_RANGER_SUPERCREW_4x2,
+                NA_LINE_SERIES_RANGER_SUPERCREW_4x4,
+            )
+            return rangerSuperCrewsLineSeries.contains(lineSeries)
+        }
+
+        private fun isRangerSuperCab(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            val rangerSuperCabsLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_RANGER_SUPERCAB_4x2,
+                NA_LINE_SERIES_RANGER_SUPERCAB_4x4,
+            )
+            return rangerSuperCabsLineSeries.contains(lineSeries)
+        }
+
+        private fun isRanger(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK &&
+                    (isRangerSuperCab(VIN) || isRangerSuperCrew(VIN))
+        }
+
+        private fun isMaverick(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            val maverickSuperCrewsLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_MAVERICK_SUPERCREW_4x2,
+                NA_LINE_SERIES_MAVERICK_SUPERCREW_4x4,
+            )
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            return wmi == WORLD_MANUFACTURING_IDENTIFIER_MEXICO_TRUCK &&
+                    maverickSuperCrewsLineSeries.contains(lineSeries)
+        }
+
         private fun isMustang(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
@@ -557,13 +614,14 @@ open class Vehicle(val VIN: String) {
             isMachE(VIN) || isF150(VIN) || isF250(VIN) || isF350(VIN)
                     || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
                     || isEscape(VIN) || isEdge(VIN) || isExpedition(VIN)
-                    || isMustang(VIN) || isKuga(VIN) || isPuma(VIN) 
-                    || isFocus(VIN)
+                    || isRanger(VIN) || isMaverick(VIN) || isMustang(VIN)
+                    || isKuga(VIN) || isPuma(VIN) || isFocus(VIN)
 
         @JvmStatic
-        fun getVehicle(VIN: String): Vehicle {
+        fun getVehicle(VIN: String?): Vehicle {
             // Check all the inherited classes first
-            if (VIN == null || VIN == "") return MachE(VIN)
+            if (VIN == null || VIN == "") return MachE("")
+            if (isMachE(VIN)) return MachE(VIN)
             if (isBroncoSport(VIN)) return BroncoSport(VIN)
             if (isExpedition(VIN)) return Expedition(VIN)
             if (isMustang(VIN)) return Mustang(VIN)
@@ -586,11 +644,16 @@ open class Vehicle(val VIN: String) {
             if (isF350SuperCab(VIN)) return F250SuperCab(VIN)
             if (isF350CrewCab(VIN)) return F250CrewCab(VIN)
 
+            // Ranger variants?
+            if (isRangerSuperCrew(VIN)) return RangerSuperCrew(VIN)
+            if (isRangerSuperCab(VIN)) return RangerSuperCab(VIN)
+
             // Check everything else
             if (isBronco(VIN)) return Bronco(VIN)
             if (isEdge(VIN)) return Edge(VIN)
             if (isEscape(VIN)) return Escape(VIN)
             if (isExplorer(VIN)) return Explorer(VIN)
+            if (isMaverick(VIN)) return Maverick(VIN)
 
             // If none of the above, then see if it's a "truck"
             if (VIN.startsWith(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK)) return F150RegularCab(VIN)
@@ -730,7 +793,7 @@ class F150RegularCab(VIN: String) : F150(VIN) {
     override val name = "F-150 Regular Cab"
 }
 
-class F150SuperCab(VIN: String) : F150(VIN) {
+open class F150SuperCab(VIN: String) : F150(VIN) {
     override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercab_wireframe_vert,
         HOOD to R.drawable.supercab_hood_vert,
@@ -762,7 +825,7 @@ class F150SuperCab(VIN: String) : F150(VIN) {
     override val name = "F-150 Super Cab"
 }
 
-class F150SuperCrew(VIN: String) : F150(VIN) {
+open class F150SuperCrew(VIN: String) : F150(VIN) {
     override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
         WIREFRAME to R.drawable.supercrew_wireframe_vert,
         HOOD to R.drawable.supercrew_hood_vert,
@@ -894,6 +957,24 @@ class F250CrewCab(VIN: String) : F250(VIN) {
     )
 
     override val name = "F-250 Crew Cab"
+}
+
+open class RangerSuperCab(VIN: String) : F150SuperCab(VIN) {
+    override val logoID = R.drawable.generic_logo
+    override val offsetPositions = arrayOf(244, 200)
+    override val name = "Ranger SuperCab"
+}
+
+open class RangerSuperCrew(VIN: String) : F150SuperCrew(VIN) {
+    override val logoID = R.drawable.generic_logo
+    override val offsetPositions = arrayOf(244, 200)
+    override val name = "Ranger SuperCrew"
+}
+
+open class Maverick(VIN: String) : F150SuperCrew(VIN) {
+    override val logoID = R.drawable.generic_logo
+    override val offsetPositions = arrayOf(344, 800)
+    override val name = "Maverick SuperCrew"
 }
 
 open class Bronco(VIN: String) : Vehicle(VIN) {
