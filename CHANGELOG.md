@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.02.28
+## Added
+- Ranger and Maverick vehicles are now recognized (uses F150 silhouettes).
+
+### Fixed
+- After app setting are restored, update widgets which refer to missing VINs.
+- Remove old user information on log-in.
+- Still resolving issues with token refreshes.
+
 ## 2023.02.15
 ### Fixed
 - Resolving other issues with app not working after a token refresh.
