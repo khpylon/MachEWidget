@@ -74,6 +74,7 @@ public class VehicleInfo {
 
     public VehicleInfo() {
         id = 0; // for new database entries, this will generate a new id
+        VIN = "";
         initialForcedRefreshTime = 0;
         lastRefreshTime = 0;
         lastUpdateTime = 0;

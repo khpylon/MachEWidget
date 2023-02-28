@@ -143,11 +143,15 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 
     private fun updateAppWidget(
         context: Context, appWidgetManager: AppWidgetManager,
-        appWidgetId: Int, info: InfoRepository?
+        appWidgetId: Int, info: InfoRepository
     ) {
 
+        // Find which user is active.
+        val userInfo = info.user
+        if (userInfo.userId == "") return
+
         // Find the vehicle for this widget
-        val vehicleInfo = getVehicleInfo(context, info!!, appWidgetId) ?: return
+        val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return
         val widget_VIN = Constants.VIN_KEY + appWidgetId
         val views = getWidgetView(context, widget_VIN)
 
@@ -160,9 +164,6 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 
         // Set background transparency
         setBackground(context, views)
-
-        // Find which user is active.
-        val userInfo = info.user ?: return
 
         // If the vehicle image has been downloaded, update it
         val useImage = PreferenceManager.getDefaultSharedPreferences(context)
@@ -345,7 +346,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             val info = getInfo(context)
-            if (info.user != null) {
+            if (info.user.userId != "") {
                 // There may be multiple widgets active, so update all of them
                 for (appWidgetId in appWidgetIds) {
                     updateAppWidget(context, appWidgetManager, appWidgetId, info)

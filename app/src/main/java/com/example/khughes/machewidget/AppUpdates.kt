@@ -70,7 +70,7 @@ object AppUpdates {
                     context.resources.getString(R.string.update_frequency_key),
                     "15"
                 )!!.toInt()
-                if( delayInMillis > 0 && delayInMillis < 15)
+                if(delayInMillis in 1..14)
                 {
                     prefs.edit()
                         .putString(

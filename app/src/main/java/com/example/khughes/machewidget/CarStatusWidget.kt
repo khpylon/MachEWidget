@@ -181,7 +181,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             .getString(widget_VIN, null)
 
         // If there's a VIN but no vehicle, then essentially there is no VIN
-        if (VIN != null && info.getVehicleByVIN(VIN) == null) {
+        if (VIN != null && info.getVehicleByVIN(VIN).vin == "") {
             VIN = null
         }
 
@@ -194,7 +194,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             }
             //  Look for an enabled vehicle with this owner
             for (vehicleInfo in vehicles) {
-                if (vehicleInfo.isEnabled && vehicleInfo.userId == info.user.userId) {
+                if (vehicleInfo.isEnabled && vehicleInfo.userId == info.user?.userId) {
                     VIN = vehicleInfo.vin
                     break
                 }
@@ -934,7 +934,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val userInfo = info.user
                             val lastUpdateInMillis = vehInfo.lastUpdateTime
                             val timeFormat =
-                                if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+                                if (userInfo?.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
                             val lastUpdate =
                                 OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat)
                             Toast.makeText(
@@ -1035,7 +1035,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                                     // The first three refreshes must have 2 minutes between them; the next
                                                     // two refreshes must have 10 minutes
                                                     if (count < FIRST_LIMIT && seconds > FIRST_INTERVAL || count < SECOND_LIMIT && seconds > SECOND_INTERVAL) {
-                                                        val timeout = user.expiresIn
+                                                        val timeout = user!!.expiresIn
                                                         seconds = (timeout - nowTime) / MILLIS
                                                         // If the access token has expired, or is about to, do a refresh first
                                                         if (seconds < 30) {

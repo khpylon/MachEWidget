@@ -63,7 +63,10 @@ class VehicleColor {
             val patchSize = 10
             for (y in 0..patchSize) {
                 for (x in 0..patchSize) {
-                    val color = bmp.getPixel(min(startx + x, bmp.width-1), min(starty + y, bmp.height-1))
+                    val color = bmp.getPixel(
+                        min(startx + x, bmp.width - 1),
+                        min(starty + y, bmp.height - 1)
+                    )
                     RGB[0] += color.shr(16) and 0xff
                     RGB[1] += color.shr(8) and 0xff
                     RGB[2] += color and 0xff
@@ -150,7 +153,7 @@ class VehicleColor {
 
             // Draw anything that's open
             for (id in whatsOpen) {
-                val icon = context.getDrawable(id)
+                val icon = AppCompatResources.getDrawable(context,id)
                 icon?.let {
                     icon.setBounds(0, 0, canvas.width, canvas.height)
                     icon.draw(canvas)
@@ -274,7 +277,7 @@ class PrefManagement {
                 // Get the current set of user IDs and VINs
                 val userIds = ArrayList<String>()
                 for (info in UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
-                    userIds.add(info.userId)
+                    userIds.add(info.userId!!)
                 }
                 val VINs = ArrayList<String>()
                 for (info in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
@@ -282,7 +285,7 @@ class PrefManagement {
                     VINs.add(info.vin)
                 }
 
-                var newVIN = ""
+                var newVIN: String
                 var newUserId = ""
 
                 // Update users in the database, and remove all IDs from the current list
@@ -296,7 +299,7 @@ class PrefManagement {
                         )
                         val current =
                             UserInfoDatabase.getInstance(context).userInfoDao()
-                                .findUserInfo(info.userId)
+                                .findUserInfo(info.userId!!)
                         if (current == null) {
                             info.id = 0
                             UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info)
@@ -307,6 +310,7 @@ class PrefManagement {
                     }
 
                     // Insert missing VINs into the database, and remove all VINs from the current list
+                    val newVINs = mutableListOf<String>()
                     val vehicles = jsonObject.getAsJsonArray("vehicles")
                     for (items in vehicles) {
                         val info = gson.fromJson<VehicleInfo>(
@@ -334,8 +338,35 @@ class PrefManagement {
                                 user.country
                             )
                         }
-                        VINs.remove(info.vin)
+                        newVINs.add(newVIN)
+                        VINs.remove(newVIN)
                     }
+
+                    // Update each widget instance to be sure there is a valid VIN
+                    val edit =
+                        context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
+                            .edit()
+                    val widgetPrefs = context.getSharedPreferences(
+                        Constants.WIDGET_FILE,
+                        Context.MODE_PRIVATE
+                    ).all
+
+                    // If there aren't any new VINs, insert a blank one
+                    if (newVINs.isEmpty()) {
+                        newVINs.add("")
+                    }
+
+                    // If an old VIN isn't among the new VINs, substitute a
+                    // new one
+                    for (item in widgetPrefs) {
+                        val key = item.key
+                        val value = item.value
+                        if (value !in newVINs) {
+                            edit.putString(key, newVINs[0])
+                        }
+                    }
+                    edit.apply()
+
                 }
 
                 // Version 1 preferences didn't include user Id
@@ -657,11 +688,11 @@ class Misc {
             return result.toString()
         }
 
-        @JvmStatic
-        fun OTASupportCheck(alertStatus: String?): Boolean {
-            return alertStatus == null || !alertStatus.lowercase(Locale.getDefault())
-                .replace("[^a-z0-9]".toRegex(), "").contains("doesntsupport")
-        }
+//        @JvmStatic
+//        fun OTASupportCheck(alertStatus: String?): Boolean {
+//            return alertStatus == null || !alertStatus.lowercase(Locale.getDefault())
+//                .replace("[^a-z0-9]".toRegex(), "").contains("doesntsupport")
+//        }
 
         @JvmStatic
         fun removeAPK(context: Context): File {
@@ -703,15 +734,19 @@ class Misc {
             } else {
                 val nightModeFlags =
                     context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                     if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES
                         && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)
                     ) {
-                        WebSettingsCompat.setForceDark( view.settings, WebSettingsCompat.FORCE_DARK_ON )
+                        WebSettingsCompat.setForceDark(
+                            view.settings,
+                            WebSettingsCompat.FORCE_DARK_ON
+                        )
                     }
                 } else {
                     if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES
-                        && WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING
+                        && WebViewFeature.isFeatureSupported(
+                            WebViewFeature.ALGORITHMIC_DARKENING
                         )
                     ) {
                         WebSettingsCompat.setAlgorithmicDarkeningAllowed(view.settings, true)
@@ -736,18 +771,25 @@ class Misc {
         // Units used to be read from user settings until the API was removed.  If these settings are using "FordPass settings" or "locale settings",
         // then examine the strings stored for the user and choose the appropriate setting value.
         @JvmStatic
-        fun updateUnits (context: Context) {
+        fun updateUnits(context: Context) {
             val prefs = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
             val unitsKey = context.resources.getString(R.string.units_key)
-            val units = Integer.parseInt(prefs.getString(unitsKey, context.resources.getString(R.string.units_mphpsi)))
+            val units = Integer.parseInt(
+                prefs.getString(
+                    unitsKey,
+                    context.resources.getString(R.string.units_mphpsi)
+                )
+            )
             if (units == 0) {
                 CoroutineScope(Dispatchers.Main).launch {
                     val info = getInfo(context)
                     info.user?.let {
-                        val map = mapOf("MPHPSI" to context.resources.getString(R.string.units_mphpsi),
+                        val map = mapOf(
+                            "MPHPSI" to context.resources.getString(R.string.units_mphpsi),
                             "KPHPSI" to context.resources.getString(R.string.units_kphpsi),
                             "KPHKPA" to context.resources.getString(R.string.units_kphkpa),
-                            "KPHBAR" to context.resources.getString(R.string.units_kphbar))
+                            "KPHBAR" to context.resources.getString(R.string.units_kphbar)
+                        )
                         val speed = it.uomSpeed
                         val pressure = it.uomPressure
                         val value = map.getOrDefault(speed + pressure, "2")

@@ -7,10 +7,7 @@ import android.widget.RemoteViews
 import com.example.khughes.machewidget.CarStatus.CarStatus
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.os.Looper
 import android.content.Intent
-import android.os.Handler
-import android.os.Message
 import android.view.View
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
@@ -70,7 +67,7 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         setBackground(context, views)
 
         // Find which user is active.
-        val userInfo = info!!.user ?: return
+        if(info == null) return
 
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return
@@ -178,18 +175,9 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             val info = getInfo(context)
-            if (info!!.user != null) {
-                // There may be multiple widgets active, so update all of them
-                for (appWidgetId in appWidgetIds) {
-                    updateAppWidget(context, appWidgetManager, appWidgetId, info)
-                }
-
-            } else {
-                LogFile.d(
-                    context,
-                    MainActivity.CHANNEL_ID,
-                    "CarStatusWidget_1x5.onUpdate(): no userinfo found"
-                )
+            // There may be multiple widgets active, so update all of them
+            for (appWidgetId in appWidgetIds) {
+                updateAppWidget(context, appWidgetManager, appWidgetId, info)
             }
         }
     }

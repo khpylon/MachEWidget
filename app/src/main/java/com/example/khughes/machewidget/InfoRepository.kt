@@ -26,7 +26,7 @@ class InfoRepository internal constructor(mContext: Context) {
         ).getString(mContext.resources.getString(R.string.userId_key), null)
         user = UserInfo()
         if (userId != null) {
-            user = mUserInfoDao.findUserInfo(userId)
+            user = mUserInfoDao.findUserInfo(userId) ?: UserInfo()
         } else {
             e(
                 mContext,

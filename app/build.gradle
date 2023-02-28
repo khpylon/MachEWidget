@@ -94,11 +94,6 @@ Application-name: com.example.khughes.machewidget
     }
 }
 
-configurations {
-    cleanedAnnotations
-    implementation.exclude group: 'org.jetbrains' , module:'annotations'
-}
-
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -135,14 +130,18 @@ dependencies {
 
     // Room components
     implementation "androidx.room:room-ktx:2.5.0"
+    // DO NOT change annotationProcessor to kapt; this will break Rooms with Kotlin
+    kapt "android.arch.persistence.room:compiler:1.1.1"
+    kapt "android.arch.persistence.room:testing:1.1.1"
+    kapt 'androidx.room:room-compiler:2.5.0'
 
     implementation 'com.github.jozefchmelar:persistentcookiejar:1.0.1'
     implementation 'com.github.skydoves:colorpickerview:2.2.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
+    //noinspection LifecycleAnnotationProcessorWithJava8
     kapt 'androidx.lifecycle:lifecycle-compiler:2.5.1'
-    annotationProcessor 'androidx.room:room-compiler:2.5.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

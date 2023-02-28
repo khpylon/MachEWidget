@@ -207,14 +207,14 @@ class VehicleActivity : AppCompatActivity() {
     private suspend fun getUserInfo(context: Context, userId: String): UserInfo =
         coroutineScope {
             withContext(Dispatchers.IO) {
-                val user = UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId)
-                if (user == null) {
-                    val tmp = UserInfo()
-                    tmp.userId = null
-                    tmp
-                } else {
-                    user
-                }
+                UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId) ?: UserInfo()
+//                if (user == null) {
+//                    val tmp = UserInfo()
+//                    tmp.userId = ""
+//                    tmp
+//                } else {
+//                    user
+//                }
             }
         }
 
