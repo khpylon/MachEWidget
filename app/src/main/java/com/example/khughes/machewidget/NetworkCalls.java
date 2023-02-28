@@ -140,7 +140,6 @@ public class NetworkCalls {
 
                         accessToken = response.body();
                         userId = UUID.nameUUIDFromBytes(accessToken.getUserId().getBytes()).toString();
-                        userDao.deleteUserInfoByUserId(userId);
 
                         // Create user profile
                         userInfo.setUserId(userId);
@@ -169,6 +168,8 @@ public class NetworkCalls {
                             userInfo.setUomDistance(0);
                         }
                         userInfo.setProgramState(nextState);
+
+                        userDao.deleteAllUserInfo();
                         userDao.insertUserInfo(userInfo);
 
                         if(VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVINsByUserId(userId).size() == 0) {

@@ -20,6 +20,9 @@ interface UserInfoDao {
     @Query("DELETE FROM user_info WHERE userId LIKE :userId")
     fun deleteUserInfoByUserId(userId: String)
 
+    @Query("DELETE FROM user_info")
+    fun deleteAllUserInfo()
+
     @Query("UPDATE user_info SET programState = :state WHERE userId = :userId")
     fun updateProgramState(state: String, userId: String)
 
