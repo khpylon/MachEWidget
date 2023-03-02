@@ -361,7 +361,7 @@ class PrefManagement {
                     for (item in widgetPrefs) {
                         val key = item.key
                         val value = item.value
-                        if (value !in newVINs) {
+                        if (key.startsWith(Constants.VIN_KEY) && value !in newVINs) {
                             edit.putString(key, newVINs[0])
                         }
                     }
