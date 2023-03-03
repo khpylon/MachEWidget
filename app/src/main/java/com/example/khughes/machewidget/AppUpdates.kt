@@ -24,7 +24,8 @@ object AppUpdates {
             // Re-enable OTA support on all vehicles, and add userId to settings.
             if (lastVersion < "2022.06.20") {
                 Thread {
-                    for (userInfo in UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
+                    for (userInfo in UserInfoDatabase.getInstance(context).userInfoDao()
+                        .findUserInfo()) {
                         userInfo.programState = Constants.STATE_HAVE_TOKEN_AND_VIN
                         UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(userInfo)
                     }
@@ -70,8 +71,7 @@ object AppUpdates {
                     context.resources.getString(R.string.update_frequency_key),
                     "15"
                 )!!.toInt()
-                if(delayInMillis in 1..14)
-                {
+                if (delayInMillis in 1..14) {
                     prefs.edit()
                         .putString(
                             context.resources.getString(R.string.update_frequency_key),
@@ -84,6 +84,26 @@ object AppUpdates {
             // Convert old unit display settings to new settings
             if (lastVersion < "2023.01.27") {
                 Misc.updateUnits(context)
+            }
+
+            // Remove any keys in widget file that aren't related to VINs. This is related to the
+            // version 2023.03.02 bug fix and should have been included in that release.
+            if (lastVersion < "2023.03.03") {
+                val edit =
+                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
+                        .edit()
+                val widgetPrefs =
+                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
+                        .all
+
+                for (item in widgetPrefs) {
+                    val key = item.key
+                    val value = item.value
+                    if (!key.startsWith(Constants.VIN_KEY)) {
+                        edit.remove(key)
+                    }
+                }
+                edit.apply()
             }
 
         }
