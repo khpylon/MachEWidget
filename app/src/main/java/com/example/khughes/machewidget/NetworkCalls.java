@@ -172,7 +172,15 @@ public class NetworkCalls {
                         userDao.deleteAllUserInfo();
                         userDao.insertUserInfo(userInfo);
 
-                        if(VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVINsByUserId(userId).size() == 0) {
+                        // Remove any existing vehicles associated with other user IDs
+                        VehicleInfoDao dao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao();
+                        for (VehicleInfo info : dao.findVehicleInfo()) {
+                            if (!info.getUserId().equals(userId)) {
+                                dao.deleteVehicleInfoByVIN(info.getVIN());
+                            }
+                        }
+
+                        if (VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVINsByUserId(userId).size() == 0) {
                             nextState = Constants.STATE_HAVE_TOKEN;
                         } else {
                             nextState = Constants.STATE_HAVE_TOKEN_AND_VIN;
@@ -240,7 +248,7 @@ public class NetworkCalls {
                         if (!newUserId.equals(userId)) {
                             VehicleInfoDao vehicleDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao();
                             List<VehicleInfo> vehicles = vehicleDao.findVehicleInfoByUserId(userId);
-                            for(VehicleInfo vehicle: vehicles) {
+                            for (VehicleInfo vehicle : vehicles) {
                                 vehicle.setUserId(newUserId);
                                 vehicleDao.updateVehicleInfo(vehicle);
                             }
