@@ -168,7 +168,7 @@ class ReminderActivity : AppCompatActivity() {
         currentVehicle?.let {
             it.chargeThresholdLevel = level
             it.chargeHour = chargeHour
-            info?.setVehicle(currentVehicle)
+            info?.setVehicle(currentVehicle!!)
             if (isNotificationEnabled(chargeHour)) {
                 ReminderReceiver.setAlarm(
                     applicationContext,

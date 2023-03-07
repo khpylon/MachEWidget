@@ -56,7 +56,7 @@ class InfoRepository internal constructor(mContext: Context) {
         return VehicleInfo()
     }
 
-    fun setVehicle(info: VehicleInfo?) {
+    fun setVehicle(info: VehicleInfo) {
         mVehicleInfo = info
         VehicleInfoDatabase.databaseWriteExecutor.execute { mVehicleInfoDao.updateVehicleInfo(info) }
     }

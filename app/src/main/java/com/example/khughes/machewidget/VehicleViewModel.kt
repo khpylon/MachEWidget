@@ -1,6 +1,7 @@
 package com.example.khughes.machewidget
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.example.khughes.machewidget.db.VehicleInfoDao
@@ -11,11 +12,11 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
     val allVehicles: LiveData<List<VehicleIds>>
 
     init {
-        mRepository = VehicleRepository(application)
+        mRepository = VehicleRepository(application?.applicationContext as Context)
         allVehicles = mRepository.allVehicles
     }
 
-    fun setEnable(VIN: String?, value: Boolean) {
+    fun setEnable(VIN: String, value: Boolean) {
         mRepository.enable(VIN, value)
     }
 
@@ -29,16 +30,16 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
         return count
     }
 
-    internal inner class VehicleRepository(application: Application?) {
+    internal inner class VehicleRepository(context: Context) {
         private val mVehDao: VehicleInfoDao
         val allVehicles: LiveData<List<VehicleIds>>
 
         init {
-            mVehDao = VehicleInfoDatabase.getInstance(application).vehicleInfoDao()
+            mVehDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
             this.allVehicles = mVehDao.liveDataVehicleInfo
         }
 
-        fun enable(VIN: String?, value: Boolean) {
+        fun enable(VIN: String, value: Boolean) {
             Thread { mVehDao.updateEnable(VIN, value) }.start()
         }
     }
