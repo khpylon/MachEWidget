@@ -1,38 +1,37 @@
-package com.example.khughes.machewidget.CarStatus;
+package com.example.khughes.machewidget.CarStatus
 
-import androidx.room.Embedded;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import javax.annotation.Generated;
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+import javax.annotation.Generated
 
 @Generated("jsonschema2pojo")
-public class Battery {
+class Battery {
+
+    @Generated("jsonschema2pojo")
+    class BatteryHealth {
+        @SerializedName("value")
+        @Expose
+        @ColumnInfo(name = "batteryhealth_value")
+        var value: String? = null
+    }
+
+    @Generated("jsonschema2pojo")
+    class BatteryStatusActual {
+        @SerializedName("value")
+        @Expose
+        @ColumnInfo(name = "batterystatusactual_value")
+        var value: Int? = null
+    }
 
     @SerializedName("batteryHealth")
     @Expose
     @Embedded
-    private BatteryHealth batteryHealth;
+    var batteryHealth: BatteryHealth? = null
+
     @SerializedName("batteryStatusActual")
     @Expose
     @Embedded
-    private BatteryStatusActual batteryStatusActual;
-
-    public BatteryHealth getBatteryHealth() {
-        return batteryHealth;
-    }
-
-    public void setBatteryHealth(BatteryHealth batteryHealth) {
-        this.batteryHealth = batteryHealth;
-    }
-
-    public BatteryStatusActual getBatteryStatusActual() {
-        return batteryStatusActual;
-    }
-
-    public void setBatteryStatusActual(BatteryStatusActual batteryStatusActual) {
-        this.batteryStatusActual = batteryStatusActual;
-    }
-
+    var batteryStatusActual: BatteryStatusActual? = null
 }

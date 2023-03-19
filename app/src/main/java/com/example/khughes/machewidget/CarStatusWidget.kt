@@ -358,15 +358,22 @@ open class CarStatusWidget : AppWidgetProvider() {
         var rangeCharge = "N/A"
         if (!isICEOrHybrid) {
             // Estimated range
-            val range = carStatus.elVehDTE
-            if (range != null && range > 0) {
+//            val range = carStatus.vehiclestatus?.elVehDTE?.value ?: 0.0
+//            if (range > 0) {
+//                rangeCharge = MessageFormat.format(
+//                    "{0} {1}",
+//                    (range * distanceConversion).roundToInt(),
+//                    distanceUnits
+//                )
+//            }
+            carStatus.vehiclestatus?.elVehDTE?.value?.let {
                 rangeCharge = MessageFormat.format(
                     "{0} {1}",
-                    (range * distanceConversion).roundToInt(),
+                    (it * distanceConversion).roundToInt(),
                     distanceUnits
                 )
-            }
 
+            }
             // Charging port
             val pluggedIn = carStatus.plugStatus
             views.setImageViewResource(
@@ -413,7 +420,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                     val endChargeTime = Calendar.getInstance()
                     try {
                         endChargeTime.time =
-                            sdf.parse(carStatus.vehiclestatus.chargeEndTime.value) as Date
+                            sdf.parse(carStatus.vehiclestatus!!.chargeEndTime!!.value) as Date
                         val nowTime = Calendar.getInstance()
                         var min = Duration.between(
                             nowTime.toInstant(),
@@ -454,8 +461,8 @@ open class CarStatusWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.GOM, rangeCharge)
 
             // High-voltage battery charge levels
-            val chargeLevel = carStatus.hvbFillLevel
-            if (chargeLevel != null) {
+            val chargeLevel = carStatus.HVBFillLevel
+            if (chargeLevel != Double.MAX_VALUE) {
                 views.setProgressBar(
                     R.id.HBVChargeProgress,
                     100,
@@ -523,21 +530,21 @@ open class CarStatusWidget : AppWidgetProvider() {
             if (carStatus.vehiclestatus == null) {
                 Toast.makeText(context, "carStatus.getVehiclestatus() is null", Toast.LENGTH_SHORT)
                     .show()
-            } else if (carStatus.vehiclestatus.fuel == null) {
+            } else if (carStatus.vehiclestatus!!.fuel == null) {
                 Toast.makeText(
                     context,
                     "carStatus.getVehiclestatus().getFuel() is null",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                if (carStatus.vehiclestatus.fuel.distanceToEmpty == null) {
+                if (carStatus.vehiclestatus!!.fuel?.distanceToEmpty == null) {
                     Toast.makeText(
                         context,
                         "carStatus.getVehiclestatus().getFuel().getDistanceToEmpty() is null",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                if (carStatus.vehiclestatus.fuel.fuelLevel == null) {
+                if (carStatus.vehiclestatus!!.fuel?.fuelLevel == null) {
                     Toast.makeText(
                         context,
                         "carStatus.getVehiclestatus().getFuel().getFuelLevel() is null",
@@ -548,8 +555,8 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
 
         // 12 volt battery status
-        val LVBLevel = carStatus.lvbVoltage
-        val LVBStatus = carStatus.lvbStatus
+        val LVBLevel = carStatus.LVBVoltage
+        val LVBStatus = carStatus.LVBStatus
         if (LVBLevel != null && LVBStatus != null) {
             views.setTextColor(
                 R.id.LVBVoltage,
@@ -618,20 +625,32 @@ open class CarStatusWidget : AppWidgetProvider() {
         distanceConversion: Double,
         distanceUnits: String?
     ) {
-        val odometer = carStatus.odometer
-        if (odometer != null && odometer > 0) {
-            // FordPass truncates; go figure.
-            views.setTextViewText(
-                R.id.odometer,
-                MessageFormat.format(
+//        val odometer = carStatus.odometer
+//        if (odometer > 0) {
+//            // FordPass truncates; go figure.
+//            views.setTextViewText(
+//                R.id.odometer,
+//                MessageFormat.format(
+//                    "Odo: {0} {1}",
+//                    java.lang.Double.valueOf(odometer * distanceConversion).toInt(),
+//                    distanceUnits
+//                )
+//            )
+//        } else {
+//            views.setTextViewText(R.id.odometer, "Odo: ---")
+//        }
+          views.setTextViewText(R.id.odometer,
+              carStatus.vehiclestatus?.odometer?.value?.let {
+                  MessageFormat.format(
                     "Odo: {0} {1}",
-                    java.lang.Double.valueOf(odometer * distanceConversion).toInt(),
+                    java.lang.Double.valueOf(it * distanceConversion).toInt(),
                     distanceUnits
                 )
-            )
-        } else {
-            views.setTextViewText(R.id.odometer, "Odo: ---")
-        }
+              } ?: "Odo: ---"
+          )
+
+
+
     }
 
     // OTA status
@@ -999,7 +1018,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                 if (carStatus != null) {
                                     when (action) {
                                         IGNITION_CLICK -> if (carStatus.remoteStartStatus != null && carStatus.ignition != null && carStatus.ignition == "Off") {
-                                            if (!carStatus.remoteStartStatus) {
+                                            if (!carStatus.remoteStartStatus!!) {
                                                 remoteStart(context, VIN)
                                             } else {
                                                 remoteStop(context, VIN)
@@ -1016,7 +1035,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                             // If user is undefined, don't do anything
                                             val user = info.user
                                             user.let {
-                                                if (carStatus.lvbStatus == "STATUS_GOOD") {
+                                                if (carStatus.LVBStatus == "STATUS_GOOD") {
                                                     val nowTime = Instant.now().toEpochMilli()
                                                     val firstTime = vehInfo.initialForcedRefreshTime
                                                     val lastTime = vehInfo.lastForcedRefreshTime

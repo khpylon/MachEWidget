@@ -155,7 +155,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
                 .getBoolean(context.resources.getString(R.string.show_location_key), true)
         ) {
             views.setViewVisibility(R.id.location_container, View.VISIBLE)
-            updateLocation(context, views, carStatus.latitude, carStatus.longitude)
+            updateLocation(context, views, carStatus.latitude!!, carStatus.longitude!!)
         } else {
             views.setViewVisibility(R.id.location_container, View.GONE)
         }

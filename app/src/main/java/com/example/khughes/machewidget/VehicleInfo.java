@@ -23,8 +23,8 @@ public class VehicleInfo {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    @ColumnInfo(name = "VIN")
     private String VIN;
-
     private String userId;
 
     private String nickname;
@@ -319,36 +319,4 @@ public class VehicleInfo {
 
     public void setChargeThresholdLevel(int chargeThresholdLevel) { this.chargeThresholdLevel = chargeThresholdLevel; }
 
-    @Entity
-    public class CarStatusInfo {
-        @PrimaryKey(autoGenerate = true)
-        private int id;
-
-        private String VIN;
-
-        @Embedded
-        private CarStatus carStatus;
-
-        public int getId() { return id; }
-
-        public void setId(int id) { this.id = id; }
-
-        @NonNull
-        public String getVIN() {
-            return VIN;
-        }
-
-        public void setVIN(@NonNull String VIN) {
-            this.VIN = VIN;
-        }
-
-        public CarStatus getCarStatus() {
-            return carStatus;
-        }
-
-        public void setCarStatus(CarStatus carStatus) {
-            this.carStatus = carStatus;
-        }
-
-    }
 }

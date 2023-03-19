@@ -56,7 +56,7 @@ class Notifications : BroadcastReceiver() {
         @JvmStatic
         fun checkLVBStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastLVBStatus = vehInfo.lastLVBStatus
-            val currentLVBStatus = carStatus.lvbStatus
+            val currentLVBStatus = carStatus.LVBStatus
             if (currentLVBStatus != null && currentLVBStatus != lastLVBStatus) {
                 // Save the current status
                 vehInfo.lastLVBStatus = currentLVBStatus
@@ -103,10 +103,10 @@ class Notifications : BroadcastReceiver() {
         fun checkTPMSStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastTPMSStatus = vehInfo.lastTPMSStatus
             val currentTPMSStatus: MutableMap<String, String> = HashMap()
-            currentTPMSStatus[LEFT_FRONT_TIRE] = carStatus.leftFrontTireStatus
-            currentTPMSStatus[RIGHT_FRONT_TIRE] = carStatus.rightFrontTireStatus
-            currentTPMSStatus[LEFT_REAR_TIRE] = carStatus.leftRearTireStatus
-            currentTPMSStatus[RIGHT_REAR_TIRE] = carStatus.rightRearTireStatus
+            currentTPMSStatus[LEFT_FRONT_TIRE] = carStatus.leftFrontTireStatus!!
+            currentTPMSStatus[RIGHT_FRONT_TIRE] = carStatus.rightFrontTireStatus!!
+            currentTPMSStatus[LEFT_REAR_TIRE] = carStatus.leftRearTireStatus!!
+            currentTPMSStatus[RIGHT_REAR_TIRE] = carStatus.rightRearTireStatus!!
             var badTire = ""
             for (key in arrayOf(
                 LEFT_FRONT_TIRE,

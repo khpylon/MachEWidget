@@ -252,20 +252,29 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         )
 
         // Current Odometer reading
-        val odometer = carStatus.odometer
-        if (odometer != null && odometer > 0) {
-            // FordPass truncates; go figure.
-            views.setTextViewText(
-                R.id.odometer,
+//        val odometer = carStatus.odometer
+//        if (odometer > 0) {
+//            // FordPass truncates; go figure.
+//            views.setTextViewText(
+//                R.id.odometer,
+//                MessageFormat.format(
+//                    "Odo: {0} {1}",
+//                    java.lang.Double.valueOf(odometer * distanceConversion).toInt(),
+//                    distanceUnits
+//                )
+//            )
+//        } else {
+//            views.setTextViewText(R.id.odometer, "Odo: ---")
+//        }
+        views.setTextViewText(R.id.odometer,
+            carStatus.vehiclestatus?.odometer?.value?.let {
                 MessageFormat.format(
                     "Odo: {0} {1}",
-                    java.lang.Double.valueOf(odometer * distanceConversion).toInt(),
+                    java.lang.Double.valueOf(it * distanceConversion).toInt(),
                     distanceUnits
                 )
-            )
-        } else {
-            views.setTextViewText(R.id.odometer, "Odo: ---")
-        }
+            } ?: "Odo: ---"
+        )
 
         // Tire pressures
         updateTire(
@@ -329,7 +338,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 .getBoolean(context.resources.getString(R.string.show_location_key), true)
         ) {
             views.setViewVisibility(R.id.location_container, View.VISIBLE)
-            updateLocation(context, views, carStatus.latitude, carStatus.longitude)
+            updateLocation(context, views, carStatus.latitude!!, carStatus.longitude!!)
         } else {
             views.setViewVisibility(R.id.location_container, View.GONE)
         }
