@@ -88,32 +88,15 @@ open class CarStatusWidget : AppWidgetProvider() {
         views.setInt(id, "setBackgroundResource", drawable)
     }
 
-    protected fun updateLocation(
-        context: Context?,
+    private fun showAddress(
         views: RemoteViews,
-        latitude: String,
-        longitude: String
+        addresses: MutableList<Address>
     ) {
-        val addresses: List<Address>?
+        // If an address was found, go with the first entry
         var streetName = PADDING
         var cityState = ""
-        val mGeocoder = Geocoder(context!!, Locale.getDefault())
-        val lat = latitude.toDouble()
-        val lon = longitude.toDouble()
-        addresses = try {
-            mGeocoder.getFromLocation(lat, lon, 1)
-        } catch (e: IOException) {
-            LogFile.e(
-                context,
-                MainActivity.CHANNEL_ID,
-                "IOException in CarStatusWidget.updateAppWidget for Geocoder (this is normal)"
-            )
-            return
-        }
-        views.setTextViewText(R.id.location_line1, "Location:")
 
-        // If an address was found, go with the first entry
-        if (addresses != null && addresses.isNotEmpty()) {
+        if (addresses.isNotEmpty()) {
             val address = addresses[0]
 
             // Street address and name
@@ -142,9 +125,31 @@ open class CarStatusWidget : AppWidgetProvider() {
             streetName = PADDING + "N/A"
         }
         //        streetName = PADDING + "45500 Fremont Blvd";
-//        cityState = PADDING + "Fremont, CA";
+        //        cityState = PADDING + "Fremont, CA";
         views.setTextViewText(R.id.location_line2, streetName)
         views.setTextViewText(R.id.location_line3, cityState)
+    }
+
+    protected fun updateLocation(
+        context: Context?,
+        views: RemoteViews,
+        latitude: String?,
+        longitude: String?
+    ) {
+        if (latitude != null && longitude != null) {
+            views.setTextViewText(R.id.location_line1, "Location:")
+
+            val mGeocoder = Geocoder(context!!, Locale.getDefault())
+            val lat = latitude.toDouble()
+            val lon = longitude.toDouble()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mGeocoder.getFromLocation(lat, lon, 1) { addresses -> showAddress(views, addresses) }
+            } else {
+                @Suppress("DEPRECATION") val addresses = mGeocoder.getFromLocation(lat, lon, 1)
+                showAddress(views, addresses as MutableList<Address>)
+            }
+        }
     }
 
     // Check if a window is open or closed.  Undefined defaults to closed.
