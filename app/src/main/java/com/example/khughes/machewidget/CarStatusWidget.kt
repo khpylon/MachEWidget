@@ -14,13 +14,11 @@ import android.icu.text.DecimalFormatSymbols
 import android.icu.text.MessageFormat
 import android.location.Address
 import android.location.Geocoder
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
+import android.os.*
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.CarStatus.CarStatus
@@ -37,6 +35,8 @@ import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 open class CarStatusWidget : AppWidgetProvider() {
@@ -307,8 +307,7 @@ open class CarStatusWidget : AppWidgetProvider() {
 
     protected open fun drawIcons(views: RemoteViews, carStatus: CarStatus) {
         // Door locks
-        val lockStatus = carStatus.lock
-        if (lockStatus != null) {
+        carStatus.vehiclestatus?.lockStatus?.value?.let { lockStatus ->
             views.setImageViewResource(
                 R.id.lock_electric,
                 if (lockStatus == "LOCKED") R.drawable.locked_icon_green else R.drawable.unlocked_icon_red
@@ -320,11 +319,9 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
 
         // Ignition and remote start
-        val ignition = carStatus.ignition
-        val remote = carStatus.remoteStartStatus
-        if (remote != null && remote) {
+        if (carStatus.vehiclestatus?.remoteStartStatus?.value == 1) {
             views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow)
-        } else if (ignition != null) {
+        } else carStatus.vehiclestatus?.ignitionStatus?.value?.let { ignition ->
             views.setImageViewResource(
                 R.id.ignition,
                 if (ignition == "Off") R.drawable.ignition_icon_gray else R.drawable.ignition_icon_green
@@ -332,17 +329,15 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
 
         // Motion alarm and deep sleep state
-        val alarm = carStatus.alarm
-        val sleep = carStatus.deepSleep
-        if (sleep != null && sleep) {
+        if (carStatus.vehiclestatus?.deepSleepInProgress?.value ?: false) {
             views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_zzz_red)
         } else {
-            if (alarm != null) {
+            carStatus.vehiclestatus?.alarm?.value?.let { alarm ->
                 views.setImageViewResource(
                     R.id.alarm,
                     if (alarm == "NOTSET") R.drawable.bell_icon_red else R.drawable.bell_icon_green
                 )
-            } else {
+            } ?: run {
                 views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray)
             }
         }
@@ -374,16 +369,16 @@ open class CarStatusWidget : AppWidgetProvider() {
                 )
 
             }
+
             // Charging port
-            val pluggedIn = carStatus.plugStatus
             views.setImageViewResource(
                 R.id.plug,
-                if (pluggedIn) R.drawable.plug_icon_green else R.drawable.plug_icon_gray
+                if (carStatus.vehiclestatus?.plugStatus?.value == 1) R.drawable.plug_icon_green else R.drawable.plug_icon_gray
             )
 
             // High-voltage battery
-            if (pluggedIn) {
-                val chargeStatus = carStatus.chargingStatus
+            if ((carStatus.vehiclestatus?.plugStatus?.value ?: 0 ) == 1) {
+                val chargeStatus = carStatus.vehiclestatus?.chargingStatus?.value
                 when (chargeStatus) {
                     Constants.CHARGING_STATUS_NOT_READY -> views.setImageViewResource(
                         R.id.HVBIcon,
@@ -401,7 +396,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                         R.id.HVBIcon,
                         R.drawable.battery_icon_yellow
                     )
-                    else -> views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray)
+                    else -> views.setImageViewResource(
+                        R.id.HVBIcon,
+                        R.drawable.battery_icon_gray
+                    )
                 }
 
                 // Normally there will be something from the GOM; if so, display this info with it
@@ -461,12 +459,11 @@ open class CarStatusWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.GOM, rangeCharge)
 
             // High-voltage battery charge levels
-            val chargeLevel = carStatus.HVBFillLevel
-            if (chargeLevel != Double.MAX_VALUE) {
+            carStatus.vehiclestatus?.batteryFillLevel?.value?.let {
                 views.setProgressBar(
                     R.id.HBVChargeProgress,
                     100,
-                    (chargeLevel + 0.5).roundToInt(),
+                    (it + 0.5).roundToInt(),
                     false
                 )
                 views.setTextViewText(
@@ -475,22 +472,19 @@ open class CarStatusWidget : AppWidgetProvider() {
                         "{0}%", DecimalFormat(
                             "#.0",  // "#.0",
                             DecimalFormatSymbols.getInstance(Locale.US)
-                        ).format(chargeLevel)
+                        ).format(it)
                     )
                 )
             }
         }
         if (isICEOrHybrid || isPHEV) {
             // Estimated range
-            var range = carStatus.distanceToEmpty
-            if (range != null && range >= 0) {
+            var range = carStatus.vehiclestatus?.fuel?.distanceToEmpty ?: Double.MAX_VALUE
+            if (range != Double.MAX_VALUE) {
                 vehicleInfo.lastDTE = range
                 info.setVehicle(vehicleInfo)
             } else {
                 range = vehicleInfo.lastDTE
-                if (range == null) {
-                    range = -distanceConversion
-                }
             }
             rangeCharge = MessageFormat.format(
                 "{0} {1}",
@@ -500,18 +494,14 @@ open class CarStatusWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.distanceToEmpty, rangeCharge)
 
             // Fuel tank level
-            var fuelLevel = carStatus.fuelLevel
-            if (fuelLevel != null && fuelLevel >= 0) {
+            var fuelLevel = carStatus.vehiclestatus?.fuel?.fuelLevel ?: Double.MAX_VALUE
+            if (fuelLevel != Double.MAX_VALUE) {
                 vehicleInfo.lastFuelLevel = fuelLevel
                 info.setVehicle(vehicleInfo)
             } else {
                 fuelLevel = vehicleInfo.lastFuelLevel
             }
-            if (fuelLevel == null) {
-                fuelLevel = -1.0
-            } else if (fuelLevel > 100.0) {
-                fuelLevel = 100.0
-            }
+            fuelLevel = min(fuelLevel, 100.0)
             views.setProgressBar(
                 R.id.fuelLevelProgress,
                 100,
@@ -537,14 +527,14 @@ open class CarStatusWidget : AppWidgetProvider() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                if (carStatus.vehiclestatus!!.fuel?.distanceToEmpty == null) {
+                if (carStatus.vehiclestatus?.fuel?.distanceToEmpty == null) {
                     Toast.makeText(
                         context,
                         "carStatus.getVehiclestatus().getFuel().getDistanceToEmpty() is null",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                if (carStatus.vehiclestatus!!.fuel?.fuelLevel == null) {
+                if (carStatus.vehiclestatus?.fuel?.fuelLevel == null) {
                     Toast.makeText(
                         context,
                         "carStatus.getVehiclestatus().getFuel().getFuelLevel() is null",
@@ -555,9 +545,8 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
 
         // 12 volt battery status
-        val LVBLevel = carStatus.LVBVoltage
-        val LVBStatus = carStatus.LVBStatus
-        if (LVBLevel != null && LVBStatus != null) {
+        carStatus.vehiclestatus?.battery?.batteryStatusActual?.value?.let { LVBLevel ->
+            val LVBStatus = carStatus.vehiclestatus?.battery?.batteryHealth?.value ?: "STATUS_GOOD"
             views.setTextColor(
                 R.id.LVBVoltage,
                 context.getColor(if (LVBStatus == "STATUS_GOOD") R.color.white else R.color.red)
@@ -566,9 +555,9 @@ open class CarStatusWidget : AppWidgetProvider() {
                 R.id.LVBVoltage,
                 MessageFormat.format("LVB Volts: {0}V", LVBLevel)
             )
-        } else {
+        } ?: run {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
-            views.setTextViewText(R.id.LVBVoltage, MessageFormat.format("LVB Volts: N/A", LVBLevel))
+            views.setTextViewText(R.id.LVBVoltage, "LVB Volts: N/A")
         }
     }
 
@@ -639,16 +628,15 @@ open class CarStatusWidget : AppWidgetProvider() {
 //        } else {
 //            views.setTextViewText(R.id.odometer, "Odo: ---")
 //        }
-          views.setTextViewText(R.id.odometer,
-              carStatus.vehiclestatus?.odometer?.value?.let {
-                  MessageFormat.format(
+        views.setTextViewText(R.id.odometer,
+            carStatus.vehiclestatus?.odometer?.value?.let {
+                MessageFormat.format(
                     "Odo: {0} {1}",
                     java.lang.Double.valueOf(it * distanceConversion).toInt(),
                     distanceUnits
                 )
-              } ?: "Odo: ---"
-          )
-
+            } ?: "Odo: ---"
+        )
 
 
     }
@@ -762,22 +750,22 @@ open class CarStatusWidget : AppWidgetProvider() {
         val whatsOpen = whatzOpen ?: mutableListOf()
 
         // Find anything that's open
-        if (!isDoorClosed(carStatus.frunk)) {
+        if (!isDoorClosed(carStatus.vehiclestatus?.doorStatus?.hoodDoor?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.HOOD]!!)
         }
-        if (!isDoorClosed(carStatus.tailgate)) {
+        if (!isDoorClosed(carStatus.vehiclestatus?.doorStatus?.tailgateDoor?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.TAILGATE]!!)
         }
-        if (!isDoorClosed(carStatus.driverDoor)) {
+        if (!isDoorClosed(carStatus.vehiclestatus?.doorStatus?.driverDoor?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.LEFT_FRONT_DOOR]!!)
         }
-        if (!isDoorClosed(carStatus.passengerDoor)) {
+        if (!isDoorClosed(carStatus.vehiclestatus?.doorStatus?.passengerDoor?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.RIGHT_FRONT_DOOR]!!)
         }
-        if (!isDoorClosed(carStatus.leftRearDoor)) {
+        if (!isDoorClosed(carStatus.vehiclestatus?.doorStatus?.leftRearDoor?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.LEFT_REAR_DOOR]!!)
         }
-        if (!isDoorClosed(carStatus.rightRearDoor)) {
+        if (!isDoorClosed(carStatus.vehiclestatus?.doorStatus?.rightRearDoor?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.RIGHT_REAR_DOOR]!!)
         }
         whatsOpen.removeAll(setOf<Any?>(null))
@@ -1017,15 +1005,17 @@ open class CarStatusWidget : AppWidgetProvider() {
                                 val carStatus = vehInfo.carStatus
                                 if (carStatus != null) {
                                     when (action) {
-                                        IGNITION_CLICK -> if (carStatus.remoteStartStatus != null && carStatus.ignition != null && carStatus.ignition == "Off") {
-                                            if (!carStatus.remoteStartStatus!!) {
-                                                remoteStart(context, VIN)
-                                            } else {
-                                                remoteStop(context, VIN)
+                                        IGNITION_CLICK ->  if (carStatus.vehiclestatus?.ignitionStatus?.value == "Off") {
+                                            carStatus.vehiclestatus?.remoteStartStatus?.value?.let { status ->
+                                                if (status == 0) {
+                                                    remoteStart(context, VIN)
+                                                } else {
+                                                    remoteStop(context, VIN)
+                                                }
                                             }
                                         }
-                                        LOCK_CLICK -> if (carStatus.lock != null) {
-                                            if (carStatus.lock == "LOCKED") {
+                                        LOCK_CLICK -> carStatus.vehiclestatus?.lockStatus?.value?.let {
+                                            if (it == "LOCKED") {
                                                 unlock(context, VIN)
                                             } else {
                                                 lock(context, VIN)
@@ -1035,7 +1025,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                             // If user is undefined, don't do anything
                                             val user = info.user
                                             user.let {
-                                                if (carStatus.LVBStatus == "STATUS_GOOD") {
+                                                if (carStatus.vehiclestatus?.battery?.batteryHealth?.value == "STATUS_GOOD") {
                                                     val nowTime = Instant.now().toEpochMilli()
                                                     val firstTime = vehInfo.initialForcedRefreshTime
                                                     val lastTime = vehInfo.lastForcedRefreshTime

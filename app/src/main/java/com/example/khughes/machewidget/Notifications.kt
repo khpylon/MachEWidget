@@ -56,8 +56,8 @@ class Notifications : BroadcastReceiver() {
         @JvmStatic
         fun checkLVBStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastLVBStatus = vehInfo.lastLVBStatus
-            val currentLVBStatus = carStatus.LVBStatus
-            if (currentLVBStatus != null && currentLVBStatus != lastLVBStatus) {
+            val currentLVBStatus = carStatus.vehiclestatus?.battery?.batteryHealth?.value ?: lastLVBStatus
+            if (currentLVBStatus != lastLVBStatus) {
                 // Save the current status
                 vehInfo.lastLVBStatus = currentLVBStatus
 
@@ -103,10 +103,10 @@ class Notifications : BroadcastReceiver() {
         fun checkTPMSStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastTPMSStatus = vehInfo.lastTPMSStatus
             val currentTPMSStatus: MutableMap<String, String> = HashMap()
-            currentTPMSStatus[LEFT_FRONT_TIRE] = carStatus.leftFrontTireStatus!!
-            currentTPMSStatus[RIGHT_FRONT_TIRE] = carStatus.rightFrontTireStatus!!
-            currentTPMSStatus[LEFT_REAR_TIRE] = carStatus.leftRearTireStatus!!
-            currentTPMSStatus[RIGHT_REAR_TIRE] = carStatus.rightRearTireStatus!!
+            currentTPMSStatus[LEFT_FRONT_TIRE] = carStatus.vehiclestatus?.tpms?.leftFrontTireStatus?.value ?: "Normal"
+            currentTPMSStatus[RIGHT_FRONT_TIRE] = carStatus.vehiclestatus?.tpms?.rightFrontTireStatus?.value ?: "Normal"
+            currentTPMSStatus[LEFT_REAR_TIRE] = carStatus.vehiclestatus?.tpms?.outerLeftRearTireStatus?.value ?: "Normal"
+            currentTPMSStatus[RIGHT_REAR_TIRE] = carStatus.vehiclestatus?.tpms?.outerRightRearTireStatus?.value ?: "Normal"
             var badTire = ""
             for (key in arrayOf(
                 LEFT_FRONT_TIRE,
@@ -115,7 +115,7 @@ class Notifications : BroadcastReceiver() {
                 RIGHT_REAR_TIRE
             )) {
                 val tire = currentTPMSStatus[key]
-                if (tire != null && tire != "Normal") {
+                if (tire != "Normal") {
                     badTire = if (badTire == "") {
                         key
                     } else {

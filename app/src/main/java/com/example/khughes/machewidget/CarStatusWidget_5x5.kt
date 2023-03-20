@@ -100,8 +100,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 
     override fun drawIcons(views: RemoteViews, carStatus: CarStatus) {
         // Door locks
-        val lockStatus = carStatus.lock
-        if (lockStatus != null) {
+        carStatus.vehiclestatus?.lockStatus?.value?.let { lockStatus ->
             views.setImageViewResource(
                 R.id.lock_electric,
                 if (lockStatus == "LOCKED") R.drawable.locked_icon_green else R.drawable.unlocked_icon_red
@@ -113,11 +112,9 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         }
 
         // Ignition and remote start
-        val ignition = carStatus.ignition
-        val remote = carStatus.remoteStartStatus
-        if (remote != null && remote) {
+        if (carStatus.vehiclestatus?.remoteStartStatus?.value == 1) {
             views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow)
-        } else if (ignition != null) {
+        } else carStatus.vehiclestatus?.ignitionStatus?.value?.let { ignition ->
             views.setImageViewResource(
                 R.id.ignition,
                 if (ignition == "Off") R.drawable.ignition_icon_gray else R.drawable.ignition_icon_green
@@ -125,17 +122,15 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         }
 
         // Motion alarm and deep sleep state
-        val alarm = carStatus.alarm
-        val sleep = carStatus.deepSleep
-        if (sleep != null && sleep) {
+        if (carStatus.vehiclestatus?.deepSleepInProgress?.value ?: false) {
             views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_zzz_red)
         } else {
-            if (alarm != null) {
+            carStatus.vehiclestatus?.alarm?.value?.let { alarm ->
                 views.setImageViewResource(
                     R.id.alarm,
                     if (alarm == "NOTSET") R.drawable.bell_icon_red else R.drawable.bell_icon_green
                 )
-            } else {
+            } ?: run {
                 views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray)
             }
         }
@@ -278,38 +273,46 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 
         // Tire pressures
         updateTire(
-            context, views, carStatus.leftFrontTirePressure, carStatus.leftFrontTireStatus,
+            context, views,
+            carStatus.vehiclestatus?.tpms?.leftFrontTirePressure?.value,
+            carStatus.vehiclestatus?.tpms?.leftFrontTireStatus?.value,
             pressureUnits, pressureConversion, R.id.lftire
         )
         updateTire(
-            context, views, carStatus.rightFrontTirePressure, carStatus.rightFrontTireStatus,
+            context, views,
+            carStatus.vehiclestatus?.tpms?.rightFrontTirePressure?.value,
+            carStatus.vehiclestatus?.tpms?.rightFrontTireStatus?.value,
             pressureUnits, pressureConversion, R.id.rftire
         )
         updateTire(
-            context, views, carStatus.leftRearTirePressure, carStatus.leftRearTireStatus,
+            context, views,
+            carStatus.vehiclestatus?.tpms?.outerLeftRearTirePressure?.value,
+            carStatus.vehiclestatus?.tpms?.outerLeftRearTireStatus?.value,
             pressureUnits, pressureConversion, R.id.lrtire
         )
         updateTire(
-            context, views, carStatus.rightRearTirePressure, carStatus.rightRearTireStatus,
+            context, views,
+            carStatus.vehiclestatus?.tpms?.outerRightRearTirePressure?.value,
+            carStatus.vehiclestatus?.tpms?.outerRightRearTireStatus?.value,
             pressureUnits, pressureConversion, R.id.rrtire
         )
 
         // Window statuses
         views.setImageViewResource(
             R.id.lt_ft_window,
-            if (isWindowClosed(carStatus.driverWindow)) R.drawable.filler else R.drawable.icons8_left_front_window_down_red
+            if (isWindowClosed(carStatus.vehiclestatus?.windowPosition?.driverWindowPosition?.value)) R.drawable.filler else R.drawable.icons8_left_front_window_down_red
         )
         views.setImageViewResource(
             R.id.rt_ft_window,
-            if (isWindowClosed(carStatus.passengerWindow)) R.drawable.filler else R.drawable.icons8_right_front_window_down_red
+            if (isWindowClosed(carStatus.vehiclestatus?.windowPosition?.passWindowPosition?.value)) R.drawable.filler else R.drawable.icons8_right_front_window_down_red
         )
         views.setImageViewResource(
             R.id.lt_rr_window,
-            if (isWindowClosed(carStatus.leftRearWindow)) R.drawable.filler else R.drawable.icons8_left_rear_window_down_red
+            if (isWindowClosed(carStatus.vehiclestatus?.windowPosition?.rearDriverWindowPos?.value)) R.drawable.filler else R.drawable.icons8_left_rear_window_down_red
         )
         views.setImageViewResource(
             R.id.rt_rr_window,
-            if (isWindowClosed(carStatus.rightRearWindow)) R.drawable.filler else R.drawable.icons8_right_rear_window_down_red
+            if (isWindowClosed(carStatus.vehiclestatus?.windowPosition?.rearPassWindowPos?.value)) R.drawable.filler else R.drawable.icons8_right_rear_window_down_red
         )
 
         // Get the right images to use for this vehicle
@@ -338,7 +341,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 .getBoolean(context.resources.getString(R.string.show_location_key), true)
         ) {
             views.setViewVisibility(R.id.location_container, View.VISIBLE)
-            updateLocation(context, views, carStatus.latitude!!, carStatus.longitude!!)
+            updateLocation(context, views, carStatus.vehiclestatus?.gps?.latitude, carStatus.vehiclestatus?.gps?.longitude)
         } else {
             views.setViewVisibility(R.id.location_container, View.GONE)
         }
