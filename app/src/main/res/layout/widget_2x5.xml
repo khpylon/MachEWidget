@@ -34,6 +34,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:text="Last refresh:\n   N/A"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
