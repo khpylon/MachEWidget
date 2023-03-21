@@ -131,7 +131,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "deepsleep_value")
-        internal var value: Boolean? = null
+        var value: Boolean? = null
     }
 
     @SerializedName("deepSleepInProgress")
