@@ -23,7 +23,7 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
     fun countEnabledVehicle(): Int {
         var count = 0
         for (id in allVehicles.value!!) {
-            if (id.isEnabled) {
+            if (id.enabled) {
                 ++count
             }
         }

@@ -257,7 +257,7 @@ class VehicleActivity : AppCompatActivity() {
                             val VIN = vehicle.vin
                             VIN?.let {
                                 mVehicleViewModel.setEnable(VIN, isChecked)
-                                vehicle.isEnabled = isChecked
+                                vehicle.enabled = isChecked
                                 notifyDataSetChanged()
                             }
                         }
@@ -269,7 +269,7 @@ class VehicleActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: VehicleViewHolder, position: Int) {
             val current = getItem(position)
-            val VIN = current.vin
+            val VIN = current.vin as String
 
             // if VIN isn't recognized, denote with a strike-through
             val text = SpannableString(VIN)
@@ -295,9 +295,9 @@ class VehicleActivity : AppCompatActivity() {
                 holder.itemView.setBackgroundColor(Color.parseColor(if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO) "#F0F0F0" else "#202020"))
             }
             changing = true
-            holder.enabledView.isChecked = current.isEnabled
+            holder.enabledView.isChecked = current.enabled
             holder.enabledView.isEnabled =
-                !current.isEnabled || mVehicleViewModel.countEnabledVehicle() > 1
+                !current.enabled || mVehicleViewModel.countEnabledVehicle() > 1
             changing = false
         }
     }
