@@ -18,7 +18,6 @@ import android.os.*
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.CarStatus.CarStatus
@@ -29,13 +28,11 @@ import com.example.khughes.machewidget.ProfileManager.changeProfile
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import com.example.khughes.machewidget.VehicleColor.Companion.drawColoredVehicle
 import kotlinx.coroutines.*
-import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
 import java.util.*
-import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -383,7 +380,7 @@ open class CarStatusWidget : AppWidgetProvider() {
 
             // High-voltage battery
             if ((carStatus.vehiclestatus?.plugStatus?.value ?: 0 ) == 1) {
-                val chargeStatus = carStatus.vehiclestatus?.chargingStatus?.value
+                val chargeStatus = carStatus.vehiclestatus?.chargingStatus?.value ?: ""
                 when (chargeStatus) {
                     Constants.CHARGING_STATUS_NOT_READY -> views.setImageViewResource(
                         R.id.HVBIcon,
@@ -400,6 +397,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                     Constants.CHARGING_STATUS_PAUSED -> views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_icon_yellow
+                    )
+                    Constants.CHARGING_SCHEDULED -> views.setImageViewResource(
+                        R.id.HVBIcon,
+                        R.drawable.battery_icon_blue
                     )
                     else -> views.setImageViewResource(
                         R.id.HVBIcon,

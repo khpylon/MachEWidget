@@ -102,11 +102,11 @@ public class OTAViewActivity extends AppCompatActivity {
                 List<VehicleInfo> vehicles = info.getVehicles();
                 if(vehicles.size() == 1) {
                     spinner.setVisibility(View.GONE);
-                    new DownloadChangelog(context, mWebView, clear).execute(info.getVehicles().get(0).getVIN());
+                    new DownloadChangelog(context, mWebView, clear).execute(info.getVehicles().get(0).getVin());
                 } else {
                     arrayList.clear();
                     for (VehicleInfo vehicle : vehicles) {
-                        arrayList.add(vehicle.getVIN());
+                        arrayList.add(vehicle.getVin());
                     }
                     spinner.setAdapter(arrayAdapter);
                 }

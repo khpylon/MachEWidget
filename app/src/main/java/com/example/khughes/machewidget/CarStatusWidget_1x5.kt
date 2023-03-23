@@ -165,7 +165,7 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         }
 
         // If vehicle is a Mach-E First Edition, show mirrors in body color
-        if (isFirstEdition(context, vehicleInfo.vin)) {
+        if (isFirstEdition(context, vehicleInfo.vin!!)) {
             vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_horz
         }
 

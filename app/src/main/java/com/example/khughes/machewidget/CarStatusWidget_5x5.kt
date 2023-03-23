@@ -163,7 +163,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         // If the vehicle image has been downloaded, update it
         val useImage = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.resources.getString(R.string.use_image_key), true)
-        val bmp = getRandomImage(context, vehicleInfo.vin)
+        val bmp = getRandomImage(context, vehicleInfo.vin!!)
         if (useImage && bmp != null) {
             views.setImageViewBitmap(R.id.logo, bmp)
         } else {
@@ -324,7 +324,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         }
 
         // If vehicle is a Mach-E First Edition, show mirrors in body color
-        if (isFirstEdition(context, vehicleInfo.vin)) {
+        if (isFirstEdition(context, vehicleInfo.vin!!)) {
             vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_vert
         }
 

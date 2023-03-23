@@ -176,7 +176,7 @@ public class NetworkCalls {
                         VehicleInfoDao dao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao();
                         for (VehicleInfo info : dao.findVehicleInfo()) {
                             if (!info.getUserId().equals(userId)) {
-                                dao.deleteVehicleInfoByVIN(info.getVIN());
+                                dao.deleteVehicleInfoByVIN(info.getVin());
                             }
                         }
 
@@ -330,7 +330,7 @@ public class NetworkCalls {
         LogFile.d(context, MainActivity.CHANNEL_ID, "getting status for " + infoDao.findVehicleInfoByUserId(userId).size() + " vehicles");
 
         for (VehicleInfo info : infoDao.findVehicleInfoByUserId(userId)) {
-            String VIN = info.getVIN();
+            String VIN = info.getVin();
             if (!info.isEnabled()) {
                 LogFile.i(context, MainActivity.CHANNEL_ID, VIN + " is disabled: skipping");
                 continue;
@@ -350,7 +350,7 @@ public class NetworkCalls {
 
                 if ((nowtime - lasttime) / (1000 * 60) > 6 * 60 && info.getCarStatus() != null && !info.getCarStatus().getVehiclestatus().getDeepSleepInProgress().getValue() &&
                         info.getCarStatus().getVehiclestatus().getBattery().getBatteryStatusActual().getValue() > 12) {
-                    updateStatus(context, info.getVIN());
+                    updateStatus(context, info.getVin());
                 }
             }
 
@@ -580,7 +580,7 @@ public class NetworkCalls {
                             }
 
                             VehicleInfo info = new VehicleInfo();
-                            info.setVIN(VIN);
+                            info.setVin(VIN);
                             info.setNickname(nickname);
                             info.setUserId(userId);
 
@@ -879,7 +879,7 @@ public class NetworkCalls {
             LogFile.e(context, MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e);
         }
 
-        String VIN = vehInfo.getVIN();
+        String VIN = vehInfo.getVin();
         USAPICVService commandServiceClient = NetworkServiceGenerators.createUSAPICVService(USAPICVService.class, context);
         try {
             for (int retries = 0; retries < 10; ++retries) {

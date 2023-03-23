@@ -89,7 +89,7 @@ class ColorActivity : AppCompatActivity() {
                 info.getVehicleByVIN(VIN)?.let {
                     setCheckedButton(it.colorValue)
                     binding.colorPickerView.setInitialColor(it.colorValue)
-                    setAutoButton(it.vin)
+                    setAutoButton(it.vin!!)
                     mVehicleInfo = it
                 }
             }
@@ -105,11 +105,11 @@ class ColorActivity : AppCompatActivity() {
                 mVehicleInfo = info.vehicles[0]
                 setCheckedButton(mVehicleInfo!!.colorValue)
                 binding.colorPickerView.setInitialColor(mVehicleInfo!!.colorValue)
-                setAutoButton(mVehicleInfo!!.vin)
+                setAutoButton(mVehicleInfo!!.vin!!)
             } else {
                 arrayList.clear()
                 for (vehicle in vehicles) {
-                    arrayList.add(vehicle.vin)
+                    arrayList.add(vehicle.vin!!)
                 }
                 binding.spinner.adapter = arrayAdapter
             }

@@ -43,7 +43,7 @@ class ReminderActivity : AppCompatActivity() {
             info?.let {
                 for (vehicle in it.vehicles) {
                     if (isPHEVorBEV(vehicle)) {
-                        VINs.add(vehicle.vin)
+                        VINs.add(vehicle.vin!!)
                     }
                 }
             }
@@ -172,11 +172,11 @@ class ReminderActivity : AppCompatActivity() {
             if (isNotificationEnabled(chargeHour)) {
                 ReminderReceiver.setAlarm(
                     applicationContext,
-                    it.vin,
+                    it.vin!!,
                     getHour(chargeHour)
                 )
             } else {
-                ReminderReceiver.cancelAlarm(applicationContext, it.vin)
+                ReminderReceiver.cancelAlarm(applicationContext, it.vin!!)
             }
         }
     }

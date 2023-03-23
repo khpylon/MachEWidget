@@ -50,7 +50,7 @@ class VehicleColor {
 
             // If the vehicle image doesn't exist, do nothing
             val VIN = vehicleInfo.vin
-            val bmp = VehicleImages.getImage(context, VIN, 4)
+            val bmp = VehicleImages.getImage(context, VIN!!, 4)
             if (bmp == null || vehicleInfo.colorValue != Color.WHITE) {
                 return false
             }
@@ -282,7 +282,7 @@ class PrefManagement {
                 val VINs = ArrayList<String>()
                 for (info in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
                     .findVehicleInfo()) {
-                    VINs.add(info.vin)
+                    VINs.add(info.vin!!)
                 }
 
                 var newVIN: String
@@ -318,10 +318,10 @@ class PrefManagement {
                             object : TypeToken<VehicleInfo?>() {}.type
                         )
                         // Save a valid VIN in case we need to change the current VIN
-                        newVIN = info.vin
-                        newUserId = info.userId
+                        newVIN = info.vin!!
+                        newUserId = info.userId!!
                         val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                            .findVehicleInfoByVIN(info.vin)
+                            .findVehicleInfoByVIN(newVIN)
                         if (current == null) {
                             info.id = 0
                             VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
@@ -329,7 +329,7 @@ class PrefManagement {
                         }
                         val user =
                             UserInfoDatabase.getInstance(context).userInfoDao()
-                                .findUserInfo(info.userId)
+                                .findUserInfo(info.userId!!)
                         if (user != null) {
                             NetworkCalls.getVehicleImage(
                                 context,

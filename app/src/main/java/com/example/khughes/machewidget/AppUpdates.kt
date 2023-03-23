@@ -44,7 +44,7 @@ object AppUpdates {
                     for (vehicleInfo in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
                         .findVehicleInfo()) {
                         val user = UserInfoDatabase.getInstance(context).userInfoDao()
-                            .findUserInfo(vehicleInfo.userId)
+                            .findUserInfo(vehicleInfo.userId!!)
                         if (user != null) {
                             NetworkCalls.getVehicleImage(
                                 context,

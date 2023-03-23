@@ -8,10 +8,7 @@ import com.example.khughes.machewidget.CarStatus.CarStatus
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
-import android.os.Looper
 import android.content.Intent
-import android.os.Handler
-import android.os.Message
 import android.view.View
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
@@ -205,7 +202,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         }
 
         // If vehicle is a Mach-E First Edition, show mirrors in body color
-        if (isFirstEdition(context, vehicleInfo.vin)) {
+        if (isFirstEdition(context, vehicleInfo.vin!!)) {
             vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_horz
         }
 
