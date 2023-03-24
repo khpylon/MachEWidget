@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.03.24
+### Fixed
+- Catch potential exception with geocoding interfaces on Android 12 and below devices.
+
 ## 2023.03.22
 ### Added
 - Display icon for high-voltage battery in blue when plugged in and charge is scheduled.
