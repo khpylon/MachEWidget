@@ -143,8 +143,11 @@ open class CarStatusWidget : AppWidgetProvider() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mGeocoder.getFromLocation(lat, lon, 1) { addresses -> showAddress(views, addresses) }
             } else {
-                @Suppress("DEPRECATION") val addresses = mGeocoder.getFromLocation(lat, lon, 1)
-                showAddress(views, addresses as MutableList<Address>)
+                try {
+                    @Suppress("DEPRECATION") val addresses = mGeocoder.getFromLocation(lat, lon, 1)
+                    showAddress(views, addresses as MutableList<Address>)
+                } catch (e: Exception) {
+                }
             }
         }
     }
