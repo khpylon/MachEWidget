@@ -34,6 +34,7 @@ public class Authenticate {
 
     private static Context mContext;
 
+    public static final String ACCOUNT_BAD_USER_OR_PASSWORD = "CSIAH0303E";
     public static final String ACCOUNT_DISABLED_CODE = "CSIAH0320E";
 
     private static final HttpLoggingInterceptor logging =
@@ -199,7 +200,10 @@ public class Authenticate {
                     final String errorString = "data-ibm-login-error-text=\"";
                     thing = thing.substring(thing.indexOf(errorString) + errorString.length());
 //                    thing = thing.substring(0, thing.indexOf("\""));
-                    if (thing.startsWith(ACCOUNT_DISABLED_CODE)) {
+                    if (thing.startsWith(ACCOUNT_BAD_USER_OR_PASSWORD)) {
+                        return ACCOUNT_BAD_USER_OR_PASSWORD;
+                    }
+                    else if (thing.startsWith(ACCOUNT_DISABLED_CODE)) {
                         return ACCOUNT_DISABLED_CODE;
                     }
                 }
