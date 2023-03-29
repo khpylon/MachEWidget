@@ -141,7 +141,12 @@ open class CarStatusWidget : AppWidgetProvider() {
             val lon = longitude.toDouble()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                mGeocoder.getFromLocation(lat, lon, 1) { addresses -> showAddress(views, addresses) }
+                mGeocoder.getFromLocation(lat, lon, 1) { addresses ->
+                    showAddress(
+                        views,
+                        addresses
+                    )
+                }
             } else {
                 @Suppress("DEPRECATION") val addresses = mGeocoder.getFromLocation(lat, lon, 1)
                 showAddress(views, addresses as MutableList<Address>)
@@ -196,7 +201,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             }
             //  Look for an enabled vehicle with this owner
             for (vehicleInfo in vehicles) {
-                if (vehicleInfo.isEnabled && vehicleInfo.userId == info.user?.userId) {
+                if (vehicleInfo.isEnabled && vehicleInfo.userId == info.user.userId) {
                     VIN = vehicleInfo.vin
                     break
                 }
@@ -379,7 +384,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             )
 
             // High-voltage battery
-            if ((carStatus.vehiclestatus?.plugStatus?.value ?: 0 ) == 1) {
+            if ((carStatus.vehiclestatus?.plugStatus?.value ?: 0) == 1) {
                 val chargeStatus = carStatus.vehiclestatus?.chargingStatus?.value ?: ""
                 when (chargeStatus) {
                     Constants.CHARGING_STATUS_NOT_READY -> views.setImageViewResource(
@@ -424,7 +429,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                     val endChargeTime = Calendar.getInstance()
                     try {
                         endChargeTime.time =
-                            sdf.parse(carStatus.vehiclestatus!!.chargeEndTime!!.value) as Date
+                            carStatus.vehiclestatus!!.chargeEndTime!!.value?.let { sdf.parse(it) } as Date
                         val nowTime = Calendar.getInstance()
                         var min = Duration.between(
                             nowTime.toInstant(),
@@ -578,7 +583,7 @@ open class CarStatusWidget : AppWidgetProvider() {
         var sdf = SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         try {
-            lastUpdateTime.time = sdf.parse(carStatus.lastRefresh) as Date // all done
+            lastUpdateTime.time = carStatus.lastRefresh?.let { sdf.parse(it) } as Date // all done
         } catch (e: ParseException) {
             LogFile.e(
                 context,
@@ -820,29 +825,30 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
     }
 
-    private fun remoteStart(context: Context, VIN: String?) {
+    private fun remoteStart(context: Context, VIN: String) {
         NetworkCalls.remoteStart(getHandler(context), context, VIN)
     }
 
-    private fun remoteStop(context: Context, VIN: String?) {
+    private fun remoteStop(context: Context, VIN: String) {
         NetworkCalls.remoteStop(getHandler(context), context, VIN)
     }
 
-    private fun lock(context: Context, VIN: String?) {
+    private fun lock(context: Context, VIN: String) {
         NetworkCalls.lockDoors(getHandler(context), context, VIN)
     }
 
-    private fun unlock(context: Context, VIN: String?) {
+    private fun unlock(context: Context, VIN: String) {
         NetworkCalls.unlockDoors(getHandler(context), context, VIN)
     }
 
-    private fun forceUpdate(context: Context?, VIN: String?) {
+    private fun forceUpdate(context: Context, VIN: String) {
         NetworkCalls.updateStatus(
             object : Handler(Looper.getMainLooper()) {
                 override fun handleMessage(msg: Message) {
-                    val result = msg.data.getString("action")
-                    if (result != null && result == NetworkCalls.COMMAND_SUCCESSFUL) {
-                        nextAlarm(context!!, 2)
+                    msg.data.getString("action")?.let { result ->
+                        if (result == NetworkCalls.COMMAND_SUCCESSFUL) {
+                            nextAlarm(context, 2)
+                        }
                     }
                 }
             },
@@ -947,7 +953,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val userInfo = info.user
                             val lastUpdateInMillis = vehInfo.lastUpdateTime
                             val timeFormat =
-                                if (userInfo?.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+                                if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
                             val lastUpdate =
                                 OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat)
                             Toast.makeText(
@@ -1007,107 +1013,105 @@ open class CarStatusWidget : AppWidgetProvider() {
                                 Context.MODE_PRIVATE
                             ).getString(widget_VIN, null)
                             val vehInfo = info.getVehicleByVIN(VIN)
-                            if (vehInfo != null) {
-                                val carStatus = vehInfo.carStatus
-                                if (carStatus != null) {
-                                    when (action) {
-                                        IGNITION_CLICK ->  if (carStatus.vehiclestatus?.ignitionStatus?.value == "Off") {
-                                            carStatus.vehiclestatus?.remoteStartStatus?.value?.let { status ->
-                                                if (status == 0) {
-                                                    remoteStart(context, VIN)
-                                                } else {
-                                                    remoteStop(context, VIN)
-                                                }
-                                            }
-                                        }
-                                        LOCK_CLICK -> carStatus.vehiclestatus?.lockStatus?.value?.let {
-                                            if (it == "LOCKED") {
-                                                unlock(context, VIN)
+                            val carStatus = vehInfo.carStatus
+                            if (carStatus != null) {
+                                when (action) {
+                                    IGNITION_CLICK -> if (carStatus.vehiclestatus?.ignitionStatus?.value == "Off") {
+                                        carStatus.vehiclestatus?.remoteStartStatus?.value?.let { status ->
+                                            if (status == 0) {
+                                                remoteStart(context, VIN!!)
                                             } else {
-                                                lock(context, VIN)
+                                                remoteStop(context, VIN!!)
                                             }
                                         }
-                                        UPDATE_CLICK -> {
-                                            // If user is undefined, don't do anything
-                                            val user = info.user
-                                            user.let {
-                                                if (carStatus.vehiclestatus?.battery?.batteryHealth?.value == "STATUS_GOOD") {
-                                                    val nowTime = Instant.now().toEpochMilli()
-                                                    val firstTime = vehInfo.initialForcedRefreshTime
-                                                    val lastTime = vehInfo.lastForcedRefreshTime
-                                                    var seconds = (nowTime - firstTime) / MILLIS
+                                    }
+                                    LOCK_CLICK -> carStatus.vehiclestatus?.lockStatus?.value?.let {
+                                        if (it == "LOCKED") {
+                                            unlock(context, VIN!!)
+                                        } else {
+                                            lock(context, VIN!!)
+                                        }
+                                    }
+                                    UPDATE_CLICK -> {
+                                        // If user is undefined, don't do anything
+                                        val user = info.user
+                                        user.let {
+                                            if (carStatus.vehiclestatus?.battery?.batteryHealth?.value == "STATUS_GOOD") {
+                                                val nowTime = Instant.now().toEpochMilli()
+                                                val firstTime = vehInfo.initialForcedRefreshTime
+                                                val lastTime = vehInfo.lastForcedRefreshTime
+                                                var seconds = (nowTime - firstTime) / MILLIS
 
-                                                    // If it's been twelve hours since the initial refresh, reset the count
-                                                    if (seconds > TIMEOUT_INTERVAL) {
-                                                        vehInfo.forcedRefreshCount = 0
-                                                        info.setVehicle(vehInfo)
-                                                    }
+                                                // If it's been twelve hours since the initial refresh, reset the count
+                                                if (seconds > TIMEOUT_INTERVAL) {
+                                                    vehInfo.forcedRefreshCount = 0
+                                                    info.setVehicle(vehInfo)
+                                                }
 
-                                                    // Calculate how long since the last refresh
-                                                    seconds = (nowTime - lastTime) / MILLIS
-                                                    val count = vehInfo.forcedRefreshCount
+                                                // Calculate how long since the last refresh
+                                                seconds = (nowTime - lastTime) / MILLIS
+                                                val count = vehInfo.forcedRefreshCount
 
-                                                    // The first three refreshes must have 2 minutes between them; the next
-                                                    // two refreshes must have 10 minutes
-                                                    if (count < FIRST_LIMIT && seconds > FIRST_INTERVAL || count < SECOND_LIMIT && seconds > SECOND_INTERVAL) {
-                                                        val timeout = user!!.expiresIn
-                                                        seconds = (timeout - nowTime) / MILLIS
-                                                        // If the access token has expired, or is about to, do a refresh first
-                                                        if (seconds < 30) {
-                                                            Toast.makeText(
-                                                                context,
-                                                                "The token is being refreshed; this may take a minute.",
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
-                                                            nextAlarm(context, 2)
+                                                // The first three refreshes must have 2 minutes between them; the next
+                                                // two refreshes must have 10 minutes
+                                                if (count < FIRST_LIMIT && seconds > FIRST_INTERVAL || count < SECOND_LIMIT && seconds > SECOND_INTERVAL) {
+                                                    val timeout = user.expiresIn
+                                                    seconds = (timeout - nowTime) / MILLIS
+                                                    // If the access token has expired, or is about to, do a refresh first
+                                                    if (seconds < 30) {
+                                                        Toast.makeText(
+                                                            context,
+                                                            "The token is being refreshed; this may take a minute.",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                        nextAlarm(context, 2)
 
-                                                            CoroutineScope(Dispatchers.Main).launch {
-                                                                delay(15 * MILLIS)
-                                                                forceUpdate(context, VIN)
-                                                            }
-                                                        } else {
-                                                            Toast.makeText(
-                                                                context,
-                                                                "Forcing a refresh; this may take 30 seconds.",
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
-                                                            forceUpdate(context, VIN)
+                                                        CoroutineScope(Dispatchers.Main).launch {
+                                                            delay(15 * MILLIS)
+                                                            forceUpdate(context, VIN!!)
                                                         }
-                                                    } else if (count < FIRST_LIMIT) {
-                                                        Toast.makeText(
-                                                            context,
-                                                            "Cannot force update for another " + elapsedSecondsToDescription(
-                                                                2 * 60 - seconds
-                                                            ) + ".",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    } else if (count < SECOND_LIMIT) {
-                                                        Toast.makeText(
-                                                            context,
-                                                            "Cannot force update for another " + elapsedSecondsToDescription(
-                                                                10 * 60 - seconds
-                                                            ) + "",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
                                                     } else {
-                                                        val remainingMinutes =
-                                                            ((firstTime - nowTime) / MILLIS + TIMEOUT_INTERVAL) / SECONDS
                                                         Toast.makeText(
                                                             context,
-                                                            "Too many forced updates; feature disabled for " +
-                                                                    elapsedMinutesToDescription(
-                                                                        remainingMinutes
-                                                                    ) + ".",
+                                                            "Forcing a refresh; this may take 30 seconds.",
                                                             Toast.LENGTH_SHORT
                                                         ).show()
+                                                        forceUpdate(context, VIN!!)
                                                     }
-                                                } else {
+                                                } else if (count < FIRST_LIMIT) {
                                                     Toast.makeText(
                                                         context,
-                                                        "The LVB status is not good.",
+                                                        "Cannot force update for another " + elapsedSecondsToDescription(
+                                                            2 * 60 - seconds
+                                                        ) + ".",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                } else if (count < SECOND_LIMIT) {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Cannot force update for another " + elapsedSecondsToDescription(
+                                                            10 * 60 - seconds
+                                                        ) + "",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                } else {
+                                                    val remainingMinutes =
+                                                        ((firstTime - nowTime) / MILLIS + TIMEOUT_INTERVAL) / SECONDS
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Too many forced updates; feature disabled for " +
+                                                                elapsedMinutesToDescription(
+                                                                    remainingMinutes
+                                                                ) + ".",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    "The LVB status is not good.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         }
                                     }

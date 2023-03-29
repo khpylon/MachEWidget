@@ -48,9 +48,8 @@ object AppUpdates {
                         if (user != null) {
                             NetworkCalls.getVehicleImage(
                                 context,
-                                user.accessToken,
-                                vehicleInfo.vin,
-                                user.country
+                                vehicleInfo.vin!!,
+                                user.country!!
                             )
                         }
                     }
@@ -98,7 +97,6 @@ object AppUpdates {
 
                 for (item in widgetPrefs) {
                     val key = item.key
-                    val value = item.value
                     if (!key.startsWith(Constants.VIN_KEY)) {
                         edit.remove(key)
                     }

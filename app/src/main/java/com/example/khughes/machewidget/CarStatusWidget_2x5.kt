@@ -81,7 +81,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         setBackground(context, views)
 
         // Find which user is active.
-        val userInfo = info!!.user ?: return
+        val userInfo = info!!.user
 
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return
@@ -231,18 +231,9 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             val info = getInfo(context)
-            if (info!!.user != null) {
-                // There may be multiple widgets active, so update all of them
-                for (appWidgetId in appWidgetIds) {
-                    updateAppWidget(context, appWidgetManager, appWidgetId, info)
-                }
-
-            } else {
-                LogFile.d(
-                    context,
-                    MainActivity.CHANNEL_ID,
-                    "CarStatusWidget_2x5.onUpdate(): no userinfo found"
-                )
+            // There may be multiple widgets active, so update all of them
+            for (appWidgetId in appWidgetIds) {
+                updateAppWidget(context, appWidgetManager, appWidgetId, info)
             }
         }
     }

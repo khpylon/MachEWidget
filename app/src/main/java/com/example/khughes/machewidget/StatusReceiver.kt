@@ -242,7 +242,7 @@ class StatusReceiver : BroadcastReceiver() {
         val time = LocalDateTime.now(ZoneId.systemDefault())
         val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         if (timeout - delayInMillis - 5 * MILLIS < nowtime) {
-            NetworkCalls.refreshAccessToken(refreshHandler,context, userId, userInfo.refreshToken)
+            NetworkCalls.refreshAccessToken(refreshHandler,context, userId!!, userInfo.refreshToken!!)
         } else {
             NetworkCalls.getStatus(statusHandler, context, userId)
         }

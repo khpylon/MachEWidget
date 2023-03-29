@@ -49,7 +49,7 @@ class VehicleActivity : AppCompatActivity() {
     private lateinit var context: Context
     private lateinit var newVINWidget: TextInputLayout
 
-    private fun getStatus(context: Context, VIN: String?, nickname: String?) {
+    private fun getStatus(context: Context, VIN: String, nickname: String) {
         val statusHandler: Handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 val bundle = msg.data
@@ -57,7 +57,7 @@ class VehicleActivity : AppCompatActivity() {
                 if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
                     Toast.makeText(context, "Vehicle status successfully retrieved.", Toast.LENGTH_LONG)
                         .show()
-                    NetworkCalls.getVehicleImage(context, userInfo.accessToken, VIN, userInfo.country)
+                    NetworkCalls.getVehicleImage(context, VIN, userInfo.country!!)
                 } else {
                     Toast.makeText(context, "Unable to retrieve vehicle status.", Toast.LENGTH_LONG)
                         .show()
@@ -82,7 +82,7 @@ class VehicleActivity : AppCompatActivity() {
         val time = LocalDateTime.now(ZoneId.systemDefault())
         val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         if (timeout < nowtime) {
-            NetworkCalls.refreshAccessToken(refreshHandler, context, userId, userInfo.refreshToken)
+            NetworkCalls.refreshAccessToken(refreshHandler, context, userId, userInfo.refreshToken!!)
         } else {
             NetworkCalls.getStatus(statusHandler, context, userInfo, VIN, nickname)
         }
