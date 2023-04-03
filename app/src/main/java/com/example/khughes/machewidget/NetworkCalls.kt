@@ -26,6 +26,8 @@ import com.example.khughes.machewidget.Notifications.Companion.checkTPMSStatus
 import com.example.khughes.machewidget.Vehicle.Companion.getModelYear
 import com.example.khughes.machewidget.db.UserInfoDatabase
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -364,9 +366,7 @@ class NetworkCalls {
                 .userInfoDao()
             val infoDao = VehicleInfoDatabase.getInstance(context)
                 .vehicleInfoDao()
-            val userInfo = userDao.findUserInfo(userId)
-            val token = userInfo!!.accessToken
-            val language = userInfo.language
+            var userInfo = userDao.findUserInfo(userId)
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
             LogFile.d(context, MainActivity.CHANNEL_ID, "userId = $userId")
@@ -389,6 +389,7 @@ class NetworkCalls {
                         "getting status for VIN $VIN"
                     )
                 }
+
                 val forceUpdate = PreferenceManager.getDefaultSharedPreferences(context)
                     .getBoolean(context.resources.getString(R.string.forceUpdate_key), false)
                 if (forceUpdate) {
@@ -414,12 +415,18 @@ class NetworkCalls {
                 }
                 var statusUpdated = false
 //                val supportsOTA = info.isSupportsOTA
-                if (checkInternetConnection(context)) {
-                    val statusClient = createUSAPICVService(USAPICVService::class.java, context)
+
+                if (checkInternetConnection(context) && checkForRefresh(context, userInfo!!)) {
+                    userInfo = userDao.findUserInfo(userId)
+                    val language = userInfo!!.language
+                    val token = userInfo.accessToken
+
 //                    val OTAstatusClient = createDIGITALSERVICESService(DigitalServicesService::class.java, context)
                     for (retry in 2 downTo 0) {
                         try {
                             // Try to get the latest car status
+                            val statusClient =
+                                createUSAPICVService(USAPICVService::class.java, context)
                             val callStatus =
                                 statusClient.getStatus(token, language, Constants.APID, VIN)
                             val responseStatus = callStatus!!.execute()
@@ -429,6 +436,43 @@ class NetworkCalls {
                                 if (car.status == Constants.HTTP_SERVER_ERROR) {
                                     i(context, MainActivity.CHANNEL_ID, "server is broken")
                                 } else if (car.vehiclestatus != null) {
+
+                                    // If vehicle is charging and we're supposed to grab data, do so
+                                    val queryCharging =
+                                        PreferenceManager.getDefaultSharedPreferences(context)
+                                            .getBoolean(
+                                                context.getResources()
+                                                    .getString(R.string.check_charging_key), false
+                                            )
+                                    if (queryCharging && car.vehiclestatus!!.plugStatus?.value == 1) {
+                                        val body = JSONObject().put("vin", VIN).toString()
+                                            .toRequestBody("application/json; charset=utf-8".toMediaType())
+                                        val chargeStatus =
+                                            createAPIMPSService(
+                                                APIMPSService::class.java, context
+                                            ).getChargingInfo(body, token)
+                                        chargeStatus?.let {
+                                            val response = it.execute()
+                                            if (response.isSuccessful) {
+                                                val chargeInfo: Map<String, String> =
+                                                    Gson().fromJson(
+                                                        response.body()?.string(),
+                                                        object :
+                                                            TypeToken<Map<String, Any>>() {}.type
+                                                    )
+                                                info.chargingPower =
+                                                    chargeInfo["power"]?.toDouble() ?: 0.0
+                                                info.chargingEnergy =
+                                                    chargeInfo["energy"]?.toDouble() ?: 0.0
+                                                i(
+                                                    context,
+                                                    MainActivity.CHANNEL_ID,
+                                                    "received charge status response: power = $info.chargingPower, energy = $info.chargingEnergy"
+                                                )
+                                            }
+                                        }
+                                    }
+
                                     val lastRefreshTime = Calendar.getInstance()
                                     val sdf =
                                         SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
@@ -653,7 +697,6 @@ class NetworkCalls {
             val infoDao = VehicleInfoDatabase.getInstance(context)
                 .vehicleInfoDao()
             val userId = userInfo.userId
-            val token = userInfo.accessToken
             val language = userInfo.language
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
@@ -671,7 +714,10 @@ class NetworkCalls {
                 context, MainActivity.CHANNEL_ID,
                 "getting status for VIN $VIN"
             )
-            if (checkInternetConnection(context)) {
+            if (checkInternetConnection(context) && checkForRefresh(context, userInfo!!)) {
+                val userInfo = userDao.findUserInfo(userId)
+                val token = userInfo!!.accessToken
+
                 val statusClient = createUSAPICVService(
                     USAPICVService::class.java, context
                 )
@@ -1207,7 +1253,6 @@ class NetworkCalls {
                 data
             }
         }
-
 
         private fun pollStatus(
             context: Context?,

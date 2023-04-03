@@ -62,6 +62,8 @@
     <string name="zenmode">Do not update while Do Not Disturb is active</string>
     <string name="hibernate_api">Hibernate app</string>
     <string name="hibernate_api_summary">Don\'t pull data until public API is released</string>
+    <string name="check_charging">Display charge session info</string>
+    <string name="check_charging_summary">When charging, display charge rate and energy added</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
@@ -90,6 +92,7 @@
     <string name="use_old_engine_key">useOldEngine</string>
     <string name="zenmode_key">zenMode</string>
     <string name="hibernate_api_key">hibernateAPI</string>
+    <string name="check_charging_key">checkCharging</string>
 
     <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
     <string name="units_kphkpa">1</string>
