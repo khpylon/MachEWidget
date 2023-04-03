@@ -12,7 +12,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.provider.Settings
-import android.provider.Settings.SettingNotFoundException
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.preference.PreferenceManager
@@ -106,7 +105,8 @@ class StatusReceiver : BroadcastReceiver() {
                 if( Settings.Global.getInt(context.contentResolver, "zen_mode") != 0 ) {
                     return
                 }
-            } catch (e: SettingNotFoundException) {
+            } catch (e: Exception) {
+                return
             }
         }
 
@@ -115,95 +115,90 @@ class StatusReceiver : BroadcastReceiver() {
             info = getInfo(context)
 
             val userInfo = info.user
-            if (userInfo == null) {
-                LogFile.d(context, MainActivity.CHANNEL_ID, "StatusReceiver: no userinfo found")
-            } else {
-                val timeout = userInfo.expiresIn
-                val time = LocalDateTime.now(ZoneId.systemDefault())
-                val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                val state = userInfo.programState
+            val timeout = userInfo.expiresIn
+            val time = LocalDateTime.now(ZoneId.systemDefault())
+            val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            val state = userInfo.programState
 
-                LogFile.d(
-                    context, MainActivity.CHANNEL_ID,
-                    MessageFormat.format(
-                        "StatusReceiver: time({0}), state({1}), battery optimization({2})",
-                        (timeout - nowtime) / MILLIS,
-                        state,
-                        Misc.ignoringBatteryOptimizations(context)
-                    )
+            LogFile.d(
+                context, MainActivity.CHANNEL_ID,
+                MessageFormat.format(
+                    "StatusReceiver: time({0}), state({1}), battery optimization({2})",
+                    (timeout - nowtime) / MILLIS,
+                    state,
+                    Misc.ignoringBatteryOptimizations(context)
                 )
+            )
 
-                when ( state ) {
-                    Constants.STATE_ACCOUNT_DISABLED-> {
-                        LogFile.d(
-                            context,
-                            MainActivity.CHANNEL_ID,
-                            "Account disabled"
-                        )
-                        cancelAlarm(context)
-                        Notifications.accountError(context, state)
-                        appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
-                    }
-                    Constants.STATE_INITIAL_STATE -> {
-                        LogFile.d(
-                            context,
-                            MainActivity.CHANNEL_ID,
-                            "Initial state: how'd did the alarm go off (manual refresh)?"
-                        )
-                        cancelAlarm(context)
-                        Notifications.loginRequired(context)
-                        appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
-                    }
-                    Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN -> {
-                        LogFile.d(context, MainActivity.CHANNEL_ID, "STILL need to refresh token")
-//                        getRefresh(context, userId, userInfo.refreshToken)
-                        getStatus(context, userInfo)
-                        appInfo.incCounter(StoredData.STATUS_UPDATED)
-                    }
-                    Constants.STATE_HAVE_TOKEN -> {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
-//                        getVehicleInfo(context, userId)
-                        appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
-                    }
-                    Constants.STATE_HAVE_TOKEN_AND_VIN -> {
-                        LogFile.d(context, MainActivity.CHANNEL_ID,"Grab status info" )
-                        getStatus(context, userInfo)
-                        appInfo.incCounter(StoredData.STATUS_UPDATED)
-                    }
-                    else -> {
-                            LogFile.d(
-                                context,
-                                MainActivity.CHANNEL_ID,
-                                "Hmmm... How did I get here. Wish I could login"
-                            )
-                        appInfo.incCounter(StoredData.STATUS_UNKNOWN)
-                    }
+            when ( state ) {
+                Constants.STATE_ACCOUNT_DISABLED-> {
+                    LogFile.d(
+                        context,
+                        MainActivity.CHANNEL_ID,
+                        "Account disabled"
+                    )
+                    cancelAlarm(context)
+                    Notifications.accountError(context, state)
+                    appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
                 }
-
-                LogFile.d(
-                    context, MainActivity.CHANNEL_ID,
-                    MessageFormat.format(
-                        "StatusReceiver status history: {0}({1}) {2}({3}) {4}({5}) {6}({7}) {8}({9}) {10}({11})",
-                        StoredData.STATUS_NOT_LOGGED_IN,
-                        appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
-                        StoredData.STATUS_LOG_OUT,
-                        appInfo.getCounter(StoredData.STATUS_LOG_OUT),
-                        StoredData.STATUS_LOG_IN,
-                        appInfo.getCounter(StoredData.STATUS_LOG_IN),
-                        StoredData.STATUS_UPDATED,
-                        appInfo.getCounter(StoredData.STATUS_UPDATED),
-                        StoredData.STATUS_VEHICLE_INFO,
-                        appInfo.getCounter(StoredData.STATUS_VEHICLE_INFO),
-                        StoredData.STATUS_UNKNOWN,
-                        appInfo.getCounter(StoredData.STATUS_UNKNOWN)
+                Constants.STATE_INITIAL_STATE -> {
+                    LogFile.d(
+                        context,
+                        MainActivity.CHANNEL_ID,
+                        "Initial state: how'd did the alarm go off (manual refresh)?"
                     )
-                )
-
+                    cancelAlarm(context)
+                    Notifications.loginRequired(context)
+                    appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
+                }
+                Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN -> {
+                    LogFile.d(context, MainActivity.CHANNEL_ID, "STILL need to refresh token")
+//                        getRefresh(context, userId, userInfo.refreshToken)
+                    getStatus(context, userInfo.userId!!)
+                    appInfo.incCounter(StoredData.STATUS_UPDATED)
+                }
+                Constants.STATE_HAVE_TOKEN -> {
+                    LogFile.e(context, MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
+//                        getVehicleInfo(context, userId)
+                    appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
+                }
+                Constants.STATE_HAVE_TOKEN_AND_VIN -> {
+                    LogFile.d(context, MainActivity.CHANNEL_ID,"Grab status info" )
+                    getStatus(context, userInfo.userId!!)
+                    appInfo.incCounter(StoredData.STATUS_UPDATED)
+                }
+                else -> {
+                        LogFile.d(
+                            context,
+                            MainActivity.CHANNEL_ID,
+                            "Hmmm... How did I get here. Wish I could login"
+                        )
+                    appInfo.incCounter(StoredData.STATUS_UNKNOWN)
+                }
             }
+
+            LogFile.d(
+                context, MainActivity.CHANNEL_ID,
+                MessageFormat.format(
+                    "StatusReceiver status history: {0}({1}) {2}({3}) {4}({5}) {6}({7}) {8}({9}) {10}({11})",
+                    StoredData.STATUS_NOT_LOGGED_IN,
+                    appInfo.getCounter(StoredData.STATUS_NOT_LOGGED_IN),
+                    StoredData.STATUS_LOG_OUT,
+                    appInfo.getCounter(StoredData.STATUS_LOG_OUT),
+                    StoredData.STATUS_LOG_IN,
+                    appInfo.getCounter(StoredData.STATUS_LOG_IN),
+                    StoredData.STATUS_UPDATED,
+                    appInfo.getCounter(StoredData.STATUS_UPDATED),
+                    StoredData.STATUS_VEHICLE_INFO,
+                    appInfo.getCounter(StoredData.STATUS_VEHICLE_INFO),
+                    StoredData.STATUS_UNKNOWN,
+                    appInfo.getCounter(StoredData.STATUS_UNKNOWN)
+                )
+            )
         }
     }
 
-    private fun getStatus(context: Context, userInfo: UserInfo) {
+    private fun getStatus(context: Context, userId: String) {
         val statusHandler: Handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 val bundle = msg.data
@@ -216,36 +211,7 @@ class StatusReceiver : BroadcastReceiver() {
                 CarStatusWidget.updateWidget(context)
             }
         }
-
-        val refreshHandler: Handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message) {
-                val bundle = msg.data
-                val action = bundle.getString("action")
-                LogFile.i(
-                    context, MainActivity.CHANNEL_ID,
-                    "Refresh: $action"
-                )
-                if(action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    NetworkCalls.getStatus(statusHandler, context, bundle.getString("userId"))
-                }
-            }
-        }
-
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val delayInMillis = sharedPref.getString(
-            context.resources.getString(R.string.update_frequency_key),
-            "10"
-        )!!.toInt() * 60 * MILLIS
-
-        val userId = userInfo.userId
-        val timeout = userInfo.expiresIn
-        val time = LocalDateTime.now(ZoneId.systemDefault())
-        val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        if (timeout - delayInMillis - 5 * MILLIS < nowtime) {
-            NetworkCalls.refreshAccessToken(refreshHandler,context, userId!!, userInfo.refreshToken!!)
-        } else {
-            NetworkCalls.getStatus(statusHandler, context, userId)
-        }
+        NetworkCalls.getStatus(statusHandler, context, userId)
     }
 
     companion object {
