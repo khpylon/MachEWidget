@@ -22,6 +22,26 @@ class Vehiclestatus {
     @Expose
     var lastModifiedDate: String? = null
 
+    @SerializedName("chargePower")
+    @Expose
+    @ColumnInfo(defaultValue = "0", )
+    var chargePower: Double = 0.0
+
+    @SerializedName("chargeEnergy")
+    @Expose
+    @ColumnInfo(defaultValue = "0")
+    var chargeEnergy: Double = 0.0
+
+    @SerializedName("chargeType")
+    @Expose
+    @ColumnInfo(defaultValue = "''")
+    var chargeType: String = ""
+
+    @SerializedName("initialDte")
+    @Expose
+    @ColumnInfo(defaultValue = "0")
+    var initialDte: Double = 0.0
+
     @Generated("jsonschema2pojo")
     class Alarm {
         @SerializedName("value")

@@ -57,12 +57,8 @@ class VehicleInfo {
     @ColumnInfo(defaultValue = "7")
     var chargeThresholdLevel: Int
 
-    var chargingPower = 0.0
-
-    var chargingEnergy = 0.0
-
     @Embedded(prefix = "car_")
-    var carStatus: CarStatus? = null
+    var carStatus: CarStatus = CarStatus()
 
     @Embedded(prefix = "ota_")
     var responseList: FuseResponseList? = null

@@ -161,10 +161,10 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         drawIcons(views, carStatus)
 
         // Draw range and fuel/gas stuff
-        val twoLines = false
+        val displayTime = true
         drawRangeFuel(
             context, views, carStatus, info, vehicleInfo,
-            distanceConversion, distanceUnits, twoLines
+            distanceConversion, distanceUnits, displayTime
         )
 
         // Tire pressures

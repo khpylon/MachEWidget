@@ -454,20 +454,23 @@ class NetworkCalls {
                                         chargeStatus?.let {
                                             val response = it.execute()
                                             if (response.isSuccessful) {
-                                                val chargeInfo: Map<String, String> =
-                                                    Gson().fromJson(
-                                                        response.body()?.string(),
+                                                val chargeInfo: Map<String, Any> =
+                                                    Gson().fromJson(response.body()?.string(),
                                                         object :
                                                             TypeToken<Map<String, Any>>() {}.type
                                                     )
-                                                info.chargingPower =
-                                                    chargeInfo["power"]?.toDouble() ?: 0.0
-                                                info.chargingEnergy =
-                                                    chargeInfo["energy"]?.toDouble() ?: 0.0
-                                                i(
-                                                    context,
+                                                car.vehiclestatus?.chargePower =
+                                                    chargeInfo["power"] as Double? ?: -1.0
+                                                car.vehiclestatus?.chargeEnergy =
+                                                    chargeInfo["energy"] as Double? ?: -1.0
+                                                car.vehiclestatus?.initialDte =
+                                                    chargeInfo["initialDte"] as Double? ?: 0.0
+                                                car.vehiclestatus?.chargeType =
+                                                    chargeInfo["chargeType"] as String? ?: ""
+                                                i(context,
                                                     MainActivity.CHANNEL_ID,
-                                                    "received charge status response: power = $info.chargingPower, energy = $info.chargingEnergy"
+                                                    "received charge status response: power = " + car.vehiclestatus?.chargePower +
+                                                            ", energy = " + car.vehiclestatus?.chargeEnergy
                                                 )
                                             }
                                         }

@@ -15,6 +15,9 @@ import android.icu.text.MessageFormat
 import android.location.Address
 import android.location.Geocoder
 import android.os.*
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
+import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
@@ -78,6 +81,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 tmpPressure = "N/A"
             }
             views.setTextViewText(id, tmpPressure)
+//            views.setTextViewTextSize(id,TypedValue.COMPLEX_UNIT_DIP, 12.0)
         } else {
             drawable = R.drawable.filler
             views.setTextViewText(id, "")
@@ -353,28 +357,22 @@ open class CarStatusWidget : AppWidgetProvider() {
     protected fun drawRangeFuel(
         context: Context, views: RemoteViews, carStatus: CarStatus,
         info: InfoRepository, vehicleInfo: VehicleInfo,
-        distanceConversion: Double, distanceUnits: String?, twoLines: Boolean
+        distanceConversion: Double, distanceUnits: String?,
+        displayTime: Boolean
     ) {
         val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.propulsion)
         val isPHEV = carStatus.isPropulsionPHEV(carStatus.propulsion)
-        var rangeCharge = "N/A"
+        var rangeMessage = "N/A"
+        var chargeMessage = ""
+
         if (!isICEOrHybrid) {
             // Estimated range
-//            val range = carStatus.vehiclestatus?.elVehDTE?.value ?: 0.0
-//            if (range > 0) {
-//                rangeCharge = MessageFormat.format(
-//                    "{0} {1}",
-//                    (range * distanceConversion).roundToInt(),
-//                    distanceUnits
-//                )
-//            }
             carStatus.vehiclestatus?.elVehDTE?.value?.let {
-                rangeCharge = MessageFormat.format(
+                rangeMessage = MessageFormat.format(
                     "{0} {1}",
                     (it * distanceConversion).roundToInt(),
                     distanceUnits
                 )
-
             }
 
             // Charging port
@@ -383,6 +381,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 if (carStatus.vehiclestatus?.plugStatus?.value == 1) R.drawable.plug_icon_green else R.drawable.plug_icon_gray
             )
 
+            var rangeMessageSize = 1.0F
             // High-voltage battery
             if ((carStatus.vehiclestatus?.plugStatus?.value ?: 0) == 1) {
                 val chargeStatus = carStatus.vehiclestatus?.chargingStatus?.value ?: ""
@@ -412,18 +411,42 @@ open class CarStatusWidget : AppWidgetProvider() {
                         R.drawable.battery_icon_gray
                     )
                 }
+                val messageLength = rangeMessage.length
+
+                // Add charging information is available, display it
+                val queryCharging =
+                    PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(
+                            context.getResources()
+                                .getString(R.string.check_charging_key), false
+                        )
+                if (queryCharging && (vehicleInfo.carStatus.vehiclestatus.plugStatus?.value ?: 0) == 1
+                        && vehicleInfo.carStatus.vehiclestatus.chargeEnergy > 0) {
+                    rangeMessage += MessageFormat.format(
+                        "\n{0}kW rate, {1}kWh added",
+                        DecimalFormat(
+                            "#0.0",
+                            DecimalFormatSymbols.getInstance(Locale.US)
+                        ).format(vehicleInfo.carStatus.vehiclestatus.chargePower / 1000.0),
+                        DecimalFormat(
+                            "#0.0",
+                            DecimalFormatSymbols.getInstance(Locale.US)
+                        ).format(vehicleInfo.carStatus.vehiclestatus.chargeEnergy / 1000.0)
+                    )
+                    rangeMessageSize = 0.8F
+                }
+                val text = SpannableString(rangeMessage)
+                text.setSpan( RelativeSizeSpan(rangeMessageSize), messageLength, rangeMessage.length, 0)
+                views.setTextViewText(R.id.GOM, text)
 
                 // Normally there will be something from the GOM; if so, display this info with it
-                if (rangeCharge != "") {
-                    rangeCharge += if (twoLines) "\n" else " - "
-                }
                 if (chargeStatus == Constants.CHARGING_STATUS_TARGET_REACHED) {
-                    rangeCharge += "Target Reached"
+                    chargeMessage = "- Target Reached"
                     if (vehicleInfo.lastChargeStatus != Constants.CHARGING_STATUS_TARGET_REACHED) {
                         chargeComplete(context)
                     }
                 } else if (chargeStatus == Constants.CHARGING_STATUS_PRECONDITION) {
-                    rangeCharge += "Preconditioning"
+                    chargeMessage = "- Preconditioning"
                 } else {
                     val sdf = SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
                     val endChargeTime = Calendar.getInstance()
@@ -439,15 +462,15 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val hours = min.toInt() / 60
                             min %= 60
                             if (hours > 0) {
-                                rangeCharge += "$hours hr"
+                                chargeMessage = "- $hours hr"
                                 if (min > 0) {
-                                    rangeCharge += ", "
+                                    chargeMessage += ", "
                                 }
                             }
                             if (min > 0) {
-                                rangeCharge += min.toInt().toString() + " min"
+                                chargeMessage += "$min min"
                             }
-                            rangeCharge += " left"
+                            chargeMessage += " left"
                         }
                     } catch (e: ParseException) {
                         LogFile.e(
@@ -467,10 +490,10 @@ open class CarStatusWidget : AppWidgetProvider() {
             } else {
                 views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray)
             }
-            views.setTextViewText(R.id.GOM, rangeCharge)
 
             // High-voltage battery charge levels
             carStatus.vehiclestatus?.batteryFillLevel?.value?.let {
+
                 views.setProgressBar(
                     R.id.HBVChargeProgress,
                     100,
@@ -481,13 +504,14 @@ open class CarStatusWidget : AppWidgetProvider() {
                     R.id.HVBChargePercent,
                     MessageFormat.format(
                         "{0}%", DecimalFormat(
-                            "#.0",  // "#.0",
+                            "#.#",  // "#.0",
                             DecimalFormatSymbols.getInstance(Locale.US)
                         ).format(it)
-                    )
+                    ) + if (displayTime) chargeMessage else ""
                 )
             }
         }
+
         if (isICEOrHybrid || isPHEV) {
             // Estimated range
             var range = carStatus.vehiclestatus?.fuel?.distanceToEmpty ?: Double.MAX_VALUE
@@ -497,12 +521,12 @@ open class CarStatusWidget : AppWidgetProvider() {
             } else {
                 range = vehicleInfo.lastDTE
             }
-            rangeCharge = MessageFormat.format(
+            rangeMessage = MessageFormat.format(
                 "{0} {1}",
                 (range * distanceConversion).roundToInt(),
                 distanceUnits
             )
-            views.setTextViewText(R.id.distanceToEmpty, rangeCharge)
+            views.setTextViewText(R.id.distanceToEmpty, rangeMessage)
 
             // Fuel tank level
             var fuelLevel = carStatus.vehiclestatus?.fuel?.fuelLevel ?: Double.MAX_VALUE
@@ -528,6 +552,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                     ).format(fuelLevel)
                 )
             )
+
             if (carStatus.vehiclestatus == null) {
                 Toast.makeText(context, "carStatus.getVehiclestatus() is null", Toast.LENGTH_SHORT)
                     .show()
@@ -564,11 +589,11 @@ open class CarStatusWidget : AppWidgetProvider() {
             )
             views.setTextViewText(
                 R.id.LVBVoltage,
-                MessageFormat.format("LVB Volts: {0}V", LVBLevel)
+                MessageFormat.format("LV Battery: {0}V", LVBLevel)
             )
         } ?: run {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
-            views.setTextViewText(R.id.LVBVoltage, "LVB Volts: N/A")
+            views.setTextViewText(R.id.LVBVoltage, "LV Battery: N/A")
         }
     }
 

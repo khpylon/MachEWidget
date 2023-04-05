@@ -79,7 +79,8 @@ class SettingsActivity : AppCompatActivity() {
                 R.string.show_location_key,
                 R.string.user_forcedUpdate_key,
                 R.string.use_colors_key,
-                R.string.use_image_key
+                R.string.use_image_key,
+                R.string.check_charging_key,
             )) {
                 showApps = findPreference(this.resources.getString(id))
                 showApps?.onPreferenceClickListener =

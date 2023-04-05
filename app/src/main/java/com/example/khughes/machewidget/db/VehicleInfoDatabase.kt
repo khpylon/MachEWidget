@@ -89,10 +89,16 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // Add new column
                 database.execSQL(
-                    "ALTER TABLE vehicle_info ADD COLUMN chargingPower REAL DEFAULT 0 NOT NULL"
+                    "ALTER TABLE vehicle_info ADD COLUMN car_chargePower REAL DEFAULT 0 NOT NULL"
                 )
                 database.execSQL(
-                    "ALTER TABLE vehicle_info ADD COLUMN chargingEnergy REAL DEFAULT 0 NOT NULL"
+                    "ALTER TABLE vehicle_info ADD COLUMN car_chargeEnergy REAL DEFAULT 0 NOT NULL"
+                )
+                database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN car_chargeType TEXT DEFAULT '' NOT NULL"
+                )
+                database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN car_initialDte REAL DEFAULT 0 NOT NULL"
                 )
             }
         }

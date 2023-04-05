@@ -242,7 +242,7 @@ class CarStatus {
     @SerializedName("vehiclestatus")
     @Expose
     @Embedded
-    var vehiclestatus: Vehiclestatus? = null
+     var vehiclestatus: Vehiclestatus = Vehiclestatus()
 
     @SerializedName("version")
     @Expose

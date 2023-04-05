@@ -112,10 +112,10 @@
 
     <SwitchPreferenceCompat
         app:key="@string/check_charging_key"
-        app:defaultValue="false"
+        app:defaultValue="true"
         app:singleLineTitle="false"
         app:title="@string/check_charging"
-        app:summary=""/>
+        app:summary="@string/check_charging_summary"/>
 
     <Preference
         app:key="@string/battery_opt_key"
