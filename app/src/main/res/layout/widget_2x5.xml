@@ -184,7 +184,7 @@
     <RelativeLayout
         android:id="@+id/rightside"
         android:layout_width="200dp"
-        android:layout_height="180dp"
+        android:layout_height="184dp"
         android:layout_centerInParent="true"
         android:layout_toRightOf="@id/leftside">
 
@@ -240,7 +240,7 @@
         <LinearLayout
             android:id="@+id/bottom"
             android:layout_width="@dimen/vehicle_width"
-            android:layout_height="40dp"
+            android:layout_height="44dp"
             android:layout_below="@id/vehicle"
             android:layout_gravity="center"
             android:layout_weight="2"
@@ -249,7 +249,7 @@
             <RelativeLayout
                 android:id="@+id/bottom_gasoline"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:visibility="visible">
 
@@ -288,7 +288,7 @@
                 <TextView
                     android:id="@+id/distanceToEmpty"
                     android:layout_width="match_parent"
-                    android:layout_height="24dp"
+                    android:layout_height="28dp"
                     android:layout_alignParentEnd="true"
                     android:gravity="center"
                     android:text="200 miles"
@@ -300,7 +300,7 @@
             <RelativeLayout
                 android:id="@+id/bottom_electric"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:visibility="gone">
 
@@ -347,10 +347,10 @@
                 <TextView
                     android:id="@+id/GOM"
                     android:layout_width="match_parent"
-                    android:layout_height="24dp"
+                    android:layout_height="28dp"
                     android:layout_alignParentEnd="true"
                     android:gravity="center"
-                    android:text="200 miles - Charge complete"
+                    android:text="200 miles"
                     android:textColor="@color/white"
                     android:textSize="10sp" />
 
@@ -363,9 +363,9 @@
             android:id="@+id/vehicle"
             android:layout_width="200dp"
             android:layout_height="100dp"
+            android:layout_below="@id/right_top_icons"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_below="@id/right_top_icons"
             android:visibility="visible">
 
 

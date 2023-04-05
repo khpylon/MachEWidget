@@ -153,7 +153,7 @@ class VehicleColor {
 
             // Draw anything that's open
             for (id in whatsOpen) {
-                val icon = AppCompatResources.getDrawable(context,id)
+                val icon = AppCompatResources.getDrawable(context, id)
                 icon?.let {
                     icon.setBounds(0, 0, canvas.width, canvas.height)
                     icon.draw(canvas)
@@ -320,22 +320,17 @@ class PrefManagement {
                         // Save a valid VIN in case we need to change the current VIN
                         newVIN = info.vin!!
                         newUserId = info.userId!!
-                        val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                            .findVehicleInfoByVIN(newVIN)
-                        if (current == null) {
-                            info.id = 0
-                            VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                                .insertVehicleInfo(info)
-                        }
+                        info.id = 0
+                        VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                            .insertVehicleInfo(info)
                         val user =
                             UserInfoDatabase.getInstance(context).userInfoDao()
                                 .findUserInfo(info.userId!!)
                         if (user != null) {
                             NetworkCalls.getVehicleImage(
                                 context,
-                                user.accessToken,
                                 newVIN,
-                                user.country
+                                user.country!!
                             )
                         }
                         newVINs.add(newVIN)
@@ -775,26 +770,22 @@ class Misc {
             val prefs = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
             val unitsKey = context.resources.getString(R.string.units_key)
             val units = Integer.parseInt(
-                prefs.getString(
-                    unitsKey,
-                    context.resources.getString(R.string.units_mphpsi)
-                )
+                prefs.getString(unitsKey, context.resources.getString(R.string.units_mphpsi))
+                    .toString()
             )
             if (units == 0) {
                 CoroutineScope(Dispatchers.Main).launch {
                     val info = getInfo(context)
-                    info.user?.let {
-                        val map = mapOf(
-                            "MPHPSI" to context.resources.getString(R.string.units_mphpsi),
-                            "KPHPSI" to context.resources.getString(R.string.units_kphpsi),
-                            "KPHKPA" to context.resources.getString(R.string.units_kphkpa),
-                            "KPHBAR" to context.resources.getString(R.string.units_kphbar)
-                        )
-                        val speed = it.uomSpeed
-                        val pressure = it.uomPressure
-                        val value = map.getOrDefault(speed + pressure, "2")
-                        prefs.edit().putString(unitsKey, value).apply()
-                    }
+                    val map = mapOf(
+                        "MPHPSI" to context.resources.getString(R.string.units_mphpsi),
+                        "KPHPSI" to context.resources.getString(R.string.units_kphpsi),
+                        "KPHKPA" to context.resources.getString(R.string.units_kphkpa),
+                        "KPHBAR" to context.resources.getString(R.string.units_kphbar)
+                    )
+                    val speed = info.user.uomSpeed
+                    val pressure = info.user.uomPressure
+                    val value = map.getOrDefault(speed + pressure, "2")
+                    prefs.edit().putString(unitsKey, value).apply()
                 }
             }
         }

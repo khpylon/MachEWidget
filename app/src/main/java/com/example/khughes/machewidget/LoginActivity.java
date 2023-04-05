@@ -89,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                                 + Authenticate.ACCOUNT_DISABLED_CODE + "): contact Ford via the FordPass app to reactivate.", Toast.LENGTH_LONG).show();
                         break;
 
+                    case Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN:
                     default:
                         Toast.makeText(getApplicationContext(), "Unable to login to server: check your username and/or password?", Toast.LENGTH_LONG).show();
                         break;

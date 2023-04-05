@@ -110,6 +110,13 @@
         app:singleLineTitle="false"
         app:title="@string/use_colors" />
 
+    <SwitchPreferenceCompat
+        app:key="@string/check_charging_key"
+        app:defaultValue="true"
+        app:singleLineTitle="false"
+        app:title="@string/check_charging"
+        app:summary="@string/check_charging_summary"/>
+
     <Preference
         app:key="@string/battery_opt_key"
         app:title="@string/battery_opt"/>

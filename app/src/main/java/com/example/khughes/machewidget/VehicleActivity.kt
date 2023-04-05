@@ -34,8 +34,6 @@ import com.example.khughes.machewidget.db.UserInfoDatabase
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.*
 
 private lateinit var mVehicleViewModel: VehicleViewModel
@@ -49,7 +47,7 @@ class VehicleActivity : AppCompatActivity() {
     private lateinit var context: Context
     private lateinit var newVINWidget: TextInputLayout
 
-    private fun getStatus(context: Context, VIN: String?, nickname: String?) {
+    private fun getStatus(context: Context, VIN: String, nickname: String) {
         val statusHandler: Handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 val bundle = msg.data
@@ -57,7 +55,7 @@ class VehicleActivity : AppCompatActivity() {
                 if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
                     Toast.makeText(context, "Vehicle status successfully retrieved.", Toast.LENGTH_LONG)
                         .show()
-                    NetworkCalls.getVehicleImage(context, userInfo.accessToken, VIN, userInfo.country)
+                    NetworkCalls.getVehicleImage(context, VIN, userInfo.country!!)
                 } else {
                     Toast.makeText(context, "Unable to retrieve vehicle status.", Toast.LENGTH_LONG)
                         .show()
@@ -65,27 +63,7 @@ class VehicleActivity : AppCompatActivity() {
             }
         }
 
-        val refreshHandler: Handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message) {
-                val bundle = msg.data
-                val action = bundle.getString("action")
-                if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    NetworkCalls.getStatus(statusHandler, context, userInfo, VIN, nickname)
-                } else {
-                    Toast.makeText(context, "Unable to refresh access token.", Toast.LENGTH_LONG)
-                        .show()
-                }
-            }
-        }
-
-        val timeout = userInfo.expiresIn
-        val time = LocalDateTime.now(ZoneId.systemDefault())
-        val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        if (timeout < nowtime) {
-            NetworkCalls.refreshAccessToken(refreshHandler, context, userId, userInfo.refreshToken)
-        } else {
-            NetworkCalls.getStatus(statusHandler, context, userInfo, VIN, nickname)
-        }
+        NetworkCalls.getStatus(statusHandler, context, userInfo, VIN, nickname)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,7 +80,7 @@ class VehicleActivity : AppCompatActivity() {
         binding.addVehicle.setOnClickListener {
             // Create the alert dialog
             val layout = layoutInflater.inflate(R.layout.newvehicle, null)
-            newVINWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_vin)
+            newVINWidget = layout.findViewById(R.id.new_vehicle_vin)
             val newNicknameWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_nickname)
             val dialog = AlertDialog.Builder(
                 ContextThemeWrapper(
@@ -181,7 +159,7 @@ class VehicleActivity : AppCompatActivity() {
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
-        mVehicleViewModel = ViewModelProvider(this).get(VehicleViewModel::class.java)
+        mVehicleViewModel = ViewModelProvider(this)[VehicleViewModel::class.java]
         mVehicleViewModel.allVehicles.observe(this) { list: List<VehicleIds?>? ->
             adapter.submitList(
                 list

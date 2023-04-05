@@ -1,12 +1,15 @@
 package com.example.khughes.machewidget
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.icu.text.MessageFormat
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -29,15 +32,10 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == LAUNCH_BATTERY_OPTIMIZATIONS) {
-            displayOptimizationMessage(applicationContext)
-        }
-    }
-
     class SettingsFragment : PreferenceFragmentCompat() {
+        var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                displayOptimizationMessage(requireContext())
+        }
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val context = context as Context
@@ -81,7 +79,8 @@ class SettingsActivity : AppCompatActivity() {
                 R.string.show_location_key,
                 R.string.user_forcedUpdate_key,
                 R.string.use_colors_key,
-                R.string.use_image_key
+                R.string.use_image_key,
+                R.string.check_charging_key,
             )) {
                 showApps = findPreference(this.resources.getString(id))
                 showApps?.onPreferenceClickListener =
@@ -134,10 +133,7 @@ class SettingsActivity : AppCompatActivity() {
                     Preference.OnPreferenceClickListener { _: Preference? ->
                         val intent = Intent(Intent.ACTION_VIEW)
                         intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
-                        it.startActivityForResult(
-                            intent,
-                            LAUNCH_BATTERY_OPTIMIZATIONS
-                        )
+                        resultLauncher.launch(intent)
                         true
                     }
             }

@@ -58,7 +58,7 @@ class VehicleInfo {
     var chargeThresholdLevel: Int
 
     @Embedded(prefix = "car_")
-    var carStatus: CarStatus? = null
+    var carStatus: CarStatus = CarStatus()
 
     @Embedded(prefix = "ota_")
     var responseList: FuseResponseList? = null
