@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.04.05
+### Added
+- For BEVs/PHEVs: while charging, display charge rate and energy added.  This can be enabled or disabled in Settings.
+
+### Changed
+- Detect incorrect user ID or password on login.
+
+### Fixed
+- Refresh token if necessary before executing commands (door lock/unlock, remote start, etc).
+
 ## 2023.03.24
 ### Fixed
 - Catch potential exception with geocoding interfaces on Android 12 and below devices.
