@@ -37,16 +37,16 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
     ) {
         val whatsOpen = whatzOpen ?: mutableListOf()
 
-        if (!isWindowClosed(carStatus.vehiclestatus?.windowPosition?.driverWindowPosition?.value)) {
+        if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.driverWindowPosition?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.LEFT_FRONT_WINDOW]!!)
         }
-        if (!isWindowClosed(carStatus.vehiclestatus?.windowPosition?.passWindowPosition?.value)) {
+        if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.passWindowPosition?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.RIGHT_FRONT_WINDOW]!!)
         }
-        if (!isWindowClosed(carStatus.vehiclestatus?.windowPosition?.rearDriverWindowPos?.value)) {
+        if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.rearDriverWindowPos?.value)) {
             whatsOpen.add( vehicleImages[Vehicle.LEFT_REAR_WINDOW]!!)
         }
-        if (!isWindowClosed(carStatus.vehiclestatus?.windowPosition?.rearPassWindowPos?.value)) {
+        if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.rearPassWindowPos?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.RIGHT_REAR_WINDOW]!!)
         }
         super.drawVehicleImage( context, views, carStatus, vehicleColor, whatsOpen, vehicleImages )
@@ -89,22 +89,27 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         }
         val pressureConversion: Double
         val pressureUnits: String
-        if (units == Constants.UNITS_KPHPSI || units == Constants.UNITS_MPHPSI) {
-            pressureConversion = Constants.KPATOPSI
-            pressureUnits = "psi"
-        } else if (units == Constants.UNITS_KPHBAR) {
-            pressureConversion = Constants.KPATOBAR
-            pressureUnits = "bar"
-        } else {
-            pressureConversion = 1.0
-            pressureUnits = "kPa"
+        when (units) {
+            Constants.UNITS_KPHPSI, Constants.UNITS_MPHPSI -> {
+                pressureConversion = Constants.KPATOPSI
+                pressureUnits = "psi"
+            }
+            Constants.UNITS_KPHBAR -> {
+                pressureConversion = Constants.KPATOBAR
+                pressureUnits = "bar"
+            }
+            else -> {
+                pressureConversion = 1.0
+                pressureUnits = "kPa"
+            }
         }
+
         val carStatus = vehicleInfo.carStatus
-        if (carStatus == null || carStatus.vehiclestatus == null) {
-            views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.")
-            appWidgetManager.updateAppWidget(appWidgetId, views)
-            return
-        }
+//        if (carStatus == null || carStatus.vehiclestatus == null) {
+//            views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.")
+//            appWidgetManager.updateAppWidget(appWidgetId, views)
+//            return
+//        }
         val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.propulsion)
         val isPHEV = carStatus.isPropulsionPHEV(carStatus.propulsion)
         views.setViewVisibility(R.id.lock_gasoline, if (isICEOrHybrid) View.VISIBLE else View.GONE)
@@ -133,26 +138,26 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         // Tire pressures
         updateTire(
             context, views,
-            carStatus.vehiclestatus?.tpms?.leftFrontTirePressure?.value,
-            carStatus.vehiclestatus?.tpms?.leftFrontTireStatus?.value,
+            carStatus.vehiclestatus.tpms?.leftFrontTirePressure?.value,
+            carStatus.vehiclestatus.tpms?.leftFrontTireStatus?.value,
             pressureUnits, pressureConversion, R.id.lt_ft_tire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus?.tpms?.rightFrontTirePressure?.value,
-            carStatus.vehiclestatus?.tpms?.rightFrontTireStatus?.value,
+            carStatus.vehiclestatus.tpms?.rightFrontTirePressure?.value,
+            carStatus.vehiclestatus.tpms?.rightFrontTireStatus?.value,
             pressureUnits, pressureConversion, R.id.rt_ft_tire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus?.tpms?.outerLeftRearTirePressure?.value,
-            carStatus.vehiclestatus?.tpms?.outerLeftRearTireStatus?.value,
+            carStatus.vehiclestatus.tpms?.outerLeftRearTirePressure?.value,
+            carStatus.vehiclestatus.tpms?.outerLeftRearTireStatus?.value,
             pressureUnits, pressureConversion, R.id.lt_rr_tire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus?.tpms?.outerRightRearTirePressure?.value,
-            carStatus.vehiclestatus?.tpms?.outerRightRearTireStatus?.value,
+            carStatus.vehiclestatus.tpms?.outerRightRearTirePressure?.value,
+            carStatus.vehiclestatus.tpms?.outerRightRearTireStatus?.value,
             pressureUnits, pressureConversion, R.id.rt_rr_tire
         )
 

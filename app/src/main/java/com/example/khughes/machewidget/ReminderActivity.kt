@@ -17,7 +17,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private lateinit var binding: ActivityReminderBinding
 
 private const val HOUR_MASK = 0x1f
 private const val NOTIFICATION_BIT = 0x20
@@ -30,8 +29,11 @@ class ReminderActivity : AppCompatActivity() {
     var hour: Int = 0
     var level: Int = 0
 
+    private lateinit var binding: ActivityReminderBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityReminderBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val activity = this
@@ -183,21 +185,18 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun isPHEVorBEV(vehicle: VehicleInfo): Boolean {
         val status = vehicle.carStatus
-        status?.let {
-            val propulsionType = it.propulsion
-            return !it.isPropulsionICEOrHybrid(propulsionType)
-        }
-        return true
+        val propulsionType = status.propulsion
+        return status.isPropulsionICEOrHybrid(propulsionType)
     }
 
-    private inline fun isNotificationEnabled(chargeHour: Int) =
+    private fun isNotificationEnabled(chargeHour: Int) =
         (chargeHour and NOTIFICATION_BIT) != 0
 
-    private inline fun getHour(chargeHour: Int) = (chargeHour and HOUR_MASK)
+    private fun getHour(chargeHour: Int) = (chargeHour and HOUR_MASK)
 
-    private inline fun levelToPosition(level: Int) = (level - 15) / 5
+    private fun levelToPosition(level: Int) = (level - 15) / 5
 
-    private inline fun positionToLevel(position: Int) = (position * 5) + 15
+    private fun positionToLevel(position: Int) = (position * 5) + 15
 
     private suspend fun getInfo(context: Context): InfoRepository =
         coroutineScope {

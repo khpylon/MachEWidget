@@ -48,17 +48,16 @@ class NetworkCalls {
 
     companion object {
 
-        val COMMAND_SUCCESSFUL = "Command successful."
-        val COMMAND_FAILED = "Command failed."
-        val COMMAND_NO_NETWORK = "Network error."
-        val COMMAND_EXCEPTION = "Exception occurred."
-        val COMMAND_REMOTE_START_LIMIT = "Cannot extend remote start time without driving."
+        const val COMMAND_SUCCESSFUL = "Command successful."
+        const val COMMAND_FAILED = "Command failed."
+        const val COMMAND_NO_NETWORK = "Network error."
+        const val COMMAND_EXCEPTION = "Exception occurred."
+        const val COMMAND_REMOTE_START_LIMIT = "Cannot extend remote start time without driving."
 
-        private val CMD_STATUS_SUCCESS = 200
-        private val CMD_STATUS_INPROGRESS = 552
-        private val CMD_STATUS_FAILED = 411
-        private val CMD_REMOTE_START_LIMIT = 590
-
+        private const val CMD_STATUS_SUCCESS = 200
+        private const val CMD_STATUS_INPROGRESS = 552
+        private const val CMD_STATUS_FAILED = 411
+        private const val CMD_REMOTE_START_LIMIT = 590
 
         @JvmStatic
         fun getAccessToken(
@@ -167,7 +166,7 @@ class NetworkCalls {
                             }
                             nextState =
                                 if (VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                                        .findVINsByUserId(userId).size == 0
+                                        .findVINsByUserId(userId).isEmpty()
                                 ) {
                                     Constants.STATE_HAVE_TOKEN
                                 } else {
@@ -189,7 +188,7 @@ class NetworkCalls {
                         )
                         try {
                             Thread.sleep((3 * 1000).toLong())
-                        } catch (e: InterruptedException) {
+                        } catch (_: InterruptedException) {
                         }
                     } catch (e3: UnknownHostException) {
                         e(
@@ -214,29 +213,12 @@ class NetworkCalls {
             return data
         }
 
-
-        @JvmStatic
-        fun refreshAccessToken(
-            handler: Handler,
-            context: Context,
-            userId: String,
-            refreshToken: String
-        ) {
-            val t = Thread {
-                val intent = refreshAccessToken(context, userId, refreshToken)
-                val m = Message.obtain()
-                m.data = intent.extras
-                handler.sendMessage(m)
-            }
-            t.start()
-        }
-
         private fun refreshAccessToken(
             context: Context,
-            userId: String,
+            _userId: String,
             refreshToken: String
         ): Intent {
-            var userId = userId
+            var userId = _userId
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
             val dao = UserInfoDatabase.getInstance(context)
@@ -300,7 +282,7 @@ class NetworkCalls {
                             )
                             try {
                                 Thread.sleep((3 * 1000).toLong())
-                            } catch (e: InterruptedException) {
+                            } catch (_: InterruptedException) {
                             }
                             continue
                         } else {
@@ -326,7 +308,7 @@ class NetworkCalls {
                         )
                         try {
                             Thread.sleep((3 * 1000).toLong())
-                        } catch (e: InterruptedException) {
+                        } catch (_: InterruptedException) {
                         }
                     } catch (e3: UnknownHostException) {
                         e(
@@ -405,11 +387,11 @@ class NetworkCalls {
                         "last refresh was " + (nowtime - lasttime) / (1000 * 60) + " min ago"
                     )
                     if ((nowtime - lasttime) / (1000 * 60) > 6 * 60 &&
-                        !info.carStatus?.vehiclestatus!!.deepSleepInProgress!!.value!! &&
-                        info.carStatus?.vehiclestatus!!.battery!!.batteryStatusActual!!.value!! > 12
+                        !info.carStatus.vehiclestatus.deepSleepInProgress!!.value!! &&
+                        info.carStatus.vehiclestatus.battery!!.batteryStatusActual!!.value!! > 12
                     ) {
                         CoroutineScope(Dispatchers.Main).launch {
-                            NetworkCalls.updateStatus(context, info.vin)
+                            updateStatus(context, info.vin)
                         }
                     }
                 }
@@ -435,16 +417,16 @@ class NetworkCalls {
                                 val car = responseStatus.body() as CarStatus
                                 if (car.status == Constants.HTTP_SERVER_ERROR) {
                                     i(context, MainActivity.CHANNEL_ID, "server is broken")
-                                } else if (car.vehiclestatus != null) {
+                                } else {
 
                                     // If vehicle is charging and we're supposed to grab data, do so
                                     val queryCharging =
                                         PreferenceManager.getDefaultSharedPreferences(context)
                                             .getBoolean(
-                                                context.getResources()
+                                                context.resources
                                                     .getString(R.string.check_charging_key), false
                                             )
-                                    if (queryCharging && car.vehiclestatus!!.plugStatus?.value == 1) {
+                                    if (queryCharging && car.vehiclestatus.plugStatus?.value == 1) {
                                         val body = JSONObject().put("vin", VIN).toString()
                                             .toRequestBody("application/json; charset=utf-8".toMediaType())
                                         val chargeStatus =
@@ -459,18 +441,18 @@ class NetworkCalls {
                                                         object :
                                                             TypeToken<Map<String, Any>>() {}.type
                                                     )
-                                                car.vehiclestatus?.chargePower =
+                                                car.vehiclestatus.chargePower =
                                                     chargeInfo["power"] as Double? ?: -1.0
-                                                car.vehiclestatus?.chargeEnergy =
+                                                car.vehiclestatus.chargeEnergy =
                                                     chargeInfo["energy"] as Double? ?: -1.0
-                                                car.vehiclestatus?.initialDte =
+                                                car.vehiclestatus.initialDte =
                                                     chargeInfo["initialDte"] as Double? ?: 0.0
-                                                car.vehiclestatus?.chargeType =
+                                                car.vehiclestatus.chargeType =
                                                     chargeInfo["chargeType"] as String? ?: ""
                                                 i(context,
                                                     MainActivity.CHANNEL_ID,
-                                                    "received charge status response: power = " + car.vehiclestatus?.chargePower +
-                                                            ", energy = " + car.vehiclestatus?.chargeEnergy
+                                                    "received charge status response: power = " + car.vehiclestatus.chargePower +
+                                                            ", energy = " + car.vehiclestatus.chargeEnergy
                                                 )
                                             }
                                         }
@@ -506,13 +488,6 @@ class NetworkCalls {
                                     checkTPMSStatus(context, car, info)
                                     i(context, MainActivity.CHANNEL_ID, "got status")
                                     nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
-                                } else {
-                                    nextState = Constants.STATE_INITIAL_STATE
-                                    i(
-                                        context,
-                                        MainActivity.CHANNEL_ID,
-                                        "vehicle status is null"
-                                    )
                                 }
                             } else {
                                 i(
@@ -623,7 +598,7 @@ class NetworkCalls {
                             )
                             try {
                                 Thread.sleep((3 * 1000).toLong())
-                            } catch (e: InterruptedException) {
+                            } catch (_: InterruptedException) {
                             }
                         } catch (e2: IllegalStateException) {
                             e(
@@ -639,7 +614,7 @@ class NetworkCalls {
                             )
                             try {
                                 Thread.sleep((3 * 1000).toLong())
-                            } catch (e: InterruptedException) {
+                            } catch (_: InterruptedException) {
                             }
                         } catch (e3: UnknownHostException) {
                             e(
@@ -691,7 +666,7 @@ class NetworkCalls {
 
         private fun getStatus(
             context: Context,
-            userInfo: UserInfo,
+            tmpUserInfo: UserInfo,
             VIN: String,
             nickname: String
         ): Intent {
@@ -699,8 +674,8 @@ class NetworkCalls {
                 .userInfoDao()
             val infoDao = VehicleInfoDatabase.getInstance(context)
                 .vehicleInfoDao()
-            val userId = userInfo.userId
-            val language = userInfo.language
+            val userId = tmpUserInfo.userId
+            val language = tmpUserInfo.language
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
             LogFile.d(context, MainActivity.CHANNEL_ID, "userId = $userId")
@@ -717,7 +692,7 @@ class NetworkCalls {
                 context, MainActivity.CHANNEL_ID,
                 "getting status for VIN $VIN"
             )
-            if (checkInternetConnection(context) && checkForRefresh(context, userInfo!!)) {
+            if (checkInternetConnection(context) && checkForRefresh(context, tmpUserInfo)) {
                 val userInfo = userDao.findUserInfo(userId)
                 val token = userInfo!!.accessToken
 
@@ -735,7 +710,7 @@ class NetworkCalls {
                             val car = responseStatus.body()
                             if (car!!.status == Constants.HTTP_SERVER_ERROR) {
                                 i(context, MainActivity.CHANNEL_ID, "server is broken")
-                            } else if (car.vehiclestatus != null) {
+                            } else {
                                 val lastRefreshTime = Calendar.getInstance()
                                 val sdf = SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
                                 sdf.timeZone = TimeZone.getTimeZone("UTC")
@@ -760,13 +735,6 @@ class NetworkCalls {
                                 info.lastRefreshTime = currentRefreshTime
                                 infoDao.insertVehicleInfo(info)
                                 i(context, MainActivity.CHANNEL_ID, "got status")
-                                nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
-                            } else {
-                                i(
-                                    context,
-                                    MainActivity.CHANNEL_ID,
-                                    "vehicle status is null"
-                                )
                                 nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
                             }
                         } else {
@@ -793,7 +761,7 @@ class NetworkCalls {
                         )
                         try {
                             Thread.sleep((3 * 1000).toLong())
-                        } catch (e: InterruptedException) {
+                        } catch (_: InterruptedException) {
                         }
                     } catch (e2: java.lang.IllegalStateException) {
                         e(
@@ -809,7 +777,7 @@ class NetworkCalls {
                         )
                         try {
                             Thread.sleep((3 * 1000).toLong())
-                        } catch (e: InterruptedException) {
+                        } catch (_: InterruptedException) {
                         }
                     } catch (e3: UnknownHostException) {
                         e(
@@ -901,7 +869,7 @@ class NetworkCalls {
                                     )
                                     try {
                                         Thread.sleep((3 * 1000).toLong())
-                                    } catch (e: InterruptedException) {
+                                    } catch (_: InterruptedException) {
                                     }
                                 } catch (e3: UnknownHostException) {
                                     e(
@@ -983,7 +951,7 @@ class NetworkCalls {
             return if (timeout - delayInMillis - 10 * MILLIS < nowtime) {
                 val intent = refreshAccessToken(
                     context,
-                    userId!!,
+                    userId,
                     user.refreshToken!!
                 )
                 val action = intent.extras?.getString("action")
@@ -1004,12 +972,12 @@ class NetworkCalls {
             withContext(Dispatchers.IO) {
                 val vehInfo = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao().findVehicleInfoByVIN(VIN)
-                val userInfo = UserInfoDatabase.getInstance(context)
+                val tmpUserInfo = UserInfoDatabase.getInstance(context)
                     .userInfoDao().findUserInfo(vehInfo.userId!!)
                 val data = Intent()
                 if (!checkInternetConnection(context)) {
                     data.putExtra("action", COMMAND_NO_NETWORK)
-                } else if (!checkForRefresh(context, userInfo!!)) {
+                } else if (!checkForRefresh(context, tmpUserInfo!!)) {
                     data.putExtra("action", COMMAND_EXCEPTION)
                 } else {
                     // Get the user info again in case a refresh updated the access token
@@ -1170,7 +1138,7 @@ class NetworkCalls {
         @JvmStatic
         fun updateStatus(handler: Handler, context: Context?, VIN: String?) {
             CoroutineScope(Dispatchers.Main).launch {
-                val intent = NetworkCalls.updateStatus(context, VIN)
+                val intent = updateStatus(context, VIN)
                 val m = Message.obtain()
                 m.data = intent.extras
                 handler.sendMessage(m)
@@ -1188,11 +1156,10 @@ class NetworkCalls {
                 val infoDao = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao()
                 val vehInfo = infoDao.findVehicleInfoByVIN(VIN!!)
-                val userInfo = userDao.findUserInfo(vehInfo.userId!!)
-                val token = userInfo!!.accessToken
+                val tmpUserInfo = userDao.findUserInfo(vehInfo.userId!!)
                 if (!checkInternetConnection(context)) {
                     data.putExtra("action", COMMAND_NO_NETWORK)
-                } else if (!checkForRefresh(context, userInfo!!)) {
+                } else if (!checkForRefresh(context, tmpUserInfo!!)) {
                     data.putExtra("action", COMMAND_EXCEPTION)
                 } else {
                     // Get the user info again in case a refresh updated the access token
@@ -1203,8 +1170,8 @@ class NetworkCalls {
                     val commandServiceClient = createUSAPICVService(
                         USAPICVService::class.java, context
                     )
-                    val call: Call<CommandStatus?>?
-                    call = commandServiceClient.putStatus(token, Constants.APID, VIN)
+                    val call: Call<CommandStatus?>? =
+                        commandServiceClient.putStatus(token, Constants.APID, VIN)
                     try {
                         val response = call!!.execute()
                         if (response.isSuccessful) {
@@ -1332,8 +1299,12 @@ class NetworkCalls {
 
             // Details about the currently active default data network
             return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                @Suppress("DEPRECATION")
                 val networkInfo = connManager.activeNetworkInfo
-                networkInfo?.let { networkInfo.isConnected && networkInfo.isAvailable } ?: false
+                networkInfo?.let {
+                    @Suppress("DEPRECATION")
+                    networkInfo.isConnected && networkInfo.isAvailable
+                } ?: false
             } else {
                 val networkInfo = connManager.activeNetwork ?: return false
                 val networkCapabilities = connManager.getNetworkCapabilities(networkInfo)
@@ -1345,11 +1316,4 @@ class NetworkCalls {
             }
         }
     }
-
-    private suspend fun getInfo(context: Context): InfoRepository =
-        coroutineScope {
-            withContext(Dispatchers.IO) { InfoRepository(context) }
-        }
-
-
 }

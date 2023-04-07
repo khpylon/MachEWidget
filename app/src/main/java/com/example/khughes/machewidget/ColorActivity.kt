@@ -68,8 +68,13 @@ class ColorActivity : AppCompatActivity() {
         TooltipCompat.setTooltipText(binding.autoImage, "Use stored image as color source.")
 
         binding.colorPickerView.setColorListener(ColorListener { color: Int, _: Boolean ->
-            binding.colorValue.text = "RGB value: #" + Integer.toHexString(color).uppercase()
-                .substring(2)
+            binding.colorValue.text = buildString {
+                append("RGB value: #")
+                append(
+                    Integer.toHexString(color).uppercase()
+                    .substring(2)
+                    )
+            }
             drawVehicle(color and VehicleColor.ARGB_MASK or wireframeMode)
         } )
         binding.colorPickerView.attachBrightnessSlider(binding.brightnessSlide)
@@ -86,7 +91,7 @@ class ColorActivity : AppCompatActivity() {
                 id: Long
             ) {
                 val VIN = parent.getItemAtPosition(position).toString()
-                info.getVehicleByVIN(VIN)?.let {
+                info.getVehicleByVIN(VIN).let {
                     setCheckedButton(it.colorValue)
                     binding.colorPickerView.setInitialColor(it.colorValue)
                     setAutoButton(it.vin!!)

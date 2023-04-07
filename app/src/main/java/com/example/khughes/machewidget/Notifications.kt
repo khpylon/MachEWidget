@@ -3,29 +3,21 @@ package com.example.khughes.machewidget
 import com.example.khughes.machewidget.Misc.Companion.ignoringBatteryOptimizations
 import android.content.BroadcastReceiver
 import android.content.Intent
-import com.example.khughes.machewidget.Notifications
 import com.example.khughes.machewidget.CarStatus.CarStatus
-import com.example.khughes.machewidget.VehicleInfo
 import android.app.PendingIntent
 import android.content.Context
-import com.example.khughes.machewidget.MainActivity
-import com.example.khughes.machewidget.R
 import android.graphics.BitmapFactory
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
-import com.example.khughes.machewidget.StoredData
-import com.example.khughes.machewidget.Misc
-import com.example.khughes.machewidget.LoginActivity
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.HashMap
 
 class Notifications : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val action = intent.action
-        when (action) {
+        when (intent.action) {
             LVB_NOTIFICATION -> LVBNotificationVisible = false
             TPMS_NOTIFICATION -> TPMSNotificationVisible = false
             CHARGE_NOTIFICATION -> ChargeNotificationVisible = false
@@ -56,7 +48,7 @@ class Notifications : BroadcastReceiver() {
         @JvmStatic
         fun checkLVBStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastLVBStatus = vehInfo.lastLVBStatus
-            val currentLVBStatus = carStatus.vehiclestatus?.battery?.batteryHealth?.value ?: lastLVBStatus
+            val currentLVBStatus = carStatus.vehiclestatus.battery?.batteryHealth?.value ?: lastLVBStatus
             if (currentLVBStatus != lastLVBStatus) {
                 // Save the current status
                 vehInfo.lastLVBStatus = currentLVBStatus
@@ -103,10 +95,10 @@ class Notifications : BroadcastReceiver() {
         fun checkTPMSStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastTPMSStatus = vehInfo.lastTPMSStatus
             val currentTPMSStatus: MutableMap<String, String> = HashMap()
-            currentTPMSStatus[LEFT_FRONT_TIRE] = carStatus.vehiclestatus?.tpms?.leftFrontTireStatus?.value ?: "Normal"
-            currentTPMSStatus[RIGHT_FRONT_TIRE] = carStatus.vehiclestatus?.tpms?.rightFrontTireStatus?.value ?: "Normal"
-            currentTPMSStatus[LEFT_REAR_TIRE] = carStatus.vehiclestatus?.tpms?.outerLeftRearTireStatus?.value ?: "Normal"
-            currentTPMSStatus[RIGHT_REAR_TIRE] = carStatus.vehiclestatus?.tpms?.outerRightRearTireStatus?.value ?: "Normal"
+            currentTPMSStatus[LEFT_FRONT_TIRE] = carStatus.vehiclestatus.tpms?.leftFrontTireStatus?.value ?: "Normal"
+            currentTPMSStatus[RIGHT_FRONT_TIRE] = carStatus.vehiclestatus.tpms?.rightFrontTireStatus?.value ?: "Normal"
+            currentTPMSStatus[LEFT_REAR_TIRE] = carStatus.vehiclestatus.tpms?.outerLeftRearTireStatus?.value ?: "Normal"
+            currentTPMSStatus[RIGHT_REAR_TIRE] = carStatus.vehiclestatus.tpms?.outerRightRearTireStatus?.value ?: "Normal"
             var badTire = ""
             for (key in arrayOf(
                 LEFT_FRONT_TIRE,

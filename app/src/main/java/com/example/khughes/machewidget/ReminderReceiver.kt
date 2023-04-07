@@ -22,12 +22,12 @@ class ReminderReceiver : BroadcastReceiver() {
                 val info = getInfo(context)
                 val vehicle = info.getVehicleByVIN(VIN)
                 val threshold = vehicle.chargeThresholdLevel
-                val actualLevel = vehicle.carStatus?.vehiclestatus?.batteryFillLevel?.value?.toInt() ?: threshold
-                val pluggedIn = vehicle.carStatus?.vehiclestatus?.plugStatus?.value == 1 ?: false
-                if ((!pluggedIn || (pluggedIn && (vehicle.carStatus?.vehiclestatus?.chargingStatus?.value in arrayOf(
+                val actualLevel = vehicle.carStatus.vehiclestatus.batteryFillLevel?.value?.toInt() ?: threshold
+                val pluggedIn = (vehicle.carStatus.vehiclestatus.plugStatus?.value ?: 0) == 1
+                if ((!pluggedIn || vehicle.carStatus.vehiclestatus.chargingStatus?.value in arrayOf(
                         Constants.CHARGING_STATUS_PAUSED,
                         Constants.CHARGING_STATUS_NOT_READY
-                    )))) && actualLevel <= threshold
+                    )) && actualLevel <= threshold
                 ) {
                     Notifications.chargeReminder(context)
                 }

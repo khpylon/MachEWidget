@@ -1,6 +1,5 @@
 package com.example.khughes.machewidget.CarStatus
 
-import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -207,9 +206,9 @@ class CarStatus {
 //        }
     val lastRefresh: String?
         get() = try {
-            var lastRefresh = vehiclestatus!!.lastRefresh
+            var lastRefresh = vehiclestatus.lastRefresh
             if (lastRefresh!!.contains("01-01-2018")) {
-                lastRefresh = vehiclestatus!!.lastModifiedDate
+                lastRefresh = vehiclestatus.lastModifiedDate
             }
             lastRefresh
         } catch (e: NullPointerException) {
@@ -217,15 +216,13 @@ class CarStatus {
         }
  
    val propulsion: Int
-        get() = if (vehiclestatus != null) {
-            if (vehiclestatus?.fuel == null) {
+        get() = if (vehiclestatus.fuel == null) {
                 PROPULSION_ELECTRIC
-            } else if (vehiclestatus!!.batteryFillLevel == null) {
+            } else if (vehiclestatus.batteryFillLevel == null) {
                 PROPULSION_ICE_OR_HYBRID
             } else {
                 PROPULSION_PHEV
             }
-        } else PROPULSION_UNKNOWN
 
     fun isPropulsionElectric(method: Int): Boolean {
         return method == PROPULSION_ELECTRIC
@@ -253,7 +250,6 @@ class CarStatus {
     var status: Int? = null
 
     companion object {
-        private const val PROPULSION_UNKNOWN = 0
         private const val PROPULSION_ELECTRIC = 1
         private const val PROPULSION_PHEV = 2
         private const val PROPULSION_ICE_OR_HYBRID = 3

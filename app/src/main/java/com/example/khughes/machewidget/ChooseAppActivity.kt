@@ -81,6 +81,7 @@ class ChooseAppActivity : AppCompatActivity() {
                     PackageManager.ResolveInfoFlags.of(0)
                 )
             } else {
+                @Suppress("DEPRECATION")
                 context.packageManager.queryIntentActivities(intent, 0)
             }
 
