@@ -14,7 +14,7 @@ interface VehicleInfoDao {
     fun findVehicleInfo(): List<VehicleInfo>
 
     @Query("SELECT * FROM vehicle_info WHERE vin LIKE :VIN")
-    fun findVehicleInfoByVIN(VIN: String): VehicleInfo
+    fun findVehicleInfoByVIN(VIN: String): VehicleInfo?
 
     @Query("SELECT vin FROM vehicle_info WHERE userId LIKE :userId")
     fun findVINsByUserId(userId: String): List<String>

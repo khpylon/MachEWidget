@@ -320,9 +320,17 @@ class PrefManagement {
                         // Save a valid VIN in case we need to change the current VIN
                         newVIN = info.vin!!
                         newUserId = info.userId!!
-                        info.id = 0
-                        VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                            .insertVehicleInfo(info)
+
+                        val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                            .findVehicleInfoByVIN(newVIN)
+                        if (current == null) {
+                            info.id = 0
+                            VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                                .insertVehicleInfo(info)
+                        } else {
+                            VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                                .updateVehicleInfo(info)
+                        }
                         val user =
                             UserInfoDatabase.getInstance(context).userInfoDao()
                                 .findUserInfo(info.userId!!)

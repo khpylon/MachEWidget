@@ -973,7 +973,7 @@ class NetworkCalls {
                 val vehInfo = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao().findVehicleInfoByVIN(VIN)
                 val tmpUserInfo = UserInfoDatabase.getInstance(context)
-                    .userInfoDao().findUserInfo(vehInfo.userId!!)
+                    .userInfoDao().findUserInfo(vehInfo!!.userId!!)
                 val data = Intent()
                 if (!checkInternetConnection(context)) {
                     data.putExtra("action", COMMAND_NO_NETWORK)
@@ -1156,7 +1156,7 @@ class NetworkCalls {
                 val infoDao = VehicleInfoDatabase.getInstance(context)
                     .vehicleInfoDao()
                 val vehInfo = infoDao.findVehicleInfoByVIN(VIN!!)
-                val tmpUserInfo = userDao.findUserInfo(vehInfo.userId!!)
+                val tmpUserInfo = userDao.findUserInfo(vehInfo!!.userId!!)
                 if (!checkInternetConnection(context)) {
                     data.putExtra("action", COMMAND_NO_NETWORK)
                 } else if (!checkForRefresh(context, tmpUserInfo!!)) {
