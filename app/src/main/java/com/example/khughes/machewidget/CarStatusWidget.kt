@@ -376,6 +376,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                     distanceUnits
                 )
             }
+            val messageLength = rangeMessage.length
 
             // Charging port
             views.setImageViewResource(
@@ -413,7 +414,6 @@ open class CarStatusWidget : AppWidgetProvider() {
                         R.drawable.battery_icon_gray
                     )
                 }
-                val messageLength = rangeMessage.length
 
                 // Add charging information is available, display it
                 val queryCharging =
@@ -437,9 +437,6 @@ open class CarStatusWidget : AppWidgetProvider() {
                     )
                     rangeMessageSize = 0.8F
                 }
-                val text = SpannableString(rangeMessage)
-                text.setSpan( RelativeSizeSpan(rangeMessageSize), messageLength, rangeMessage.length, 0)
-                views.setTextViewText(R.id.GOM, text)
 
                 // Normally there will be something from the GOM; if so, display this info with it
                 if (chargeStatus == Constants.CHARGING_STATUS_TARGET_REACHED) {
@@ -492,6 +489,10 @@ open class CarStatusWidget : AppWidgetProvider() {
             } else {
                 views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray)
             }
+            val text = SpannableString(rangeMessage)
+            text.setSpan( RelativeSizeSpan(rangeMessageSize), messageLength, rangeMessage.length, 0)
+            views.setTextViewText(R.id.GOM, text)
+
 
             // High-voltage battery charge levels
             carStatus.vehiclestatus.batteryFillLevel?.value?.let {
