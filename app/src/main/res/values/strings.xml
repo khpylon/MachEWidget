@@ -30,6 +30,7 @@
     <string name="vehicle_instructions">
         Select which vehicles should be visible within the widget.
         Click on the \"+\" icon to add a new vehicle.
+        Swipe right on a vehicle to remove it.
         Vehicles whose VIN are struck-through are not currently supported;
         to request support, enable logging to capture data and create an issue on GitHub (https://github.com/khpylon/MachEWidget).
     </string>

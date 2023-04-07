@@ -3,7 +3,9 @@ package com.example.khughes.machewidget
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Configuration
-import android.graphics.Color
+import android.graphics.*
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,18 +25,16 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.GONE
-import androidx.recyclerview.widget.RecyclerView.VISIBLE
+import androidx.recyclerview.widget.RecyclerView.*
 import com.example.khughes.machewidget.databinding.ActivityVehicleBinding
 import com.example.khughes.machewidget.db.UserInfoDatabase
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 import java.util.*
+
 
 private lateinit var mVehicleViewModel: VehicleViewModel
 private lateinit var activity: AppCompatActivity
@@ -119,7 +119,7 @@ class VehicleActivity : AppCompatActivity() {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
 
             // Force text to uppercase
-            newVINWidget.editText?.let{ it.filters += InputFilter.AllCaps() }
+            newVINWidget.editText?.let { it.filters += InputFilter.AllCaps() }
 
             // Process VIN text as it's typed
             newVINWidget.editText?.addTextChangedListener(object : TextWatcher {
@@ -165,12 +165,43 @@ class VehicleActivity : AppCompatActivity() {
                 list
             )
         }
+
+        val swipeToDelete = object : SwipeToDelete(context) {
+            override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
+
+                val position = viewHolder.adapterPosition
+                val VIN = adapter.currentList[position].vin
+
+                AlertDialog.Builder(
+                    ContextThemeWrapper(activity, R.style.AlertDialogCustom)
+                )
+                    .setTitle("Remove vehicle")
+                    .setMessage("Please confirm you want to remove this vehicle from the app.")
+                    .setNegativeButton(
+                        android.R.string.cancel
+                    ) { _: DialogInterface?, _: Int ->
+                        adapter.refresh()
+                    }
+                    .setPositiveButton(
+                        android.R.string.ok
+                    ) { _: DialogInterface?, _: Int ->
+                        adapter.removeItem(position, VIN!!)
+                    }
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show()
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeToDelete)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerview)
+
         CoroutineScope(Dispatchers.Main).launch {
             userInfo = getUserInfo(context, userId)
-            if(userInfo.userId == null) {
+            if (userInfo.userId == null) {
                 binding.addVehicle.hide()
                 AlertDialog.Builder(
-                    ContextThemeWrapper(activity, R.style.AlertDialogCustom))
+                    ContextThemeWrapper(activity, R.style.AlertDialogCustom)
+                )
                     .setTitle("Error")
                     .setMessage("Vehicles can't be added without a valid user; please log in first.")
                     .setPositiveButton(
@@ -196,8 +227,103 @@ class VehicleActivity : AppCompatActivity() {
             }
         }
 
+    open class SwipeToDelete(context: Context) : ItemTouchHelper.Callback() {
+        val mContext = context
+        val mBackground = ColorDrawable()
+        val backgroundColor = Color.parseColor(context.resources.getString(R.color.light_blue_900))
+        val mClearPaint = Paint()
+        val deleteDrawable = ContextCompat.getDrawable(
+            mContext,
+            R.drawable.x_gray
+        ) as Drawable
+        val intrinsicWidth = deleteDrawable.intrinsicWidth
+        val intrinsicHeight = deleteDrawable.intrinsicWidth
+
+        init {
+            mClearPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+        }
+
+        override fun getMovementFlags(
+            recyclerView: RecyclerView,
+            viewHolder: ViewHolder
+        ): Int {
+            return makeMovementFlags(0, ItemTouchHelper.RIGHT)
+        }
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: ViewHolder,
+            target: ViewHolder
+        ): Boolean {
+            return false
+        }
+
+        override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onChildDraw(
+            c: Canvas,
+            recyclerView: RecyclerView,
+            viewHolder: ViewHolder,
+            dX: Float,
+            dY: Float,
+            actionState: Int,
+            isCurrentlyActive: Boolean
+        ) {
+            val itemView = viewHolder.itemView
+            val itemHeight = itemView.height
+
+            val isCancelled = dX == 0F && !isCurrentlyActive
+
+            if (isCancelled) {
+                clearCanvas(
+                    c,
+                    itemView.right + dX,
+                    itemView.top.toFloat(),
+                    itemView.right.toFloat(),
+                    itemView.bottom.toFloat()
+                )
+            } else {
+                mBackground.color = backgroundColor
+                mBackground.setBounds(
+                    itemView.left,
+                    itemView.top,
+                    itemView.left + dX.toInt(),
+                    itemView.bottom
+                )
+                mBackground.draw(c)
+
+                val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
+                val deleteIconLeft: Int = itemView.left + deleteIconMargin
+                val deleteIconRight = itemView.left + deleteIconMargin + intrinsicWidth
+                val deleteIconBottom = deleteIconTop + intrinsicHeight
+
+                deleteDrawable.setBounds(
+                    deleteIconLeft,
+                    deleteIconTop,
+                    deleteIconRight,
+                    deleteIconBottom
+                )
+                deleteDrawable.draw(c)
+            }
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        }
+
+        private fun clearCanvas(
+            c: Canvas,
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float
+        ) {
+            c.drawRect(left, top, right, bottom, mClearPaint)
+        }
+    }
+
     class VehicleViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+        ViewHolder(itemView) {
         val VINItemView: TextView
         val nicknameItemView: TextView
         val enabledView: CheckBox
@@ -277,6 +403,15 @@ class VehicleActivity : AppCompatActivity() {
             holder.enabledView.isEnabled =
                 !current.enabled || mVehicleViewModel.countEnabledVehicle() > 1
             changing = false
+        }
+
+        fun removeItem(position: Int, VIN: String) {
+            mVehicleViewModel.removeVehicle(VIN)
+            notifyItemRemoved(position)
+        }
+
+        fun refresh() {
+            notifyDataSetChanged()
         }
     }
 

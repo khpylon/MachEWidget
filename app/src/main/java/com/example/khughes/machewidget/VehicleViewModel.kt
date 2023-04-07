@@ -20,6 +20,10 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
         mRepository.enable(VIN, value)
     }
 
+    fun removeVehicle(VIN: String) {
+        mRepository.remove(VIN)
+    }
+
     fun countEnabledVehicle(): Int {
         var count = 0
         for (id in allVehicles.value!!) {
@@ -41,6 +45,10 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
 
         fun enable(VIN: String, value: Boolean) {
             Thread { mVehDao.updateEnable(VIN, value) }.start()
+        }
+
+        fun remove(VIN: String) {
+            Thread { mVehDao.deleteVehicleInfoByVIN(VIN) }.start()
         }
     }
 }
