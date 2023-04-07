@@ -608,8 +608,8 @@ open class CarStatusWidget : AppWidgetProvider() {
         var sdf = SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         try {
-            lastUpdateTime.time = carStatus.lastRefresh?.let { sdf.parse(it) } as Date // all done
-        } catch (e: ParseException) {
+            lastUpdateTime.time = carStatus.lastRefresh?.let { sdf.parse(it) } ?: Date(0)
+        } catch (e: Exception) {
             LogFile.e(
                 context,
                 MainActivity.CHANNEL_ID,
