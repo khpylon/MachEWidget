@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.04.07
+### Added
+- Vehicles can be removed from the app under Manage Vehicles by swiping them to the right.
+
+### Fixed
+- Fixed bug with estimated range not always being displayed for BEVs/PHEVs.
+
 ## 2023.04.05
 ### Added
 - For BEVs/PHEVs: while charging, display charge rate and energy added.  This can be enabled or disabled in Settings.
