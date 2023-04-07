@@ -208,7 +208,7 @@ class NetworkCalls {
                     }
                 }
             }
-            userDao.updateProgramState(nextState, userId!!)
+            userId?.let { userDao.updateProgramState(nextState, it) }
             data.putExtra("action", nextState)
             return data
         }
@@ -437,7 +437,8 @@ class NetworkCalls {
                                             val response = it.execute()
                                             if (response.isSuccessful) {
                                                 val chargeInfo: Map<String, Any> =
-                                                    Gson().fromJson(response.body()?.string(),
+                                                    Gson().fromJson(
+                                                        response.body()?.string(),
                                                         object :
                                                             TypeToken<Map<String, Any>>() {}.type
                                                     )
@@ -449,7 +450,8 @@ class NetworkCalls {
                                                     chargeInfo["initialDte"] as Double? ?: 0.0
                                                 car.vehiclestatus.chargeType =
                                                     chargeInfo["chargeType"] as String? ?: ""
-                                                i(context,
+                                                i(
+                                                    context,
                                                     MainActivity.CHANNEL_ID,
                                                     "received charge status response: power = " + car.vehiclestatus.chargePower +
                                                             ", energy = " + car.vehiclestatus.chargeEnergy
