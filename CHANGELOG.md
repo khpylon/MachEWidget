@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.04.08
+### Fixed
+- Fix some null pointer exceptions.
+
 ## 2023.04.07
 ### Added
 - Vehicles can be removed from the app under Manage Vehicles by swiping them to the right.
