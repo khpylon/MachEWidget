@@ -450,6 +450,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                     val sdf = SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
                     val endChargeTime = Calendar.getInstance()
                     try {
+                        chargeMessage = "- "
                         endChargeTime.time =
                             carStatus.vehiclestatus.chargeEndTime!!.value?.let { sdf.parse(it) } as Date
                         val nowTime = Calendar.getInstance()
@@ -461,7 +462,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val hours = min.toInt() / 60
                             min %= 60
                             if (hours > 0) {
-                                chargeMessage = "- $hours hr"
+                                chargeMessage += "$hours hr"
                                 if (min > 0) {
                                     chargeMessage += ", "
                                 }
