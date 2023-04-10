@@ -169,7 +169,8 @@ open class CarStatusWidget : AppWidgetProvider() {
 
     // Check if a door is open or closed.  Undefined defaults to closed.
     private fun isDoorClosed(status: String?): Boolean {
-        return status == null || status.lowercase(Locale.getDefault()).contains("closed")
+        return status == null || status.lowercase(Locale.getDefault()).contains("closed") ||
+                !status.lowercase(Locale.getDefault()).contains("ajar")
     }
 
     // Set background transparency
@@ -444,13 +445,17 @@ open class CarStatusWidget : AppWidgetProvider() {
                     if (vehicleInfo.lastChargeStatus != Constants.CHARGING_STATUS_TARGET_REACHED) {
                         chargeComplete(context)
                     }
+                } else if (chargeStatus == Constants.CHARGING_STATUS_COMPLETE) {
+                    chargeMessage = "- Completed"
+                    if (vehicleInfo.lastChargeStatus != Constants.CHARGING_STATUS_COMPLETE) {
+                        chargeComplete(context)
+                    }
                 } else if (chargeStatus == Constants.CHARGING_STATUS_PRECONDITION) {
                     chargeMessage = "- Preconditioning"
                 } else {
                     val sdf = SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
                     val endChargeTime = Calendar.getInstance()
                     try {
-                        chargeMessage = "- "
                         endChargeTime.time =
                             carStatus.vehiclestatus.chargeEndTime!!.value?.let { sdf.parse(it) } as Date
                         val nowTime = Calendar.getInstance()
@@ -459,6 +464,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                             endChargeTime.toInstant()
                         ).seconds / 60
                         if (min > 0) {
+                            chargeMessage = "- "
                             val hours = min.toInt() / 60
                             min %= 60
                             if (hours > 0) {
@@ -588,10 +594,17 @@ open class CarStatusWidget : AppWidgetProvider() {
                 R.id.LVBVoltage,
                 context.getColor(if (LVBStatus == "STATUS_GOOD") R.color.white else R.color.red)
             )
-            views.setTextViewText(
-                R.id.LVBVoltage,
-                MessageFormat.format("LV Battery: {0}V", LVBLevel)
-            )
+            if (LVBLevel > 0) {
+                views.setTextViewText(
+                    R.id.LVBVoltage,
+                    MessageFormat.format("LV Battery: {0}V", LVBLevel)
+                )
+            } else {
+                views.setTextViewText(
+                    R.id.LVBVoltage,
+                    MessageFormat.format("LV Battery: {0}", (if (LVBStatus == "STATUS_GOOD") "Good" else "Warning"))
+                )
+            }
         } ?: run {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
             views.setTextViewText(R.id.LVBVoltage, "LV Battery: N/A")

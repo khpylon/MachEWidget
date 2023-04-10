@@ -41,6 +41,8 @@ object Constants {
     const val CHARGING_STATUS_PRECONDITION = "CabinPreconditioning"
     const val CHARGING_STATUS_PAUSED = "EvsePaused"
     const val CHARGING_SCHEDULED = "ChargeScheduled"
+    const val CHARGING_STATUS_IN_PROGRESS = "Inprogress"
+    const val CHARGING_STATUS_COMPLETE = "Complete"
 
     const val REPOURL = "https://github.com/khpylon/MachEWidget"
     const val FSVERSION_1 = "FSVERSION_1"

@@ -61,10 +61,11 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 )
                 result = "N/A"
             }
-        } else {
-            result = "N/A"
+            views.setTextViewText(id, result)
+//        } else {
+//            result = "N/A"
         }
-        views.setTextViewText(id, result)
+        views.setViewVisibility(id, if(pressure != null) View.VISIBLE else View.GONE)
     }
 
     // Define actions for clicking on various icons, including the widget itself
