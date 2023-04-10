@@ -1169,57 +1169,76 @@ class NetworkCalls {
                         .userInfoDao().findUserInfo(vehInfo.userId!!)
                     val token = userInfo!!.accessToken
 
-                    val commandServiceClient = createUSAPICVService(
-                        USAPICVService::class.java, context
-                    )
-                    val call: Call<CommandStatus?>? =
-                        commandServiceClient.putStatus(token, Constants.APID, VIN)
-                    try {
-                        val response = call!!.execute()
-                        if (response.isSuccessful) {
-                            val status = response.body()
-                            if (status!!.status == CMD_STATUS_SUCCESS) {
-                                i(
-                                    context,
-                                    MainActivity.CHANNEL_ID,
-                                    "statusrefresh send successful."
-                                )
-                                Looper.prepare()
-                                Toast.makeText(context, "Command transmitted.", Toast.LENGTH_SHORT)
-                                    .show()
-                                data.putExtra(
-                                    "action",
-                                    pollStatus(context, token, vehInfo, status.commandId)
-                                )
-                            } else if (status.status == CMD_REMOTE_START_LIMIT) {
+                    while (true) {
+                        try {
+                            val commandServiceClient = createUSAPICVService(
+                                USAPICVService::class.java, context
+                            )
+                            val call: Call<CommandStatus?>? =
+                                commandServiceClient.putStatus(token, Constants.APID, VIN)
+                            val response = call!!.execute()
+                            if (response.isSuccessful) {
+                                val status = response.body()
+                                if (status!!.status == CMD_STATUS_SUCCESS) {
+                                    i(
+                                        context,
+                                        MainActivity.CHANNEL_ID,
+                                        "statusrefresh send successful."
+                                    )
+                                    Looper.prepare()
+                                    Toast.makeText(
+                                        context,
+                                        "Command transmitted.",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                    data.putExtra(
+                                        "action",
+                                        pollStatus(context, token, vehInfo, status.commandId)
+                                    )
+                                } else if (status.status == CMD_REMOTE_START_LIMIT) {
+                                    i(
+                                        context,
+                                        MainActivity.CHANNEL_ID,
+                                        "statusrefresh send UNSUCCESSFUL."
+                                    )
+                                    data.putExtra("action", COMMAND_REMOTE_START_LIMIT)
+                                } else {
+                                    data.putExtra("action", COMMAND_EXCEPTION)
+                                    i(
+                                        context,
+                                        MainActivity.CHANNEL_ID,
+                                        "statusrefresh send unknown response."
+                                    )
+                                    i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                                }
+                            } else {
+                                data.putExtra("action", COMMAND_FAILED)
                                 i(
                                     context,
                                     MainActivity.CHANNEL_ID,
                                     "statusrefresh send UNSUCCESSFUL."
                                 )
-                                data.putExtra("action", COMMAND_REMOTE_START_LIMIT)
-                            } else {
-                                data.putExtra("action", COMMAND_EXCEPTION)
-                                i(
-                                    context,
-                                    MainActivity.CHANNEL_ID,
-                                    "statusrefresh send unknown response."
-                                )
                                 i(context, MainActivity.CHANNEL_ID, response.raw().toString())
                             }
-                        } else {
-                            data.putExtra("action", COMMAND_FAILED)
-                            i(context, MainActivity.CHANNEL_ID, "statusrefresh send UNSUCCESSFUL.")
-                            i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                            break
+                        } catch (e1: java.lang.IllegalStateException) {
+                            data.putExtra("action", COMMAND_EXCEPTION)
+                            e(
+                                context,
+                                MainActivity.CHANNEL_ID,
+                                "IllegalStateException in NetworkCalls.updateStatus(): ", e1
+                            )
+                        } catch (e: java.lang.Exception) {
+                            data.putExtra("action", COMMAND_EXCEPTION)
+                            e(
+                                context,
+                                MainActivity.CHANNEL_ID,
+                                "exception in NetworkCalls.updateStatus(): ",
+                                e
+                            )
                         }
-                    } catch (e: java.lang.Exception) {
-                        data.putExtra("action", COMMAND_EXCEPTION)
-                        e(
-                            context,
-                            MainActivity.CHANNEL_ID,
-                            "exception in NetworkCalls.updateStatus(): ",
-                            e
-                        )
+                        Thread.sleep((3 * 1000).toLong())
                     }
                 }
                 data
