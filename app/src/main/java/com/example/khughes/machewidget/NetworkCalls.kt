@@ -460,6 +460,40 @@ class NetworkCalls {
                                         }
                                     }
 
+                                    // Experimental stuff to get some OTA information
+                                    val queryOTA =
+                                        PreferenceManager.getDefaultSharedPreferences(context)
+                                            .getBoolean("checkMMOTA", false
+                                            )
+
+                                    if (queryOTA) {
+                                        val body = JSONObject()
+                                            .put("displayOTAStatusReport", "Display")
+                                            .put("getDtcsViaApplink", "NoDisplay" )
+                                            .put("hmiPreferredLanguage", "en-us")
+                                            .put("sdnLookup", "VSDN")
+                                            .put("userAuthorization", "AUTHORIZED")
+                                            .put("VIN", VIN)
+                                        .toString()
+                                            .toRequestBody("application/json; charset=utf-8".toMediaType())
+                                        val chargeStatus =
+                                            createAPIMPSService(
+                                                APIMPSService::class.java, context
+                                            ).getOTAInfo(body, token , Locale("",userInfo.country).getISO3Country())
+                                        chargeStatus?.let {
+                                            val response = it.execute()
+                                            if (response.isSuccessful) {
+//                                                val chargeInfo: Map<String, Any> =
+//                                                    Gson().fromJson(
+//                                                        response.body()?.string(),
+//                                                        object :
+//                                                            TypeToken<Map<String, Any>>() {}.type
+//                                                    )
+                                                print(response.body()?.string())
+                                            }
+                                        }
+                                    }
+
                                     val lastRefreshTime = Calendar.getInstance()
                                     val sdf =
                                         SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)

@@ -36,6 +36,18 @@ interface APIMPSService {
     @POST("cevs/v1/chargestatus/retrieve")
     fun getChargingInfo(@Body vin: RequestBody?, @Header("auth-token") token: String?): Call<ResponseBody?>?
 
+    @Headers(
+        "Accept-Encoding: gzip",
+        "Application-Id: " + Constants.APID,
+        "Content-Type: application/json",
+        "Host: api.mps.ford.com",
+        "User-Agent: okhttp/4.9.0",
+        "locale: en-us"
+    )
+    @POST("expvehiclealerts/v2/details")
+    fun getOTAInfo(@Body vin: RequestBody?, @Header("auth-token") token: String?,
+                   @Header("countryCode") country: String?): Call<ResponseBody?>?
+
 //    @Headers("locale: en-US", "user-agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110")
 //    @POST("expdashboard/v1/details")
 //    fun getUserDetails(
