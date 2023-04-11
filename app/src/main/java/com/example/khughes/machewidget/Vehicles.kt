@@ -1212,5 +1212,5 @@ class Puma(VIN: String) : Escape(VIN) {
 class Focus(VIN: String) : Escape(VIN) {
     override val offsetPositions = arrayOf(316, 316)
     override val name = "Focus"
-    override val logoID = R.drawable.generic_logo
+    override val logoID = R.drawable.focus_logo
 }
