@@ -11,9 +11,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.EditTextPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 
 private const val LAUNCH_BATTERY_OPTIMIZATIONS = 1
@@ -143,6 +141,17 @@ class SettingsActivity : AppCompatActivity() {
                 val item = findPreference<EditTextPreference>(this.resources.getString(id))
                 item?.parent?.removePreference(item)
             }
+
+            val showMMOTA =
+                PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean("showMMOTA", false
+                    )
+
+            if (!showMMOTA){
+                val item = findPreference<SwitchPreferenceCompat>("checkMMOTA")
+                item?.parent?.removePreference(item)
+            }
+
         }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

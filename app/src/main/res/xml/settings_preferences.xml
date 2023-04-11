@@ -7,6 +7,18 @@
         app:enabled="false"
         app:isPreferenceVisible="false"/>
 
+    <SwitchPreferenceCompat
+        app:key = "showMMOTA"
+        app:useSimpleSummaryProvider="true"
+        app:enabled="false"
+        app:isPreferenceVisible="false"/>
+
+    <SwitchPreferenceCompat
+        app:key = "checkMMOTA"
+        app:title="Check MMOTA"
+        app:useSimpleSummaryProvider="true"
+        app:enabled="true"/>
+
     <EditTextPreference
         app:key="@string/userId_key"
         app:defaultValue=""
