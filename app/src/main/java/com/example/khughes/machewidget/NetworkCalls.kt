@@ -90,9 +90,9 @@ class NetworkCalls {
                     "NetworkCalls.getAccessToken() called with null username?"
                 )
             } else if (checkInternetConnection(context)) {
-                val OAuth2Client = createAPIMPSService(APIMPSService::class.java, context)
                 for (retry in 2 downTo 0) {
                     try {
+                        val OAuth2Client = createAPIMPSService(APIMPSService::class.java, context)
                         var accessToken: AccessToken
                         var call: Call<AccessToken?>?
 
@@ -197,6 +197,21 @@ class NetworkCalls {
                             "java.net.UnknownHostException in NetworkCalls.getAccessToken"
                         )
                         break
+                    } catch (e1: java.lang.IllegalStateException) {
+                        e(
+                            context,
+                            MainActivity.CHANNEL_ID,
+                            "IllegalStateException in NetworkCalls.getAccessToken: ", e1
+                        )
+                        e(
+                            context,
+                            MainActivity.CHANNEL_ID,
+                            MessageFormat.format("    {0} retries remaining", retry)
+                        )
+                        try {
+                            Thread.sleep((3 * 1000).toLong())
+                        } catch (_: InterruptedException) {
+                        }
                     } catch (e: java.lang.Exception) {
                         e(
                             context,
@@ -227,10 +242,10 @@ class NetworkCalls {
                 val jsonObject = JSONObject().put("refresh_token", refreshToken)
                 val body = jsonObject.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaType())
-                val OAuth2Client = createAPIMPSService(APIMPSService::class.java, context)
                 for (retry in 2 downTo 0) {
-                    val call = OAuth2Client.refreshAccessToken(body)
                     try {
+                        val OAuth2Client = createAPIMPSService(APIMPSService::class.java, context)
+                        val call = OAuth2Client.refreshAccessToken(body)
                         val response = call!!.execute()
                         if (response.isSuccessful) {
                             i(context, MainActivity.CHANNEL_ID, "refresh successful")
@@ -317,6 +332,21 @@ class NetworkCalls {
                             "java.net.UnknownHostException in NetworkCalls.refreshAccessToken"
                         )
                         break
+                    } catch (e1: java.lang.IllegalStateException) {
+                        e(
+                            context,
+                            MainActivity.CHANNEL_ID,
+                            "IllegalStateException in NetworkCalls.refreshAccessToken(): ", e1
+                        )
+                        e(
+                            context,
+                            MainActivity.CHANNEL_ID,
+                            MessageFormat.format("    {0} retries remaining", retry)
+                        )
+                        try {
+                            Thread.sleep((3 * 1000).toLong())
+                        } catch (_: InterruptedException) {
+                        }
                     } catch (e: Exception) {
                         e(
                             context,
@@ -387,8 +417,8 @@ class NetworkCalls {
                         "last refresh was " + (nowtime - lasttime) / (1000 * 60) + " min ago"
                     )
                     if ((nowtime - lasttime) / (1000 * 60) > 6 * 60 &&
-                        !info.carStatus.vehiclestatus.deepSleepInProgress!!.value!! &&
-                        info.carStatus.vehiclestatus.battery!!.batteryStatusActual!!.value!! > 12
+                        !(info.carStatus.vehiclestatus.deepSleepInProgress?.value ?: true) &&
+                        (info.carStatus.vehiclestatus.battery?.batteryStatusActual?.value ?: 0) > 12
                     ) {
                         CoroutineScope(Dispatchers.Main).launch {
                             updateStatus(context, info.vin)
@@ -848,23 +878,23 @@ class NetworkCalls {
                 imageDir.mkdir()
             }
             val modelYear = getModelYear(VIN).toString()
-            val vehicleImageClient =
-                createDIGITALSERVICESService(DigitalServicesService::class.java, context)
             if (checkInternetConnection(context)) {
                 for (angle in 1..5) {
                     val image = File(imageDir, VIN + "_angle" + angle + ".png")
                     if (!image.exists()) {
                         val t = Thread {
                             for (retry in 2 downTo 0) {
-                                val call =
-                                    vehicleImageClient.getVehicleImage(
-                                        Constants.APID,
-                                        VIN,
-                                        modelYear,
-                                        country,
-                                        angle.toString()
-                                    )
                                 try {
+                                    val vehicleImageClient =
+                                        createDIGITALSERVICESService(DigitalServicesService::class.java, context)
+                                    val call =
+                                        vehicleImageClient.getVehicleImage(
+                                            Constants.APID,
+                                            VIN,
+                                            modelYear,
+                                            country,
+                                            angle.toString()
+                                        )
                                     val response = call!!.execute()
                                     if (response.isSuccessful) {
                                         Files.copy(
@@ -914,6 +944,22 @@ class NetworkCalls {
                                         "java.net.UnknownHostException in NetworkCalls.getVehicleImage"
                                     )
                                     break
+                                } catch (e2: java.lang.IllegalStateException) {
+                                    e(
+                                        context,
+                                        MainActivity.CHANNEL_ID,
+                                        "exception in NetworkCalls.getVehicleImage",
+                                        e2
+                                    )
+                                    e(
+                                        context,
+                                        MainActivity.CHANNEL_ID,
+                                        MessageFormat.format("    {0} retries remaining", retry)
+                                    )
+                                    try {
+                                        Thread.sleep((3 * 1000).toLong())
+                                    } catch (_: InterruptedException) {
+                                    }
                                 } catch (e: java.lang.Exception) {
                                     e(
                                         context,
@@ -1020,21 +1066,21 @@ class NetworkCalls {
                     val userInfo = UserInfoDatabase.getInstance(context)
                         .userInfoDao().findUserInfo(vehInfo.userId!!)
                     val token = userInfo!!.accessToken
-                    val commandServiceClient = createUSAPICVService(
-                        USAPICVService::class.java, context
-                    )
-                    val call: Call<CommandStatus?>? = if (request == "put") {
-                        commandServiceClient.putCommand(
-                            token, Constants.APID,
-                            version, VIN, component, operation
-                        )
-                    } else {
-                        commandServiceClient.deleteCommand(
-                            token, Constants.APID,
-                            version, VIN, component, operation
-                        )
-                    }
                     try {
+                        val commandServiceClient = createUSAPICVService(
+                            USAPICVService::class.java, context
+                        )
+                        val call: Call<CommandStatus?>? = if (request == "put") {
+                            commandServiceClient.putCommand(
+                                token, Constants.APID,
+                                version, VIN, component, operation
+                            )
+                        } else {
+                            commandServiceClient.deleteCommand(
+                                token, Constants.APID,
+                                version, VIN, component, operation
+                            )
+                        }
                         val response = call!!.execute()
                         if (response.isSuccessful) {
                             val status = response.body()
@@ -1079,6 +1125,13 @@ class NetworkCalls {
                             i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.")
                             i(context, MainActivity.CHANNEL_ID, response.raw().toString())
                         }
+                    } catch (e2: java.lang.IllegalStateException) {
+                        e(
+                            context,
+                            MainActivity.CHANNEL_ID,
+                            "exception in NetworkCalls.execCommand",
+                            e2
+                        )
                     } catch (e: java.lang.Exception) {
                         data.putExtra("action", COMMAND_EXCEPTION)
                         e(
