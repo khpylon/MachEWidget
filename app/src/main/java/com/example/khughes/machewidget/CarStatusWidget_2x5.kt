@@ -58,12 +58,12 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
             whatsOpen.add(vehicleImages[Vehicle.RIGHT_FRONT_WINDOW]!!)
         }
         if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.rearDriverWindowPos?.value)) {
-            whatsOpen.add( vehicleImages[Vehicle.LEFT_REAR_WINDOW]!!)
+            whatsOpen.add(vehicleImages[Vehicle.LEFT_REAR_WINDOW]!!)
         }
         if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.rearPassWindowPos?.value)) {
             whatsOpen.add(vehicleImages[Vehicle.RIGHT_REAR_WINDOW]!!)
         }
-        super.drawVehicleImage( context, views, carStatus, vehicleColor, whatsOpen, vehicleImages )
+        super.drawVehicleImage(context, views, carStatus, vehicleColor, whatsOpen, vehicleImages)
     }
 
     private fun updateAppWidget(
@@ -153,7 +153,12 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
                 .getBoolean(context.resources.getString(R.string.show_location_key), true)
         ) {
             views.setViewVisibility(R.id.location_container, View.VISIBLE)
-            updateLocation(context, views, carStatus.vehiclestatus.gps?.latitude, carStatus.vehiclestatus.gps?.longitude)
+            updateLocation(
+                context,
+                views,
+                carStatus.vehiclestatus.gps?.latitude,
+                carStatus.vehiclestatus.gps?.longitude
+            )
         } else {
             views.setViewVisibility(R.id.location_container, View.GONE)
         }
@@ -212,7 +217,10 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         updateLinkedApps(context, views)
 
         // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views)
+        try {
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+        } catch (_: NullPointerException) {
+        }
     }
 
     override fun onAppWidgetOptionsChanged(

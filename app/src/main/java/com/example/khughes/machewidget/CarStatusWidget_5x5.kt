@@ -65,7 +65,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 //        } else {
 //            result = "N/A"
         }
-        views.setViewVisibility(id, if(pressure != null) View.VISIBLE else View.GONE)
+        views.setViewVisibility(id, if (pressure != null) View.VISIBLE else View.GONE)
     }
 
     // Define actions for clicking on various icons, including the widget itself
@@ -174,7 +174,10 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         // Display the vehicle's nickname
         views.setTextViewText(R.id.profile, vehicleInfo.nickname)
         //        views.setTextViewText(R.id.profile, "My Mach-E");
-        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
+        try {
+            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
+        } catch (_: IllegalArgumentException) {
+        }
 
         // If no status information, print something generic and return
         val carStatus = vehicleInfo.carStatus
@@ -224,7 +227,8 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
             Constants.UNITS_KPHBAR -> {
                 pressureConversion = Constants.KPATOBAR
                 pressureUnits = "bar"
-            } else -> {
+            }
+            else -> {
                 pressureConversion = 1.0
                 pressureUnits = "kPa"
             }
@@ -341,7 +345,12 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 .getBoolean(context.resources.getString(R.string.show_location_key), true)
         ) {
             views.setViewVisibility(R.id.location_container, View.VISIBLE)
-            updateLocation(context, views, carStatus.vehiclestatus.gps?.latitude, carStatus.vehiclestatus.gps?.longitude)
+            updateLocation(
+                context,
+                views,
+                carStatus.vehiclestatus.gps?.latitude,
+                carStatus.vehiclestatus.gps?.longitude
+            )
         } else {
             views.setViewVisibility(R.id.location_container, View.GONE)
         }
