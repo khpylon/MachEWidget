@@ -423,8 +423,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                             context.resources
                                 .getString(R.string.check_charging_key), false
                         )
-                if (queryCharging && (vehicleInfo.carStatus.vehiclestatus.plugStatus?.value ?: 0) == 1
-                        && vehicleInfo.carStatus.vehiclestatus.chargeEnergy > 0) {
+                if (queryCharging && (vehicleInfo.carStatus.vehiclestatus.plugStatus?.value
+                        ?: 0) == 1
+                    && vehicleInfo.carStatus.vehiclestatus.chargeEnergy > 0
+                ) {
                     rangeMessage += MessageFormat.format(
                         "\n{0}kW rate, {1}kWh added",
                         DecimalFormat(
@@ -497,7 +499,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 views.setImageViewResource(R.id.HVBIcon, R.drawable.battery_icon_gray)
             }
             val text = SpannableString(rangeMessage)
-            text.setSpan( RelativeSizeSpan(rangeMessageSize), messageLength, rangeMessage.length, 0)
+            text.setSpan(RelativeSizeSpan(rangeMessageSize), messageLength, rangeMessage.length, 0)
             views.setTextViewText(R.id.GOM, text)
 
 
@@ -507,7 +509,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 views.setProgressBar(
                     R.id.HBVChargeProgress,
                     100,
-                    (it + 0.5).roundToInt(),
+                    min(100, (it + 0.5).roundToInt()),
                     false
                 )
                 views.setTextViewText(
@@ -602,7 +604,10 @@ open class CarStatusWidget : AppWidgetProvider() {
             } else {
                 views.setTextViewText(
                     R.id.LVBVoltage,
-                    MessageFormat.format("LV Battery: {0}", (if (LVBStatus == "STATUS_GOOD") "Good" else "Warning"))
+                    MessageFormat.format(
+                        "LV Battery: {0}",
+                        (if (LVBStatus == "STATUS_GOOD") "Good" else "Warning")
+                    )
                 )
             }
         } ?: run {
