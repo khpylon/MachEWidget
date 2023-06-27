@@ -32,7 +32,7 @@ this [app-release.apk](https://github.com/khpylon/MachEWidget/blob/master/app/gi
 
 ## Features
 
-- Will automatically fetch data from servers (default is every 10 minutes, but configurable)
+- Will automatically fetch data from servers (default is every 15 minutes, but configurable)
 - Send commands to car to lock or unlock doors, perform remote start, and force refresh
 - Assign "short cuts" to other related apps such as FordPass, Waze, etc
 - Can display all supported vehicles assigned to a single log-in on individual widgets
