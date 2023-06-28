@@ -1086,7 +1086,9 @@ class NetworkCalls {
                             val status = response.body()
                             if (status!!.status == CMD_STATUS_SUCCESS) {
                                 i(context, MainActivity.CHANNEL_ID, "CMD send successful.")
-                                Looper.prepare()
+                                if (Looper.myLooper() == null) {
+                                    Looper.prepare()
+                                }
                                 Toast.makeText(context, "Command transmitted.", Toast.LENGTH_SHORT)
                                     .show()
                                 data.putExtra(
@@ -1272,7 +1274,9 @@ class NetworkCalls {
                                         MainActivity.CHANNEL_ID,
                                         "statusrefresh send successful."
                                     )
-                                    Looper.prepare()
+                                    if (Looper.myLooper() == null) {
+                                        Looper.prepare()
+                                    }
                                     Toast.makeText(
                                         context,
                                         "Command transmitted.",
