@@ -32,7 +32,7 @@ class Notifications : BroadcastReceiver() {
         //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         //        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-        //                .setSmallIcon(R.mipmap.ic_launcher)
+        //                .setSmallIcon(R.drawable.notification_icon)
         //                .setContentTitle("OTA information")
         //                .setContentText(message)
         //                .setContentIntent(pendingIntent)
@@ -61,11 +61,11 @@ class Notifications : BroadcastReceiver() {
                     val pendingIntent =
                         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.notification_icon)
                         .setLargeIcon(
                             BitmapFactory.decodeResource(
                                 context.resources,
-                                R.mipmap.ic_launcher
+                                R.drawable.notification_icon
                             )
                         )
                         .setContentTitle("LVB Status")
@@ -127,11 +127,11 @@ class Notifications : BroadcastReceiver() {
                     val pendingIntent =
                         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.notification_icon)
                         .setLargeIcon(
                             BitmapFactory.decodeResource(
                                 context.resources,
-                                R.mipmap.ic_launcher
+                                R.drawable.notification_icon
                             )
                         )
                         .setContentTitle("TPMS Status")
@@ -161,11 +161,11 @@ class Notifications : BroadcastReceiver() {
                 val pendingIntent =
                     PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                 val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.notification_icon)
                     .setLargeIcon(
                         BitmapFactory.decodeResource(
                             context.resources,
-                            R.mipmap.ic_launcher
+                            R.drawable.notification_icon
                         )
                     )
                     .setContentTitle("Charge Status")
@@ -196,11 +196,11 @@ class Notifications : BroadcastReceiver() {
                     val pendingIntent =
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.notification_icon)
                         .setLargeIcon(
                             BitmapFactory.decodeResource(
                                 context.resources,
-                                R.mipmap.ic_launcher
+                                R.drawable.notification_icon
                             )
                         )
                         .setContentTitle("Battery Optimizations are on")
@@ -228,8 +228,8 @@ class Notifications : BroadcastReceiver() {
         private const val CHARGE_REMINDER = 940
         fun chargeReminder(context: Context) {
             val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
+                .setSmallIcon(R.drawable.notification_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.notification_icon))
                 .setContentTitle("Charge Reminder")
                 .setContentText("HVB level is below threshold and charger is not detected.")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -248,7 +248,7 @@ class Notifications : BroadcastReceiver() {
             val builder = NotificationCompat.Builder(
                 context!!, MainActivity.CHANNEL_ID
             )
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle("Login required")
                 .setContentText("Unable to refresh tokens: you need to log in again.")
                 .setContentIntent(pendingIntent)
@@ -272,11 +272,11 @@ class Notifications : BroadcastReceiver() {
                 val pendingIntent =
                     PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                 val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.notification_icon)
                     .setLargeIcon(
                         BitmapFactory.decodeResource(
                             context.resources,
-                            R.mipmap.ic_launcher
+                            R.drawable.notification_icon
                         )
                     )
                     .setContentTitle("New survey available")
@@ -294,11 +294,11 @@ class Notifications : BroadcastReceiver() {
         fun accountError(context: Context, state: String) {
             if (state === Constants.STATE_ACCOUNT_DISABLED) {
                 val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.notification_icon)
                     .setLargeIcon(
                         BitmapFactory.decodeResource(
                             context.resources,
-                            R.mipmap.ic_launcher
+                            R.drawable.notification_icon
                         )
                     )
                     .setContentTitle("FordPass account disabled!")
