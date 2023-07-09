@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -62,12 +63,7 @@ class Notifications : BroadcastReceiver() {
                         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setLargeIcon(
-                            BitmapFactory.decodeResource(
-                                context.resources,
-                                R.drawable.notification_icon
-                            )
-                        )
+                        .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                         .setContentTitle("LVB Status")
                         .setContentText("The LVB's status is reporting \"low\".")
                         .setContentIntent(pendingIntent)
@@ -128,12 +124,7 @@ class Notifications : BroadcastReceiver() {
                         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setLargeIcon(
-                            BitmapFactory.decodeResource(
-                                context.resources,
-                                R.drawable.notification_icon
-                            )
-                        )
+                        .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                         .setContentTitle("TPMS Status")
                         .setContentText("The TPMS status on $badTire abnormal.")
                         .setContentIntent(pendingIntent)
@@ -162,12 +153,7 @@ class Notifications : BroadcastReceiver() {
                     PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                 val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                     .setSmallIcon(R.drawable.notification_icon)
-                    .setLargeIcon(
-                        BitmapFactory.decodeResource(
-                            context.resources,
-                            R.drawable.notification_icon
-                        )
-                    )
+                    .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                     .setContentTitle("Charge Status")
                     .setContentText("Charging is complete.")
                     .setContentIntent(pendingIntent)
@@ -197,12 +183,7 @@ class Notifications : BroadcastReceiver() {
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setLargeIcon(
-                            BitmapFactory.decodeResource(
-                                context.resources,
-                                R.drawable.notification_icon
-                            )
-                        )
+                        .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                         .setContentTitle("Battery Optimizations are on")
                         .setContentText("This may interfere with the app's performance; consider disabling them.")
                         .setContentIntent(pendingIntent)
@@ -229,7 +210,7 @@ class Notifications : BroadcastReceiver() {
         fun chargeReminder(context: Context) {
             val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                 .setSmallIcon(R.drawable.notification_icon)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.notification_icon))
+                .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                 .setContentTitle("Charge Reminder")
                 .setContentText("HVB level is below threshold and charger is not detected.")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -249,6 +230,7 @@ class Notifications : BroadcastReceiver() {
                 context!!, MainActivity.CHANNEL_ID
             )
                 .setSmallIcon(R.drawable.notification_icon)
+                .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                 .setContentTitle("Login required")
                 .setContentText("Unable to refresh tokens: you need to log in again.")
                 .setContentIntent(pendingIntent)
@@ -273,12 +255,7 @@ class Notifications : BroadcastReceiver() {
                     PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                 val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                     .setSmallIcon(R.drawable.notification_icon)
-                    .setLargeIcon(
-                        BitmapFactory.decodeResource(
-                            context.resources,
-                            R.drawable.notification_icon
-                        )
-                    )
+                    .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                     .setContentTitle("New survey available")
                     .setContentText("Please take the survey to provide feedback to the developer.")
                     .setContentIntent(pendingIntent)
@@ -295,12 +272,7 @@ class Notifications : BroadcastReceiver() {
             if (state === Constants.STATE_ACCOUNT_DISABLED) {
                 val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
                     .setSmallIcon(R.drawable.notification_icon)
-                    .setLargeIcon(
-                        BitmapFactory.decodeResource(
-                            context.resources,
-                            R.drawable.notification_icon
-                        )
-                    )
+                    .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                     .setContentTitle("FordPass account disabled!")
                     .setContentText("The app is unable to access your information.  Contact Ford to reactivate your account.")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
