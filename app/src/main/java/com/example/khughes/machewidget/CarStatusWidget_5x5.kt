@@ -188,6 +188,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 //        }
         val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.propulsion)
         val isPHEV = carStatus.isPropulsionPHEV(carStatus.propulsion)
+        val isDiesel = carStatus.isPropulsionDiesel(carStatus.propulsion)
         views.setViewVisibility(R.id.lock_gasoline, if (isICEOrHybrid) View.VISIBLE else View.GONE)
         views.setViewVisibility(
             R.id.bottom_gasoline,
@@ -200,6 +201,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         )
         views.setViewVisibility(R.id.plug, if (isICEOrHybrid) View.GONE else View.VISIBLE)
         setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline")
+        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
 
         // Get conversion factors and descriptions for measurement units
         val units = PreferenceManager.getDefaultSharedPreferences(context)
@@ -438,6 +440,24 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                     views.setViewVisibility(R.id.bottom_gasoline, View.GONE)
                 }
                 setPHEVCallbacks(context, views, true, appWidgetId, nextMode)
+                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
+            }
+            DIESELTOGGLE_CLICK -> {
+                val mode = intent.getStringExtra("nextMode")
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val views = RemoteViews(context.packageName, R.layout.widget_2x5)
+                val nextMode: String
+                if (mode == "showDEFLevel") {
+                    nextMode = "showLVBVoltage"
+                    views.setViewVisibility(R.id.LVBVoltage, View.GONE)
+                    views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
+                } else {
+                    nextMode = "showDEFLevel"
+                    views.setViewVisibility(R.id.LVBVoltage, View.VISIBLE)
+                    views.setViewVisibility(R.id.DEFLevel, View.GONE)
+                }
+                val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
+                setDieselCallbacks(context, views, true, appWidgetId, nextMode)
                 appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
             }
             else -> super.onReceive(context, intent)

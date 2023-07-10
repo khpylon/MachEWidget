@@ -233,7 +233,12 @@ class CarStatus {
     }
 
     fun isPropulsionICEOrHybrid(method: Int): Boolean {
-        return method == PROPULSION_ICE_OR_HYBRID
+        return method == PROPULSION_ICE_OR_HYBRID || method == PROPULSION_DIESEL
+    }
+
+    fun isPropulsionDiesel(method: Int): Boolean {
+//        return method == PROPULSION_DIESEL
+        return false
     }
 
     @SerializedName("vehiclestatus")
@@ -253,5 +258,6 @@ class CarStatus {
         private const val PROPULSION_ELECTRIC = 1
         private const val PROPULSION_PHEV = 2
         private const val PROPULSION_ICE_OR_HYBRID = 3
+        private const val PROPULSION_DIESEL = 4
     }
 }

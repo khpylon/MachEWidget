@@ -319,6 +319,49 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
     }
 
+    protected fun setDieselCallbacks(
+        context: Context?,
+        views: RemoteViews,
+        isDiesel: Boolean,
+        id: Int,
+        mode: String?
+    ) {
+        if (!isDiesel) {
+            views.setOnClickPendingIntent(
+                R.id.LVBVoltage,
+                getPendingSelfIntent(context, id, WIDGET_CLICK)
+            )
+            views.setOnClickPendingIntent(
+                R.id.DEFLevel,
+                getPendingSelfIntent(context, id, WIDGET_CLICK)
+            )
+        } else {
+            val intent = Intent(context, javaClass)
+            intent.putExtra(APPWIDGETID, id)
+            intent.putExtra("nextMode", mode)
+            intent.action = DIESELTOGGLE_CLICK
+            views.setOnClickPendingIntent(
+                R.id.LVBVoltage,
+                PendingIntent.getBroadcast(
+                    context,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            )
+            intent.action = DIESELTOGGLE_CLICK
+            views.setOnClickPendingIntent(
+                R.id.DEFLevel,
+                PendingIntent.getBroadcast(
+                    context,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            )
+        }
+    }
+
     protected open fun drawIcons(views: RemoteViews, carStatus: CarStatus) {
         // Door locks
         carStatus.vehiclestatus.lockStatus?.value?.let { lockStatus ->
@@ -1194,6 +1237,7 @@ open class CarStatusWidget : AppWidgetProvider() {
         const val LOCK_CLICK = "LockButton"
         const val REFRESH_CLICK = "Refresh"
         const val PHEVTOGGLE_CLICK = "PHEVToggle"
+        const val DIESELTOGGLE_CLICK = "DieselToggle"
         const val UPDATE_CLICK = "ForceUpdate"
         const val APPWIDGETID = "appWidgetId"
         const val PADDING = "   "
