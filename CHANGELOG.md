@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.07.11
+### Added
+- Diesel vehicles which use diesel exhaust fluid (which is probably all of them?) now display DEF status
+info.  Tap on the "LV Battery" display to see DEF range and DEF level (I'm not completely sure what
+this represents; I'm assuming it's a percentage).
+
+### Changed
+- Widget update intervals of 5 and 10 minutes have been added back. 
+
+### Fixed
+- Notification icons now have a proper shape that is representative of the app.
+
 ## 2023.05.23
 ### Fixed
 - Fix various null pointer and other exceptions.
@@ -14,7 +26,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 - Fix various null pointer and other exceptions.
 
 ## 2023.04.11
-### - Added
+### Added
 - North American Focus vehicles are now recognized (uses Escape images).
 
 ### Fixed
