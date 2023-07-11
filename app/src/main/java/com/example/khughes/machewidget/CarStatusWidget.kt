@@ -154,7 +154,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 try {
                     @Suppress("DEPRECATION") val addresses = mGeocoder.getFromLocation(lat, lon, 1)
                     showAddress(views, addresses as MutableList<Address>)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                 }
             }
         }
@@ -335,6 +335,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                 R.id.DEFLevel,
                 getPendingSelfIntent(context, id, WIDGET_CLICK)
             )
+            views.setOnClickPendingIntent(
+                R.id.DEFRange,
+                getPendingSelfIntent(context, id, WIDGET_CLICK)
+            )
         } else {
             val intent = Intent(context, javaClass)
             intent.putExtra(APPWIDGETID, id)
@@ -352,6 +356,16 @@ open class CarStatusWidget : AppWidgetProvider() {
             intent.action = DIESELTOGGLE_CLICK
             views.setOnClickPendingIntent(
                 R.id.DEFLevel,
+                PendingIntent.getBroadcast(
+                    context,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            )
+            intent.action = DIESELTOGGLE_CLICK
+            views.setOnClickPendingIntent(
+                R.id.DEFRange,
                 PendingIntent.getBroadcast(
                     context,
                     0,
@@ -408,6 +422,7 @@ open class CarStatusWidget : AppWidgetProvider() {
     ) {
         val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.propulsion)
         val isPHEV = carStatus.isPropulsionPHEV(carStatus.propulsion)
+        val isDiesel = carStatus.isPropulsionDiesel(carStatus.propulsion)
         var rangeMessage = "N/A"
         var chargeMessage = ""
 
@@ -437,22 +452,27 @@ open class CarStatusWidget : AppWidgetProvider() {
                         R.id.HVBIcon,
                         R.drawable.battery_icon_red
                     )
+
                     Constants.CHARGING_STATUS_CHARGING_AC, Constants.CHARGING_STATUS_CHARGING_DC -> views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_charging
                     )
+
                     Constants.CHARGING_STATUS_TARGET_REACHED, Constants.CHARGING_STATUS_PRECONDITION -> views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_icon_charged_green
                     )
+
                     Constants.CHARGING_STATUS_PAUSED -> views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_icon_yellow
                     )
+
                     Constants.CHARGING_SCHEDULED -> views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_icon_blue
                     )
+
                     else -> views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_icon_gray
@@ -634,7 +654,8 @@ open class CarStatusWidget : AppWidgetProvider() {
 
         // 12 volt battery status
         carStatus.vehiclestatus.battery?.batteryStatusActual?.value?.let { LVBLevel ->
-            val LVBStatus = carStatus.vehiclestatus.battery?.batteryHealth?.value ?: "STATUS_GOOD"
+            val LVBStatus =
+                carStatus.vehiclestatus.battery?.batteryHealth?.value ?: "STATUS_GOOD"
             views.setTextColor(
                 R.id.LVBVoltage,
                 context.getColor(if (LVBStatus == "STATUS_GOOD") R.color.white else R.color.red)
@@ -656,6 +677,33 @@ open class CarStatusWidget : AppWidgetProvider() {
         } ?: run {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
             views.setTextViewText(R.id.LVBVoltage, "LV Battery: N/A")
+        }
+
+        if (isDiesel) {
+            // It appears as if default DEF range is in miles, as opposed to all other distance values
+            var distanceConversion = 1.0
+            if (distanceUnits == "km") {
+                distanceConversion = 1.0 / Constants.KMTOMILES
+            }
+            carStatus.vehiclestatus.diesel?.exhaustFluidLevel?.value?.let { fluidLevel ->
+                val level = fluidLevel.toString().toDouble()
+                views.setTextViewText(
+                    R.id.DEFLevel,
+                    MessageFormat.format("DEF Level: {0}%", level)
+                )
+            } ?: run {
+                views.setTextViewText(R.id.DEFLevel, "DEF Level: N/A")
+            }
+            carStatus.vehiclestatus.diesel?.ureaRange?.value?.let { ureaRange ->
+                val range = ureaRange.toString().toDouble()
+                views.setTextViewText(
+                    R.id.DEFRange,
+                    MessageFormat.format("DEF Range: {0} {1}",
+                        (range * distanceConversion).roundToInt(), distanceUnits)
+                )
+            } ?: run {
+                views.setTextViewText(R.id.DEFRange, "DEF Range: N/A")
+            }
         }
     }
 
@@ -712,20 +760,6 @@ open class CarStatusWidget : AppWidgetProvider() {
         distanceConversion: Double,
         distanceUnits: String?
     ) {
-//        val odometer = carStatus.odometer
-//        if (odometer > 0) {
-//            // FordPass truncates; go figure.
-//            views.setTextViewText(
-//                R.id.odometer,
-//                MessageFormat.format(
-//                    "Odo: {0} {1}",
-//                    java.lang.Double.valueOf(odometer * distanceConversion).toInt(),
-//                    distanceUnits
-//                )
-//            )
-//        } else {
-//            views.setTextViewText(R.id.odometer, "Odo: ---")
-//        }
         views.setTextViewText(R.id.odometer,
             carStatus.vehiclestatus.odometer?.value?.let {
                 MessageFormat.format(
@@ -735,82 +769,80 @@ open class CarStatusWidget : AppWidgetProvider() {
                 )
             } ?: "Odo: ---"
         )
-
-
     }
 
-    // OTA status
-    //    protected void drawOTAInfo(Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat) {
-    //        views.setViewVisibility(R.id.ota_container, View.GONE);
-    //        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
-    //        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
-    //                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
-    //
-    //        if (displayOTA && otaStatus != null) {
-    //            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
-    //            if (Misc.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
-    //                views.setTextViewText(R.id.ota_line1, "OTA Status:");
-    //                String OTArefresh;
-    //                if (otaStatus.getFuseResponse() == null) {
-    //                    OTArefresh = "No OTA data";
-    //                } else {
-    //                    long lastOTATime = vehicleInfo.getLastOTATime();
-    //                    String currentUTCOTATime = otaStatus.getOTADateTime();
-    //                    if (currentUTCOTATime == null) {
-    //                        OTArefresh = "No date specified";
-    //                    } else {
-    //                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
-    //
-    //                        // If there's new information, display that data/time in a different color
-    //                        if (currentOTATime > lastOTATime) {
-    //                            // if OTA failed, show it in red (that means something bad)
-    //                            String OTAResult = otaStatus.getOTAAggregateStatus();
-    //                            if (OTAResult != null && OTAResult.equals("failure")) {
-    //                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
-    //                            } else {
-    //                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
-    //                            }
-    //                            OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
-    //                            String message;
-    //                            switch(otaStatus.getOTAAggregateStatus()) {
-    //                                case "request_delivery_queued":
-    //                                    message = "An update is ready for download to your vehicle.";
-    //                                    break;
-    //                                case "artifact_retrieval_in_progress":
-    //                                    message = "Your vehicle is downloading the update.";
-    //                                    break;
-    //                                case "installation_queued":
-    //                                    if(otaStatus.getOtaAlertStatus().equals("UPDATE REMINDER")) {
-    //                                        message = "Your vehicle has downloaded the update but requires your attention.";
-    //                                    } else {
-    //                                        message = "Your vehicle has downloaded the update; you should turn on the ignition.";
-    //                                    }
-    //                                    break;
-    //                                case "deploying":
-    //                                    message = "Your vehicle is installing the update.";
-    //                                    break;
-    //                                case "success":
-    //                                    message = "The update was successful.";
-    //                                    break;
-    //                                case "failure":
-    //                                    message = "The update was not successful.";
-    //                                    break;
-    //                                case "requested":
-    //                                default:
-    //                                    message = "New OTA information was found.";
-    //                                    break;
-    //                            }
-    //                            Notifications.newOTA(context, message);
-    //                        } else {
-    //                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
-    //                            OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
-    //                        }
-    //                    }
-    //                }
-    //                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
-    //            }
-    //        }
-    //    }
+// OTA status
+//    protected void drawOTAInfo(Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat) {
+//        views.setViewVisibility(R.id.ota_container, View.GONE);
+//        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
+//        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
+//                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
+//
+//        if (displayOTA && otaStatus != null) {
+//            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
+//            if (Misc.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
+//                views.setTextViewText(R.id.ota_line1, "OTA Status:");
+//                String OTArefresh;
+//                if (otaStatus.getFuseResponse() == null) {
+//                    OTArefresh = "No OTA data";
+//                } else {
+//                    long lastOTATime = vehicleInfo.getLastOTATime();
+//                    String currentUTCOTATime = otaStatus.getOTADateTime();
+//                    if (currentUTCOTATime == null) {
+//                        OTArefresh = "No date specified";
+//                    } else {
+//                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
+//
+//                        // If there's new information, display that data/time in a different color
+//                        if (currentOTATime > lastOTATime) {
+//                            // if OTA failed, show it in red (that means something bad)
+//                            String OTAResult = otaStatus.getOTAAggregateStatus();
+//                            if (OTAResult != null && OTAResult.equals("failure")) {
+//                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
+//                            } else {
+//                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
+//                            }
+//                            OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
+//                            String message;
+//                            switch(otaStatus.getOTAAggregateStatus()) {
+//                                case "request_delivery_queued":
+//                                    message = "An update is ready for download to your vehicle.";
+//                                    break;
+//                                case "artifact_retrieval_in_progress":
+//                                    message = "Your vehicle is downloading the update.";
+//                                    break;
+//                                case "installation_queued":
+//                                    if(otaStatus.getOtaAlertStatus().equals("UPDATE REMINDER")) {
+//                                        message = "Your vehicle has downloaded the update but requires your attention.";
+//                                    } else {
+//                                        message = "Your vehicle has downloaded the update; you should turn on the ignition.";
+//                                    }
+//                                    break;
+//                                case "deploying":
+//                                    message = "Your vehicle is installing the update.";
+//                                    break;
+//                                case "success":
+//                                    message = "The update was successful.";
+//                                    break;
+//                                case "failure":
+//                                    message = "The update was not successful.";
+//                                    break;
+//                                case "requested":
+//                                default:
+//                                    message = "New OTA information was found.";
+//                                    break;
+//                            }
+//                            Notifications.newOTA(context, message);
+//                        } else {
+//                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
+//                            OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
+//                        }
+//                    }
+//                }
+//                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
+//            }
+//        }
+//    }
 
     private fun setAppBitmap(
         context: Context,
@@ -975,12 +1007,14 @@ open class CarStatusWidget : AppWidgetProvider() {
                 onUpdate(context, AppWidgetManager.getInstance(context), ids)
                 return
             }
+
             WIDGET_CLICK -> {
                 val newIntent = Intent(context, MainActivity::class.java)
                 newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(newIntent)
                 return
             }
+
             LEFT_BUTTON_CLICK -> {
                 val appInfo = StoredData(context)
                 val appPackageName = appInfo.leftAppPackage
@@ -998,6 +1032,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 }
                 return
             }
+
             RIGHT_BUTTON_CLICK -> {
                 val appInfo = StoredData(context)
                 val appPackageName = appInfo.rightAppPackage
@@ -1015,6 +1050,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 }
                 return
             }
+
             REFRESH_CLICK -> {
                 var clickCount =
                     context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
@@ -1072,12 +1108,14 @@ open class CarStatusWidget : AppWidgetProvider() {
                 return
 
             }
+
             SETTINGS_CLICK -> {
                 val newIntent = Intent(context, SettingsActivity::class.java)
                 newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(newIntent)
                 return
             }
+
             IGNITION_CLICK, LOCK_CLICK, UPDATE_CLICK -> {
                 var clickCount =
                     context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
@@ -1111,6 +1149,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                         }
                                     }
                                 }
+
                                 LOCK_CLICK -> carStatus.vehiclestatus.lockStatus?.value?.let {
                                     if (it == "LOCKED") {
                                         unlock(context, VIN!!)
@@ -1118,6 +1157,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                         lock(context, VIN!!)
                                     }
                                 }
+
                                 UPDATE_CLICK -> {
                                     // If user is undefined, don't do anything
                                     val user = info.user
@@ -1213,6 +1253,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 }
                 return
             }
+
             else -> {
                 super.onReceive(context, intent)
             }

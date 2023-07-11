@@ -216,8 +216,11 @@ class CarStatus {
         }
  
    val propulsion: Int
-        get() = if (vehiclestatus.fuel == null) {
+        get() =
+            if (vehiclestatus.fuel == null) {
                 PROPULSION_ELECTRIC
+            } else if (vehiclestatus.diesel != null && vehiclestatus.diesel!!.ureaRange != null) {
+                PROPULSION_DIESEL
             } else if (vehiclestatus.batteryFillLevel == null) {
                 PROPULSION_ICE_OR_HYBRID
             } else {
@@ -237,8 +240,7 @@ class CarStatus {
     }
 
     fun isPropulsionDiesel(method: Int): Boolean {
-//        return method == PROPULSION_DIESEL
-        return false
+        return method == PROPULSION_DIESEL
     }
 
     @SerializedName("vehiclestatus")

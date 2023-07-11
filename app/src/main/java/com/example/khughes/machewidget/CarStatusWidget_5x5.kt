@@ -447,14 +447,25 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 val views = RemoteViews(context.packageName, R.layout.widget_2x5)
                 val nextMode: String
-                if (mode == "showDEFLevel") {
-                    nextMode = "showLVBVoltage"
-                    views.setViewVisibility(R.id.LVBVoltage, View.GONE)
-                    views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
-                } else {
-                    nextMode = "showDEFLevel"
-                    views.setViewVisibility(R.id.LVBVoltage, View.VISIBLE)
-                    views.setViewVisibility(R.id.DEFLevel, View.GONE)
+                when (mode) {
+                    "showDEFLevel" -> {
+                        nextMode = "showDEFRange"
+                        views.setViewVisibility(R.id.LVBVoltage, View.GONE)
+                        views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
+                        views.setViewVisibility(R.id.DEFRange, View.GONE)
+                    }
+                    "showDEFRange" -> {
+                        nextMode = "showLVBVoltage"
+                        views.setViewVisibility(R.id.LVBVoltage, View.GONE)
+                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
+                        views.setViewVisibility(R.id.DEFRange, View.VISIBLE)
+                    }
+                    else -> {
+                        nextMode = "showDEFLevel"
+                        views.setViewVisibility(R.id.LVBVoltage, View.VISIBLE)
+                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
+                        views.setViewVisibility(R.id.DEFRange, View.GONE)
+                    }
                 }
                 val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
                 setDieselCallbacks(context, views, true, appWidgetId, nextMode)

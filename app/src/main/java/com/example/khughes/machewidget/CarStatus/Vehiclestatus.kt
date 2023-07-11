@@ -256,4 +256,10 @@ class Vehiclestatus {
     @Expose
     @Embedded
     var tpms: TPMS? = null
+
+    @SerializedName("dieselSystemStatus")
+    @Expose
+    @Embedded
+    var diesel: DieselSystemStatus? = null
+
 }

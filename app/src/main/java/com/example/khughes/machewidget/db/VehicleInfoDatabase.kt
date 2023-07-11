@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.khughes.machewidget.VehicleInfo
 import java.util.concurrent.Executors
 
-@Database(entities = [VehicleInfo::class], version = 7)
+@Database(entities = [VehicleInfo::class], version = 8)
 abstract class VehicleInfoDatabase : RoomDatabase() {
     abstract fun vehicleInfoDao(): VehicleInfoDao
 
@@ -25,11 +25,11 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                     "vehicleinfo_db"
                 )
                     .addMigrations(
-                        MIGRATION_2_3,
                         MIGRATION_3_4,
                         MIGRATION_4_5,
                         MIGRATION_5_6,
                         MIGRATION_6_7,
+                        MIGRATION_7_8,
                     )
                     .fallbackToDestructiveMigration()
                     .setJournalMode(JournalMode.TRUNCATE)
@@ -41,17 +41,6 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
         private const val NUMBER_OF_THREADS = 4
         val databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
 
-        private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                // Add new column
-                database.execSQL(
-                    "ALTER TABLE vehicle_info ADD COLUMN lastChargeStatus TEXT DEFAULT '' NOT NULL"
-                )
-                database.execSQL(
-                    "ALTER TABLE vehicle_info ADD COLUMN lastOTATime INTEGER DEFAULT 0 NOT NULL"
-                )
-            }
-        }
         private val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // Add new column
@@ -99,6 +88,17 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                 )
                 database.execSQL(
                     "ALTER TABLE vehicle_info ADD COLUMN car_initialDte REAL DEFAULT 0 NOT NULL"
+                )
+            }
+        }
+        private val MIGRATION_7_8: Migration = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add new column
+                database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN car_ureaRange_value TEXT DEFAULT '' NOT NULL"
+                )
+                database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN car_exhaustFluidLevel_value TEXT DEFAULT '' NOT NULL"
                 )
             }
         }

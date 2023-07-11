@@ -83,6 +83,20 @@
                 android:textSize="10sp"
                 android:visibility="gone"/>
 
+            <TextView
+                android:id="@+id/DEFRange"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="DEF Range: N/A"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:visibility="gone"/>
+
         </RelativeLayout>
 
             <!--

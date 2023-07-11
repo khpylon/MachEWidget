@@ -141,7 +141,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         )
         views.setViewVisibility(R.id.plug, if (isICEOrHybrid) View.GONE else View.VISIBLE)
         setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline")
-        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showLVBVoltage")
+        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
 
         // Show last refresh, odometer, OTA status
         val timeFormat =
@@ -259,42 +259,57 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
-        if (action == PHEVTOGGLE_CLICK) {
-            val mode = intent.getStringExtra("nextMode")
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val views = RemoteViews(context.packageName, R.layout.widget_2x5)
-            val nextMode: String
-            if (mode == "showGasoline") {
-                nextMode = "showElectric"
-                views.setViewVisibility(R.id.bottom_electric, View.GONE)
-                views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE)
-            } else {
-                nextMode = "showGasoline"
-                views.setViewVisibility(R.id.bottom_electric, View.VISIBLE)
-                views.setViewVisibility(R.id.bottom_gasoline, View.GONE)
+        when (action) {
+            PHEVTOGGLE_CLICK -> {
+                val mode = intent.getStringExtra("nextMode")
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val views = RemoteViews(context.packageName, R.layout.widget_2x5)
+                val nextMode: String
+                if (mode == "showGasoline") {
+                    nextMode = "showElectric"
+                    views.setViewVisibility(R.id.bottom_electric, View.GONE)
+                    views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE)
+                } else {
+                    nextMode = "showGasoline"
+                    views.setViewVisibility(R.id.bottom_electric, View.VISIBLE)
+                    views.setViewVisibility(R.id.bottom_gasoline, View.GONE)
+                }
+                val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
+                setPHEVCallbacks(context, views, true, appWidgetId, nextMode)
+                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
             }
-            val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
-            setPHEVCallbacks(context, views, true, appWidgetId, nextMode)
-            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
-        } else if (action == DIESELTOGGLE_CLICK) {
-            val mode = intent.getStringExtra("nextMode")
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val views = RemoteViews(context.packageName, R.layout.widget_2x5)
-            val nextMode: String
-            if (mode == "showDEFLevel") {
-                nextMode = "showLVBVoltage"
-                views.setViewVisibility(R.id.LVBVoltage, View.GONE)
-                views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
-            } else {
-                nextMode = "showDEFLevel"
-                views.setViewVisibility(R.id.LVBVoltage, View.VISIBLE)
-                views.setViewVisibility(R.id.DEFLevel, View.GONE)
+            DIESELTOGGLE_CLICK -> {
+                val mode = intent.getStringExtra("nextMode")
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val views = RemoteViews(context.packageName, R.layout.widget_2x5)
+                val nextMode: String
+                when (mode) {
+                    "showDEFLevel" -> {
+                        nextMode = "showDEFRange"
+                        views.setViewVisibility(R.id.LVBVoltage, View.GONE)
+                        views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
+                        views.setViewVisibility(R.id.DEFRange, View.GONE)
+                    }
+                    "showDEFRange" -> {
+                        nextMode = "showLVBVoltage"
+                        views.setViewVisibility(R.id.LVBVoltage, View.GONE)
+                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
+                        views.setViewVisibility(R.id.DEFRange, View.VISIBLE)
+                    }
+                    else -> {
+                        nextMode = "showDEFLevel"
+                        views.setViewVisibility(R.id.LVBVoltage, View.VISIBLE)
+                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
+                        views.setViewVisibility(R.id.DEFRange, View.GONE)
+                    }
+                }
+                val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
+                setDieselCallbacks(context, views, true, appWidgetId, nextMode)
+                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
             }
-            val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
-            setDieselCallbacks(context, views, true, appWidgetId, nextMode)
-            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
-        } else {
-            super.onReceive(context, intent)
+            else -> {
+                super.onReceive(context, intent)
+            }
         }
     }
 }
