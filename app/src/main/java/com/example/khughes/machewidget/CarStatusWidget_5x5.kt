@@ -349,6 +349,8 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
             views.setViewVisibility(R.id.location_container, View.VISIBLE)
             updateLocation(
                 context,
+                appWidgetManager,
+                appWidgetId,
                 views,
                 carStatus.vehiclestatus.gps?.latitude,
                 carStatus.vehiclestatus.gps?.longitude

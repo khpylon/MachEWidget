@@ -132,6 +132,8 @@ open class CarStatusWidget : AppWidgetProvider() {
 
     protected fun updateLocation(
         context: Context?,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
         views: RemoteViews,
         latitude: String?,
         longitude: String?
@@ -145,10 +147,8 @@ open class CarStatusWidget : AppWidgetProvider() {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mGeocoder.getFromLocation(lat, lon, 1) { addresses ->
-                    showAddress(
-                        views,
-                        addresses
-                    )
+                    showAddress(views, addresses)
+                    appWidgetManager.updateAppWidget(appWidgetId, views)
                 }
             } else {
                 try {
