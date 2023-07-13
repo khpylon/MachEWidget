@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.07.13
+### Added
+- Display DC fast charging data in "real time" (update widget every 30 seconds).  To use this
+feature, both "Display charge session info" and "Display DCFC info" under "Settings" must be enabled.
+
+### Fixed
+- Fix bug with location information not updating correctly.
+
 ## 2023.07.11
 ### Added
 - Diesel vehicles which use diesel exhaust fluid (which is probably all of them?) now display DEF status
