@@ -480,6 +480,16 @@ class NetworkCalls {
                                                     chargeInfo["initialDte"] as Double? ?: 0.0
                                                 car.vehiclestatus.chargeType =
                                                     chargeInfo["chargeType"] as String? ?: ""
+                                                val reportDCFC =
+                                                    PreferenceManager.getDefaultSharedPreferences(context)
+                                                        .getBoolean(
+                                                            context.resources
+                                                                .getString(R.string.check_dcfastcharging_key), false
+                                                        )
+
+                                                if (reportDCFC && car.vehiclestatus.chargeType == "DcCharging") {
+                                                    data.putExtra(context.getString(R.string.dcfc_active), true)
+                                                }
                                                 i(
                                                     context,
                                                     MainActivity.CHANNEL_ID,

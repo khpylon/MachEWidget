@@ -129,6 +129,14 @@
         app:title="@string/check_charging"
         app:summary="@string/check_charging_summary"/>
 
+    <SwitchPreferenceCompat
+        app:key="@string/check_dcfastcharging_key"
+        app:dependency="@string/check_charging_key"
+        app:defaultValue="false"
+        app:singleLineTitle="false"
+        app:title="@string/check_dcfastcharging_title"
+        app:summary="@string/check_dcfastcharging_summary"/>
+
     <Preference
         app:key="@string/battery_opt_key"
         app:title="@string/battery_opt"/>

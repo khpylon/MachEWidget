@@ -24,16 +24,22 @@ import java.util.stream.Collectors
 
 private lateinit var info: InfoRepository
 private const val MILLIS = 1000
+private lateinit var alarmTime: LocalDateTime
 
 class StatusReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
         // Set the next alarm
-        if(!Misc.isHibernating(context) ) {
+        alarmTime = LocalDateTime.now(ZoneId.systemDefault())
+        if (!Misc.isHibernating(context)) {
             nextAlarm(context)
         } else {
-            LogFile.d(context, MainActivity.CHANNEL_ID, "StatusReceiver: hibernating so no next alarm")
+            LogFile.d(
+                context,
+                MainActivity.CHANNEL_ID,
+                "StatusReceiver: hibernating so no next alarm"
+            )
         }
 
         // Store time when we run the update;
@@ -83,7 +89,8 @@ class StatusReceiver : BroadcastReceiver() {
         // If any widgets have been removed, delete their VIN entry
         for (key in context.getSharedPreferences(
             Constants.WIDGET_FILE,
-            Context.MODE_PRIVATE).all.keys) {
+            Context.MODE_PRIVATE
+        ).all.keys) {
             if (key.startsWith(Constants.VIN_KEY)) {
                 val appWidgetId = key.replace(Constants.VIN_KEY, "").toInt()
                 if (!appIds.contains(appWidgetId)) {
@@ -99,10 +106,10 @@ class StatusReceiver : BroadcastReceiver() {
                 context.resources.getString(R.string.zenmode_key),
                 false
             )
-        if(zenMode) {
+        if (zenMode) {
             try {
                 // Non-zero when DnD is on
-                if( Settings.Global.getInt(context.contentResolver, "zen_mode") != 0 ) {
+                if (Settings.Global.getInt(context.contentResolver, "zen_mode") != 0) {
                     return
                 }
             } catch (e: Exception) {
@@ -130,8 +137,8 @@ class StatusReceiver : BroadcastReceiver() {
                 )
             )
 
-            when ( state ) {
-                Constants.STATE_ACCOUNT_DISABLED-> {
+            when (state) {
+                Constants.STATE_ACCOUNT_DISABLED -> {
                     LogFile.d(
                         context,
                         MainActivity.CHANNEL_ID,
@@ -141,6 +148,7 @@ class StatusReceiver : BroadcastReceiver() {
                     Notifications.accountError(context, state)
                     appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
                 }
+
                 Constants.STATE_INITIAL_STATE -> {
                     LogFile.d(
                         context,
@@ -151,28 +159,32 @@ class StatusReceiver : BroadcastReceiver() {
                     Notifications.loginRequired(context)
                     appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
                 }
+
                 Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN -> {
                     LogFile.d(context, MainActivity.CHANNEL_ID, "STILL need to refresh token")
 //                        getRefresh(context, userId, userInfo.refreshToken)
                     getStatus(context, userInfo.userId!!)
                     appInfo.incCounter(StoredData.STATUS_UPDATED)
                 }
+
                 Constants.STATE_HAVE_TOKEN -> {
                     LogFile.e(context, MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
 //                        getVehicleInfo(context, userId)
                     appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
                 }
+
                 Constants.STATE_HAVE_TOKEN_AND_VIN -> {
-                    LogFile.d(context, MainActivity.CHANNEL_ID,"Grab status info" )
+                    LogFile.d(context, MainActivity.CHANNEL_ID, "Grab status info")
                     getStatus(context, userInfo.userId!!)
                     appInfo.incCounter(StoredData.STATUS_UPDATED)
                 }
+
                 else -> {
-                        LogFile.d(
-                            context,
-                            MainActivity.CHANNEL_ID,
-                            "Hmmm... How did I get here. Wish I could login"
-                        )
+                    LogFile.d(
+                        context,
+                        MainActivity.CHANNEL_ID,
+                        "Hmmm... How did I get here. Wish I could login"
+                    )
                     appInfo.incCounter(StoredData.STATUS_UNKNOWN)
                 }
             }
@@ -207,7 +219,26 @@ class StatusReceiver : BroadcastReceiver() {
                     context, MainActivity.CHANNEL_ID,
                     "Status: $action"
                 )
-                // Update the widgets, no mattery what.
+
+                // If vehicle is DC fast charging, update status in 30 seconds
+                if (bundle.getBoolean(context.getString(R.string.dcfc_active))) {
+                    LogFile.i(
+                        context, MainActivity.CHANNEL_ID,
+                        "Vehicle is DC fast charging; setting alarm for 30 seconds"
+                    )
+                    cancelAlarm(context)
+                    if(::alarmTime.isInitialized) {
+                        nextAlarm(context, alarmTime.plusSeconds(30))
+                    } else {
+                        LogFile.e(
+                            context, MainActivity.CHANNEL_ID,
+                            "lateinit alarmTime is not initialized"
+                        )
+                        nextAlarm(context, 30)
+                    }
+                }
+
+                // Update the widgets, no matter what.
                 CarStatusWidget.updateWidget(context)
             }
         }
@@ -223,7 +254,10 @@ class StatusReceiver : BroadcastReceiver() {
         fun nextAlarm(context: Context) {
             val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
             val delay =
-                sharedPref.getString(context.resources.getString(R.string.update_frequency_key), "10")!!
+                sharedPref.getString(
+                    context.resources.getString(R.string.update_frequency_key),
+                    "10"
+                )!!
                     .toInt()
             if (delay != 0) {
                 nextAlarm(context, delay * 60)
@@ -233,6 +267,28 @@ class StatusReceiver : BroadcastReceiver() {
         @JvmStatic
         fun nextAlarm(context: Context, delay: Int) {
             val time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(delay.toLong())
+            val timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US))
+            LogFile.i(
+                context, MainActivity.CHANNEL_ID,
+                "StatusReceiver: next status alarm at $timeText"
+            )
+            val nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            val pendingIntent = PendingIntent.getBroadcast(
+                context, 0,
+                getIntent(context), PendingIntent.FLAG_IMMUTABLE
+            )
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager[AlarmManager.RTC_WAKEUP, nextTime] = pendingIntent
+            alarmManager.setWindow(
+                AlarmManager.RTC_WAKEUP,
+                nextTime,
+                DateUtils.SECOND_IN_MILLIS,
+                pendingIntent
+            )
+        }
+
+        @JvmStatic
+        fun nextAlarm(context: Context, time: LocalDateTime) {
             val timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US))
             LogFile.i(
                 context, MainActivity.CHANNEL_ID,

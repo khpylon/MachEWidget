@@ -65,6 +65,8 @@
     <string name="hibernate_api_summary">Don\'t pull data until public API is released</string>
     <string name="check_charging">Display charge session info</string>
     <string name="check_charging_summary">When charging, display charge rate and energy added</string>
+    <string name="check_dcfastcharging_title">Display DCFC info</string>
+    <string name="check_dcfastcharging_summary">When DC fast charging, request updates every 30 seconds</string>
     <string name="version">App version</string>
 
     <!-- Shared preference keys -->
@@ -94,6 +96,7 @@
     <string name="zenmode_key">zenMode</string>
     <string name="hibernate_api_key">hibernateAPI</string>
     <string name="check_charging_key">checkCharging</string>
+    <string name="check_dcfastcharging_key">check_DCfastcharging_key</string>
 
     <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
     <string name="units_kphkpa">1</string>
@@ -129,5 +132,6 @@
     <string name="login">Login</string>
     <string name="vehicles_vin">Vehicle\'s VIN</string>
     <string name="vehicle_s_nickname">Vehicle\'s Nickname</string>
+    <string name="dcfc_active">dcfc</string>
 
 </resources>
