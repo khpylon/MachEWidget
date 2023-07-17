@@ -10,6 +10,7 @@ import android.text.format.DateUtils;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -97,7 +98,8 @@ public class UpdateReceiver extends BroadcastReceiver {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.notification_icon)
+                .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                 .setContentTitle("App update")
                 .setContentText("A new app version was found.")
                 .setContentIntent(pendingIntent)
