@@ -6,6 +6,7 @@ object Constants {
     const val APID = "71A3AD0A-CF46-4CCF-B473-FC7FE5BC4592"
     const val CLIENTID = "9fb503e0-715b-47e8-adfd-ad4b7770f73b"
     const val OTATIMEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" // 2022-01-19T05:10:35.239+0000
+    const val CHARGETIMEFORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'" // 2022-01-19T00:25:15Z
     const val STATUSTIMEFORMAT = "MM-dd-yyyy HH:mm:ss" // 01-19-2022 13:00:00
     const val LOCALTIMEFORMATUS = "MMM d, HH:mm z" // Jan 29, 13:00 PST
     const val LOCALTIMEFORMAT = "d MMM, HH:mm z" // 29 Jan, 13:00 PST

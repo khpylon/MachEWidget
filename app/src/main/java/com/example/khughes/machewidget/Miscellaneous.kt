@@ -25,10 +25,14 @@ import kotlinx.coroutines.*
 import java.io.*
 import java.lang.Integer.min
 import java.nio.charset.StandardCharsets
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
@@ -797,6 +801,114 @@ class Misc {
                 }
             }
         }
+
+
+        private const val CHARGINGSESSIONFILENAME = "dcfcsession.txt"
+        private const val CHARGINGFILENAME = "dcfc.txt"
+
+        // Append a new entry to the DCFC file
+        @JvmStatic
+        fun updateChargingSession(context: Context, chargeInfo: DCFCInfo) {
+            try {
+                val logFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
+                val outputStream = FileOutputStream(logFile, true)
+                val printStream = PrintStream(outputStream)
+                val message = GsonBuilder().create().toJson(chargeInfo)
+                printStream.println(message)
+                outputStream.close()
+            } catch (e: Exception) {
+                Log.e(MainActivity.CHANNEL_ID, "exception in Misc.updateChargingSession()", e)
+            }
+        }
+
+        @JvmStatic
+        private fun writeSession(session: DCFCInfo, updates: MutableList<DCFCUpdate>, printStream : PrintStream) {
+            val gson = GsonBuilder().create()
+            val dcfcSession = DCFCSession( session, updates)
+            val message = gson.toJson(dcfcSession)
+            printStream.println(message)
+        }
+
+        @JvmStatic
+        fun consolidateChargingSessions(context: Context) {
+            try {
+                val gson = GsonBuilder().create()
+                val sessionFile = File(context.dataDir, CHARGINGSESSIONFILENAME )
+                val logFile = File(context.dataDir, CHARGINGFILENAME)
+                val inputStream: InputStream = FileInputStream(sessionFile)
+                val outputStream: OutputStream = FileOutputStream(logFile, true)
+                val reader = BufferedReader(InputStreamReader(inputStream))
+                val printStream = PrintStream(outputStream)
+
+                var session = DCFCInfo()
+                val updates = mutableListOf<DCFCUpdate>()
+                var lastTime = ""
+                for (line in reader.lineSequence()) {
+                    session = gson.fromJson(line, DCFCInfo::class.java)
+                    if(lastTime != "" && lastTime != session.plugInTime){
+                        writeSession(session, updates, printStream)
+                        updates.clear()
+                    }
+                    lastTime = session.plugInTime!!
+                    updates.add(DCFCUpdate(session))
+                }
+
+                writeSession(session, updates, printStream)
+                inputStream.close()
+                outputStream.close()
+                sessionFile.delete()
+            } catch (_: FileNotFoundException) {
+            } catch (e: Exception) {
+                Log.e(MainActivity.CHANNEL_ID, "exception in Misc.consolidateChargingSessions()", e)
+            }
+        }
+
+        @JvmStatic
+        fun purgeChargingData(context: Context) {
+            try {
+                // Assign 180 days prior to now as cut-off time
+                val cutOffTime =
+                    Instant.now().minusSeconds(TimeUnit.DAYS.toSeconds(180)).toEpochMilli()
+                val gson = GsonBuilder().create()
+                val cal = Calendar.getInstance();
+                val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH);
+                val oldLogFile = File(context.dataDir, CHARGINGFILENAME)
+                val newLogFile = File(context.dataDir, "tmplogfile")
+
+                val inputStream: InputStream = FileInputStream(oldLogFile)
+                val outputStream: OutputStream = FileOutputStream(newLogFile)
+                val reader = BufferedReader(InputStreamReader(inputStream))
+                val printStream = PrintStream(outputStream)
+
+                // process each entry in the log file
+                for (line in reader.lineSequence()) {
+                    val data = gson.fromJson(line, DCFCSession::class.java)
+                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+                    var thisTime = cutOffTime
+                    try {
+                        cal.setTime(sdf.parse(data.plugInTime));
+                        thisTime = cal.toInstant().toEpochMilli();
+                    } catch (_: ParseException) {
+                    }
+                    // Copy all times after the cut-off time
+                    if (thisTime >= cutOffTime) {
+                        printStream.println(line)
+                    }
+                }
+
+                // Finish the updates
+                printStream.flush()
+                inputStream.close()
+                outputStream.close()
+
+                // Replace the original file with the updated one
+                oldLogFile.delete()
+                newLogFile.renameTo(oldLogFile)
+            } catch (e: IndexOutOfBoundsException) {
+                Log.e(MainActivity.CHANNEL_ID, "exception in Misc.updateChargingData()", e)
+            }
+        }
+
 
         private suspend fun getInfo(context: Context): InfoRepository =
             coroutineScope {

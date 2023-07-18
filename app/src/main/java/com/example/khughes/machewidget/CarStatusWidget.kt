@@ -681,7 +681,7 @@ open class CarStatusWidget : AppWidgetProvider() {
 
         if (isDiesel) {
             // It appears as if default DEF range is in miles, as opposed to all other distance values
-            var distanceConversion = 1.0
+            @Suppress("NAME_SHADOWING") var distanceConversion = 1.0
             if (distanceUnits == "km") {
                 distanceConversion = 1.0 / Constants.KMTOMILES
             }

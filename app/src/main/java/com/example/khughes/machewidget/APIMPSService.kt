@@ -34,7 +34,7 @@ interface APIMPSService {
         "User-Agent: okhttp/4.9.0"
     )
     @POST("cevs/v1/chargestatus/retrieve")
-    fun getChargingInfo(@Body vin: RequestBody?, @Header("auth-token") token: String?): Call<ResponseBody?>?
+    fun getChargingInfo(@Body vin: RequestBody?, @Header("auth-token") token: String?): Call<DCFCInfo?>?
 
     @Headers(
         "Accept-Encoding: gzip",
