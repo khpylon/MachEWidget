@@ -31,7 +31,7 @@
 
     <style name="Theme.MacheWidget.AppWidgetContainer" parent="Theme.MacheWidget.AppWidgetContainerParent" />
 
-    <style name="Theme.MacheWidget.CompoundButton" parent="Widget.AppCompat.CompoundButton.RadioButton" >
+    <style name="Theme.MacheWidget.CompoundButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:textColor">@color/quantum_white_100</item>
     </style>
 </resources>

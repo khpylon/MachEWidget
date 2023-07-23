@@ -133,5 +133,6 @@
     <string name="vehicles_vin">Vehicle\'s VIN</string>
     <string name="vehicle_s_nickname">Vehicle\'s Nickname</string>
     <string name="dcfc_active">dcfc</string>
+    <string name="title_activity_charging">ChargingActivity</string>
 
 </resources>

@@ -31,6 +31,9 @@ class DCFCUpdate {
     var dte: Double? = 0.0
     var batteryFillLevel: Double? = 0.0
 
+    constructor() {
+    }
+
     constructor(session: DCFCInfo) {
         time = session.time
         energy = session.energy
