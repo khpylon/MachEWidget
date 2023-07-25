@@ -485,6 +485,7 @@ class NetworkCalls {
                                                                         .getString(R.string.check_dcfastcharging_key),
                                                                     false
                                                                 )
+
                                                         if (reportDCFC && car.vehiclestatus.chargeType == "DcCharging") {
                                                             chargeInfo.time =
                                                                 OTAViewActivity.convertMillisToDate(
@@ -496,7 +497,7 @@ class NetworkCalls {
                                                             chargeInfo.batteryFillLevel =
                                                                 car.vehiclestatus.batteryFillLevel?.value
 
-                                                            Misc.updateChargingSession(
+                                                            DCFC.updateChargingSession(
                                                                 context,
                                                                 chargeInfo
                                                             )
@@ -516,7 +517,7 @@ class NetworkCalls {
                                                 }
                                             }
                                         } else {
-                                            Misc.consolidateChargingSessions(context)
+                                            DCFC.consolidateChargingSessions(context)
                                         }
                                     }
 

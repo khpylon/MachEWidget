@@ -68,6 +68,16 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
 
+            // Erase the DCFC log file on disable.
+            val dcfclogs: Preference? = findPreference(this.resources.getString(R.string.dcfclog_key))
+            dcfclogs?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                    if (!(newValue as Boolean)) {
+                        DCFC.eraseLogFile(context)
+                    }
+                    true
+                }
+
             // Changing any of these preferences requires updating the widget
             for (id in intArrayOf(
                 R.string.show_app_links_key,

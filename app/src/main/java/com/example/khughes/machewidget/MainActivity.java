@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private int vehicleCount = 0;
 
-
     private void FordPassInfo(Context context) {
         WebView surveyWebview = new WebView(this);
         surveyWebview.getSettings().setJavaScriptEnabled(true);
@@ -66,6 +65,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
+
+
+//
+//
+//        String other = "{\"vin\":\"3FMTK3R75MMA09929\",\"status\":200,\"maxRangePossible\":null,\"plugInTime\":null,\"initialDte\":null,\"energy\":null,\"power\":null,\"chargeLocationName\":null,\"estimatedChargeEndTime\":null,\"chargeTargetLevel\":null,\"chargeType\":null,\"network\":null,\"gsscInitiatedBy\":null,\"chargeLocationAddress\":null,\"locationType\":null}";
+//        DCFCInfo stuff2 = gson.fromJson(other, DCFCInfo.class);
+//
+//        Calendar cal = Calendar.getInstance();
+//        SimpleDateFormat sdf = new SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH);
+//        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+//        long x = 0;
+//        try {
+//            cal.setTime(sdf.parse(stuff.getTime()));
+//            x = cal.toInstant().toEpochMilli();
+//        } catch (ParseException e) {
+//            x = -1;
+//        }
 
         // If we haven't bugged about the survey before, do it once and get it over with
         if (Misc.doSurvey(context)) {
@@ -128,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
                 vehicleCount = info.getVehicles().size();
             }).start();
         }
+
+        // Do bookkeeping on old charging logs
+        DCFC.purgeChargingData(context);
 
         // Create the webview containing instruction for use.
         WebView mWebView = findViewById(R.id.main_description);
@@ -208,6 +227,11 @@ public class MainActivity extends AppCompatActivity {
         boolean colorsEnabled = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(context.getResources().getString(R.string.use_colors_key), true);
         menu.findItem(R.id.action_color).setVisible(colorsEnabled);
+
+        // Hide view DCFC charging option if there isn't a log file
+        if (!DCFC.logFileExists(context)) {
+            menu.findItem(R.id.action_charge).setVisible(false);
+        }
 
         // The PlayStore version doesn't do all the update stuff
         if (com.example.khughes.machewidget.BuildConfig.FLAVOR.equals("playstore")) {
@@ -300,6 +324,10 @@ public class MainActivity extends AppCompatActivity {
             intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             context.sendBroadcast(intent);
             Toast.makeText(context, "Checking for an update; if one is found, a notification will appear.", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id == R.id.action_charge) {
+            Intent intent = new Intent(this, ChargingActivity.class);
+            startActivity(intent);
             return true;
         } else if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);

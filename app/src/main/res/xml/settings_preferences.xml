@@ -156,6 +156,14 @@
             app:enabled="true"
             app:title="@string/force_updates"
             app:summary="@string/force_updates_summary"/>
+
+        <SwitchPreferenceCompat
+            app:key="@string/dcfclog_key"
+            app:defaultValue="false"
+            app:enabled="true"
+            app:title="@string/dcfclog"
+            app:summary="@string/dcfclog_summary"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

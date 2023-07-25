@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,17 +44,30 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
+import com.google.gson.GsonBuilder
+import java.io.File
 import java.lang.Double.max
+import java.lang.Integer.min
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.math.ln
+import kotlin.math.log10
 import kotlin.math.pow
 
 
 class ChargingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val CHARGINGFILENAME = "dcfc.txt"
+        val gson = GsonBuilder().create()
+        val sessions = mutableListOf<DCFCSession>()
+        for (line in File(applicationContext.dataDir, CHARGINGFILENAME).readLines() ) {
+            sessions.add( gson.fromJson(line, DCFCSession::class.java))
+        }
+
         setContent {
             MacheWidgetTheme {
                 // A surface container using the 'background' color from the theme
@@ -60,30 +75,7 @@ class ChargingActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val info: MutableList<DCFCUpdate> = mutableListOf()
-                    val update1 = DCFCUpdate()
-
-                    update1.time = "2023-04-13T00:30:15Z"
-                    update1.energy = 7202.9414
-                    update1.power = 56376.013
-                    update1.batteryFillLevel = 48.5
-                    info.add(update1)
-
-                    val update2 = DCFCUpdate()
-                    update2.time = "2023-04-13T00:34:15Z"
-                    update2.energy = 5000.0
-                    update2.power = 60000.0
-                    update2.batteryFillLevel = 65.0
-                    info.add(update2)
-
-                    val update3 = DCFCUpdate()
-                    update3.time = "2023-04-13T00:40:15Z"
-                    update3.energy = 2134.6881
-                    update3.power = 66647.21
-                    update3.batteryFillLevel = 91.0
-                    info.add(update3)
-
-                    Greeting(info)
+                    Greeting(sessions)
                 }
             }
         }
@@ -100,7 +92,7 @@ fun getEpochMillis(time: String): Long {
 }
 
 @Composable
-private fun Graph(info: List<DCFCUpdate>, textColor: Color, modifier: Modifier) {
+private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Modifier) {
     val density = LocalDensity.current
     val textPaint = remember(density) {
         Paint().apply {
@@ -144,14 +136,13 @@ private fun Graph(info: List<DCFCUpdate>, textColor: Color, modifier: Modifier) 
         maxValue = if (maxValue < values[values.lastIndex]) values[values.lastIndex] else maxValue
     }
 
-    val log = Math.log10(maxValue)
+    val log = log10(maxValue)
     val whole = log.toInt().toDouble()
     val fraction = log - whole
-    var scale = 10.0;
-    scale = scale.pow(whole)
-    if (fraction< Math.log10(2.5)) {
+    var scale = (10.0).pow(whole)
+    if (fraction< log10(2.5)) {
         scale *= .25
-    } else if (fraction < Math.log(5.0)) {
+    } else if (fraction < log10(5.0)) {
         scale *= .5
     }
 
@@ -253,7 +244,7 @@ private fun Graph(info: List<DCFCUpdate>, textColor: Color, modifier: Modifier) 
                 drawContext.canvas.nativeCanvas.save()
                 drawContext.canvas.nativeCanvas.rotate(270f, 500f, 500f)
                 drawContext.canvas.nativeCanvas.drawText(
-                    whatInfo + " ($units)",
+                    "$whatInfo ($units)",
                     400f, 30f,
                     textPaint
                 )
@@ -262,12 +253,10 @@ private fun Graph(info: List<DCFCUpdate>, textColor: Color, modifier: Modifier) 
                 /** placing y axis points */
                 var i  = 0.0
                 while (i  < maxYScale) {
-                    val index = i
-
-                    val text = "$index"
+                    val text = "$i"
                     textPaint.getTextBounds(text, 0, text.length, rect)
 
-                    val y = (bottom + (top - bottom) * index / maxYScale).toFloat()
+                    val y = (bottom + (top - bottom) * i / maxYScale).toFloat()
                     drawContext.canvas.nativeCanvas.drawText(
                         text,
                         left - 20 - rect.width(),
@@ -284,7 +273,7 @@ private fun Graph(info: List<DCFCUpdate>, textColor: Color, modifier: Modifier) 
                 }
 
                 val offsets = mutableListOf<Offset>()
-                for (i in 0..info.size-1) {
+                for (i in 0 until info.size) {
                     val xTime = (getEpochMillis(info[i].time!!) - chargeBeginTime) / 1000
                     val yPower = values[i]
                     offsets += Offset(
@@ -302,14 +291,14 @@ private fun Graph(info: List<DCFCUpdate>, textColor: Color, modifier: Modifier) 
                     )
                 }
 
-                for (i in 0..info.size-1) {
+                for (i in 0 until info.size) {
                     val xTime = (getEpochMillis(info[i].time!!) - chargeBeginTime) / 1000
                     val yPower = values[i]
                     drawCircle(
                         color = Color.Red,
                         radius = 10.0f,
                         center = Offset(
-                            x = (left + (right - left) * xTime / elapsedSeconds).toFloat(),
+                            x = left + (right - left) * xTime / elapsedSeconds,
                             y = (bottom + (top - bottom) * yPower / maxYScale).toFloat()
                         )
                     )
@@ -321,109 +310,148 @@ private fun Graph(info: List<DCFCUpdate>, textColor: Color, modifier: Modifier) 
 
 @Composable
 fun Greeting(
-    info: MutableList<DCFCUpdate>, modifier: Modifier = Modifier
+    sessions: MutableList<DCFCSession>, modifier: Modifier = Modifier
 ) {
+    var index by rememberSaveable { mutableStateOf(sessions.lastIndex) }
+    val session = sessions[index]
+    val pluginTime = getEpochMillis(session.plugInTime!!)
+    val count = sessions.size
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(horizontal = 8.dp, vertical = 12.dp),
     ) {
-//        Box (modifier = Modifier.fillMaxWidth()
-//                .height(IntrinsicSize.Max)) {
-//            Button(
-//
-//                onClick = { /* Do something */ },
-//                colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.0F)),
-//                modifier = Modifier.align(Alignment.CenterStart)
-////            modifier = Modifier
-////                .height(
-////                    48.dp
-////                )
-////                .width(
-////                    148.dp
-////                ),
-////            shape = RoundedCornerShape(10.dp)
-//            ) {
-//                Text(text = "<< Power",color = MaterialTheme.colorScheme.secondary )
-//            }
-//            Button(
-//                onClick = { /* Do something */ },
-//                colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.0F)),
-//                modifier = Modifier.align(Alignment.Center)
-//            ) {
-//                Text(text = "Energy",color = MaterialTheme.colorScheme.secondary
-//                )
-//            }
-//            Button(
-//                onClick = { /* Do something */ },
-//                colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.0F)),
-//                modifier = Modifier.align(Alignment.CenterEnd)
-//            ) {
-//                Text(text = "SOC >> ",color = MaterialTheme.colorScheme.secondary )
-//            }
-//
-//        }
-
         Graph(
-            info, MaterialTheme.colorScheme.secondary,
+            session.updates, MaterialTheme.colorScheme.secondary,
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "Vehicle: Howard",
+            text = "Vehicle: " + session.VIN,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        var sessionDay = Calendar.getInstance()
+        val sdfDay = SimpleDateFormat(Constants.LOCALTIMEFORMATUS // "EEE, d MMM"
+            , Locale.ENGLISH);
+        sessionDay.timeInMillis = pluginTime
+
+        Text(
+            text = "Session start time: " + sdfDay.format(sessionDay.time),
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Session date: 24 June",
+            text = "Charging network: " + session.network,
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
+
+        var location = session.chargeLocationName as String
+        val prefix =session.network + " - "
+        if (location.startsWith(prefix, ignoreCase = false)) {
+            location = location.substring(prefix.length)
+        }
+
         Text(
-            text = "Charging network: EVGo",
+            text = "Location: " + location.substring(0,min(35,location.length)),
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
+
+        val maxPowerStr = String.format("%.2f",
+            (session.updates.maxBy({it -> it.power!!}).power as Double) / 1000)
         Text(
-            text = "Location: 142 Main Street, Golden CO",
+            text = "Max power: $maxPowerStr kW",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
+
+        val avgPowerStr = String.format("%.2f",
+            session.updates.sumOf({it -> it.power!!}) / 1000 / session.updates.size )
         Text(
-            text = "Session start time: 10:04 PDT",
+            text = "Average power: $avgPowerStr kW",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
+
+        val energyStr = String.format("%.2f",
+            (session.updates.maxBy({it -> it.energy!!}).energy as Double) / 1000)
         Text(
-            text = "Session duration: 42 min",
+            text = "Energy added: $energyStr kWh",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
+
+        val distanceConversion = Constants.KMTOMILES
+        val initialDTE = String.format("%.1f", session.initialDte!! * distanceConversion )
+        val finalDTE = String.format("%.1f", session.updates[session.updates.lastIndex].dte!!
+                * distanceConversion )
+
+        var distanceUnits = "miles"
         Text(
-            text = "Max power: 162 kW",
+            text = "Range: $initialDTE $distanceUnits -> $finalDTE $distanceUnits",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
+
+        val initialSOC = session.updates[0].batteryFillLevel!!
+        val finalSOC = session.updates[session.updates.lastIndex].batteryFillLevel!!
+
         Text(
-            text = "Average power: 105 kW",
+            text = "SOC: $initialSOC% -> $finalSOC%",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
-        Text(
-            text = "Energy added: 47.2 kWh",
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Text(
-            text = "Range added: 104 miles",
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Text(
-            text = "SOC: 42% -> 79%",
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Row(
+            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max)
+            ) {
+                if (index > 0) {
+                    Button(
+                        onClick = { --index },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                alpha = 0.5F
+                            )
+
+                        ),
+                        modifier = Modifier.align(Alignment.CenterStart),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text(
+                            text = "<<",
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+                Column(modifier = Modifier.align(Alignment.Center)
+                    .padding(10.dp)
+                ) {
+                    Text(text = "${index+1} of $count", color = MaterialTheme.colorScheme.secondary)
+                }
+                if (index < sessions.lastIndex) {
+                    Button(
+                        onClick = { ++index },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                alpha = 0.5F
+                            )
+                        ),
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text(text = ">>", color = MaterialTheme.colorScheme.secondary)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -431,30 +459,38 @@ fun Greeting(
 @Composable
 fun LightPreview() {
     MacheWidgetTheme {
-        val info: MutableList<DCFCUpdate> = mutableListOf()
+        val updates: MutableList<DCFCUpdate> = mutableListOf()
         val update1 = DCFCUpdate()
 
         update1.time = "2023-04-13T00:30:15Z"
         update1.energy = 7202.9414
         update1.power = 56376.013
         update1.batteryFillLevel = 48.5
-        info.add(update1)
+        updates.add(update1)
 
         val update2 = DCFCUpdate()
         update2.time = "2023-04-13T00:34:15Z"
         update2.energy = 5000.0
         update2.power = 60000.0
-        update2.batteryFillLevel = 65.05
-        info.add(update2)
+        update2.batteryFillLevel = 65.0
+        updates.add(update2)
 
         val update3 = DCFCUpdate()
         update3.time = "2023-04-13T00:40:15Z"
         update3.energy = 2134.6881
         update3.power = 66647.21
         update3.batteryFillLevel = 91.0
-        info.add(update3)
+        updates.add(update3)
 
-        Greeting(info)
+        val info = DCFCInfo()
+        info.VIN = "3FMTK3R75MMA09929"
+        info.plugInTime = "2023-04-12T16:55:21Z"
+        info.initialDte = 186.0
+        info.chargeLocationName = "ChargePoint - City of Pacific Grove Lot"
+        info.network = "ChargePoint"
+
+        val session = DCFCSession(info, updates)
+        Greeting(mutableListOf(session))
     }
 }
 
@@ -462,29 +498,37 @@ fun LightPreview() {
 @Composable
 fun DarkPreview() {
     MacheWidgetTheme {
-        val info: MutableList<DCFCUpdate> = mutableListOf()
+        val updates: MutableList<DCFCUpdate> = mutableListOf()
         val update1 = DCFCUpdate()
 
         update1.time = "2023-04-13T00:30:15Z"
         update1.energy = 7202.9414
         update1.power = 56376.013
         update1.batteryFillLevel = 48.5
-        info.add(update1)
+        updates.add(update1)
 
         val update2 = DCFCUpdate()
         update2.time = "2023-04-13T00:34:15Z"
         update2.energy = 5000.0
         update2.power = 60000.0
         update2.batteryFillLevel = 65.0
-        info.add(update2)
+        updates.add(update2)
 
         val update3 = DCFCUpdate()
         update3.time = "2023-04-13T00:40:15Z"
         update3.energy = 2134.6881
         update3.power = 66647.21
         update3.batteryFillLevel = 91.0
-        info.add(update3)
+        updates.add(update3)
 
-        Greeting(info)
+        val info = DCFCInfo()
+        info.VIN = "3FMTK3R75MMA09929"
+        info.plugInTime = "2023-04-12T16:55:21Z"
+        info.initialDte = 186.0
+        info.chargeLocationName = "ChargePoint - City of Pacific Grove Lot"
+        info.network = "ChargePoint"
+
+        val session = DCFCSession(info, updates)
+        Greeting(mutableListOf(session))
     }
 }
