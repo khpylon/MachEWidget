@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.07.25
+### Added
+- "Beta" release of DC Fast Charging activity.  **If you don't own a BEV *or* don't feel
+adventurous, you may want to skip this and wait for the next release.**  
+When "Display charging session info", "Display DCDC info", and "Save DCFC logs" are all enabled
+in "Settings", you will be able to view recent DC fast charging data via "View DCFC Logs" in the
+three-dot menu.  The logs will show power, energy, and SOC during each charging session.  Note that
+DCFC data is only collected once the app detects that the car is plugged in, so you must either
+refresh the app manually after plugging in, or set the time between widget updates to the minimum
+of 5 minutes.
+
 ## 2023.07.13
 ### Added
 - Display DC fast charging data in "real time" (update widget every 30 seconds).  To use this
