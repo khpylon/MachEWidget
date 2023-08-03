@@ -1,4 +1,4 @@
-Version: 2023.07.25
-Commit: 081ae92
-Build date: 25 Jul 2023 17:31:02 UTC
+Version: 2023.08.03
+Commit: d355740
+Build date: 03 Aug 2023 23:24:02 UTC
 Application-name: com.example.khughes.machewidget
