@@ -142,15 +142,21 @@ class NetworkCalls {
                                 userInfo.country = locale.country
                                 userInfo.language = locale.toLanguageTag()
                             }
+                            var units: String = ""
                             if (locale == null || locale.country == Locale.US.country) {
-                                userInfo.uomPressure = "PSI"
                                 userInfo.uomSpeed = "MPH"
+                                userInfo.uomPressure = "PSI"
                                 userInfo.uomDistance = 1
+                                units = context.resources.getString(R.string.units_mphpsi)
                             } else {
-                                userInfo.uomPressure = "BAR"
                                 userInfo.uomSpeed = "KPH"
+                                userInfo.uomPressure = "BAR"
                                 userInfo.uomDistance = 0
+                                units = context.resources.getString(R.string.units_kphbar)
                             }
+                            val edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
+                            edit.putString(context.resources.getString(R.string.units_key),units)
+                            edit.commit()
                             userInfo.programState = nextState
                             userDao.deleteAllUserInfo()
                             userDao.insertUserInfo(userInfo)
