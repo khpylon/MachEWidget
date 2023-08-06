@@ -2,9 +2,12 @@ package com.example.khughes.machewidget
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
+import android.os.FileObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,23 +24,19 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -46,26 +45,68 @@ import androidx.compose.ui.unit.sp
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
 import com.google.gson.GsonBuilder
 import java.io.File
-import java.lang.Double.max
 import java.lang.Integer.min
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import kotlin.math.ln
 import kotlin.math.log10
 import kotlin.math.pow
 
+@RequiresApi(Build.VERSION_CODES.Q)
+class DCFCFileObserver(path: String, cb: (Boolean) -> Unit) :
+    FileObserver(File(path), MODIFY + CREATE + DELETE) {
+    private var callback = cb
+
+    override fun onEvent(event: Int, path: String?) {
+        if (path == DCFC.CHARGINGSESSIONFILENAME) {
+            if (event == CREATE || event == MODIFY) {
+                callback(true)
+            } else if (event == DELETE) {
+                callback(false)
+            }
+        }
+    }
+}
 
 class ChargingActivity : ComponentActivity() {
+
+    private lateinit var directoryFileObserver: DCFCFileObserver
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+            this::directoryFileObserver.isInitialized
+        ) {
+            directoryFileObserver.stopWatching()
+        }
+    }
+
+    private lateinit var sessions: MutableList<DCFCSession>
+    private var sessionActive = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val CHARGINGFILENAME = "dcfc.txt"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            directoryFileObserver = DCFCFileObserver(
+                File(applicationContext.dataDir.toString()).toString(),
+                this::loadData
+            )
+            directoryFileObserver.startWatching()
+        }
+
         val gson = GsonBuilder().create()
-        val sessions = mutableListOf<DCFCSession>()
-        for (line in File(applicationContext.dataDir, CHARGINGFILENAME).readLines() ) {
-            sessions.add( gson.fromJson(line, DCFCSession::class.java))
+        sessions = listOf<DCFCSession>().toMutableStateList()
+        for (line in File(applicationContext.dataDir, DCFC.CHARGINGFILENAME).readLines()) {
+            sessions.add(gson.fromJson(line, DCFCSession::class.java))
+        }
+
+        val session = DCFC.pseudoConsolidateChargingSessions(context = applicationContext)
+        session?.let {
+            sessions[sessions.lastIndex] = it
+            sessionActive = true
         }
 
         setContent {
@@ -80,6 +121,20 @@ class ChargingActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun loadData(active: Boolean) {
+        if (active) {
+            val session = DCFC.pseudoConsolidateChargingSessions(context = applicationContext)
+            session?.let {
+                if (sessionActive) {
+                    sessions[sessions.lastIndex] = it
+                } else {
+                    sessions.add(session)
+                }
+            }
+        }
+        sessionActive = active
+    }
 }
 
 private
@@ -87,7 +142,7 @@ fun getEpochMillis(time: String): Long {
     val cal = Calendar.getInstance()
     val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
     sdf.timeZone = TimeZone.getTimeZone("UTC")
-    cal.time = sdf.parse(time)
+    cal.time = sdf.parse(time) as Date
     return cal.toInstant().toEpochMilli()
 }
 
@@ -118,17 +173,19 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
     }
 
     val values = mutableListOf<Double>()
-    var maxValue: Double = 0.0
-    var units = buttonText[2]
+    var maxValue = 0.0
+    val units = buttonText[2]
 
     for (item in info) {
         when (whatInfo) {
             "Energy" -> {
                 values.add(item.energy!! / 1000f)
             }
+
             "Power" -> {
                 values.add(item.power!! / 1000f)
             }
+
             else -> {
                 values.add(item.batteryFillLevel!!)
             }
@@ -140,7 +197,7 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
     val whole = log.toInt().toDouble()
     val fraction = log - whole
     var scale = (10.0).pow(whole)
-    if (fraction< log10(2.5)) {
+    if (fraction < log10(2.5)) {
         scale *= .25
     } else if (fraction < log10(5.0)) {
         scale *= .5
@@ -161,7 +218,8 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
                 Button(
                     onClick = { whatInfo = buttonText[0] },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5F)),
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5F)
+                    ),
                     modifier = Modifier.align(Alignment.CenterStart),
                     shape = RoundedCornerShape(10.dp)
                 ) {
@@ -179,7 +237,8 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
                 Button(
                     onClick = { whatInfo = buttonText[1] },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5F)),
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5F)
+                    ),
                     modifier = Modifier.align(Alignment.CenterEnd),
                     shape = RoundedCornerShape(10.dp)
                 ) {
@@ -193,8 +252,6 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                val canvasWidth = size.width
-                val canvasHeight = size.height
                 val rect = android.graphics.Rect()
 
                 val startTime = info[0].time as String
@@ -251,8 +308,8 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
                 drawContext.canvas.nativeCanvas.restore()
 
                 /** placing y axis points */
-                var i  = 0.0
-                while (i  < maxYScale) {
+                var i = 0.0
+                while (i < maxYScale) {
                     val text = "$i"
                     textPaint.getTextBounds(text, 0, text.length, rect)
 
@@ -309,13 +366,19 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
 }
 
 @Composable
-fun Greeting(
-    sessions: MutableList<DCFCSession>, modifier: Modifier = Modifier
-) {
+fun Greeting(sessions: MutableList<DCFCSession>) {
+    // index identifies which session to display
     var index by rememberSaveable { mutableStateOf(sessions.lastIndex) }
+    // count is the total number of sessions
+    var count by rememberSaveable { mutableStateOf(sessions.lastIndex) }
+    // If the number of sessions increases, always display the most recent (last)
+    if (count < sessions.size) {
+        index = sessions.lastIndex
+        count = sessions.size
+    }
+
     val session = sessions[index]
     val pluginTime = getEpochMillis(session.plugInTime!!)
-    val count = sessions.size
 
     Column(
         modifier = Modifier
@@ -333,9 +396,11 @@ fun Greeting(
             modifier = Modifier.fillMaxWidth()
         )
 
-        var sessionDay = Calendar.getInstance()
-        val sdfDay = SimpleDateFormat(Constants.LOCALTIMEFORMATUS // "EEE, d MMM"
-            , Locale.ENGLISH);
+        val sessionDay = Calendar.getInstance()
+        val sdfDay = SimpleDateFormat(
+            Constants.LOCALTIMEFORMATUS // "EEE, d MMM"
+            , Locale.ENGLISH
+        )
         sessionDay.timeInMillis = pluginTime
 
         Text(
@@ -350,35 +415,41 @@ fun Greeting(
         )
 
         var location = session.chargeLocationName as String
-        val prefix =session.network + " - "
+        val prefix = session.network + " - "
         if (location.startsWith(prefix, ignoreCase = false)) {
             location = location.substring(prefix.length)
         }
 
         Text(
-            text = "Location: " + location.substring(0,min(35,location.length)),
+            text = "Location: " + location.substring(0, min(35, location.length)),
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
 
-        val maxPowerStr = String.format("%.2f",
-            (session.updates.maxBy({it -> it.power!!}).power as Double) / 1000)
+        val maxPowerStr = String.format(
+            "%.2f",
+            (session.updates.maxBy { it.power!! }.power as Double) / 1000
+        )
         Text(
             text = "Max power: $maxPowerStr kW",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
 
-        val avgPowerStr = String.format("%.2f",
-            session.updates.sumOf({it -> it.power!!}) / 1000 / session.updates.size )
+        val avgPowerStr = String.format(
+            "%.2f",
+            session.updates.sumOf { it.power!! } / 1000 / session.updates.size
+        )
         Text(
             text = "Average power: $avgPowerStr kW",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
 
-        val energyStr = String.format("%.2f",
-            (session.updates.maxBy({it -> it.energy!!}).energy as Double) / 1000)
+        val energyStr = String.format(
+            "%.2f",
+            (session.updates.maxBy { it.energy!! }.energy as Double) / 1000
+        )
         Text(
             text = "Energy added: $energyStr kWh",
             color = MaterialTheme.colorScheme.secondary,
@@ -386,11 +457,13 @@ fun Greeting(
         )
 
         val distanceConversion = Constants.KMTOMILES
-        val initialDTE = String.format("%.1f", session.initialDte!! * distanceConversion )
-        val finalDTE = String.format("%.1f", session.updates[session.updates.lastIndex].dte!!
-                * distanceConversion )
+        val initialDTE = String.format("%.1f", session.initialDte!! * distanceConversion)
+        val finalDTE = String.format(
+            "%.1f", session.updates[session.updates.lastIndex].dte!!
+                    * distanceConversion
+        )
 
-        var distanceUnits = "miles"
+        val distanceUnits = "miles"
         Text(
             text = "Range: $initialDTE $distanceUnits -> $finalDTE $distanceUnits",
             color = MaterialTheme.colorScheme.secondary,
@@ -431,10 +504,15 @@ fun Greeting(
                         )
                     }
                 }
-                Column(modifier = Modifier.align(Alignment.Center)
-                    .padding(10.dp)
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(10.dp)
                 ) {
-                    Text(text = "${index+1} of $count", color = MaterialTheme.colorScheme.secondary)
+                    Text(
+                        text = "${index + 1} of $count",
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
                 if (index < sessions.lastIndex) {
                     Button(

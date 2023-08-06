@@ -91,8 +91,8 @@ class DCFC {
 
     companion object {
 
-        private const val CHARGINGSESSIONFILENAME = "dcfcsession.txt"
-        private const val CHARGINGFILENAME = "dcfc.txt"
+        const val CHARGINGSESSIONFILENAME = "dcfcsession.txt"
+        const val CHARGINGFILENAME = "dcfc.txt"
 
         @JvmStatic
         fun logFileExists(context: Context): Boolean {
@@ -100,6 +100,11 @@ class DCFC {
                 .getBoolean(context.resources.getString(R.string.dcfclog_key), false)
 
             return logDCFC && File(context.dataDir, CHARGINGFILENAME).exists()
+        }
+
+        @JvmStatic
+        fun sessionFileExists(context: Context): Boolean {
+            return File(context.dataDir, CHARGINGSESSIONFILENAME).exists()
         }
 
         @JvmStatic
@@ -184,6 +189,40 @@ class DCFC {
                     )
                 }
             }
+        }
+
+        @JvmStatic
+        fun pseudoConsolidateChargingSessions(context: Context) : DCFCSession? {
+            var dcfcSession: DCFCSession? = null
+            try {
+                val gson = GsonBuilder().create()
+                val sessionFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
+                val inputStream: InputStream = FileInputStream(sessionFile)
+                val reader = BufferedReader(InputStreamReader(inputStream))
+
+                var session = DCFCInfo()
+                val updates = mutableListOf<DCFCUpdate>()
+                var lastTime = ""
+                for (line in reader.lineSequence()) {
+                    session = gson.fromJson(line, DCFCInfo::class.java)
+                    if (lastTime != "" && lastTime != session.plugInTime) {
+                        updates.clear()
+                    }
+                    lastTime = session.plugInTime!!
+                    updates.add(DCFCUpdate(session))
+                }
+
+                inputStream.close()
+                dcfcSession = DCFCSession(session, updates)
+            } catch (_: FileNotFoundException) {
+            } catch (e: Exception) {
+                Log.e(
+                    MainActivity.CHANNEL_ID,
+                    "exception in DCFC.pseudoConsolidateChargingSessions()",
+                    e
+                )
+            }
+            return dcfcSession
         }
 
         @JvmStatic
