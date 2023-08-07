@@ -20,10 +20,10 @@ import kotlinx.coroutines.withContext
 
 private const val HOUR_MASK = 0x1f
 private const val NOTIFICATION_BIT = 0x20
+private lateinit var info: InfoRepository
 
 class ReminderActivity : AppCompatActivity() {
 
-    var info: InfoRepository? = null
     var currentVehicle: VehicleInfo? = null
     private var isEnabled: Boolean = false
     var hour: Int = 0
@@ -42,11 +42,9 @@ class ReminderActivity : AppCompatActivity() {
             info = getInfo(applicationContext)
             // Find the BEV and PHEV vehicles
             val VINs: MutableList<String> = mutableListOf()
-            info?.let {
-                for (vehicle in it.vehicles) {
-                    if (isPHEVorBEV(vehicle)) {
-                        VINs.add(vehicle.vin!!)
-                    }
+            for (vehicle in info.vehicles) {
+                if (isPHEVorBEV(vehicle)) {
+                    VINs.add(vehicle.vin!!)
                 }
             }
 
@@ -186,7 +184,7 @@ class ReminderActivity : AppCompatActivity() {
     private fun isPHEVorBEV(vehicle: VehicleInfo): Boolean {
         val status = vehicle.carStatus
         val propulsionType = status.propulsion
-        return status.isPropulsionICEOrHybrid(propulsionType)
+        return !status.isPropulsionICEOrHybrid(propulsionType)
     }
 
     private fun isNotificationEnabled(chargeHour: Int) =
