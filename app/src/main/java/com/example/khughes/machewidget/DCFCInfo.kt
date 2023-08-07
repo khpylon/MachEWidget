@@ -3,8 +3,6 @@ package com.example.khughes.machewidget
 import android.content.Context
 import android.util.Log
 import androidx.preference.PreferenceManager
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import java.io.BufferedReader
@@ -91,8 +89,26 @@ class DCFC {
 
     companion object {
 
-        const val CHARGINGSESSIONFILENAME = "dcfcsession.txt"
-        const val CHARGINGFILENAME = "dcfc.txt"
+        private const val OLDCHARGINGSESSIONFILENAME = "dcfcsession.txt"
+        private const val OLDCHARGINGFILENAME = "dcfc.txt"
+
+        const val CHARGINGSESSIONFILENAME = "dcfcsession.json"
+        const val CHARGINGFILENAME = "dcfclog.json"
+
+        @JvmStatic
+        fun renameLogFiles(context: Context) {
+            if( File(context.dataDir, OLDCHARGINGFILENAME).exists() ) {
+                val oldLogFile = File(context.dataDir, OLDCHARGINGFILENAME)
+                val newLogFile = File(context.dataDir, CHARGINGFILENAME)
+                oldLogFile.renameTo(newLogFile)
+            }
+            if( File(context.dataDir, OLDCHARGINGSESSIONFILENAME).exists() ) {
+                val oldLogFile = File(context.dataDir, OLDCHARGINGSESSIONFILENAME)
+                val newLogFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
+                oldLogFile.renameTo(newLogFile)
+            }
+        }
+
 
         @JvmStatic
         fun logFileExists(context: Context): Boolean {

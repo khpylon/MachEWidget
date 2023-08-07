@@ -21,41 +21,6 @@ object AppUpdates {
 
             // Add operations here
 
-            // Re-enable OTA support on all vehicles, and add userId to settings.
-            if (lastVersion < "2022.06.20") {
-                Thread {
-                    for (userInfo in UserInfoDatabase.getInstance(context).userInfoDao()
-                        .findUserInfo()) {
-                        userInfo.programState = Constants.STATE_HAVE_TOKEN_AND_VIN
-                        UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(userInfo)
-                    }
-                }.start()
-            }
-
-            // Reload vehicle images, including angles
-            if (lastVersion < "2022.07.16") {
-                val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
-                if (imageDir.exists() && imageDir.isDirectory) {
-                    for (file in imageDir.list()!!) {
-                        File(imageDir, file).delete()
-                    }
-                }
-                Thread {
-                    for (vehicleInfo in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                        .findVehicleInfo()) {
-                        val user = UserInfoDatabase.getInstance(context).userInfoDao()
-                            .findUserInfo(vehicleInfo.userId!!)
-                        if (user != null) {
-                            NetworkCalls.getVehicleImage(
-                                context,
-                                vehicleInfo.vin!!,
-                                user.country!!
-                            )
-                        }
-                    }
-                }.start()
-            }
-
             if (lastVersion < "2022.12.07") {
                 // Disable saving credentials
                 prefs.edit()
@@ -104,6 +69,10 @@ object AppUpdates {
                 edit.apply()
             }
 
+            // Rename old DCFC *.txt to *.json
+            if (lastVersion < "2023.08.03") {
+                DCFC.renameLogFiles(context)
+            }
         }
 
         // Update internally

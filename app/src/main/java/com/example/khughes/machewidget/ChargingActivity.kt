@@ -116,7 +116,7 @@ class ChargingActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting(sessions)
+                    MainScreen(sessions)
                 }
             }
         }
@@ -366,7 +366,7 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
 }
 
 @Composable
-fun Greeting(sessions: MutableList<DCFCSession>) {
+fun MainScreen(sessions: MutableList<DCFCSession>) {
     // index identifies which session to display
     var index by rememberSaveable { mutableStateOf(sessions.lastIndex) }
     // count is the total number of sessions
@@ -561,14 +561,14 @@ fun LightPreview() {
         updates.add(update3)
 
         val info = DCFCInfo()
-        info.VIN = "3FMTK3R75MMA09929"
+        info.VIN = "3FMTK3R75MMA00001"
         info.plugInTime = "2023-04-12T16:55:21Z"
         info.initialDte = 186.0
         info.chargeLocationName = "ChargePoint - City of Pacific Grove Lot"
         info.network = "ChargePoint"
 
         val session = DCFCSession(info, updates)
-        Greeting(mutableListOf(session))
+        MainScreen(mutableListOf(session))
     }
 }
 
@@ -600,13 +600,13 @@ fun DarkPreview() {
         updates.add(update3)
 
         val info = DCFCInfo()
-        info.VIN = "3FMTK3R75MMA09929"
+        info.VIN = "3FMTK3R75MMA00001"
         info.plugInTime = "2023-04-12T16:55:21Z"
         info.initialDte = 186.0
         info.chargeLocationName = "ChargePoint - City of Pacific Grove Lot"
         info.network = "ChargePoint"
 
         val session = DCFCSession(info, updates)
-        Greeting(mutableListOf(session))
+        MainScreen(mutableListOf(session))
     }
 }
