@@ -7,7 +7,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 
 ## 2023.08.08
 ### Fixed
-- Displayed units for distance and pressure didnot match user's locale info.
+- Displayed units for distance and pressure did not match user's locale info.
 - Vehicles were not displaying in Charging Reminder activity.
 
 ## 2023.08.03
