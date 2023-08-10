@@ -257,8 +257,8 @@
 
     <ImageView
         android:id="@+id/refresh"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_alignLeft="@id/wireframe"
         android:layout_alignBottom="@id/wireframe"
         android:src="@drawable/refresh_icon" />

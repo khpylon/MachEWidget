@@ -2,8 +2,6 @@ package com.example.khughes.machewidget;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -163,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         CarStatusWidget.updateWidget(context);
 
         // Allow the app to display notifications
-        createNotificationChannel();
+        Notifications.createNotificationChannels(context);
     }
 
     @Override
@@ -338,19 +336,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        CharSequence name = "Channel name"; // getString(R.string.channel_name);
-        String description = "Description"; // getString(R.string.channel_description);
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-        channel.setDescription(description);
-        // Register the channel with the system; you can't change the importance
-        // or other notification behaviors after this
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
-    }
-
 }
