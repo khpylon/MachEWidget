@@ -142,7 +142,7 @@ class NetworkCalls {
                                 userInfo.country = locale.country
                                 userInfo.language = locale.toLanguageTag()
                             }
-                            var units: String = ""
+                            var units: String
                             if (locale == null || locale.country == Locale.US.country) {
                                 userInfo.uomSpeed = "MPH"
                                 userInfo.uomPressure = "PSI"
@@ -522,8 +522,6 @@ class NetworkCalls {
                                                     }
                                                 }
                                             }
-                                        } else {
-                                            DCFC.consolidateChargingSessions(context)
                                         }
                                     }
 

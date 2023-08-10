@@ -1,10 +1,17 @@
 package com.example.khughes.machewidget
 
 import android.content.Context
-import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
@@ -49,8 +56,7 @@ class DCFCUpdate {
     var dte: Double? = 0.0
     var batteryFillLevel: Double? = 0.0
 
-    constructor() {
-    }
+    constructor()
 
     constructor(session: DCFCInfo) {
         time = session.time
@@ -63,7 +69,7 @@ class DCFCUpdate {
 
 // Information saved for a single charging session.
 @Generated("jsonschema2pojo")
-class DCFCSession {
+class DCFCSession(session: DCFCInfo, var updates: MutableList<DCFCUpdate>) {
     @SerializedName("vin")
     var VIN: String? = ""
     var chargeType: String? = ""
@@ -71,9 +77,8 @@ class DCFCSession {
     var initialDte: Double? = 0.0
     var chargeLocationName: String? = ""
     var network: String? = ""
-    lateinit var updates: MutableList<DCFCUpdate>
 
-    constructor(session: DCFCInfo, updates: MutableList<DCFCUpdate>) {
+    init {
         VIN = session.VIN
         chargeType = session.chargeType
         plugInTime = session.plugInTime
@@ -81,7 +86,6 @@ class DCFCSession {
         initialDte = session.initialDte
         chargeLocationName = session.chargeLocationName
         network = session.network
-        this.updates = updates
     }
 }
 
@@ -91,9 +95,11 @@ class DCFC {
 
         private const val OLDCHARGINGSESSIONFILENAME = "dcfcsession.txt"
         private const val OLDCHARGINGFILENAME = "dcfc.txt"
+        private const val CHARGINGSESSIONFILENAME = "dcfcsession.json"
 
-        const val CHARGINGSESSIONFILENAME = "dcfcsession.json"
         const val CHARGINGFILENAME = "dcfclog.json"
+
+        private var mutex = Mutex()
 
         @JvmStatic
         fun renameLogFiles(context: Context) {
@@ -107,8 +113,79 @@ class DCFC {
                 val newLogFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
                 oldLogFile.renameTo(newLogFile)
             }
+            val sessionFIle = File(context.dataDir, CHARGINGSESSIONFILENAME)
+            if( sessionFIle.exists() ) {
+                mergeChargingSessions(context)
+            }
         }
 
+        private fun mergeChargingSessions(context: Context) {
+            CoroutineScope(Dispatchers.IO).launch {
+                mutex.lock()
+                try {
+
+                    // Create input and output file things
+                    val sessionFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
+                    val inputStream: InputStream = FileInputStream(sessionFile)
+                    val reader = BufferedReader(InputStreamReader(inputStream))
+
+                    val logFile = File(context.dataDir, CHARGINGFILENAME)
+                    val outputStream: OutputStream = FileOutputStream(logFile, true)
+                    val printStream = PrintStream(outputStream)
+
+                    // This list contains the key for each session in chronological order
+                    val order = mutableListOf<String>()
+                    // This map stores the DCFC info for each session
+                    val sessionMap: MutableMap<String, MutableList<DCFCInfo>> = mutableMapOf()
+
+                    // Process each entry in the DCFC session file
+                    val gson = GsonBuilder().create()
+                    for (line in reader.lineSequence()) {
+                        // Use the info's VIN and plug-in time as a key for the session
+                        val info = gson.fromJson(line, DCFCInfo::class.java) as DCFCInfo
+                        val key = info.VIN + info.plugInTime
+
+                        // If data for the session exists, add it to the list
+                        if (sessionMap.containsKey(key)) {
+                            sessionMap[key]!!.add(info)
+                        }
+                        // Otherwise create a new session
+                        else {
+                            order.add(key)
+                            sessionMap[key] = mutableListOf(info)
+                        }
+                    }
+
+                    val sessionList: MutableList<DCFCSession> = mutableListOf()
+                    // Go through the session in chronological order and process them
+                    for (key in order) {
+                        val updates = mutableListOf<DCFCUpdate>()
+                        val session = sessionMap[key]!![0]
+                        for (info in sessionMap[key]!!) {
+                            updates.add(DCFCUpdate(info))
+                        }
+                        sessionList.add(DCFCSession(session, updates))
+                        val dcfcSession = DCFCSession(session, updates)
+                        val message = gson.toJson(dcfcSession)
+                        printStream.println(message)
+                    }
+
+                    // Clean up
+                    inputStream.close()
+                    outputStream.close()
+                    sessionFile.delete()
+                } catch (_: FileNotFoundException) {
+                } catch (e: Exception) {
+                    LogFile.e(
+                        context,
+                        MainActivity.CHANNEL_ID,
+                        "exception in DCFC.mergeChargingSessions()",
+                        e
+                    )
+                }
+                mutex.unlock()
+            }
+        }
 
         @JvmStatic
         fun logFileExists(context: Context): Boolean {
@@ -118,17 +195,11 @@ class DCFC {
             return logDCFC && File(context.dataDir, CHARGINGFILENAME).exists()
         }
 
-        @JvmStatic
-        fun sessionFileExists(context: Context): Boolean {
-            return File(context.dataDir, CHARGINGSESSIONFILENAME).exists()
-        }
 
         @JvmStatic
         fun eraseLogFile(context: Context) {
             val logFile = File(context.dataDir, CHARGINGFILENAME)
             logFile.delete()
-            val sessionFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
-            sessionFile.delete()
         }
 
         // Append a new entry to the DCFC file
@@ -138,108 +209,107 @@ class DCFC {
                 .getBoolean(context.resources.getString(R.string.dcfclog_key), false)
 
             if (logDCFC) {
-                try {
-                    val logFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
-                    val outputStream = FileOutputStream(logFile, true)
-                    val printStream = PrintStream(outputStream)
-                    val message = GsonBuilder().create().toJson(chargeInfo)
-                    printStream.println(message)
-                    outputStream.close()
-                } catch (_: FileNotFoundException) {
-                } catch (e: Exception) {
-                    Log.e(MainActivity.CHANNEL_ID, "exception in DCFC.updateChargingSession()", e)
+                CoroutineScope(Dispatchers.IO).launch {
+                    mutex.lock()
+
+                    var updated = false
+                    val update = DCFCUpdate(chargeInfo)
+                    try {
+
+                        // Create input and output file things
+                        val logFile = File(context.dataDir, CHARGINGFILENAME)
+                        val inputStream: InputStream = FileInputStream(logFile)
+                        val reader = BufferedReader(InputStreamReader(inputStream))
+
+                        val tmpFile = File(context.dataDir, "tmpfile")
+                        val outputStream: OutputStream = FileOutputStream(tmpFile, true)
+                        val printStream = PrintStream(outputStream)
+
+                        // Read entry in the DCFC file
+                        val gson = GsonBuilder().create()
+                        for (line in reader.lineSequence()) {
+                            // Use the info's VIN and plug-in time as a key for the session
+                            val session = gson.fromJson(line, DCFCSession::class.java) as DCFCSession
+
+                            // If this session matches the current info, add the update and write it 
+                            if(session.VIN == chargeInfo.VIN && session.plugInTime == chargeInfo.plugInTime) {
+                                session.updates.add(update)
+                                val message = gson.toJson(session)
+                                printStream.println(message)
+                                updated = true
+                            }
+                            // Otherwise just copy the data
+                            else {
+                                printStream.println(line)
+                            }
+                        }
+
+                        // If we didn't find a matching session, create a new one
+                        if(!updated) {
+                            val session = DCFCSession(chargeInfo, mutableListOf(update))
+                            val message = gson.toJson(session)
+                            printStream.println(message)
+                        }
+
+                        // Finish the updates
+                        printStream.flush()
+                        inputStream.close()
+                        outputStream.close()
+
+                        // Replace the original file with the updated one
+                        logFile.delete()
+                        tmpFile.renameTo(logFile)
+                    } catch (_: FileNotFoundException) {
+                    } catch (e: Exception) {
+                        LogFile.e(context,
+                            MainActivity.CHANNEL_ID,
+                            "exception in DCFC.updateChargingSession()",
+                            e
+                        )
+                    }
                 }
+                mutex.unlock()
             }
         }
 
+        // Append a new entry to the DCFC file
         @JvmStatic
-        private fun writeSession(
-            session: DCFCInfo,
-            updates: MutableList<DCFCUpdate>,
-            printStream: PrintStream
-        ) {
-            val gson = GsonBuilder().create()
-            val dcfcSession = DCFCSession(session, updates)
-            val message = gson.toJson(dcfcSession)
-            printStream.println(message)
-        }
+        fun getChargingSessions(context: Context) : MutableList<DCFCSession> {
+            var activeSessions: MutableList<DCFCSession> = mutableListOf()
+            val futureResult: Deferred<MutableList<DCFCSession>> = GlobalScope.async {
+                mutex.lock()
 
-        @JvmStatic
-        fun consolidateChargingSessions(context: Context) {
-            val logDCFC = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.resources.getString(R.string.dcfclog_key), false)
-
-            if (logDCFC) {
                 try {
-                    val gson = GsonBuilder().create()
-                    val sessionFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
-                    val logFile = File(context.dataDir, CHARGINGFILENAME)
-                    val inputStream: InputStream = FileInputStream(sessionFile)
-                    val outputStream: OutputStream = FileOutputStream(logFile, true)
-                    val reader = BufferedReader(InputStreamReader(inputStream))
-                    val printStream = PrintStream(outputStream)
 
-                    var session = DCFCInfo()
-                    val updates = mutableListOf<DCFCUpdate>()
-                    var lastTime = ""
+                    // Create input and output file things
+                    val logFile = File(context.dataDir, CHARGINGFILENAME)
+                    val inputStream: InputStream = FileInputStream(logFile)
+                    val reader = BufferedReader(InputStreamReader(inputStream))
+
+                    // Read entry in the DCFC file
+                    val gson = GsonBuilder().create()
                     for (line in reader.lineSequence()) {
-                        session = gson.fromJson(line, DCFCInfo::class.java)
-                        if (lastTime != "" && lastTime != session.plugInTime) {
-                            writeSession(session, updates, printStream)
-                            updates.clear()
-                        }
-                        lastTime = session.plugInTime!!
-                        updates.add(DCFCUpdate(session))
+                        activeSessions.add( gson.fromJson(line, DCFCSession::class.java) as DCFCSession )
+
                     }
 
-                    writeSession(session, updates, printStream)
                     inputStream.close()
-                    outputStream.close()
-                    sessionFile.delete()
                 } catch (_: FileNotFoundException) {
                 } catch (e: Exception) {
-                    Log.e(
+                    LogFile.e(context,
                         MainActivity.CHANNEL_ID,
-                        "exception in DCFC.consolidateChargingSessions()",
+                        "exception in DCFC.getChargingSessions()",
                         e
                     )
                 }
+                mutex.unlock()
+                activeSessions
+
             }
+            runBlocking { activeSessions = futureResult.await() }
+            return activeSessions
         }
 
-        @JvmStatic
-        fun pseudoConsolidateChargingSessions(context: Context) : DCFCSession? {
-            var dcfcSession: DCFCSession? = null
-            try {
-                val gson = GsonBuilder().create()
-                val sessionFile = File(context.dataDir, CHARGINGSESSIONFILENAME)
-                val inputStream: InputStream = FileInputStream(sessionFile)
-                val reader = BufferedReader(InputStreamReader(inputStream))
-
-                var session = DCFCInfo()
-                val updates = mutableListOf<DCFCUpdate>()
-                var lastTime = ""
-                for (line in reader.lineSequence()) {
-                    session = gson.fromJson(line, DCFCInfo::class.java)
-                    if (lastTime != "" && lastTime != session.plugInTime) {
-                        updates.clear()
-                    }
-                    lastTime = session.plugInTime!!
-                    updates.add(DCFCUpdate(session))
-                }
-
-                inputStream.close()
-                dcfcSession = DCFCSession(session, updates)
-            } catch (_: FileNotFoundException) {
-            } catch (e: Exception) {
-                Log.e(
-                    MainActivity.CHANNEL_ID,
-                    "exception in DCFC.pseudoConsolidateChargingSessions()",
-                    e
-                )
-            }
-            return dcfcSession
-        }
 
         @JvmStatic
         fun purgeChargingData(context: Context) {
@@ -248,8 +318,8 @@ class DCFC {
                 val cutOffTime =
                     Instant.now().minusSeconds(TimeUnit.DAYS.toSeconds(180)).toEpochMilli()
                 val gson = GsonBuilder().create()
-                val cal = Calendar.getInstance();
-                val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH);
+                val cal = Calendar.getInstance()
+                val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
                 val oldLogFile = File(context.dataDir, CHARGINGFILENAME)
                 val newLogFile = File(context.dataDir, "tmplogfile")
 
@@ -261,11 +331,11 @@ class DCFC {
                 // process each entry in the log file
                 for (line in reader.lineSequence()) {
                     val data = gson.fromJson(line, DCFCSession::class.java)
-                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+                    sdf.timeZone = TimeZone.getTimeZone("UTC")
                     var thisTime = cutOffTime
                     try {
-                        cal.setTime(sdf.parse(data.plugInTime));
-                        thisTime = cal.toInstant().toEpochMilli();
+                        data.plugInTime?.let { sdf.parse(it)?.let { cal.time = it } }
+                        thisTime = cal.toInstant().toEpochMilli()
                     } catch (_: ParseException) {
                     }
                     // Copy all times after the cut-off time
@@ -284,7 +354,7 @@ class DCFC {
                 newLogFile.renameTo(oldLogFile)
             } catch (_: FileNotFoundException) {
             } catch (e: Exception) {
-                Log.e(MainActivity.CHANNEL_ID, "exception in DCFC.updateChargingData()", e)
+                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in DCFC.updateChargingData()", e)
             }
         }
 

@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -43,7 +42,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
-import com.google.gson.GsonBuilder
 import java.io.File
 import java.lang.Integer.min
 import java.text.SimpleDateFormat
@@ -55,16 +53,14 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 @RequiresApi(Build.VERSION_CODES.Q)
-class DCFCFileObserver(path: String, cb: (Boolean) -> Unit) :
+class DCFCFileObserver(path: String, cb: () -> Unit) :
     FileObserver(File(path), MODIFY + CREATE + DELETE) {
     private var callback = cb
 
     override fun onEvent(event: Int, path: String?) {
-        if (path == DCFC.CHARGINGSESSIONFILENAME) {
+        if (path == DCFC.CHARGINGFILENAME) {
             if (event == CREATE || event == MODIFY) {
-                callback(true)
-            } else if (event == DELETE) {
-                callback(false)
+                callback()
             }
         }
     }
@@ -84,7 +80,6 @@ class ChargingActivity : ComponentActivity() {
     }
 
     private lateinit var sessions: MutableList<DCFCSession>
-    private var sessionActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,17 +92,9 @@ class ChargingActivity : ComponentActivity() {
             directoryFileObserver.startWatching()
         }
 
-        val gson = GsonBuilder().create()
-        sessions = listOf<DCFCSession>().toMutableStateList()
-        for (line in File(applicationContext.dataDir, DCFC.CHARGINGFILENAME).readLines()) {
-            sessions.add(gson.fromJson(line, DCFCSession::class.java))
-        }
-
-        val session = DCFC.pseudoConsolidateChargingSessions(context = applicationContext)
-        session?.let {
-            sessions[sessions.lastIndex] = it
-            sessionActive = true
-        }
+        sessions = DCFC.getChargingSessions(
+            context = applicationContext,
+        )
 
         setContent {
             MacheWidgetTheme {
@@ -122,19 +109,20 @@ class ChargingActivity : ComponentActivity() {
         }
     }
 
-    private fun loadData(active: Boolean) {
-        if (active) {
-            val session = DCFC.pseudoConsolidateChargingSessions(context = applicationContext)
-            session?.let {
-                if (sessionActive) {
-                    sessions[sessions.lastIndex] = it
-                } else {
-                    sessions.add(session)
+    private fun loadData() {
+        val currentSessions = DCFC.getChargingSessions(context = applicationContext)
+        if(sessions.size != currentSessions.size) {
+            sessions.clear()
+            sessions.addAll(currentSessions)
+        } else {
+            for (i in 0..sessions.lastIndex) {
+                if(sessions[i].updates.size != currentSessions[i].updates.size) {
+                    sessions[i].updates = currentSessions[i].updates
                 }
             }
         }
-        sessionActive = active
     }
+
 }
 
 private
@@ -363,6 +351,8 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
             }
         }
     }
+
+
 }
 
 @Composable
