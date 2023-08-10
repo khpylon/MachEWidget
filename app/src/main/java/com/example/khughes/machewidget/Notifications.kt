@@ -1,22 +1,24 @@
 package com.example.khughes.machewidget
 
-import com.example.khughes.machewidget.Misc.Companion.ignoringBatteryOptimizations
-import android.content.BroadcastReceiver
-import android.content.Intent
-import com.example.khughes.machewidget.CarStatus.CarStatus
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
-import android.graphics.BitmapFactory
+import android.content.Intent
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.preference.PreferenceManager
+import com.example.khughes.machewidget.CarStatus.CarStatus
+import com.example.khughes.machewidget.Misc.Companion.ignoringBatteryOptimizations
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.HashMap
 
 class Notifications : BroadcastReceiver() {
+
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             LVB_NOTIFICATION -> LVBNotificationVisible = false
@@ -26,13 +28,51 @@ class Notifications : BroadcastReceiver() {
     }
 
     companion object {
+        val NORMAL_NOTIFICATIONS = "NORMAL_NOTIFICATIONS"
+        val IMPORTANT_NOTIFICATIONS = "IMPORTANT_NOTIFICATIONS"
+        val CHARGE_NOTIFICATIONS = "CHARGE_NOTIFICATIONS"
+
+        @JvmStatic
+        fun createNotificationChannels(context: Context) {
+
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            var name: CharSequence = "Informational" // getString(R.string.channel_name);
+            var description =
+                "General information from the app" // getString(R.string.channel_description);
+            var importance = NotificationManager.IMPORTANCE_DEFAULT
+            var channel = NotificationChannel(NORMAL_NOTIFICATIONS, name, importance)
+            channel.description = description
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            val notificationManager: NotificationManager = getSystemService<NotificationManager>(context,
+                NotificationManager::class.java
+            ) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+            name = "Important"
+            description = "Alerts for unusual situations"
+            importance = NotificationManager.IMPORTANCE_HIGH
+            channel = NotificationChannel(IMPORTANT_NOTIFICATIONS, name, importance)
+            channel.description = description
+            notificationManager.createNotificationChannel(channel)
+            name = "Charging"
+            description = "Reminder to plug in for charging"
+            importance = NotificationManager.IMPORTANCE_HIGH
+            channel.description = description
+            notificationManager.createNotificationChannel(channel)
+
+            // Remove the old channel
+            notificationManager.deleteNotificationChannel(MainActivity.CHANNEL_ID)
+        }
+
+
         //    private static final int OTA_NOTIFICATION = 935;
         //
         //    public static void newOTA(Context context, String message) {
         //        Intent intent = new Intent(context, OTAViewActivity.class);
         //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        //        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+        //        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
         //                .setSmallIcon(R.drawable.notification_icon)
         //                .setContentTitle("OTA information")
         //                .setContentText(message)
@@ -61,13 +101,13 @@ class Notifications : BroadcastReceiver() {
                     intent.action = LVB_NOTIFICATION
                     val pendingIntent =
                         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                    val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                    val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                         .setContentTitle("LVB Status")
                         .setContentText("The LVB's status is reporting \"low\".")
                         .setContentIntent(pendingIntent)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true)
                     val notificationManager = NotificationManagerCompat.from(context)
                     // notificationId is a unique int for each notification that you must define
@@ -122,13 +162,13 @@ class Notifications : BroadcastReceiver() {
                     intent.action = TPMS_NOTIFICATION
                     val pendingIntent =
                         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                    val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                    val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                         .setContentTitle("TPMS Status")
                         .setContentText("The TPMS status on $badTire abnormal.")
                         .setContentIntent(pendingIntent)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true)
                     val notificationManager = NotificationManagerCompat.from(context)
                     // notificationId is a unique int for each notification that you must define
@@ -151,7 +191,7 @@ class Notifications : BroadcastReceiver() {
                 intent.action = LVB_NOTIFICATION
                 val pendingIntent =
                     PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
                     .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                     .setContentTitle("Charge Status")
@@ -181,7 +221,7 @@ class Notifications : BroadcastReceiver() {
                     intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
                     val pendingIntent =
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                    val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                    val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                         .setContentTitle("Battery Optimizations are on")
@@ -208,12 +248,12 @@ class Notifications : BroadcastReceiver() {
 
         private const val CHARGE_REMINDER = 940
         fun chargeReminder(context: Context) {
-            val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+            val builder = NotificationCompat.Builder(context, CHARGE_NOTIFICATION)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                 .setContentTitle("Charge Reminder")
                 .setContentText("HVB level is below threshold and charger is not detected.")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
             val notificationManager = NotificationManagerCompat.from(context)
             // notificationId is a unique int for each notification that you must define
@@ -227,14 +267,14 @@ class Notifications : BroadcastReceiver() {
             val pendingIntent =
                 PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             val builder = NotificationCompat.Builder(
-                context!!, MainActivity.CHANNEL_ID
+                context!!, IMPORTANT_NOTIFICATIONS
             )
                 .setSmallIcon(R.drawable.notification_icon)
                 .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                 .setContentTitle("Login required")
                 .setContentText("Unable to refresh tokens: you need to log in again.")
                 .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
             val notificationManager = NotificationManagerCompat.from(context)
             // notificationId is a unique int for each notification that you must define
@@ -253,7 +293,7 @@ class Notifications : BroadcastReceiver() {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 val pendingIntent =
                     PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
                     .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                     .setContentTitle("New survey available")
@@ -270,12 +310,12 @@ class Notifications : BroadcastReceiver() {
         private const val ACCOUNT_ERROR = 943
         fun accountError(context: Context, state: String) {
             if (state === Constants.STATE_ACCOUNT_DISABLED) {
-                val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+                val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
                     .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                     .setContentTitle("FordPass account disabled!")
                     .setContentText("The app is unable to access your information.  Contact Ford to reactivate your account.")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true)
                 val notificationManager = NotificationManagerCompat.from(context)
                 // notificationId is a unique int for each notification that you must define
