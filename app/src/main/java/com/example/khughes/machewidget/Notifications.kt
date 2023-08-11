@@ -35,30 +35,30 @@ class Notifications : BroadcastReceiver() {
         @JvmStatic
         fun createNotificationChannels(context: Context) {
 
-            // Create the NotificationChannel, but only on API 26+ because
-            // the NotificationChannel class is new and not in the support library
-            var name: CharSequence = "Informational" // getString(R.string.channel_name);
-            var description =
-                "General information from the app" // getString(R.string.channel_description);
-            var importance = NotificationManager.IMPORTANCE_DEFAULT
-            var channel = NotificationChannel(NORMAL_NOTIFICATIONS, name, importance)
-            channel.description = description
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
             val notificationManager: NotificationManager = getSystemService<NotificationManager>(context,
                 NotificationManager::class.java
             ) as NotificationManager
+
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            var name: CharSequence = "Informational" // getString(R.string.channel_name);
+            var importance = NotificationManager.IMPORTANCE_DEFAULT
+            var channel = NotificationChannel(NORMAL_NOTIFICATIONS, name, importance)
+            channel.description = "General information from the app" // getString(R.string.channel_description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
             notificationManager.createNotificationChannel(channel)
+
             name = "Important"
-            description = "Alerts for unusual situations"
             importance = NotificationManager.IMPORTANCE_HIGH
             channel = NotificationChannel(IMPORTANT_NOTIFICATIONS, name, importance)
-            channel.description = description
+            channel.description = "Alerts for unusual situations"
             notificationManager.createNotificationChannel(channel)
+
             name = "Charging"
-            description = "Reminder to plug in for charging"
             importance = NotificationManager.IMPORTANCE_HIGH
-            channel.description = description
+            channel = NotificationChannel(CHARGE_NOTIFICATIONS, name, importance)
+            channel.description = "Reminder to plug in for charging"
             notificationManager.createNotificationChannel(channel)
 
             // Remove the old channel
