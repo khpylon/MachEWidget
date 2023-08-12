@@ -210,19 +210,22 @@ class DCFC {
 
             if (logDCFC) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    mutex.lock()
+               //     mutex.lock()
 
                     var updated = false
                     val update = DCFCUpdate(chargeInfo)
                     try {
 
                         // Create input and output file things
-                        val logFile = File(context.dataDir, CHARGINGFILENAME)
-                        val inputStream: InputStream = FileInputStream(logFile)
+                        val newLogFile = File(context.dataDir,  CHARGINGFILENAME)
+                        val oldLogFile = File(context.dataDir,"tmpfile")
+
+                        newLogFile.renameTo(oldLogFile)
+
+                        val inputStream: InputStream = FileInputStream(oldLogFile)
                         val reader = BufferedReader(InputStreamReader(inputStream))
 
-                        val tmpFile = File(context.dataDir, "tmpfile")
-                        val outputStream: OutputStream = FileOutputStream(tmpFile, true)
+                        val outputStream: OutputStream = FileOutputStream(newLogFile, true)
                         val printStream = PrintStream(outputStream)
 
                         // Read entry in the DCFC file
@@ -257,8 +260,7 @@ class DCFC {
                         outputStream.close()
 
                         // Replace the original file with the updated one
-                        logFile.delete()
-                        tmpFile.renameTo(logFile)
+                        oldLogFile.delete()
                     } catch (_: FileNotFoundException) {
                     } catch (e: Exception) {
                         LogFile.e(context,
@@ -268,7 +270,7 @@ class DCFC {
                         )
                     }
                 }
-                mutex.unlock()
+            //    mutex.unlock()
             }
         }
 
@@ -289,8 +291,10 @@ class DCFC {
                     // Read entry in the DCFC file
                     val gson = GsonBuilder().create()
                     for (line in reader.lineSequence()) {
-                        activeSessions.add( gson.fromJson(line, DCFCSession::class.java) as DCFCSession )
-
+                        val session = gson.fromJson(line, DCFCSession::class.java) as DCFCSession
+                        if(session.updates.size > 1) {
+                            activeSessions.add(session)
+                        }
                     }
 
                     inputStream.close()
@@ -354,7 +358,7 @@ class DCFC {
                 newLogFile.renameTo(oldLogFile)
             } catch (_: FileNotFoundException) {
             } catch (e: Exception) {
-                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in DCFC.updateChargingData()", e)
+                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in DCFC.purgeChargingData()", e)
             }
         }
 

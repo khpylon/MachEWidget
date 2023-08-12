@@ -25,11 +25,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -54,12 +56,13 @@ import kotlin.math.pow
 
 @RequiresApi(Build.VERSION_CODES.Q)
 class DCFCFileObserver(path: String, cb: () -> Unit) :
-    FileObserver(File(path), MODIFY + CREATE + DELETE) {
+    FileObserver(File(path) , CLOSE_WRITE//, MODIFY + CREATE + DELETE
+    ) {
     private var callback = cb
 
     override fun onEvent(event: Int, path: String?) {
         if (path == DCFC.CHARGINGFILENAME) {
-            if (event == CREATE || event == MODIFY) {
+            if (event == CLOSE_WRITE || event == MODIFY) {
                 callback()
             }
         }
@@ -83,6 +86,7 @@ class ChargingActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        TestReceiver.setAlarm(applicationContext)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             directoryFileObserver = DCFCFileObserver(
@@ -94,7 +98,7 @@ class ChargingActivity : ComponentActivity() {
 
         sessions = DCFC.getChargingSessions(
             context = applicationContext,
-        )
+        ).toMutableStateList()
 
         setContent {
             MacheWidgetTheme {
@@ -117,7 +121,7 @@ class ChargingActivity : ComponentActivity() {
         } else {
             for (i in 0..sessions.lastIndex) {
                 if(sessions[i].updates.size != currentSessions[i].updates.size) {
-                    sessions[i].updates = currentSessions[i].updates
+                    sessions[i] = currentSessions[i]
                 }
             }
         }
@@ -362,7 +366,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
     // count is the total number of sessions
     var count by rememberSaveable { mutableStateOf(sessions.lastIndex) }
     // If the number of sessions increases, always display the most recent (last)
-    if (count < sessions.size) {
+    if (count != sessions.size) {
         index = sessions.lastIndex
         count = sessions.size
     }
