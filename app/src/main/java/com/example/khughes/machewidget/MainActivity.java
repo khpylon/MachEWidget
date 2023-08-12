@@ -64,23 +64,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
 
-
-//
-//
-//        String other = "{\"vin\":\"3FMTK3R75MMA09929\",\"status\":200,\"maxRangePossible\":null,\"plugInTime\":null,\"initialDte\":null,\"energy\":null,\"power\":null,\"chargeLocationName\":null,\"estimatedChargeEndTime\":null,\"chargeTargetLevel\":null,\"chargeType\":null,\"network\":null,\"gsscInitiatedBy\":null,\"chargeLocationAddress\":null,\"locationType\":null}";
-//        DCFCInfo stuff2 = gson.fromJson(other, DCFCInfo.class);
-//
-//        Calendar cal = Calendar.getInstance();
-//        SimpleDateFormat sdf = new SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH);
-//        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-//        long x = 0;
-//        try {
-//            cal.setTime(sdf.parse(stuff.getTime()));
-//            x = cal.toInstant().toEpochMilli();
-//        } catch (ParseException e) {
-//            x = -1;
-//        }
-
         // If we haven't bugged about the survey before, do it once and get it over with
         if (Misc.doSurvey(context)) {
             FordPassInfo(context);
