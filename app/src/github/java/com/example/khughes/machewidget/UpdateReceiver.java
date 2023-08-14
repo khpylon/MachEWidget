@@ -97,7 +97,7 @@ public class UpdateReceiver extends BroadcastReceiver {
         Intent intent = new Intent(context, UpdateActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Notifications.Companion.getNORMAL_NOTIFICATIONS())
                 .setSmallIcon(R.drawable.notification_icon)
                 .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
                 .setContentTitle("App update")
