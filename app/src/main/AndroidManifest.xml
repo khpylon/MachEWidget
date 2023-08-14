@@ -76,10 +76,6 @@
         </provider>
 
         <receiver
-            android:name=".TestReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
             android:name=".ReminderReceiver"
             android:enabled="true"
             android:exported="true" />
