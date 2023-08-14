@@ -2,9 +2,6 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.example.khughes.machewidget.db.UserInfoDatabase
-import com.example.khughes.machewidget.db.VehicleInfoDatabase
-import java.io.File
 
 object AppUpdates {
     // This method is intended to bundle various changes from older versions to the most recent.
@@ -75,7 +72,7 @@ object AppUpdates {
             }
 
             // Remove old notification channels, and remove DCFC session file
-            if (lastVersion < "2023.08.14") {
+            if (lastVersion < "2023.08.13") {
                 DCFC.renameLogFiles(context)
                 Notifications.removeNotificationChannels(context)
             }
