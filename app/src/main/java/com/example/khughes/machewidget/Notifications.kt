@@ -69,11 +69,6 @@ class Notifications : BroadcastReceiver() {
             channel.description = "Alerts for unusual situations"
             notificationManager.createNotificationChannel(channel)
 
-            notificationManager = getSystemService<NotificationManager>(
-                context,
-                NotificationManager::class.java
-            ) as NotificationManager
-
             name = "Charging"
             importance = NotificationManager.IMPORTANCE_HIGH
             channel = NotificationChannel(CHARGE_NOTIFICATIONS, name, importance)
