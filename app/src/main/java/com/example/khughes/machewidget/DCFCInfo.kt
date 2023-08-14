@@ -210,7 +210,7 @@ class DCFC {
 
             if (logDCFC) {
                 CoroutineScope(Dispatchers.IO).launch {
-               //     mutex.lock()
+                    mutex.lock()
 
                     var updated = false
                     val update = DCFCUpdate(chargeInfo)
@@ -269,8 +269,8 @@ class DCFC {
                             e
                         )
                     }
+                    mutex.unlock()
                 }
-            //    mutex.unlock()
             }
         }
 

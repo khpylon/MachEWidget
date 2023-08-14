@@ -86,7 +86,6 @@ class ChargingActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        TestReceiver.setAlarm(applicationContext)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             directoryFileObserver = DCFCFileObserver(

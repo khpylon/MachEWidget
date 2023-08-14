@@ -73,6 +73,12 @@ object AppUpdates {
             if (lastVersion < "2023.08.03") {
                 DCFC.renameLogFiles(context)
             }
+
+            // Remove old notification channels, and remove DCFC session file
+            if (lastVersion < "2023.08.14") {
+                DCFC.renameLogFiles(context)
+                Notifications.removeNotificationChannels(context)
+            }
         }
 
         // Update internally
