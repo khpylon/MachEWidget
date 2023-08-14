@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.08.14
+### Fixed
+- Change the Update notification to work with the new notification channels.
+
 ## 2023.08.13
 ## Added
 - Display real-time DC Fast Charging activity.

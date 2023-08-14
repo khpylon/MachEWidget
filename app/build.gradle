@@ -16,7 +16,7 @@ android {
         minSdkVersion 28
         targetSdkVersion 33
         versionCode 77
-        versionName "2023.08.13"
+        versionName "2023.08.14"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
