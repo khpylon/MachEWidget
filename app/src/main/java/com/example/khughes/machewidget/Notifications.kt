@@ -30,7 +30,21 @@ class Notifications : BroadcastReceiver() {
     companion object {
         val NORMAL_NOTIFICATIONS = "NORMAL_NOTIFICATIONS"
         val IMPORTANT_NOTIFICATIONS = "IMPORTANT_NOTIFICATIONS"
-        val CHARGE_NOTIFICATIONS = "CHARGE_NOTIFICATIONS"
+        val CHARGE_NOTIFICATIONS = "CHARGER_NOTIFICATIONS"
+
+        @JvmStatic
+        fun removeNotificationChannels(context: Context) {
+            var notificationManager: NotificationManager = getSystemService<NotificationManager>(
+                context,
+                NotificationManager::class.java
+            ) as NotificationManager
+
+            val channels = notificationManager.notificationChannels
+            for (channel in channels) {
+                notificationManager.deleteNotificationChannel(channel.id)
+            }
+
+        }
 
         @JvmStatic
         fun createNotificationChannels(context: Context) {
@@ -55,14 +69,16 @@ class Notifications : BroadcastReceiver() {
             channel.description = "Alerts for unusual situations"
             notificationManager.createNotificationChannel(channel)
 
+            notificationManager = getSystemService<NotificationManager>(
+                context,
+                NotificationManager::class.java
+            ) as NotificationManager
+
             name = "Charging"
             importance = NotificationManager.IMPORTANCE_HIGH
             channel = NotificationChannel(CHARGE_NOTIFICATIONS, name, importance)
             channel.description = "Reminder to plug in for charging"
             notificationManager.createNotificationChannel(channel)
-
-            // Remove the old channel
-            notificationManager.deleteNotificationChannel(MainActivity.CHANNEL_ID)
         }
 
 
@@ -86,10 +102,12 @@ class Notifications : BroadcastReceiver() {
         private const val LVB_STATUS = 936
         private const val LVB_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.LVB"
         private var LVBNotificationVisible = false
+
         @JvmStatic
         fun checkLVBStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastLVBStatus = vehInfo.lastLVBStatus
-            val currentLVBStatus = carStatus.vehiclestatus.battery?.batteryHealth?.value ?: lastLVBStatus
+            val currentLVBStatus =
+                carStatus.vehiclestatus.battery?.batteryHealth?.value ?: lastLVBStatus
             if (currentLVBStatus != lastLVBStatus) {
                 // Save the current status
                 vehInfo.lastLVBStatus = currentLVBStatus
@@ -103,7 +121,7 @@ class Notifications : BroadcastReceiver() {
                         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                        .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                         .setContentTitle("LVB Status")
                         .setContentText("The LVB's status is reporting \"low\".")
                         .setContentIntent(pendingIntent)
@@ -127,14 +145,19 @@ class Notifications : BroadcastReceiver() {
         private const val RIGHT_REAR_TIRE = "the right rear tire is"
         private const val MANY_TIRES = "multiple tires are"
         private var TPMSNotificationVisible = false
+
         @JvmStatic
         fun checkTPMSStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastTPMSStatus = vehInfo.lastTPMSStatus
             val currentTPMSStatus: MutableMap<String, String> = HashMap()
-            currentTPMSStatus[LEFT_FRONT_TIRE] = carStatus.vehiclestatus.tpms?.leftFrontTireStatus?.value ?: "Normal"
-            currentTPMSStatus[RIGHT_FRONT_TIRE] = carStatus.vehiclestatus.tpms?.rightFrontTireStatus?.value ?: "Normal"
-            currentTPMSStatus[LEFT_REAR_TIRE] = carStatus.vehiclestatus.tpms?.outerLeftRearTireStatus?.value ?: "Normal"
-            currentTPMSStatus[RIGHT_REAR_TIRE] = carStatus.vehiclestatus.tpms?.outerRightRearTireStatus?.value ?: "Normal"
+            currentTPMSStatus[LEFT_FRONT_TIRE] =
+                carStatus.vehiclestatus.tpms?.leftFrontTireStatus?.value ?: "Normal"
+            currentTPMSStatus[RIGHT_FRONT_TIRE] =
+                carStatus.vehiclestatus.tpms?.rightFrontTireStatus?.value ?: "Normal"
+            currentTPMSStatus[LEFT_REAR_TIRE] =
+                carStatus.vehiclestatus.tpms?.outerLeftRearTireStatus?.value ?: "Normal"
+            currentTPMSStatus[RIGHT_REAR_TIRE] =
+                carStatus.vehiclestatus.tpms?.outerRightRearTireStatus?.value ?: "Normal"
             var badTire = ""
             for (key in arrayOf(
                 LEFT_FRONT_TIRE,
@@ -164,7 +187,7 @@ class Notifications : BroadcastReceiver() {
                         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                        .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                         .setContentTitle("TPMS Status")
                         .setContentText("The TPMS status on $badTire abnormal.")
                         .setContentIntent(pendingIntent)
@@ -183,6 +206,7 @@ class Notifications : BroadcastReceiver() {
         private const val CHARGE_STATUS = 938
         private const val CHARGE_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.Charge"
         private var ChargeNotificationVisible = false
+
         @JvmStatic
         fun chargeComplete(context: Context) {
             if (!ChargeNotificationVisible) {
@@ -193,7 +217,7 @@ class Notifications : BroadcastReceiver() {
                     PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                 val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
-                    .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                    .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                     .setContentTitle("Charge Status")
                     .setContentText("Charging is complete.")
                     .setContentIntent(pendingIntent)
@@ -207,6 +231,7 @@ class Notifications : BroadcastReceiver() {
         }
 
         private const val BATTERY_OPTIMIZATION = 939
+
         @JvmStatic
         fun batteryOptimization(context: Context) {
             val appInfo = StoredData(context)
@@ -223,7 +248,7 @@ class Notifications : BroadcastReceiver() {
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                        .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                         .setContentTitle("Battery Optimizations are on")
                         .setContentText("This may interfere with the app's performance; consider disabling them.")
                         .setContentIntent(pendingIntent)
@@ -248,14 +273,14 @@ class Notifications : BroadcastReceiver() {
 
         private const val CHARGE_REMINDER = 940
         fun chargeReminder(context: Context) {
-            val builder = NotificationCompat.Builder(context, CHARGE_NOTIFICATION)
+            val notificationManager = NotificationManagerCompat.from(context)
+            val builder = NotificationCompat.Builder(context, CHARGE_NOTIFICATIONS)
                 .setSmallIcon(R.drawable.notification_icon)
-                .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                 .setContentTitle("Charge Reminder")
                 .setContentText("HVB level is below threshold and charger is not detected.")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
-            val notificationManager = NotificationManagerCompat.from(context)
             // notificationId is a unique int for each notification that you must define
             notificationManager.notify(CHARGE_REMINDER, builder.build())
         }
@@ -270,7 +295,7 @@ class Notifications : BroadcastReceiver() {
                 context!!, IMPORTANT_NOTIFICATIONS
             )
                 .setSmallIcon(R.drawable.notification_icon)
-                .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                 .setContentTitle("Login required")
                 .setContentText("Unable to refresh tokens: you need to log in again.")
                 .setContentIntent(pendingIntent)
@@ -295,7 +320,7 @@ class Notifications : BroadcastReceiver() {
                     PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                 val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
-                    .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                    .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                     .setContentTitle("New survey available")
                     .setContentText("Please take the survey to provide feedback to the developer.")
                     .setContentIntent(pendingIntent)
@@ -312,7 +337,7 @@ class Notifications : BroadcastReceiver() {
             if (state === Constants.STATE_ACCOUNT_DISABLED) {
                 val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
-                    .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                    .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                     .setContentTitle("FordPass account disabled!")
                     .setContentText("The app is unable to access your information.  Contact Ford to reactivate your account.")
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
