@@ -122,6 +122,16 @@
         app:singleLineTitle="false"
         app:title="@string/use_colors" />
 
+    <Preference
+        app:key="@string/battery_opt_key"
+        app:title="@string/battery_opt"/>
+
+    <PreferenceCategory
+        app:key="@string/charging_preferences_key"
+        app:title="@string/charging_information_title"
+        app:enabled="false"
+        app:summary="@string/charging_infomation_summary">
+
     <SwitchPreferenceCompat
         app:key="@string/check_charging_key"
         app:defaultValue="true"
@@ -137,9 +147,15 @@
         app:title="@string/check_dcfastcharging_title"
         app:summary="@string/check_dcfastcharging_summary"/>
 
-    <Preference
-        app:key="@string/battery_opt_key"
-        app:title="@string/battery_opt"/>
+    <SwitchPreferenceCompat
+        app:key="@string/dcfclog_key"
+        app:dependency="@string/check_dcfastcharging_key"
+        app:defaultValue="false"
+        app:enabled="true"
+        app:title="@string/dcfclog"
+        app:summary="@string/dcfclog_summary"/>
+
+    </PreferenceCategory>
 
     <PreferenceCategory
         app:title="Developer options">
@@ -156,13 +172,6 @@
             app:enabled="true"
             app:title="@string/force_updates"
             app:summary="@string/force_updates_summary"/>
-
-        <SwitchPreferenceCompat
-            app:key="@string/dcfclog_key"
-            app:defaultValue="false"
-            app:enabled="true"
-            app:title="@string/dcfclog"
-            app:summary="@string/dcfclog_summary"/>
 
     </PreferenceCategory>
 

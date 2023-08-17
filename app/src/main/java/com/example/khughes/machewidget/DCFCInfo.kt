@@ -195,11 +195,11 @@ class DCFC {
             return logDCFC && File(context.dataDir, CHARGINGFILENAME).exists()
         }
 
-
         @JvmStatic
-        fun eraseLogFile(context: Context) {
+        fun clearLogFile(context: Context) {
             val logFile = File(context.dataDir, CHARGINGFILENAME)
             logFile.delete()
+            logFile.createNewFile()
         }
 
         // Append a new entry to the DCFC file

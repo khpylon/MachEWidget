@@ -138,5 +138,8 @@
     <string name="vehicle_s_nickname">Vehicle\'s Nickname</string>
     <string name="dcfc_active">dcfc</string>
     <string name="title_activity_charging">ChargingActivity</string>
+    <string name="charging_preferences_key">charging_preferences_key</string>
+    <string name="charging_information_title">Charging Information</string>
+    <string name="charging_infomation_summary">Only applicable to electric vehicles</string>
 
 </resources>

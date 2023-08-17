@@ -45,6 +45,17 @@ class InfoRepository internal constructor(mContext: Context) {
         }
     }
 
+    // Check if any vehicles are electric
+    fun hasElectricVehicles() : Boolean {
+        for (vehicleInfo in vehicles) {
+            val carStatus = vehicleInfo.carStatus
+            if (carStatus.isPropulsionElectric(carStatus.propulsion)) {
+                return true
+            }
+        }
+        return false
+    }
+
     fun getVehicleByVIN(VIN: String?): VehicleInfo {
         if (VIN != null) {
             for (vehicleInfo in vehicles) {

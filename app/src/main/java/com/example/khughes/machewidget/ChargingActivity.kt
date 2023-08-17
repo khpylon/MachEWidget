@@ -1,13 +1,16 @@
 package com.example.khughes.machewidget
 
+import android.content.DialogInterface
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
 import android.os.FileObserver
+import android.view.ContextThemeWrapper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -43,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
 import java.io.File
 import java.lang.Integer.min
@@ -56,7 +59,8 @@ import kotlin.math.pow
 
 @RequiresApi(Build.VERSION_CODES.Q)
 class DCFCFileObserver(path: String, cb: () -> Unit) :
-    FileObserver(File(path) , CLOSE_WRITE//, MODIFY + CREATE + DELETE
+    FileObserver(
+        File(path), CLOSE_WRITE//, MODIFY + CREATE + DELETE
     ) {
     private var callback = cb
 
@@ -86,27 +90,114 @@ class ChargingActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val context = applicationContext
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            directoryFileObserver = DCFCFileObserver(
-                File(applicationContext.dataDir.toString()).toString(),
-                this::loadData
-            )
-            directoryFileObserver.startWatching()
+        sessions = DCFC.getChargingSessions(context = context).toMutableStateList()
+
+        if (sessions.size == 0) {
+            val error: String
+            val message: String
+
+            // If there is a log file, it must be empty, so explain what to do
+            if (DCFC.logFileExists(context = context)) {
+                error = "The log file is empty."
+                message = "Once you begin DC fast charging, " +
+                        "manually refresh the app to start capturing data."
+            }
+
+            // Otherwise some settings are disabled.  Explain which need to be enabled.
+            else {
+                val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+
+                val chargeKey = context.resources.getString(R.string.check_charging_key)
+                val chargeTitle = context.resources.getString(R.string.check_charging)
+                val checkDCFCKey = context.resources.getString(R.string.check_dcfastcharging_key)
+                val dcfcTitle = context.resources.getString(R.string.check_dcfastcharging_title)
+                val logDCFCKey = context.resources.getString(R.string.dcfclog_key)
+                val logDCFCTitle = context.resources.getString(R.string.dcfclog)
+
+                val checkCharging = prefs.getBoolean(chargeKey, false)
+                val checkDCFC = prefs.getBoolean(checkDCFCKey, false)
+                val logDCFC = prefs.getBoolean(logDCFCKey, false)
+
+                if (!checkCharging) {
+                    error = "None of the required settings are enabled."
+                    message = "Under Settings, enable \"" + chargeTitle + "\", \"" +
+                            dcfcTitle + "\", and \"" + logDCFCTitle + "\"." +
+                            "\n\nDo you want to enable these settings?"
+                } else if (!checkDCFC) {
+                    error = "Two of the required settings are disabled."
+                    message = "Under Settings, enable both \"" + dcfcTitle + "\" and \"" +
+                            logDCFCTitle + "\"." +
+                            "\n\nDo you want to enable these settings?"
+                } else if (!logDCFC) {
+                    error = "One of the required settings is disabled."
+                    message = "Under Settings, enable \"" + logDCFCTitle + "\"." +
+                            "\n\nDo you want to enable this setting?"
+                } else {
+                    error = "There is an unexpected issue."
+                    message = "Please file a bug report on github."
+                    finish()
+                }
+            }
+
+            // Create the basic dialog
+            val dialog = AlertDialog.Builder(ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                .setTitle(error)
+                .setMessage(message)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+
+            // If the log file is there, it's just an information dialog
+            if (DCFC.logFileExists(context = context)) {
+                dialog.setPositiveButton(
+                    android.R.string.ok
+                ) { _: DialogInterface?, _: Int -> finish() }
+            }
+
+            // If settings are disabled, ask if the user wants to enable them.
+            else {
+                dialog.setPositiveButton(
+                    android.R.string.ok
+                ) { _: DialogInterface?, _: Int ->
+                    val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                    val edit = prefs.edit()
+
+                    val chargeKey = context.resources.getString(R.string.check_charging_key)
+                    val checkDCFCKey =
+                        context.resources.getString(R.string.check_dcfastcharging_key)
+                    val logDCFCKey = context.resources.getString(R.string.dcfclog_key)
+
+                    edit.putBoolean(chargeKey, true).apply()
+                    edit.putBoolean(checkDCFCKey, true).apply()
+                    edit.putBoolean(logDCFCKey, true).apply()
+                    finish()
+                }
+                    .setNegativeButton(
+                        android.R.string.cancel
+                    ) { _: DialogInterface?, _: Int -> finish() }
+            }
+            dialog.show()
         }
 
-        sessions = DCFC.getChargingSessions(
-            context = applicationContext,
-        ).toMutableStateList()
+        // Otherwise we're ready do go: display some stats
+        else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                directoryFileObserver = DCFCFileObserver(
+                    File(applicationContext.dataDir.toString()).toString(),
+                    this::loadData
+                )
+                directoryFileObserver.startWatching()
+            }
 
-        setContent {
-            MacheWidgetTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    MainScreen(sessions)
+            setContent {
+                MacheWidgetTheme {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        MainScreen(sessions)
+                    }
                 }
             }
         }
@@ -114,12 +205,12 @@ class ChargingActivity : ComponentActivity() {
 
     private fun loadData() {
         val currentSessions = DCFC.getChargingSessions(context = applicationContext)
-        if(sessions.size != currentSessions.size) {
+        if (sessions.size != currentSessions.size) {
             sessions.clear()
             sessions.addAll(currentSessions)
         } else {
             for (i in 0..sessions.lastIndex) {
-                if(sessions[i].updates.size != currentSessions[i].updates.size) {
+                if (sessions[i].updates.size != currentSessions[i].updates.size) {
                     sessions[i] = currentSessions[i]
                 }
             }

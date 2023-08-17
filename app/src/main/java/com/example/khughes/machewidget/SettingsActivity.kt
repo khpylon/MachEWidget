@@ -1,11 +1,9 @@
 package com.example.khughes.machewidget
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.icu.text.MessageFormat
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
@@ -13,6 +11,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val LAUNCH_BATTERY_OPTIMIZATIONS = 1
 private lateinit var battery: Preference
@@ -31,9 +32,11 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
-        var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        var resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 displayOptimizationMessage(requireContext())
-        }
+            }
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val context = context as Context
@@ -45,7 +48,7 @@ class SettingsActivity : AppCompatActivity() {
                 Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any? ->
                     val newInterval = newValue as String?
                     newInterval?.let {
-                        nextAlarm( context, newInterval.toInt() )
+                        nextAlarm(context, newInterval.toInt())
                     }
                     true
                 }
@@ -59,7 +62,8 @@ class SettingsActivity : AppCompatActivity() {
                 }
 
             // Erase the old log file on enable.
-            val verbose: Preference? = findPreference(this.resources.getString(R.string.logging_key))
+            val verbose: Preference? =
+                findPreference(this.resources.getString(R.string.logging_key))
             verbose?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
                     if (newValue as Boolean) {
@@ -68,15 +72,52 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
 
-            // Erase the DCFC log file on disable.
-            val dcfclogs: Preference? = findPreference(this.resources.getString(R.string.dcfclog_key))
-            dcfclogs?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
-                    if (!(newValue as Boolean)) {
-                        DCFC.eraseLogFile(context)
-                    }
-                    true
+            // Only handle these settings if there are electric vehicles
+            CoroutineScope(Dispatchers.IO).launch {
+                val info = InfoRepository(context)
+                if (info.hasElectricVehicles()) {
+
+                    // These options are only valid in precedence.  If one gets disabled, also disable
+                    // the others that depend in it.
+
+                    val dcfcLogs =
+                        findPreference(context.resources.getString(R.string.dcfclog_key)) as SwitchPreferenceCompat?
+                    dcfcLogs?.onPreferenceChangeListener =
+                        Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                            DCFC.clearLogFile(context)
+                            true
+                        }
+
+                    val dcfcCharging =
+                        findPreference(context.resources.getString(R.string.check_dcfastcharging_key)) as SwitchPreferenceCompat?
+                    dcfcCharging?.onPreferenceChangeListener =
+                        Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                            if (!(newValue as Boolean)) {
+                                dcfcLogs?.isChecked = false
+                            }
+                            true
+                        }
+
+                    val charging: Preference? =
+                        findPreference(context.resources.getString(R.string.check_charging_key))
+                    charging?.onPreferenceChangeListener =
+                        Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                            if (!(newValue as Boolean)) {
+                                DCFC.clearLogFile(context)
+                                dcfcLogs?.isChecked = false
+                                dcfcCharging?.isChecked = false
+                            }
+                            true
+                        }
+                    findPreference<PreferenceCategory>(
+                        context.resources.getString(R.string.charging_preferences_key)
+                    )?.isEnabled = true
+                } else {
+                    findPreference<PreferenceCategory>(
+                        context.resources.getString(R.string.charging_preferences_key)
+                    )?.isEnabled = false
                 }
+            }
 
             // Changing any of these preferences requires updating the widget
             for (id in intArrayOf(
@@ -103,7 +144,8 @@ class SettingsActivity : AppCompatActivity() {
             }
 
             // Set app version info
-            val version: Preference? = findPreference(this.resources.getString(R.string.version_key))
+            val version: Preference? =
+                findPreference(this.resources.getString(R.string.version_key))
             version?.summary = BuildConfig.VERSION_NAME + " " + BuildConfig.FLAVOR
             version?.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
@@ -133,7 +175,8 @@ class SettingsActivity : AppCompatActivity() {
                 }
 
             // Display battery optimization setting and make easier for user to change
-            val tmpBattery : Preference? = findPreference(this.resources.getString(R.string.battery_opt_key))
+            val tmpBattery: Preference? =
+                findPreference(this.resources.getString(R.string.battery_opt_key))
             battery = tmpBattery as Preference
             displayOptimizationMessage(context)
             activity?.let {
@@ -154,10 +197,11 @@ class SettingsActivity : AppCompatActivity() {
 
             val showMMOTA =
                 PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean("showMMOTA", false
+                    .getBoolean(
+                        "showMMOTA", false
                     )
 
-            if (!showMMOTA){
+            if (!showMMOTA) {
                 val item = findPreference<SwitchPreferenceCompat>("checkMMOTA")
                 item?.parent?.removePreference(item)
             }

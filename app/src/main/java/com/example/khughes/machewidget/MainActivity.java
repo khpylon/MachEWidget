@@ -209,15 +209,16 @@ public class MainActivity extends AppCompatActivity {
                 .getBoolean(context.getResources().getString(R.string.use_colors_key), true);
         menu.findItem(R.id.action_color).setVisible(colorsEnabled);
 
-        // Hide view DCFC charging option if there isn't a log file
-        if (!DCFC.logFileExists(context)) {
-            menu.findItem(R.id.action_charge).setVisible(false);
-        }
-
         // The PlayStore version doesn't do all the update stuff
         if (com.example.khughes.machewidget.BuildConfig.FLAVOR.equals("playstore")) {
             menu.findItem(R.id.action_update).setVisible(false);
         }
+
+        // Only show the DCFC log option if there are electric vehicles
+        new Thread(() -> {
+            InfoRepository info = new InfoRepository(context);
+            menu.findItem(R.id.action_charge).setVisible(info.hasElectricVehicles());
+        }).start();
 
         return true;
     }
