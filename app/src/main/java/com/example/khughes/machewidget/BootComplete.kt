@@ -61,5 +61,7 @@ class BootComplete : BroadcastReceiver() {
             CarStatusWidget.updateWidget(context)
             ReminderReceiver.checkAlarms(context)
         }
+
+        UpdateReceiver.createIntent(context)
     }
 }
