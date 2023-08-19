@@ -18,8 +18,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-private const val HOUR_MASK = 0x1f
-private const val NOTIFICATION_BIT = 0x20
 private lateinit var info: InfoRepository
 
 class ReminderActivity : AppCompatActivity() {
@@ -200,5 +198,10 @@ class ReminderActivity : AppCompatActivity() {
         coroutineScope {
             withContext(Dispatchers.IO) { InfoRepository(context) }
         }
+
+    companion object {
+        const val HOUR_MASK = 0x1f
+        const val NOTIFICATION_BIT = 0x20
+    }
 
 }

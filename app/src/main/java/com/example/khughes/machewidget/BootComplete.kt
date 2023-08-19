@@ -49,6 +49,9 @@ class BootComplete : BroadcastReceiver() {
 
             // Check for updates (github version only).
             UpdateReceiver.createIntent(context)
+
+            // Restart any charging reminders that exist
+            ReminderReceiver.checkAlarms(context)
         }
 
         if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED, ignoreCase = true)) {
@@ -56,6 +59,7 @@ class BootComplete : BroadcastReceiver() {
             Misc.removeAPK(context)
             AppUpdates.performUpdates(context)
             CarStatusWidget.updateWidget(context)
+            ReminderReceiver.checkAlarms(context)
         }
     }
 }

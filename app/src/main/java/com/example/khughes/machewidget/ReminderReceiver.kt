@@ -10,6 +10,8 @@ import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 private const val VIN_ID = "VIN"
 
@@ -24,11 +26,17 @@ class ReminderReceiver : BroadcastReceiver() {
                 val threshold = vehicle.chargeThresholdLevel
                 val actualLevel = vehicle.carStatus.vehiclestatus.batteryFillLevel?.value?.toInt() ?: threshold
                 val pluggedIn = (vehicle.carStatus.vehiclestatus.plugStatus?.value ?: 0) == 1
+
+                LogFile.d(context = context, MainActivity.CHANNEL_ID,
+                    "ReminderReceiver: threshold = "+threshold +
+                    ", actualLevel = " + actualLevel +
+                    ", pluggedIn = " + pluggedIn )
                 if ((!pluggedIn || vehicle.carStatus.vehiclestatus.chargingStatus?.value in arrayOf(
                         Constants.CHARGING_STATUS_PAUSED,
                         Constants.CHARGING_STATUS_NOT_READY
                     )) && actualLevel <= threshold
                 ) {
+                    LogFile.d(context = context, MainActivity.CHANNEL_ID, "ReminderReceiver: firing notification")
                     Notifications.chargeReminder(context)
                 }
                 setAlarm(context, VIN, vehicle.chargeHour and 0x1f)
@@ -36,10 +44,10 @@ class ReminderReceiver : BroadcastReceiver() {
         }
     }
 
-    private suspend fun getInfo(context: Context): InfoRepository =
-        coroutineScope {
-            withContext(Dispatchers.IO) { InfoRepository(context) }
-        }
+//    private suspend fun getInfo(context: Context): InfoRepository =
+//        coroutineScope {
+//            withContext(Dispatchers.IO) { InfoRepository(context) }
+//        }
 
     companion object {
 
@@ -61,6 +69,13 @@ class ReminderReceiver : BroadcastReceiver() {
                 LocalDate.now().atTime(hour, 0).plusDays(if (hour > currentHour) 0 else 1)
                     .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
+            val time = LocalDate.now().atTime(hour, 0).plusDays(if (hour > currentHour) 0 else 1)
+            val timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US))
+            LogFile.i(
+                context, MainActivity.CHANNEL_ID,
+                "ReminderReceiver: next reminder alarm at $timeText"
+            )
+
             // Create intent including the VIN
             val intent = Intent(context, ReminderReceiver::class.java).putExtra(VIN_ID, VIN)
             val pendingIntent = PendingIntent.getBroadcast(
@@ -78,5 +93,22 @@ class ReminderReceiver : BroadcastReceiver() {
                 pendingIntent
             )
         }
+
+        fun checkAlarms(context: Context) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val info = getInfo(context)
+                for (vehicle in info.vehicles) {
+                    if((vehicle.chargeHour and ReminderActivity.NOTIFICATION_BIT) != 0) {
+                        cancelAlarm(context, VIN = vehicle.vin!!)
+                        setAlarm(context, VIN = vehicle.vin!!, vehicle.chargeHour and ReminderActivity.HOUR_MASK)
+                    }
+                }
+            }
+        }
+        private suspend fun getInfo(context: Context): InfoRepository =
+            coroutineScope {
+                withContext(Dispatchers.IO) { InfoRepository(context) }
+            }
+
     }
 }
