@@ -9,14 +9,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
-
     defaultConfig {
         applicationId "com.example.khughes.machewidget"
+        compileSdk 34
         minSdkVersion 28
-        targetSdkVersion 33
-        versionCode 78
-        versionName "2023.08.17"
+        targetSdkVersion 34
+        versionCode 79
+        versionName "2023.08.19"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -41,12 +40,12 @@ android {
             }
         }
     }
-    task versionTxt { task ->
+    tasks.register('versionTxt') { task ->
         doLast {
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss z")
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
             new File(projectDir, "VERSION.txt").text =
-"""Version: ${defaultConfig.versionName}
+                    """Version: ${defaultConfig.versionName}
 Commit: ${grgit.head().abbreviatedId}
 Build date: ${sdf.format(new Date())}
 Application-name: com.example.khughes.machewidget
@@ -54,7 +53,7 @@ Application-name: com.example.khughes.machewidget
         }
     }
 
-    flavorDimensions "none"
+    flavorDimensions = ["none"]
     productFlavors {
         playstore {
             dimension "none"
@@ -65,8 +64,8 @@ Application-name: com.example.khughes.machewidget
             dimension "none"
         }
     }
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
             if (variant.flavorName == "github") {
                 outputFileName = "app-release.apk"
             }
@@ -110,10 +109,10 @@ Application-name: com.example.khughes.machewidget
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.0'
 
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.3'
     implementation 'com.google.code.gson:gson:2.10.1'

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 2023.08.17
+### Added
+- Preliminary support for Fusion vehicles.
+- Force charging reminder alarm to be reloaded on boot.
+### Fixed
+- Fix crash on some phones during app load. 
+
+## 2023.08.17
 ### Changed
 - Changed the operation of the "View DCFC logs" activity.  This menu option, and charging settings,
   will only appear if you have an electric vehicle in your profile.  When accessed, it will
