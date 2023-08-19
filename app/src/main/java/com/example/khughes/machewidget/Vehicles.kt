@@ -13,6 +13,7 @@ open class Vehicle(val VIN: String) {
 
         private const val WORLD_MANUFACTURING_IDENTIFIER_START_INDEX = 1 - 1
         private const val WORLD_MANUFACTURING_IDENTIFIER_END_INDEX = 3
+        private const val WORLD_MANUFACTURING_IDENTIFIER_MEXICO_CAR = "3FA"
         private const val WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV = "3FM"
         private const val WORLD_MANUFACTURING_IDENTIFIER_MEXICO_TRUCK = "3FT"
         private const val WORLD_MANUFACTURING_IDENTIFIER_GERMANY = "WF0"
@@ -173,6 +174,18 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_FOCUS_ST_HATCH = "P3L"
         private const val NA_LINE_SERIES_FOCUS_BEV_HATCH = "P3R"
         private const val NA_LINE_SERIES_FOCUS_RS_HATCH = "P3T"
+
+        private const val NA_LINE_SERIES_FUSION_S = "P0G"
+        private const val NA_LINE_SERIES_FUSION_SE = "P0H"
+        private const val NA_LINE_SERIES_FUSION_TITANIUM_FWD = "P0K"
+        private const val NA_LINE_SERIES_FUSION_TITANIUM_AWD = "P0D"
+        private const val NA_LINE_SERIES_FUSION_S_HYBRID = "P0U"
+        private const val NA_LINE_SERIES_FUSION_SE_HYBRID = "P0L"
+        private const val NA_LINE_SERIES_FUSION_SE_AWD = "P0T"
+        private const val NA_LINE_SERIES_FUSION_SE_PHEV = "P0P"
+        private const val NA_LINE_SERIES_FUSION_TITANIUM_HEV = "P0R"
+        private const val NA_LINE_SERIES_FUSION_TITANIUM_PHEV = "P0S"
+        private const val NA_LINE_SERIES_FUSION_SPORT = "P0V"
 
         private const val EURO_LINE_SERIES_START_INDEX = 7 - 1
         private const val EURO_LINE_SERIES_END_INDEX = 9
@@ -504,6 +517,30 @@ open class Vehicle(val VIN: String) {
                     focusLineSeries.contains(lineSeries)
         }
 
+        private fun isFusion(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            val fusionLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_FUSION_S,
+                NA_LINE_SERIES_FUSION_SE,
+                NA_LINE_SERIES_FUSION_TITANIUM_FWD,
+                NA_LINE_SERIES_FUSION_TITANIUM_AWD,
+                NA_LINE_SERIES_FUSION_S_HYBRID,
+                NA_LINE_SERIES_FUSION_SE_HYBRID,
+                NA_LINE_SERIES_FUSION_SE_AWD,
+                NA_LINE_SERIES_FUSION_SE_PHEV,
+                NA_LINE_SERIES_FUSION_TITANIUM_HEV,
+                NA_LINE_SERIES_FUSION_TITANIUM_PHEV,
+                NA_LINE_SERIES_FUSION_SPORT,            )
+            val lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            return wmi ==  WORLD_MANUFACTURING_IDENTIFIER_MEXICO_CAR
+                    && fusionLineSeries.contains(lineSeries)
+        }
+
+
         private val expeditionLineSeries: Set<String> = setOf(
             NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2,
             NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4,
@@ -648,7 +685,7 @@ open class Vehicle(val VIN: String) {
         fun isVINRecognized(VIN: String): Boolean =
             isMachE(VIN) || isF150(VIN) || isF250(VIN) || isF350(VIN)
             || isBronco(VIN) || isBroncoSport(VIN) || isExplorer(VIN)
-            || isEscape(VIN) || isEdge(VIN) || isFocus(VIN)
+            || isEscape(VIN) || isEdge(VIN) || isFocus(VIN) || isFusion(VIN)
             || isExpedition(VIN) || isRanger(VIN) || isMaverick(VIN)
             || isMustang(VIN) || isKuga(VIN) || isPuma(VIN) || isEUFocus(VIN)
 
@@ -660,8 +697,10 @@ open class Vehicle(val VIN: String) {
             if (isBroncoSport(VIN)) return BroncoSport(VIN)
             if (isExpedition(VIN)) return Expedition(VIN)
             if (isMustang(VIN)) return Mustang(VIN)
+            if (isFusion(VIN)) return Fusion(VIN)
             if (isKuga(VIN)) return Kuga(VIN)
             if (isPuma(VIN)) return Puma(VIN)
+
             if (isFocus(VIN) || isEUFocus(VIN)) return Focus(VIN)
 
             // Next check for F-150 variants
@@ -1197,6 +1236,11 @@ class BroncoSport(VIN: String) : Bronco(VIN) {
     override val name = "Bronco Sport"
 }
 
+class Fusion(VIN: String) : Escape(VIN) {
+    override val offsetPositions = arrayOf(340, 280)
+    override val name = "Fusion"
+    override val logoID = R.drawable.generic_logo
+}
 class Kuga(VIN: String) : Escape(VIN) {
     override val offsetPositions = arrayOf(340, 280)
     override val name = "Kuga"
