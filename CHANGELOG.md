@@ -7,7 +7,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 
 ## 2023.08.20
 ### Fixed
-- Fix crash (again) when setting up menu options.
+- Fix crash (again) when setting up menu options. 
 
 ## 2023.08.19
 ### Added
