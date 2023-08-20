@@ -2,6 +2,9 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import androidx.preference.PreferenceManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object AppUpdates {
     // This method is intended to bundle various changes from older versions to the most recent.
@@ -75,6 +78,13 @@ object AppUpdates {
             if (lastVersion < "2023.08.13") {
                 DCFC.renameLogFiles(context)
                 Notifications.removeNotificationChannels(context)
+            }
+
+            // Create stored data value reflecting presence of electric vehicles in database
+            if (lastVersion < "2023.08.20") {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val info = InfoRepository(context)
+                }
             }
         }
 

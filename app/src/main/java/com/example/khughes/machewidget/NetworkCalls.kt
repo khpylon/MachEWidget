@@ -840,6 +840,13 @@ class NetworkCalls {
                                 info.setLastUpdateTime()
                                 info.lastRefreshTime = currentRefreshTime
                                 infoDao.insertVehicleInfo(info)
+
+                                // If this vehicle is electric, update global setting
+                                if( car.isPropulsionElectric(car.propulsion) ||
+                                        car.isPropulsionPHEV(car.propulsion) ) {
+                                    val appInfo = StoredData(context)
+                                    appInfo.electricVehicles = true
+                                }
                                 i(context, MainActivity.CHANNEL_ID, "got status")
                                 nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
                             }

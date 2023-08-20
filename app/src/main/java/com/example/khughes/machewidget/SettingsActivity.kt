@@ -73,50 +73,47 @@ class SettingsActivity : AppCompatActivity() {
                 }
 
             // Only handle these settings if there are electric vehicles
-            CoroutineScope(Dispatchers.IO).launch {
-                val info = InfoRepository(context)
-                if (info.hasElectricVehicles()) {
+            val appInfo = StoredData(context)
+            if (appInfo.electricVehicles) {
+                // These options are only valid in precedence.  If one gets disabled, also disable
+                // the others that depend in it.
 
-                    // These options are only valid in precedence.  If one gets disabled, also disable
-                    // the others that depend in it.
+                val dcfcLogs =
+                    findPreference(context.resources.getString(R.string.dcfclog_key)) as SwitchPreferenceCompat?
+                dcfcLogs?.onPreferenceChangeListener =
+                    Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                        DCFC.clearLogFile(context)
+                        true
+                    }
 
-                    val dcfcLogs =
-                        findPreference(context.resources.getString(R.string.dcfclog_key)) as SwitchPreferenceCompat?
-                    dcfcLogs?.onPreferenceChangeListener =
-                        Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                val dcfcCharging =
+                    findPreference(context.resources.getString(R.string.check_dcfastcharging_key)) as SwitchPreferenceCompat?
+                dcfcCharging?.onPreferenceChangeListener =
+                    Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                        if (!(newValue as Boolean)) {
+                            dcfcLogs?.isChecked = false
+                        }
+                        true
+                    }
+
+                val charging: Preference? =
+                    findPreference(context.resources.getString(R.string.check_charging_key))
+                charging?.onPreferenceChangeListener =
+                    Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                        if (!(newValue as Boolean)) {
                             DCFC.clearLogFile(context)
-                            true
+                            dcfcLogs?.isChecked = false
+                            dcfcCharging?.isChecked = false
                         }
-
-                    val dcfcCharging =
-                        findPreference(context.resources.getString(R.string.check_dcfastcharging_key)) as SwitchPreferenceCompat?
-                    dcfcCharging?.onPreferenceChangeListener =
-                        Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
-                            if (!(newValue as Boolean)) {
-                                dcfcLogs?.isChecked = false
-                            }
-                            true
-                        }
-
-                    val charging: Preference? =
-                        findPreference(context.resources.getString(R.string.check_charging_key))
-                    charging?.onPreferenceChangeListener =
-                        Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
-                            if (!(newValue as Boolean)) {
-                                DCFC.clearLogFile(context)
-                                dcfcLogs?.isChecked = false
-                                dcfcCharging?.isChecked = false
-                            }
-                            true
-                        }
-                    findPreference<PreferenceCategory>(
-                        context.resources.getString(R.string.charging_preferences_key)
-                    )?.isEnabled = true
-                } else {
-                    findPreference<PreferenceCategory>(
-                        context.resources.getString(R.string.charging_preferences_key)
-                    )?.isEnabled = false
-                }
+                        true
+                    }
+                findPreference<PreferenceCategory>(
+                    context.resources.getString(R.string.charging_preferences_key)
+                )?.isEnabled = true
+            } else {
+                findPreference<PreferenceCategory>(
+                    context.resources.getString(R.string.charging_preferences_key)
+                )?.isEnabled = false
             }
 
             // Changing any of these preferences requires updating the widget

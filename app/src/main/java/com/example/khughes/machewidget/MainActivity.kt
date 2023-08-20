@@ -159,6 +159,16 @@ class MainActivity : AppCompatActivity() {
 
         // Allow the app to display notifications
         createNotificationChannels(applicationContext)
+
+        // If we get into a weird state where the user appears to have logged in but there are no
+        // vehicles, send them to Manage Vehicles
+        CoroutineScope(Dispatchers.IO).launch {
+            val info = InfoRepository(applicationContext)
+            if (info.user.programState == Constants.STATE_HAVE_TOKEN && info.vehicles.size == 0 ) {
+                val intent = Intent(applicationContext, VehicleActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -228,10 +238,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Only show the DCFC log option if there are electric vehicles
-        CoroutineScope(Dispatchers.IO).launch {
-            val info = InfoRepository(applicationContext)
-            menu.findItem(R.id.action_charge).isVisible = info.hasElectricVehicles()
-        }
+        val appInfo = StoredData(applicationContext)
+        menu.findItem(R.id.action_charge).isVisible = appInfo.electricVehicles
+
         return true
     }
 

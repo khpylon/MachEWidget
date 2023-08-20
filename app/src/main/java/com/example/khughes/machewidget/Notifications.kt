@@ -342,5 +342,27 @@ class Notifications : BroadcastReceiver() {
                 notificationManager.notify(ACCOUNT_ERROR, builder.build())
             }
         }
+
+        private const val NO_VEHICLES = 944
+        fun missingVehicles(context: Context) {
+            val intent = Intent(context, VehicleActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val pendingIntent =
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            val builder = NotificationCompat.Builder(
+                context!!, IMPORTANT_NOTIFICATIONS
+            )
+                .setSmallIcon(R.drawable.notification_icon)
+                .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
+                .setContentTitle("No vehicles found")
+                .setContentText("No vehicles are associated with te app.")
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+            val notificationManager = NotificationManagerCompat.from(context)
+            notificationManager.notify(NO_VEHICLES, builder.build())
+        }
+
+
     }
 }

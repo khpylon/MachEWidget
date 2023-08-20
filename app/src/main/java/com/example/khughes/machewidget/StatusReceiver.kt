@@ -168,8 +168,12 @@ class StatusReceiver : BroadcastReceiver() {
                 }
 
                 Constants.STATE_HAVE_TOKEN -> {
-                    LogFile.e(context, MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
-//                        getVehicleInfo(context, userId)
+                    if (info.vehicles.size == 0) {
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "Login looks OK, but no vehicles found")
+                        Notifications.missingVehicles(context)
+                    } else {
+                        LogFile.e(context, MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
+                    }
                     appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
                 }
 
@@ -227,7 +231,7 @@ class StatusReceiver : BroadcastReceiver() {
                         "Vehicle is DC fast charging; setting alarm for 30 seconds"
                     )
                     cancelAlarm(context)
-                    if(::alarmTime.isInitialized) {
+                    if (::alarmTime.isInitialized) {
                         nextAlarm(context, alarmTime.plusSeconds(30))
                     } else {
                         LogFile.e(

@@ -36,11 +36,13 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
 
     internal inner class VehicleRepository(context: Context) {
         private val mVehDao: VehicleInfoDao
+        private var mContext: Context
         val allVehicles: LiveData<List<VehicleIds>>
 
         init {
             mVehDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
             this.allVehicles = mVehDao.liveDataVehicleInfo
+            mContext = context
         }
 
         fun enable(VIN: String, value: Boolean) {
@@ -48,7 +50,12 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
         }
 
         fun remove(VIN: String) {
-            Thread { mVehDao.deleteVehicleInfoByVIN(VIN) }.start()
+            Thread {
+                mVehDao.deleteVehicleInfoByVIN(VIN)
+                // Force recalculation of electric vehicles
+                val info = InfoRepository(mContext)
+                info.vehicles.size
+            }.start()
         }
     }
 }

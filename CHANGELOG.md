@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2023.08.17
+## 2023.08.20
+### Fixed
+- Fix crash (again) when setting up menu options.
+
+## 2023.08.19
 ### Added
 - Preliminary support for Fusion vehicles.
 - Force charging reminder alarm to be reloaded on boot.
