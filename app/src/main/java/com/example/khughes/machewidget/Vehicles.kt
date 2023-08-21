@@ -1236,10 +1236,39 @@ class BroncoSport(VIN: String) : Bronco(VIN) {
     override val name = "Bronco Sport"
 }
 
-class Fusion(VIN: String) : Escape(VIN) {
+open class Fusion(VIN: String) : Vehicle(VIN) {
+    override val verticalDrawables: MutableMap<String, Int> = mutableMapOf(
+        WIREFRAME to R.drawable.fusion_wireframe_vert,
+        HOOD to R.drawable.fusion_hood_vert,
+        TAILGATE to R.drawable.fusion_trunk_vert,
+        LEFT_FRONT_DOOR to R.drawable.fusion_lfdoor_vert,
+        RIGHT_FRONT_DOOR to R.drawable.fusion_rfdoor_vert,
+        LEFT_REAR_DOOR to R.drawable.fusion_lrdoor_vert,
+        RIGHT_REAR_DOOR to R.drawable.fusion_rrdoor_vert,
+        BODY_PRIMARY to R.drawable.fusion_primary_vert,
+        BODY_SECONDARY to R.drawable.fusion_secondary_vert,
+    )
+
+    override val horizontalDrawables: MutableMap<String, Int> = mutableMapOf(
+        WIREFRAME to R.drawable.fusion_wireframe_horz,
+        HOOD to R.drawable.fusion_hood_horz,
+        TAILGATE to R.drawable.fusion_trunk_horz,
+        LEFT_FRONT_DOOR to R.drawable.fusion_lfdoor_horz,
+        RIGHT_FRONT_DOOR to R.drawable.fusion_rfdoor_horz,
+        LEFT_REAR_DOOR to R.drawable.fusion_lrdoor_horz,
+        RIGHT_REAR_DOOR to R.drawable.fusion_rrdoor_horz,
+        LEFT_FRONT_WINDOW to R.drawable.fusion_lfwindow_horz,
+        RIGHT_FRONT_WINDOW to R.drawable.fusion_rfwindow_horz,
+        LEFT_REAR_WINDOW to R.drawable.fusion_lrwindow_horz,
+        RIGHT_REAR_WINDOW to R.drawable.fusion_rrwindow_horz,
+        BODY_PRIMARY to R.drawable.fusion_primary_horz,
+        BODY_SECONDARY to R.drawable.fusion_secondary_horz,
+    )
+
+    override val layoutID = R.layout.fusion_widget
     override val offsetPositions = arrayOf(340, 280)
     override val name = "Fusion"
-    override val logoID = R.drawable.generic_logo
+    override val logoID = R.drawable.fusion_logo
 }
 class Kuga(VIN: String) : Escape(VIN) {
     override val offsetPositions = arrayOf(340, 280)
