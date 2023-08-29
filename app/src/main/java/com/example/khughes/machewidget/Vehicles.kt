@@ -20,6 +20,8 @@ open class Vehicle(val VIN: String) {
         private const val WORLD_MANUFACTURING_IDENTIFIER_USA_CAR = "1FA"
         private const val WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK = "1FT"
         private const val WORLD_MANUFACTURING_IDENTIFIER_USA_MPV = "1FM"
+        private const val WORLD_MANUFACTURING_IDENTIFIER_THAILAND_AAT = "MNA"
+        private const val WORLD_MANUFACTURING_IDENTIFIER_THAILAND_FTM = "MPB"
 
         private const val NA_LINE_SERIES_START_INDEX = 5 - 1
         private const val NA_LINE_SERIES_END_INDEX = 7
@@ -153,6 +155,13 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_RANGER_SUPERCAB_4x4 = "R1F"
         private const val NA_LINE_SERIES_RANGER_SUPERCREW_4x2 = "R4E"
         private const val NA_LINE_SERIES_RANGER_SUPERCREW_4x4 = "R4F"
+
+        private const val EURO_LINE_SERIES_RANGER_REGULARCAB_4X4 = "F90"
+        private const val EURO_LINE_SERIES_RANGER_SUPERCAB_4x4 = "F60"
+        private const val EURO_LINE_SERIES_RANGER_SUPERCREW_4x2 = "E90"
+        private const val EURO_LINE_SERIES_RANGER_SUPERCREW_4x4 = "F70"
+        private const val EURO_LINE_SERIES_RANGER_RAPTOR_PX = "E60"
+        private const val EURO_LINE_SERIES_RANGER_RAPTOR_PY = "E10"
 
         private const val NA_LINE_SERIES_MAVERICK_SUPERCREW_4x2 = "W8E"
         private const val NA_LINE_SERIES_MAVERICK_SUPERCREW_4x4 = "W8F"
@@ -567,34 +576,63 @@ open class Vehicle(val VIN: String) {
 
         private fun isRangerSuperCrew(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
-            val lineSeries =
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            val naLineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             val rangerSuperCrewsLineSeries: Set<String> = setOf(
                 NA_LINE_SERIES_RANGER_SUPERCREW_4x2,
                 NA_LINE_SERIES_RANGER_SUPERCREW_4x4,
+                EURO_LINE_SERIES_RANGER_SUPERCREW_4x2,
+                EURO_LINE_SERIES_RANGER_SUPERCREW_4x4,
             )
-            return rangerSuperCrewsLineSeries.contains(lineSeries)
+            return (wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK ||
+                    wmi == WORLD_MANUFACTURING_IDENTIFIER_THAILAND_FTM ||
+                    wmi == WORLD_MANUFACTURING_IDENTIFIER_THAILAND_AAT
+                    ) &&
+                    rangerSuperCrewsLineSeries.contains(naLineSeries)
         }
 
         private fun isRangerSuperCab(VIN: String): Boolean {
-            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
-            val lineSeries =
-                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
-            val rangerSuperCabsLineSeries: Set<String> = setOf(
-                NA_LINE_SERIES_RANGER_SUPERCAB_4x2,
-                NA_LINE_SERIES_RANGER_SUPERCAB_4x4,
-            )
-            return rangerSuperCabsLineSeries.contains(lineSeries)
-        }
-
-        private fun isRanger(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
             )
-            return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK &&
-                    (isRangerSuperCab(VIN) || isRangerSuperCrew(VIN))
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            val rangerSuperCabsLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_RANGER_SUPERCAB_4x2,
+                NA_LINE_SERIES_RANGER_SUPERCAB_4x4,
+                EURO_LINE_SERIES_RANGER_SUPERCAB_4x4,
+            )
+            return (wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK ||
+                    wmi == WORLD_MANUFACTURING_IDENTIFIER_THAILAND_FTM ||
+                    wmi == WORLD_MANUFACTURING_IDENTIFIER_THAILAND_AAT
+                    ) &&
+                    rangerSuperCabsLineSeries.contains(lineSeries)
+        }
+
+        private fun isRangerRaptor(VIN: String): Boolean {
+            if (VIN.length < EURO_LINE_SERIES_END_INDEX) return false
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            val euroLineSeries =
+                VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX)
+            val rangerRaptorLineSeries: Set<String> = setOf(
+                EURO_LINE_SERIES_RANGER_RAPTOR_PX,
+                EURO_LINE_SERIES_RANGER_RAPTOR_PY,
+            )
+            return wmi == WORLD_MANUFACTURING_IDENTIFIER_THAILAND_FTM &&
+                    rangerRaptorLineSeries.contains(euroLineSeries)
+        }
+
+        private fun isRanger(VIN: String): Boolean {
+            return isRangerSuperCab(VIN) || isRangerSuperCrew(VIN) || isRangerRaptor(VIN)
         }
 
         private fun isMaverick(VIN: String): Boolean {
@@ -721,6 +759,7 @@ open class Vehicle(val VIN: String) {
             // Ranger variants?
             if (isRangerSuperCrew(VIN)) return RangerSuperCrew(VIN)
             if (isRangerSuperCab(VIN)) return RangerSuperCab(VIN)
+            if (isRangerRaptor(VIN)) return RangerRaptor(VIN)
 
             // Check everything else
             if (isBronco(VIN)) return Bronco(VIN)
@@ -1043,6 +1082,12 @@ open class RangerSuperCrew(VIN: String) : F150SuperCrew(VIN) {
     override val logoID = R.drawable.generic_logo
     override val offsetPositions = arrayOf(244, 200)
     override val name = "Ranger SuperCrew"
+}
+
+open class RangerRaptor(VIN: String) : F150SuperCrew(VIN) {
+    override val logoID = R.drawable.generic_logo
+    override val offsetPositions = arrayOf(244, 200)
+    override val name = "Ranger Raptor"
 }
 
 open class Maverick(VIN: String) : F150SuperCrew(VIN) {
