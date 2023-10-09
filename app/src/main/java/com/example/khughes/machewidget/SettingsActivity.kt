@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
+import com.example.khughes.machewidget.ProfileManager.finish
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +41,17 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val context = context as Context
+
+            val commands = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(
+                    context.resources.getString(R.string.enable_commands_key),
+                    false
+                )
+            if(commands == true) {
+                val intent = Intent(context, MainActivity::class.java)
+                startActivity(intent)
+                finish();
+            }
 
             // If update frequency is changed, sent the info to the Alarm Manager
             var showApps: Preference? =

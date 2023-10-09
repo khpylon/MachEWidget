@@ -2,6 +2,7 @@ package com.example.khughes.machewidget
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.DialogInterface
@@ -11,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebResourceRequest
@@ -64,8 +66,26 @@ class MainActivity : AppCompatActivity() {
             .setView(surveyWebview).show()
     }
 
+    private fun checkCommandsEnabled(activity: Activity, context: Context) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val key = context.resources.getString(R.string.enable_commands_key)
+        val commands = prefs.getBoolean(key,false)
+        if (commands) {
+            AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
+                .setTitle("Remote commands have been disabled.")
+                .setNegativeButton("Close") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                .setMessage("Ford has changed the API and remote commands (lock and start) no longer work.  If they are" +
+                        "exposed in the future public API, they will automatically be re-enabled in the app.")
+                .show()
+            val appInfo = StoredData(context)
+            appInfo.remoteCommands = true
+            prefs.edit().putBoolean(key,false).commit()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_AppCompat)
         setContentView(R.layout.activity_main)
 
         // If we haven't bugged about the survey before, do it once and get it over with
@@ -78,6 +98,8 @@ class MainActivity : AppCompatActivity() {
         if (crashMessage != null) {
             Toast.makeText(applicationContext, crashMessage, Toast.LENGTH_SHORT).show()
         }
+
+        checkCommandsEnabled(this, applicationContext)
 
         // Initialize preferences
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false)
@@ -164,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         // vehicles, send them to Manage Vehicles
         CoroutineScope(Dispatchers.IO).launch {
             val info = InfoRepository(applicationContext)
-            if (info.user.programState == Constants.STATE_HAVE_TOKEN && info.vehicles.size == 0 ) {
+            if (info.user.programState == Constants.STATE_HAVE_TOKEN && info.vehicles.isEmpty()) {
                 val intent = Intent(applicationContext, VehicleActivity::class.java)
                 startActivity(intent)
             }

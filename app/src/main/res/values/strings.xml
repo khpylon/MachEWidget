@@ -141,5 +141,6 @@
     <string name="charging_preferences_key">charging_preferences_key</string>
     <string name="charging_information_title">Charging Information</string>
     <string name="charging_infomation_summary">Only applicable to electric vehicles</string>
+    <string name="enable_commands_summary">NOTICE: unavailable until Ford\'s public API is released.</string>
 
 </resources>

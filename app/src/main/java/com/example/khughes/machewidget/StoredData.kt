@@ -58,6 +58,17 @@ class StoredData(private val mContext: Context) {
             commitWait(edit)
         }
 
+    var remoteCommands: Boolean
+        get() {
+            val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+            return pref.getBoolean(REMOTECOMMANDS, false)
+        }
+        set(value) {
+            val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+            edit.putBoolean(REMOTECOMMANDS, value)
+            commitWait(edit)
+        }
+
     fun setLastAlarmTime() {
         val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
         val nowtime =
@@ -96,6 +107,7 @@ class StoredData(private val mContext: Context) {
         private const val LATESTVERSION = "LatestVersion"
         private const val BATTERYNOTIFICATION = "BatteryOptNotificationTime"
         private const val ELECTRICVEHICLES = "ElectricVehicles"
+        private const val REMOTECOMMANDS = "RemoteCommands"
 
         const val STATUS_NOT_LOGGED_IN = "Logged out"
         const val STATUS_LOG_OUT = "Log out"
@@ -114,6 +126,7 @@ class StoredData(private val mContext: Context) {
                     LATESTVERSION,
                     BATTERYNOTIFICATION,
                     ELECTRICVEHICLES,
+                    REMOTECOMMANDS,
                     STATUS_NOT_LOGGED_IN,
                     STATUS_LOG_OUT,
                     STATUS_LOG_IN,
