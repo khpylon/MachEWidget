@@ -68,18 +68,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkCommandsEnabled(activity: Activity, context: Context) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val key = context.resources.getString(R.string.enable_commands_key)
-        val commands = prefs.getBoolean(key,false)
-        if (commands) {
+
+        // Check status of remote commands and forced updates
+        val commandsKey = context.resources.getString(R.string.enable_commands_key)
+        val commands = prefs.getBoolean(commandsKey, false)
+        val forcedKey = context.resources.getString(R.string.user_forcedUpdate_key)
+        val forced = prefs.getBoolean(forcedKey, false)
+
+        // if either is set, let the user know why they're disabled
+        if (commands || forced) {
             AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
                 .setTitle("Remote commands have been disabled.")
                 .setNegativeButton("Close") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-                .setMessage("Ford has changed the API and remote commands (lock and start) no longer work.  If they are" +
-                        "exposed in the future public API, they will automatically be re-enabled in the app.")
+                .setMessage(
+                    "Ford has changed the API and remote commands (lock and start) no longer work.  If they are" +
+                            "exposed in the future public API, they will automatically be re-enabled in the app."
+                )
                 .show()
+
+            // disable active settings and store them for future use
+            var result = StoredData.NO_COMMANDS
+            if (commands) {
+                result += StoredData.REMOTE_COMMANDS
+                prefs.edit().putBoolean(commandsKey, false).commit()
+            }
+            if (forced) {
+                result += StoredData.FORCED_REFRESH
+                prefs.edit().putBoolean(forcedKey, false).commit()
+            }
             val appInfo = StoredData(context)
-            appInfo.remoteCommands = true
-            prefs.edit().putBoolean(key,false).commit()
+            appInfo.remoteCommands = result
         }
     }
 
@@ -313,50 +331,64 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 return true
             }
+
             R.id.action_refresh -> {
                 nextAlarm(applicationContext, 5)
-                Toast.makeText(applicationContext, "Refresh scheduled in 5 seconds.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "Refresh scheduled in 5 seconds.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return true
             }
+
             R.id.action_chooseapp -> {
                 val intent = Intent(this, ChooseAppActivity::class.java)
                 startActivity(intent)
                 return true
             }
+
             R.id.action_vehicle -> {
                 val intent = Intent(this, VehicleActivity::class.java)
                 startActivity(intent)
                 return true
             }
+
             R.id.action_color -> {
                 val intent = Intent(this, ColorActivity::class.java)
                 startActivity(intent)
                 return true
             }
+
             R.id.action_reminder -> {
                 val intent = Intent(this, ReminderActivity::class.java)
                 startActivity(intent)
                 return true
             }
+
             R.id.action_copylog -> {
                 val result = copyLogFile(applicationContext)
                 Toast.makeText(applicationContext, result, Toast.LENGTH_SHORT).show()
                 return true
             }
+
             R.id.action_backup -> {
                 PrefManagement().savePrefs(applicationContext)
                 return true
             }
+
             R.id.action_restore -> {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 intent.type = "application/*"
-                val mimeTypes = arrayOf(Constants.APPLICATION_JSON, Constants.APPLICATION_OCTETSTREAM)
+                val mimeTypes =
+                    arrayOf(Constants.APPLICATION_JSON, Constants.APPLICATION_OCTETSTREAM)
                 intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
                 restoreSettingsLauncher.launch(intent)
                 return true
             }
+
             R.id.action_update -> {
                 val intent = Intent(this, UpdateReceiver::class.java)
                 intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
@@ -368,16 +400,19 @@ class MainActivity : AppCompatActivity() {
                 ).show()
                 return true
             }
+
             R.id.action_charge -> {
                 val intent = Intent(this, ChargingActivity::class.java)
                 startActivity(intent)
                 return true
             }
+
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 return true
             }
+
             R.id.action_fordpass -> {
                 fordPassInfo(applicationContext)
             }

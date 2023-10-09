@@ -58,14 +58,14 @@ class StoredData(private val mContext: Context) {
             commitWait(edit)
         }
 
-    var remoteCommands: Boolean
+    var remoteCommands: Int
         get() {
             val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
-            return pref.getBoolean(REMOTECOMMANDS, false)
+            return pref.getInt(REMOTECOMMANDS, 0)
         }
         set(value) {
             val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
-            edit.putBoolean(REMOTECOMMANDS, value)
+            edit.putInt(REMOTECOMMANDS, value)
             commitWait(edit)
         }
 
@@ -89,7 +89,7 @@ class StoredData(private val mContext: Context) {
 
     fun getCounter(key: String?): Int {
         val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
-        return pref.getInt(key, 0)
+        return pref.getInt(key, NO_COMMANDS)
     }
 
     fun incCounter(key: String?) {
@@ -115,6 +115,10 @@ class StoredData(private val mContext: Context) {
         const val STATUS_VEHICLE_INFO = "Vehicle Info"
         const val STATUS_UPDATED = "Updated"
         const val STATUS_UNKNOWN = "Unknown"
+        const val NO_COMMANDS = 0
+        const val REMOTE_COMMANDS = 1
+        const val FORCED_REFRESH = 2
+        const val REMOTE_AND_FORCED = REMOTE_COMMANDS + FORCED_REFRESH
 
         // When the list above changes, be sure to change this function also
         val keys: ArrayList<String>

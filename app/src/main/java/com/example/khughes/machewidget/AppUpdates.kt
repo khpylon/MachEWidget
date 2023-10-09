@@ -86,6 +86,11 @@ object AppUpdates {
                     val info = InfoRepository(context)
                 }
             }
+
+            // Disable automatic forced updates
+            if (lastVersion < "2023.10.08") {
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(context.resources.getString(R.string.forceUpdate_key),false).commit()
+            }
         }
 
         // Update internally

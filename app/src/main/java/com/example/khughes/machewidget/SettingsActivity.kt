@@ -47,7 +47,12 @@ class SettingsActivity : AppCompatActivity() {
                     context.resources.getString(R.string.enable_commands_key),
                     false
                 )
-            if(commands == true) {
+            val forced = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(
+                    context.resources.getString(R.string.user_forcedUpdate_key),
+                    false
+                )
+            if(commands == true || forced == true) {
                 val intent = Intent(context, MainActivity::class.java)
                 startActivity(intent)
                 finish();
