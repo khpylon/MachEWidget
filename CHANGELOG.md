@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.10.08
+### Changed
+- Disabled remote commands (start/stop, lock/unlock, and force updates) due to API changes.  If Ford's public API supports
+these in the future, they will be re-enabled.
+
 ## 2023.08.29
 ### Added
 - Thailand-manufactured Ranger vehicles are now recognized (uses F-150 images).
