@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2023.10.11
+### Changed
+- PLEASE READ: In early October 2023, major portions of the application programming interface (API)
+  were disabled by Ford, making it impossible to read status information about vehicles.
+  Ford is developing a "public" API that should restore this functionality. Sources have stated
+  it should be released prior to January 2024 but no firm date has been given.
+  **No further app updates will be published until that occurs.**
+- The app will no longer attempt to send *any information*, including login
+    authentication, to Ford's servers in order to avoid the possibility of FordPass accounts being
+    locked out.
+
 ## 2023.10.08
 ### Changed
 - Disabled remote commands (start/stop, lock/unlock, and force updates) due to API changes.  If Ford's public API supports
