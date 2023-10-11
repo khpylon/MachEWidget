@@ -1077,13 +1077,15 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val lastUpdateInMillis = vehInfo.lastUpdateTime
                             val timeFormat =
                                 if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
-                            val lastUpdate =
-                                OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat)
-                            Toast.makeText(
-                                context,
-                                "Last update at $lastUpdate",
-                                Toast.LENGTH_SHORT
-                            )
+//                            val lastUpdate =
+//                                OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat)
+//                            Toast.makeText(
+//                                context,
+//                                "Last update at $lastUpdate",
+//                                Toast.LENGTH_SHORT
+//                            )
+//                                .show()
+                            Toast.makeText(context, "App updates disabled during hiatus", Toast.LENGTH_SHORT)
                                 .show()
                             val lastAlarmInMillis = StoredData(context).lastAlarmTime
                             val lastAlarm =

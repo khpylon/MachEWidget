@@ -69,6 +69,17 @@ class StoredData(private val mContext: Context) {
             commitWait(edit)
         }
 
+    var hibernationNotice: Boolean
+        get() {
+            val pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+            return pref.getBoolean(HIBERNATION, false)
+        }
+        set(value) {
+            val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+            edit.putBoolean(HIBERNATION, value)
+            commitWait(edit)
+        }
+
     fun setLastAlarmTime() {
         val edit = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
         val nowtime =
@@ -108,6 +119,7 @@ class StoredData(private val mContext: Context) {
         private const val BATTERYNOTIFICATION = "BatteryOptNotificationTime"
         private const val ELECTRICVEHICLES = "ElectricVehicles"
         private const val REMOTECOMMANDS = "RemoteCommands"
+        private const val HIBERNATION = "Hibernation Notice"
 
         const val STATUS_NOT_LOGGED_IN = "Logged out"
         const val STATUS_LOG_OUT = "Log out"

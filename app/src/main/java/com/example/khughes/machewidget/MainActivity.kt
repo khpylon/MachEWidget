@@ -209,6 +209,9 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+
+        // Turn off hibernation notice notification
+        StoredData(applicationContext).hibernationNotice = true
     }
 
     override fun onRequestPermissionsResult(

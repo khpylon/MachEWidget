@@ -47,11 +47,21 @@ class BootComplete : BroadcastReceiver() {
                 )
             }
 
-            // Check for updates (github version only).
-            UpdateReceiver.createIntent(context)
+            if (StoredData(context).hibernationNotice == false) {
+                // Display hiatus notification, and hibernate app
+                Notifications.hiatusMessage(context)
+                val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                prefs.edit()
+                    .putString(context.resources.getString(R.string.update_frequency_key), "60")
+                    .commit()
+                prefs.edit()
+                    .putBoolean(context.resources.getString(R.string.hibernate_api_key), true)
+                    .commit()
+            }
 
             // Restart any charging reminders that exist
-            ReminderReceiver.checkAlarms(context)
+            // Don't do this while in hiatus
+//            ReminderReceiver.checkAlarms(context)
         }
 
         if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED, ignoreCase = true)) {
@@ -59,9 +69,12 @@ class BootComplete : BroadcastReceiver() {
             Misc.removeAPK(context)
             AppUpdates.performUpdates(context)
             CarStatusWidget.updateWidget(context)
-            ReminderReceiver.checkAlarms(context)
+
+            // Don't do these while in hiatus
+//            ReminderReceiver.checkAlarms(context)
         }
 
+        // Check for updates (github version only).
         UpdateReceiver.createIntent(context)
     }
 }

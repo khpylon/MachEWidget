@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
         app:key="@string/VIN_key"
@@ -28,6 +29,7 @@
     <SwitchPreferenceCompat
         app:key="@string/hibernate_api_key"
         app:defaultValue="false"
+        app:enabled="false"
         app:singleLineTitle="false"
         app:disableDependentsState="true"
         app:title="@string/hibernate_api"
