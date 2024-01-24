@@ -29,7 +29,6 @@
     <SwitchPreferenceCompat
         app:key="@string/hibernate_api_key"
         app:defaultValue="false"
-        app:enabled="false"
         app:singleLineTitle="false"
         app:disableDependentsState="true"
         app:title="@string/hibernate_api"

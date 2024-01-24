@@ -2,12 +2,14 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import androidx.preference.PreferenceManager
+import com.example.khughes.machewidget.db.UserInfoDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 object AppUpdates {
     // This method is intended to bundle various changes from older versions to the most recent.
+    @Suppress("UNUSED_VARIABLE")
     @JvmStatic
     fun performUpdates(context: Context) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -20,54 +22,6 @@ object AppUpdates {
             LogFile.i(context, MainActivity.CHANNEL_ID, "running updates")
 
             // Add operations here
-
-            if (lastVersion < "2022.12.07") {
-                // Disable saving credentials
-                prefs.edit()
-                    .putBoolean(
-                        context.resources.getString(R.string.save_credentials_key),
-                        false
-                    )
-                    .commit()
-
-                // If applicable, change update frequency to 15 minute minimum
-                val delayInMillis = prefs.getString(
-                    context.resources.getString(R.string.update_frequency_key),
-                    "15"
-                )!!.toInt()
-                if (delayInMillis in 1..14) {
-                    prefs.edit()
-                        .putString(
-                            context.resources.getString(R.string.update_frequency_key),
-                            "15"
-                        )
-                        .commit()
-                }
-            }
-
-            // Convert old unit display settings to new settings
-            if (lastVersion < "2023.01.27") {
-                Misc.updateUnits(context)
-            }
-
-            // Remove any keys in widget file that aren't related to VINs. This is related to the
-            // version 2023.03.02 bug fix and should have been included in that release.
-            if (lastVersion < "2023.03.03") {
-                val edit =
-                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
-                        .edit()
-                val widgetPrefs =
-                    context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
-                        .all
-
-                for (item in widgetPrefs) {
-                    val key = item.key
-                    if (!key.startsWith(Constants.VIN_KEY)) {
-                        edit.remove(key)
-                    }
-                }
-                edit.apply()
-            }
 
             // Rename old DCFC *.txt to *.json
             if (lastVersion < "2023.08.03") {
@@ -90,6 +44,17 @@ object AppUpdates {
             // Disable automatic forced updates
             if (lastVersion < "2023.10.08") {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(context.resources.getString(R.string.forceUpdate_key),false).commit()
+            }
+
+            // Reset the program state to require a login
+            if (lastVersion < "2024.01.24") {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val info = InfoRepository(context)
+                    val userInfo = info.user
+                    userInfo.programState = Constants.STATE_INITIAL_STATE
+                    val userInfoDao = UserInfoDatabase.getInstance(context).userInfoDao()
+                    userInfoDao.updateUserInfo(userInfo)
+                }
             }
         }
 

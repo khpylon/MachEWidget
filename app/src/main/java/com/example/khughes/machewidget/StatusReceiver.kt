@@ -46,14 +46,6 @@ class StatusReceiver : BroadcastReceiver() {
         val appInfo = StoredData(context)
         appInfo.setLastAlarmTime()
 
-        // Don't try to do anything while in hiatus
-        LogFile.d(
-            context,
-            MainActivity.CHANNEL_ID,
-            "StatusReceiver: app is on hiatur"
-        )
-        return
-
         // Check if the user should be prompted to take a survey
         Notifications.surveyPrompt(context)
 

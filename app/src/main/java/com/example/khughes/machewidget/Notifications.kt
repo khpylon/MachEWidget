@@ -362,25 +362,5 @@ class Notifications : BroadcastReceiver() {
             val notificationManager = NotificationManagerCompat.from(context)
             notificationManager.notify(NO_VEHICLES, builder.build())
         }
-
-        private const val HIATUS = 945
-        fun hiatusMessage(context: Context) {
-            val intent = Intent(context, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            val pendingIntent =
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            val builder = NotificationCompat.Builder(
-                context!!, IMPORTANT_NOTIFICATIONS
-            )
-                .setSmallIcon(R.drawable.notification_icon)
-                .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                .setContentTitle("FSW app is \"in hiatus\"")
-                .setContentText("Please tap here or open the app for more important.")
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-            val notificationManager = NotificationManagerCompat.from(context)
-            notificationManager.notify(HIATUS, builder.build())
-        }
     }
 }
