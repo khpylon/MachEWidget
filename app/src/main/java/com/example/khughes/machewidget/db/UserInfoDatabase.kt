@@ -8,7 +8,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.khughes.machewidget.UserInfo
 
-@Database(entities = [UserInfo::class], version = 3)
+@Database(entities = [UserInfo::class], version = 4)
 abstract class UserInfoDatabase : RoomDatabase() {
     abstract fun userInfoDao(): UserInfoDao
 
@@ -25,6 +25,8 @@ abstract class UserInfoDatabase : RoomDatabase() {
                     "userinfo_db"
                 )
                     .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_3_4)
+//                    .addMigrations(MIGRATION_4_3)
                     .setJournalMode(JournalMode.TRUNCATE)
                     .build()
             }
@@ -54,5 +56,36 @@ abstract class UserInfoDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE new_user_info RENAME TO user_info")
             }
         }
+
+        private val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add new column
+                database.execSQL(
+                    "ALTER TABLE user_info ADD COLUMN autoAccessToken TEXT"
+                )
+                database.execSQL(
+                    "ALTER TABLE user_info ADD COLUMN autoRefreshToken TEXT"
+                )
+                database.execSQL(
+                    "ALTER TABLE user_info ADD COLUMN autoExpiresIn INTEGER DEFAULT 0 NOT NULL"
+                )
+            }
+        }
+
+//        private val MIGRATION_4_3: Migration = object : Migration(4, 3) {
+//            override fun migrate(database: SupportSQLiteDatabase) {
+//                // Create the new table
+//                database.execSQL(newTable)
+//                // Copy the data
+//                database.execSQL(
+//                    "INSERT INTO new_user_info ($fields) SELECT $fields FROM user_info"
+//                )
+//                // Remove the old table
+//                database.execSQL("DROP TABLE user_info")
+//                // Change the table name to the correct one
+//                database.execSQL("ALTER TABLE new_user_info RENAME TO user_info")
+//            }
+//        }
+
     }
 }

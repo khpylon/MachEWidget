@@ -16,7 +16,7 @@ import java.util.*
 object LogFile {
     private const val LOGFILENAME = "fsw_logfile"
     private const val BACKUPLOGFILENAME = LOGFILENAME + ".0"
-    private const val LOGFILE_SIZE = 750000
+    private const val LOGFILE_SIZE = 2500000
     fun clearLogFile(context: Context, moveBackup: Boolean) {
         try {
             val backupLogFile = File(context.dataDir, BACKUPLOGFILENAME)

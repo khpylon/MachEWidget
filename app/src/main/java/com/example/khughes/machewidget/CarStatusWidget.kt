@@ -458,7 +458,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                         R.drawable.battery_charging
                     )
 
-                    Constants.CHARGING_STATUS_TARGET_REACHED, Constants.CHARGING_STATUS_PRECONDITION -> views.setImageViewResource(
+                    Constants.CHARGING_STATUS_TARGET_REACHED, Constants.CHARGING_STATUS_PRECONDITION,
+                    Constants.CHARGING_STATUS_COMPLETE -> views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_icon_charged_green
                     )
@@ -518,39 +519,39 @@ open class CarStatusWidget : AppWidgetProvider() {
                 } else if (chargeStatus == Constants.CHARGING_STATUS_PRECONDITION) {
                     chargeMessage = "- Preconditioning"
                 } else {
-                    val sdf = SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
-                    val endChargeTime = Calendar.getInstance()
-                    try {
-                        endChargeTime.time =
-                            carStatus.vehiclestatus.chargeEndTime!!.value?.let { sdf.parse(it) } as Date
-                        val nowTime = Calendar.getInstance()
-                        var min = Duration.between(
-                            nowTime.toInstant(),
-                            endChargeTime.toInstant()
-                        ).seconds / 60
-                        if (min > 0) {
-                            chargeMessage = "- "
-                            val hours = min.toInt() / 60
-                            min %= 60
-                            if (hours > 0) {
-                                chargeMessage += "$hours hr"
-                                if (min > 0) {
-                                    chargeMessage += ", "
-                                }
-                            }
-                            if (min > 0) {
-                                chargeMessage += "$min min"
-                            }
-                            chargeMessage += " left"
-                        }
-                    } catch (e: ParseException) {
-                        LogFile.e(
-                            context,
-                            MainActivity.CHANNEL_ID,
-                            "exception in CarStatusWidget.updateAppWidget: ",
-                            e
-                        )
-                    }
+//                    val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.US)
+//                    val endChargeTime = Calendar.getInstance()
+//                    try {
+//                        endChargeTime.time =
+//                            carStatus.vehiclestatus.chargeEndTime!!.value?.let { sdf.parse(it) } as Date
+//                        val nowTime = Calendar.getInstance()
+//                        var min = Duration.between(
+//                            nowTime.toInstant(),
+//                            endChargeTime.toInstant()
+//                        ).seconds / 60
+//                        if (min > 0) {
+//                            chargeMessage = "- "
+//                            val hours = min.toInt() / 60
+//                            min %= 60
+//                            if (hours > 0) {
+//                                chargeMessage += "$hours hr"
+//                                if (min > 0) {
+//                                    chargeMessage += ", "
+//                                }
+//                            }
+//                            if (min > 0) {
+//                                chargeMessage += "$min min"
+//                            }
+//                            chargeMessage += " left"
+//                        }
+//                    } catch (e: ParseException) {
+//                        LogFile.e(
+//                            context,
+//                            MainActivity.CHANNEL_ID,
+//                            "exception in CarStatusWidget.updateAppWidget: ",
+//                            e
+//                        )
+//                    }
                 }
 
                 // If status changed, save for future reference.
@@ -663,7 +664,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             if (LVBLevel > 0) {
                 views.setTextViewText(
                     R.id.LVBVoltage,
-                    MessageFormat.format("LV Battery: {0}V", LVBLevel)
+                    MessageFormat.format("LV Battery: {0,number,#.#}V", LVBLevel.toDouble() / 10.0)
                 )
             } else {
                 views.setTextViewText(
@@ -715,7 +716,7 @@ open class CarStatusWidget : AppWidgetProvider() {
     ) {
         // Fill in the last update time
         val lastUpdateTime = Calendar.getInstance()
-        var sdf = SimpleDateFormat(Constants.STATUSTIMEFORMAT, Locale.US)
+        var sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         try {
             lastUpdateTime.time = carStatus.lastRefresh?.let { sdf.parse(it) } ?: Date(0)
