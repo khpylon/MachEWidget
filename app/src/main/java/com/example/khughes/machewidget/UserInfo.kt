@@ -18,4 +18,8 @@ class UserInfo {
     var uomDistance = 0
     var uomPressure: String? = ""
     var lastModified: String? = ""
+
+    var autoAccessToken: String? = ""
+    var autoRefreshToken: String? = ""
+    var autoExpiresIn: Long = 0
 }

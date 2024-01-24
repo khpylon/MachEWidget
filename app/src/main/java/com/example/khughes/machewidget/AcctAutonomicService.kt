@@ -1,45 +1,36 @@
 package com.example.khughes.machewidget
 
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable
 import okhttp3.RequestBody
-import com.example.khughes.machewidget.AccessToken
-import com.example.khughes.machewidget.UserDetails
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
-interface APIMPSService {
-//    @Headers(
-//        "Content-Type: application/json",
-//        "Accept-Language: en-US",
-//        "Application-Id: " + Constants.APID,
-//        "Authorization: Basic ZWFpLWNsaWVudDo="
-//    )
+interface AcctAutonomicService {
+    @FormUrlEncoded
     @Headers(
-        "Content-Type: application/json",
+        "Content-Type: application/x-www-form-urlencoded",
         "Accept: */*",
-        "Accept-Language: en-us",
-        "User-Agent: FordPass/26 CFNetwork/1485 Darwin/23.1.0",
-        "Accept-Encoding: gzip, deflate, br",
-        "Application-Id: " + Constants.APID,
     )
-    @POST("token/v2/cat-with-b2c-access-token")
-//    @POST("token/v2/cat-with-ci-access-token")
-    fun getAccessToken(@Body token: RequestBody?): Call<AccessToken?>?
+    @POST("v1/auth/oidc/token")
+    fun getAccessToken(
+        @Field("subject_token") token: String,
+        @Field("subject_issuer") issuer: String,
+        @Field("client_id") clientId: String,
+        @Field("grant_type") grantType: String,
+        @Field("subject_token_type") tokenType: String
+    ): Call<AccessToken?>?
 
     @Headers(
-//        "Content-Type: application/json",
-//        "Accept-Language: en-US",
-//        "Application-Id: " + Constants.APID,
-//        "Authorization: Basic ZWFpLWNsaWVudDo="
         "Content-Type: application/json",
-        "Accept: */*",
-        "Accept-Language: en-us",
-        "User-Agent: FordPass/26 CFNetwork/1485 Darwin/23.1.0",
-        "Accept-Encoding: gzip, deflate, br",
+        "Accept-Language: en-US",
         "Application-Id: " + Constants.APID,
+        "Authorization: Basic ZWFpLWNsaWVudDo="
     )
     @POST("token/v2/cat-with-refresh-token")
-    fun refreshAccessToken(@Body token: RequestBody?): Call<AccessToken?>?
+    fun refreshAccessToken(
+        @Body token: RequestBody?
+    ): Call<AccessToken?>?
 
     @Headers(
         "Accept-Encoding: gzip",
@@ -49,7 +40,10 @@ interface APIMPSService {
         "User-Agent: okhttp/4.9.0"
     )
     @POST("cevs/v1/chargestatus/retrieve")
-    fun getChargingInfo(@Body vin: RequestBody?, @Header("auth-token") token: String?): Call<DCFCInfo?>?
+    fun getStatus(
+        @Query("lrdt") lrdt: String?,
+        @Header("auth-token") token: String?
+    ): Call<DCFCInfo?>?
 
     @Headers(
         "Accept-Encoding: gzip",

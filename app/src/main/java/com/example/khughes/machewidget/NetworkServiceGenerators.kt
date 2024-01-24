@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Math.min
 import java.lang.ref.WeakReference
 
 object NetworkServiceGenerators {
@@ -14,6 +15,8 @@ object NetworkServiceGenerators {
     private const val APIMPS_BASE_URL = "https://api.mps.ford.com/api/"
     private const val USAPICV_BASE_URL = "https://usapi.cv.ford.com/api/"
     private const val DIGITALSERVICES_BASE_URL = "https://www.digitalservices.ford.com/"
+    private const val APIAUTONOMIC_BASE_URL = "https://api.autonomic.ai/"
+    private const val ACCOUNTAUTONOMIC_BASE_URL = "https://accounts.autonomic.ai/"
 
     private val logging = HttpLoggingInterceptor { message ->
         var result = message
@@ -35,6 +38,7 @@ object NetworkServiceGenerators {
             result =
                 message.replace("\"userId\":.[^\"]*.".toRegex(), "\"userId\":**redacted**")
         }
+//        mContext.get()?.let { d(it, "OkHttp3", result.substring(0,min(result.length, 2048))) }
         mContext.get()?.let { d(it, "OkHttp3", result) }
     }
         .setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -127,5 +131,41 @@ object NetworkServiceGenerators {
             DIGITALSERVICESRetrofit = DIGITALSERVICESBuilder.build()
         }
         return DIGITALSERVICESRetrofit.create(serviceClass as Class<S>)
+    }
+
+    private val AcctAutonomicBuilder = Retrofit.Builder()
+        .baseUrl(ACCOUNTAUTONOMIC_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+    private var AcctAutonomicRetrofit = AcctAutonomicBuilder.build()
+    private val AcctAutonomicHttpClient: OkHttpClient.Builder = OkHttpClient.Builder()
+    @JvmStatic
+    fun <S> createAcctAutonomicService(
+        serviceClass: Class<S>?, context: Context?
+    ): S {
+        mContext = WeakReference(context)
+        if (!AcctAutonomicHttpClient.interceptors().contains(logging)) {
+            AcctAutonomicHttpClient.addInterceptor(logging)
+            AcctAutonomicBuilder.client(AcctAutonomicHttpClient.build())
+            AcctAutonomicRetrofit = AcctAutonomicBuilder.build()
+        }
+        return AcctAutonomicRetrofit.create(serviceClass as Class<S>)
+    }
+
+    private val ApiAutonomicBuilder = Retrofit.Builder()
+        .baseUrl(APIAUTONOMIC_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+    private var ApiAutonomicRetrofit = ApiAutonomicBuilder.build()
+    private val ApiAutonomicHttpClient: OkHttpClient.Builder = OkHttpClient.Builder()
+    @JvmStatic
+    fun <S> createApiAutonomicService(
+        serviceClass: Class<S>?, context: Context?
+    ): S {
+        mContext = WeakReference(context)
+        if (!ApiAutonomicHttpClient.interceptors().contains(logging)) {
+            ApiAutonomicHttpClient.addInterceptor(logging)
+            ApiAutonomicBuilder.client(ApiAutonomicHttpClient.build())
+            ApiAutonomicRetrofit = ApiAutonomicBuilder.build()
+        }
+        return ApiAutonomicRetrofit.create(serviceClass as Class<S>)
     }
 }

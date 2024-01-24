@@ -103,20 +103,20 @@ public class Authenticate {
                     .build();
             List<String> cookies = new ArrayList<>();
 
-            String code1 = generateCodeVerifier();
-            String codeVerifier = generateCodeChallange(code1);
+            String codeVerifier = generateCodeVerifier();
+            String codeChallenge = generateCodeChallange(codeVerifier);
 
             String FORD_LOGIN_URL = "https://login.ford.com/";
 
             String country_code = "EN-US";
             String short_country_code = "USA";
-            String url1 = FORD_LOGIN_URL + "4566605f-43a7-400a-946e-89cc9fdb0bd7/B2C_1A_SignInSignUp_"+country_code+
-                    "/oauth2/v2.0/authorize?redirect_uri=fordapp://userauthorized&response_type=code&max_age=3600&"+
-                    "scope=%2009852200-05fd-41f6-8c21-d36d3497dc64%20openid&client_id=09852200-05fd-41f6-8c21-d36d3497dc64&"+
-                    "code_challenge="+codeVerifier+
-                    "&code_challenge_method=S256&ui_locales="+country_code+
-                    "&language_code="+country_code+
-                    "&country_code="+short_country_code+
+            String url1 = FORD_LOGIN_URL + "4566605f-43a7-400a-946e-89cc9fdb0bd7/B2C_1A_SignInSignUp_" + country_code +
+                    "/oauth2/v2.0/authorize?redirect_uri=fordapp://userauthorized&response_type=code&max_age=3600&" +
+                    "scope=%2009852200-05fd-41f6-8c21-d36d3497dc64%20openid&client_id=09852200-05fd-41f6-8c21-d36d3497dc64&" +
+                    "code_challenge="+ codeChallenge +
+                    "&code_challenge_method=S256&ui_locales=" + country_code +
+                    "&language_code=" + country_code +
+                    "&country_code=" + short_country_code +
                     "&ford_application_id=5C80A6BB-CF0D-4A30-BDBF-FC804B5C1A98";
 
             Headers loginHeaders = new Headers.Builder()
@@ -152,7 +152,7 @@ public class Authenticate {
             String csrfToken = settings.get("csrf").toString();
 
             String urlp = FORD_LOGIN_URL + "4566605f-43a7-400a-946e-89cc9fdb0bd7/B2C_1A_SignInSignUp_" + country_code +
-                    "/SelfAsserted?tx="+ transId +
+                    "/SelfAsserted?tx=" + transId +
                     "&p=B2C_1A_SignInSignUp_en-AU";
 
             requestBody = new FormBody.Builder()
@@ -175,7 +175,7 @@ public class Authenticate {
             response = client.newCall(request).execute();
 
             if (response.code() != 200) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: first GET request didn't return 200 response");
+                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: second POST request didn't return 200 response");
                 return null;
             }
 
@@ -195,7 +195,7 @@ public class Authenticate {
             response = client.newCall(request).execute();
 
             if (response.code() != 302) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: first GET request didn't return 302 response");
+                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: third GET request didn't return 302 response");
                 return null;
             }
 
@@ -204,8 +204,8 @@ public class Authenticate {
             requestBody = new FormBody.Builder()
                     .add("client_id", "09852200-05fd-41f6-8c21-d36d3497dc64")
                     .add("grant_type", "authorization_code")
-                    .add("code_verifier", code1)
-                            .add("code", newUrl)
+                    .add("code_verifier", codeVerifier)
+                    .add("code", newUrl)
                     .add("redirect_uri", "fordapp://userauthorized")
                     .build();
 
