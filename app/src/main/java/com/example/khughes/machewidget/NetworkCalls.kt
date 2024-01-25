@@ -861,54 +861,62 @@ class NetworkCalls {
                 val userInfo = userDao.findUserInfo(userId)
                 val token = userInfo!!.accessToken
 
-                val statusClient = createUSAPICVService(
-                    USAPICVService::class.java, context
-                )
+                val statusClient = createApiAutonomicService(ApiAutonomicService::class.java, context)
+
                 for (retry in 2 downTo 0) {
                     try {
                         // Try to get the latest car status
-                        val callStatus =
-                            statusClient.getStatus(token, language, Constants.APID, VIN)
+                        val autoAccessToken = userInfo.autoAccessToken
+                        val callStatus = statusClient.getStatus(VIN, "01-01-1970 00:00:00","Bearer " + autoAccessToken)
                         val responseStatus = callStatus!!.execute()
+
                         if (responseStatus.isSuccessful) {
                             i(context, MainActivity.CHANNEL_ID, "status successful.")
-                            val car = responseStatus.body()
-                            if (car!!.status == Constants.HTTP_SERVER_ERROR) {
-                                i(context, MainActivity.CHANNEL_ID, "server is broken")
-                            } else {
-                                val lastRefreshTime = Calendar.getInstance()
-                                val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-                                sdf.timeZone = TimeZone.getTimeZone("UTC")
-                                var currentRefreshTime: Long = 0
-                                try {
-                                    lastRefreshTime.time = sdf.parse(car.lastRefresh)
-                                    currentRefreshTime = lastRefreshTime.toInstant().toEpochMilli()
-                                } catch (e: ParseException) {
-                                    e(
-                                        context,
-                                        MainActivity.CHANNEL_ID,
-                                        "exception in NetworkCalls.getStatus: ",
-                                        e
-                                    )
-                                }
-                                val info = VehicleInfo()
-                                info.vin = VIN
-                                info.nickname = nickname
-                                info.userId = userId
-                                info.carStatus = car
-                                info.setLastUpdateTime()
-                                info.lastRefreshTime = currentRefreshTime
-                                infoDao.insertVehicleInfo(info)
+                            val newCar = responseStatus.body() as NewCarStatus
+                            val car = NewCarStatus.getCarStatus(newCar)
 
-                                // If this vehicle is electric, update global setting
-                                if( car.isPropulsionElectric(car.propulsion) ||
-                                        car.isPropulsionPHEV(car.propulsion) ) {
-                                    val appInfo = StoredData(context)
-                                    appInfo.electricVehicles = true
-                                }
-                                i(context, MainActivity.CHANNEL_ID, "got status")
-                                nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
+                            val lastRefreshTime = Calendar.getInstance()
+                            val cal = Calendar.getInstance()
+                            val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
+                            sdf.timeZone = TimeZone.getTimeZone("UTC")
+                            cal.time = sdf.parse(car.lastRefresh) as Date
+                            val currentRefreshTime =
+                                lastRefreshTime.toInstant().toEpochMilli()
+
+
+//                            val lastRefreshTime = Calendar.getInstance()
+//                            val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
+//                            sdf.timeZone = TimeZone.getTimeZone("UTC")
+//                            var currentRefreshTime: Long = 0
+//                            try {
+//                                lastRefreshTime.time = sdf.parse(car.lastRefresh)
+//                                currentRefreshTime = lastRefreshTime.toInstant().toEpochMilli()
+//                            } catch (e: ParseException) {
+//                                e(
+//                                    context,
+//                                    MainActivity.CHANNEL_ID,
+//                                    "exception in NetworkCalls.getStatus: ",
+//                                    e
+//                                )
+//                            }
+
+                            val info = VehicleInfo()
+                            info.vin = VIN
+                            info.nickname = nickname
+                            info.userId = userId
+                            info.carStatus = car
+                            info.setLastUpdateTime()
+                            info.lastRefreshTime = currentRefreshTime
+                            infoDao.insertVehicleInfo(info)
+
+                            // If this vehicle is electric, update global setting
+                            if( car.isPropulsionElectric(car.propulsion) ||
+                                    car.isPropulsionPHEV(car.propulsion) ) {
+                                val appInfo = StoredData(context)
+                                appInfo.electricVehicles = true
                             }
+                            i(context, MainActivity.CHANNEL_ID, "got status")
+                            nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
                         } else {
                             i(
                                 context,
