@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.01.24
+### Changed
+- This release is the first attempt using the new FordPass API (*not* the mythical "public" Ford API).
+  Only status information is implemented; vehicles commands and charging activity do not work.
+- The JSON format of the status information has changed completely, and since changes are based on what
+  is discovered from observing actual vehicle data everything may not work.  I only have info for Mach-Es
+  and some F-150s variants. If you find something not working, particularly if you have a different vehicle,
+  grab a logfile and upload it to GitHib following the instruction in the issue
+  ["User-submitted data for new FordPass API"](https://github.com/khpylon/MachEWidget/issues/45).
+
 ## 2023.10.11
 ### Changed
 - PLEASE READ: In early October 2023, major portions of the application programming interface (API)
