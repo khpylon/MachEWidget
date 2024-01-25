@@ -475,7 +475,7 @@ class NetworkCalls {
                     )
                     if ((nowtime - lasttime) / (1000 * 60) > 6 * 60 &&
                         !(info.carStatus.vehiclestatus.deepSleepInProgress?.value ?: true) &&
-                        (info.carStatus.vehiclestatus.battery?.batteryStatusActual?.value ?: 0) > 12
+                        (info.carStatus.vehiclestatus.battery?.batteryStatusActual?.value ?: 0.0) > 12.0
                     ) {
                         CoroutineScope(Dispatchers.Main).launch {
                             updateStatus(context, info.vin)

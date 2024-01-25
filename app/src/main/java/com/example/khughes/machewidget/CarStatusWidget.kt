@@ -664,7 +664,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             if (LVBLevel > 0) {
                 views.setTextViewText(
                     R.id.LVBVoltage,
-                    MessageFormat.format("LV Battery: {0,number,#.0}V", LVBLevel.toDouble() / 10.0)
+                    MessageFormat.format("LV Battery: {0,number,#.0}V", LVBLevel)
                 )
             } else {
                 views.setTextViewText(

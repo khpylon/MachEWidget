@@ -22,7 +22,7 @@ class Battery {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "batterystatusactual_value")
-        var value: Int? = null
+        var value: Double = 12.0
     }
 
     @SerializedName("batteryHealth")

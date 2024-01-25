@@ -56,7 +56,26 @@ object AppUpdates {
                     userInfoDao.updateUserInfo(userInfo)
                 }
             }
+
+            // Adjust LVB voltages which were stored as Integers * 10
+            if (lastVersion < "2024.01.24") {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val info = InfoRepository(context)
+                    for (vehicle in info.vehicles) {
+                        vehicle.carStatus.vehiclestatus.battery?.batteryStatusActual?.value?.let {
+                            if (it > 50.0) {
+                                vehicle.carStatus.vehiclestatus.battery!!.batteryStatusActual!!.value =
+                                    it / 10.0
+                                info.setVehicle(vehicle)
+                            }
+                        }
+                    }
+                }
+            }
+
         }
+
+
 
         // Update internally
         prefs.edit().putString(context.resources.getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit()

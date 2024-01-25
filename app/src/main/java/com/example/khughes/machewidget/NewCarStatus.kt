@@ -8,6 +8,7 @@ import com.example.khughes.machewidget.CarStatus.DoorStatus
 import com.example.khughes.machewidget.CarStatus.TPMS
 import com.example.khughes.machewidget.CarStatus.WindowPosition
 import com.google.gson.annotations.SerializedName
+import java.util.regex.Pattern
 import javax.annotation.Generated
 
 @Generated("jsonschema2pojo")
@@ -27,8 +28,9 @@ class NewCarStatus(
             val carStatus = CarStatus()
             val vehicleStatus = carStatus.vehiclestatus
 
-            vehicleStatus.lastRefresh = status.updateTime
-            vehicleStatus.lastModifiedDate = status.updateTime
+            val updateTime = status.updateTime.replace(".[0-9]*Z", "Z")
+            vehicleStatus.lastRefresh = updateTime
+            vehicleStatus.lastModifiedDate = updateTime
 
             // Alarm
             val alarm = Vehiclestatus.Alarm()
@@ -37,7 +39,7 @@ class NewCarStatus(
 
             // LVB battery info
             val batteryStatusActual = Battery.BatteryStatusActual()
-            batteryStatusActual.value = (10.0 * metrics.batteryVoltage.value).toInt()
+            batteryStatusActual.value = metrics.batteryVoltage.value
             val batteryHealth = Battery.BatteryHealth()
             batteryHealth.value =
                 if (metrics.batteryStateOfCharge.value > 50.0) "STATUS_GOOD" else "STATUS_LOW"
