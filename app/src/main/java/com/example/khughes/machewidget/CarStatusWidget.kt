@@ -657,6 +657,8 @@ open class CarStatusWidget : AppWidgetProvider() {
         carStatus.vehiclestatus.battery?.batteryStatusActual?.value?.let { LVBLevel ->
             val LVBStatus =
                 carStatus.vehiclestatus.battery?.batteryHealth?.value ?: "STATUS_GOOD"
+            val LVBPercent =
+                carStatus.vehiclestatus.battery?.batteryStatusActual?.percentage ?: 0.0
             views.setTextColor(
                 R.id.LVBVoltage,
                 context.getColor(if (LVBStatus == "STATUS_GOOD") R.color.white else R.color.red)
@@ -664,7 +666,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             if (LVBLevel > 0) {
                 views.setTextViewText(
                     R.id.LVBVoltage,
-                    MessageFormat.format("LV Battery: {0,number,#.0}V", LVBLevel)
+                    MessageFormat.format("LV Bat: {0,number,#.0}V ({1,number,#}%)", LVBLevel, LVBPercent)
                 )
             } else {
                 views.setTextViewText(

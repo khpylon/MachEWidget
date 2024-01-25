@@ -23,6 +23,8 @@ class Battery {
         @Expose
         @ColumnInfo(name = "batterystatusactual_value")
         var value: Double = 12.0
+        @ColumnInfo(name = "batterystatusactual_percent")
+        var percentage: Double = 0.0
     }
 
     @SerializedName("batteryHealth")

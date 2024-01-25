@@ -102,7 +102,7 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                     "`car_passengerdoor_value` TEXT, `car_rightreardoor_value` TEXT, " +
                     "`car_leftreardoor_value` TEXT, `car_hooddoor_value` TEXT, " +
                     "`car_tailgate_value` TEXT, `car_batteryhealth_value` TEXT, " +
-                    "`car_batterystatusactual_value` REAL, `car_leftfronttirestatus_value` TEXT, " +
+                    "`car_batterystatusactual_value` REAL, `batterystatusactual_percent` REAL, " +
                     "`car_leftfronttirepressure_value` TEXT, `car_rightfronttirestatus_value` TEXT, " +
                     "`car_rightfronttirepressure_value` TEXT, " +
                     "`car_outerleftreartirestatus_value` TEXT, " +
@@ -118,7 +118,6 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                     "`ota_deploymentFinalConsumerAction` TEXT, `ota_aggregateStatus` TEXT, " +
                     "`ota_detailedStatus` TEXT, `ota_dateTimestamp` TEXT, `ota_language` TEXT," +
                     " `ota_languageCode` TEXT, `ota_languageCodeMobileApp` TEXT, `ota_text` TEXT)"
-
         private const val fields = "`id`, `VIN`, `userId`, `nickname`, `lastRefreshTime`, `lastUpdateTime`, `lastOTATime`, " +
                 "`lastLVBStatus`, `lastTPMSStatus`, `lastChargeStatus`, `lastDTE`, `lastFuelLevel`, " +
                 "`supportsOTA`, `initialForcedRefreshTime`, `lastForcedRefreshTime`, `forcedRefreshCount`, " +
@@ -151,6 +150,10 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                 database.execSQL("DROP TABLE vehicle_info")
                 // Change the table name to the correct one
                 database.execSQL("ALTER TABLE new_vehicle_info RENAME TO vehicle_info")
+            }
+        }
+        private val MIGRATION_9_10: Migration = object : Migration(9,10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
             }
         }
     }

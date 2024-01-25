@@ -40,6 +40,7 @@ class NewCarStatus(
             // LVB battery info
             val batteryStatusActual = Battery.BatteryStatusActual()
             batteryStatusActual.value = metrics.batteryVoltage.value
+            batteryStatusActual.percentage = metrics.batteryStateOfCharge.value
             val batteryHealth = Battery.BatteryHealth()
             batteryHealth.value =
                 if (metrics.batteryStateOfCharge.value > 50.0) "STATUS_GOOD" else "STATUS_LOW"
