@@ -8,7 +8,6 @@ import com.example.khughes.machewidget.CarStatus.DoorStatus
 import com.example.khughes.machewidget.CarStatus.TPMS
 import com.example.khughes.machewidget.CarStatus.WindowPosition
 import com.google.gson.annotations.SerializedName
-import java.util.regex.Pattern
 import javax.annotation.Generated
 
 @Generated("jsonschema2pojo")
@@ -34,16 +33,17 @@ class NewCarStatus(
 
             // Alarm
             val alarm = Vehiclestatus.Alarm()
-            alarm.value = metrics.alarmStatus.value
+            alarm.value = metrics.alarmStatus?.value
             vehicleStatus.alarm = alarm // "ARMED" or "DISARMED"
 
             // LVB battery info
+            // TODO: these may need to hold null instead of a value
             val batteryStatusActual = Battery.BatteryStatusActual()
-            batteryStatusActual.value = metrics.batteryVoltage.value
-            batteryStatusActual.percentage = metrics.batteryStateOfCharge.value
+            batteryStatusActual.value = metrics.batteryVoltage?.value ?: 0.0
+            batteryStatusActual.percentage = metrics.batteryStateOfCharge?.value ?: 0.0
             val batteryHealth = Battery.BatteryHealth()
             batteryHealth.value =
-                if (metrics.batteryStateOfCharge.value > 50.0) "STATUS_GOOD" else "STATUS_LOW"
+                if (batteryStatusActual.percentage > 50.0) "STATUS_GOOD" else "STATUS_LOW"
 
             val battery = Battery()
             battery.batteryStatusActual = batteryStatusActual
@@ -59,12 +59,13 @@ class NewCarStatus(
             val chargeEndTime = Vehiclestatus.ChargeEndTime()
             // TODO: what value goes here: derived from metrics.xevBatteryTimeToFullCharge.value (Double)
             // TODO: metrics.xevBatteryTimeToFullCharge.value appears to be number of minutes until target reached
+            // TODO: metrics.evBatteryTimeToFullCharge.value may also
             chargeEndTime.value = ""
             vehicleStatus.chargeEndTime = chargeEndTime
 
             // Charging plug status
             val plugStatus = Vehiclestatus.PlugStatus()
-            plugStatus.value = if (metrics.xevPlugChargerStatus.value == "DISCONNECTED") 0 else 1
+            plugStatus.value = if (metrics.xevPlugChargerStatus?.value == "DISCONNECTED") 0 else 1
             vehicleStatus.plugStatus = plugStatus
 
             // .xevBatteryChargeDisplayStatus
@@ -75,14 +76,19 @@ class NewCarStatus(
             // Status of charge
             val chargingStatus = Vehiclestatus.ChargingStatus()
             // TODO: find out the other cases
-            if (metrics.xevBatteryChargeDisplayStatus.value == Constants.CHARGING_STATUS_IN_PROGRESS) {
-                chargingStatus.value = Constants.CHARGING_STATUS_IN_PROGRESS
-            } else if (metrics.xevBatteryChargeDisplayStatus.value == Constants.CHARGING_SCHEDULED ){
-                chargingStatus.value = Constants.CHARGING_SCHEDULED
-            } else if (metrics.xevBatteryChargeDisplayStatus.value == Constants.CHARGING_STATUS_COMPLETE ){
-                chargingStatus.value = Constants.CHARGING_STATUS_COMPLETE
-            } else {
-                chargingStatus.value = Constants.CHARGING_STATUS_NOT_READY
+            when (metrics.xevBatteryChargeDisplayStatus.value) {
+                Constants.CHARGING_STATUS_IN_PROGRESS -> {
+                    chargingStatus.value = Constants.CHARGING_STATUS_IN_PROGRESS
+                }
+                Constants.CHARGING_SCHEDULED -> {
+                    chargingStatus.value = Constants.CHARGING_SCHEDULED
+                }
+                Constants.CHARGING_STATUS_COMPLETE -> {
+                    chargingStatus.value = Constants.CHARGING_STATUS_COMPLETE
+                }
+                else -> {
+                    chargingStatus.value = Constants.CHARGING_STATUS_NOT_READY
+                }
             }
 
 //            metrics.xevPlugChargerStatus.value.let {
@@ -183,37 +189,45 @@ class NewCarStatus(
             vehicleStatus.windowPosition = windowPosition
 
             val tpms = TPMS()
-            tpms.leftFrontTireStatus = TPMS.LeftFrontTireStatus()
-            tpms.leftFrontTirePressure = TPMS.LeftFrontTirePressure()
-            tpms.rightFrontTireStatus = TPMS.RightFrontTireStatus()
-            tpms.rightFrontTirePressure = TPMS.RightFrontTirePressure()
-            tpms.outerLeftRearTireStatus = TPMS.OuterLeftRearTireStatus()
-            tpms.outerLeftRearTirePressure = TPMS.OuterLeftRearTirePressure()
-            tpms.outerRightRearTireStatus = TPMS.OuterRightRearTireStatus()
-            tpms.outerRightRearTirePressure = TPMS.OuterRightRearTirePressure()
-            for (tire in metrics.tirePressure) {
-                val status = if (tire.value > 250.0) "Normal" else "Low"
-                val pressure = tire.value.toString()
-                if (tire.vehicleWheel == "FRONT_LEFT") {
-                    tpms.leftFrontTirePressure!!.value = pressure
-                    tpms.leftFrontTireStatus!!.value = status
-                } else if (tire.vehicleWheel == "FRONT_RIGHT") {
-                    tpms.rightFrontTirePressure!!.value = pressure
-                    tpms.rightFrontTireStatus!!.value = status
-                } else if (tire.vehicleWheel == "REAR_LEFT") {
-                    tpms.outerLeftRearTirePressure!!.value = pressure
-                    tpms.outerLeftRearTireStatus!!.value = status
-                } else if (tire.vehicleWheel == "REAR_RIGHT") {
-                    tpms.outerRightRearTirePressure!!.value = pressure
-                    tpms.outerRightRearTireStatus!!.value = status
+            metrics.tirePressure?.let {
+                tpms.leftFrontTireStatus = TPMS.LeftFrontTireStatus()
+                tpms.leftFrontTirePressure = TPMS.LeftFrontTirePressure()
+                tpms.rightFrontTireStatus = TPMS.RightFrontTireStatus()
+                tpms.rightFrontTirePressure = TPMS.RightFrontTirePressure()
+                tpms.outerLeftRearTireStatus = TPMS.OuterLeftRearTireStatus()
+                tpms.outerLeftRearTirePressure = TPMS.OuterLeftRearTirePressure()
+                tpms.outerRightRearTireStatus = TPMS.OuterRightRearTireStatus()
+                tpms.outerRightRearTirePressure = TPMS.OuterRightRearTirePressure()
+
+                for (tire in metrics.tirePressure) {
+                    val status = if (tire.value > 250.0) "Normal" else "Low"
+                    val pressure = tire.value.toString()
+                    when (tire.vehicleWheel) {
+                        "FRONT_LEFT" -> {
+                            tpms.leftFrontTirePressure!!.value = pressure
+                            tpms.leftFrontTireStatus!!.value = status
+                        }
+                        "FRONT_RIGHT" -> {
+                            tpms.rightFrontTirePressure!!.value = pressure
+                            tpms.rightFrontTireStatus!!.value = status
+                        }
+                        "REAR_LEFT" -> {
+                            tpms.outerLeftRearTirePressure!!.value = pressure
+                            tpms.outerLeftRearTireStatus!!.value = status
+                        }
+                        "REAR_RIGHT" -> {
+                            tpms.outerRightRearTirePressure!!.value = pressure
+                            tpms.outerRightRearTireStatus!!.value = status
+                        }
+                    }
                 }
             }
             vehicleStatus.tpms = tpms
 
             // ICE/Diesel/Hybrid/PHEV fuel level
             val fuel = Vehiclestatus.Fuel()
-            fuel.fuelLevel = metrics.fuelLevel?.value ?: null
-            fuel.distanceToEmpty = metrics.fuelRange?.value ?: null
+            fuel.fuelLevel = metrics.fuelLevel?.value
+            fuel.distanceToEmpty = metrics.fuelRange?.value
             vehicleStatus.fuel = fuel
             vehicleStatus.diesel = DieselSystemStatus()
             vehicleStatus.diesel!!.exhaustFluidLevel = DieselSystemStatus.ExhaustFluidLevel()
@@ -225,49 +239,50 @@ class NewCarStatus(
 
     data class CarStatusMetrics(
 //    val customMetrics: FluffyCustomMetrics,
-        val alarmStatus: AlarmStatus,
+        val alarmStatus: AlarmStatus?,
 //    val acceleration: Acceleration,
 //    val acceleratorPedalPosition: DoubleValue,
 //    val ambientTemp: AcceleratorPedalPosition,
-        val batteryStateOfCharge: AcceleratorPedalPosition,
-        val batteryVoltage: AcceleratorPedalPosition,
+        val batteryStateOfCharge: AcceleratorPedalPosition?,
+        val batteryVoltage: AcceleratorPedalPosition?,
 //    val brakePedalStatus: AlarmStatus,
 //    val brakeTorque: AcceleratorPedalPosition,
         val compassDirection: AlarmStatus,
-        val doorLockStatus: List<DoorStatus>,
+        val doorLockStatus: List<DoorStatus>?,
         val doorStatus: List<DoorStatus>,
 //    val engineCoolantTemp: DoubleValue,
 //    val engineOilTemp: DoubleValue,
         val fuelLevel: DoubleValue?,
         val fuelRange: DoubleValue?,
         val engineSpeed: DoubleValue,
-        val xevBatteryTimeToFullCharge: AcceleratorPedalPosition,
+        val xevBatteryTimeToFullCharge: AcceleratorPedalPosition?,
+        val evBatteryTimeToFullCharge: AcceleratorPedalPosition?,
 //    val gearLeverPosition: AlarmStatus,
 //    val heading: Heading,
         val hoodStatus: StringValue,
         val hybridVehicleModeStatus: AlarmStatus,
         val ignitionStatus: AlarmStatus,
-        val indicators: Map<String, Indicator>,
+        val indicators: Map<String, Indicator>?,
 //    val outsideTemperature: AcceleratorPedalPosition,
 //    val yawRate: AcceleratorPedalPosition,
-        val windowStatus: List<WindowStatus>,
-//    val wheelTorqueStatus: AlarmStatus,
-        val tirePressureStatus: List<AlarmStatus>,
-        val tirePressure: List<TirePressure>,
-        val tirePressureSystemStatus: List<AlarmStatus>,
 //    val seatOccupancyStatus: List<AlarmStatus>,
 //    val seatBeltStatus: List<AlarmStatus>,
-        val remoteStartCountdownTimer: AcceleratorPedalPosition,
-        val position: Position,
 //    val parkingBrakeStatus: AlarmStatus,
         val oilLifeRemaining: AcceleratorPedalPosition,
         val odometer: DoubleValue,
-        val speed: DoubleValue,
+        val position: Position,
+        val remoteStartCountdownTimer: AcceleratorPedalPosition,
 //    val configurations: PurpleConfigurations,
+        val speed: DoubleValue,
+        val tirePressureStatus: List<AlarmStatus>?,
+        val tirePressure: List<TirePressure>?,
+        val tirePressureSystemStatus: List<AlarmStatus>?,
         val vehicleLifeCycleMode: AlarmStatus,
-        val xevPlugChargerStatus: StringValue,
-        val xevBatteryCapacity: DoubleValue,
-        val xevBatteryMaximumRange: DoubleValue,
+        val windowStatus: List<WindowStatus>,
+//    val wheelTorqueStatus: AlarmStatus,
+        val xevPlugChargerStatus: StringValue?,
+        val xevBatteryCapacity: DoubleValue?,
+        val xevBatteryMaximumRange: DoubleValue?,
         val xevBatteryRange: DoubleValue,
         val xevBatteryStateOfCharge: DoubleValue?,
 //    val xevBatteryPerformanceStatus: AlarmStatus,
