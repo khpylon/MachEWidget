@@ -28,7 +28,7 @@ class NewCarStatus(
             val carStatus = CarStatus()
             val vehicleStatus = carStatus.vehiclestatus
 
-            val updateTime = status.updateTime.replace(".[0-9]*Z", "Z")
+            val updateTime = status.updateTime.replace("\\.[0-9]*Z".toRegex(), "Z")
             vehicleStatus.lastRefresh = updateTime
             vehicleStatus.lastModifiedDate = updateTime
 
