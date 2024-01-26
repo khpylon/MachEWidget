@@ -58,7 +58,7 @@ object AppUpdates {
             }
 
             // Adjust LVB voltages which were stored as Integers * 10
-            if (lastVersion < "2024.01.24") {
+            if (lastVersion < "2024.01.26") {
                 CoroutineScope(Dispatchers.IO).launch {
                     val info = InfoRepository(context)
                     for (vehicle in info.vehicles) {
