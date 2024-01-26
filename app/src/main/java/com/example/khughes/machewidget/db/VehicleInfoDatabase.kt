@@ -103,7 +103,9 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                     "`car_leftreardoor_value` TEXT, `car_hooddoor_value` TEXT, " +
                     "`car_tailgate_value` TEXT, `car_batteryhealth_value` TEXT, " +
                     "`car_batterystatusactual_value` REAL, `batterystatusactual_percent` REAL, " +
-                    "`car_leftfronttirepressure_value` TEXT, `car_rightfronttirestatus_value` TEXT, " +
+                    "`car_leftfronttirestatus_value` TEXT, " +
+                    "`car_leftfronttirepressure_value` TEXT, " +
+                    "`car_rightfronttirestatus_value` TEXT, " +
                     "`car_rightfronttirepressure_value` TEXT, " +
                     "`car_outerleftreartirestatus_value` TEXT, " +
                     "`car_outerleftreartirepressure_value` TEXT, " +
