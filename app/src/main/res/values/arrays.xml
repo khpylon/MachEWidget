@@ -37,6 +37,21 @@
         <item>@string/units_kphbar</item>
     </string-array>
 
+    <string-array name="lvb_titles">
+        <item>Voltage</item>
+        <item>State of Charge</item>
+        <item>Voltage and SOC</item>
+        <item>SOC as Progress Bar</item>
+    </string-array>
+
+    <!-- make sure these match values in Constants.java -->
+    <string-array name="lvb_values">
+        <item>Volts</item>
+        <item>SOC</item>
+        <item>VSOC</item>
+        <item>Graph</item>
+    </string-array>
+
     <string-array name="packages">
         <item>com.ford.fordpass</item>
         <item>com.coulombtech</item>

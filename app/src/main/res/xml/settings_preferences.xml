@@ -108,6 +108,17 @@
         app:title="@string/units"
         app:useSimpleSummaryProvider="true" />
 
+    <ListPreference
+        app:key="@string/lvb_display_key"
+        app:defaultValue="VSOC"
+        app:entries="@array/lvb_titles"
+        app:entryValues="@array/lvb_values"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/lvb_display_description"
+        app:useSimpleSummaryProvider="true" />
+
+
     <SwitchPreferenceCompat
         app:defaultValue="false"
         app:key="@string/transp_bg_key"

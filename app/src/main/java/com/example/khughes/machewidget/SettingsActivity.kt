@@ -70,9 +70,18 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
 
-            // Update the widget once the user pick a new unit preference.
+            // Update the widget once the user picks a new unit preference.
             val units: Preference? = findPreference(this.resources.getString(R.string.units_key))
             units?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _: Preference?, _: Any? ->
+                    CarStatusWidget.updateWidget(context)
+                    true
+                }
+
+            // Update the widget once the user picks a new LVB status preference.
+            var lvbDisplay: Preference? =
+                findPreference(this.resources.getString(R.string.lvb_display_key))
+            lvbDisplay?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _: Preference?, _: Any? ->
                     CarStatusWidget.updateWidget(context)
                     true

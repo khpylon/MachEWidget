@@ -654,20 +654,41 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
 
         // 12 volt battery status
+        views.setViewVisibility(R.id.LVBLevelGreen, View.GONE)
+        views.setViewVisibility(R.id.LVBLevelYellow, View.GONE)
+        views.setViewVisibility(R.id.LVBLevelRed, View.GONE)
         carStatus.vehiclestatus.battery?.batteryStatusActual?.value?.let { LVBLevel ->
             val LVBStatus =
                 carStatus.vehiclestatus.battery?.batteryHealth?.value ?: "STATUS_GOOD"
             val LVBPercent =
                 carStatus.vehiclestatus.battery?.batteryStatusActual?.percentage ?: 0.0
-            views.setTextColor(
-                R.id.LVBVoltage,
-                context.getColor(if (LVBStatus == "STATUS_GOOD") R.color.white else R.color.red)
-            )
+//            views.setTextColor(
+//                R.id.LVBVoltage,
+//                context.getColor(if (LVBStatus == "STATUS_GOOD") R.color.white else R.color.red)
+//            )
             if (LVBLevel > 0) {
-                views.setTextViewText(
-                    R.id.LVBVoltage,
-                    MessageFormat.format("LV Bat: {0,number,#.0}V ({1,number,#}%)", LVBLevel, LVBPercent)
-                )
+                val displayLVB = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(context.resources.getString(R.string.lvb_display_key), "")
+                val message: String
+                if (displayLVB == "Graph") {
+                    val id: Int
+                    if (LVBPercent >= 80.0) {
+                        id = R.id.LVBLevelGreen
+                    } else if (LVBPercent >= 50.0) {
+                        id = R.id.LVBLevelYellow
+                    } else {
+                        id = R.id.LVBLevelRed
+                    }
+                    views.setViewVisibility(id, View.VISIBLE)
+                    message = MessageFormat.format( "{0,number,#.0}V", LVBLevel )
+                } else if (displayLVB == "Volts") {
+                    message = MessageFormat.format( "{0,number,#.0}V", LVBLevel )
+                } else if (displayLVB == "SOC" ) {
+                    message = MessageFormat.format( "{0}%", LVBPercent )
+                } else {
+                    message = MessageFormat.format( "{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent )
+                }
+                views.setTextViewText( R.id.LVBVoltage, message )
             } else {
                 views.setTextViewText(
                     R.id.LVBVoltage,

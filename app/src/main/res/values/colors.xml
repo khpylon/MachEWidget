@@ -20,5 +20,6 @@
     <color name="transparent_black">#BF000000</color>
     <color name="bright_green">#7F00FF00</color>
     <color name="dull_yellow">#7FBFBF00</color>
+    <color name="mustard_yellow">#7FFFFF00</color>
     <color name="dull_green">#7F00BF00</color>
 </resources>

@@ -101,6 +101,8 @@
     <string name="check_charging_key">checkCharging</string>
     <string name="check_dcfastcharging_key">check_DCfastcharging_key</string>
     <string name="dcfclog_key">save_DCfastcharging_key</string>
+    <string name="lvb_display_key">lvb_display</string>
+
 
     <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
     <string name="units_kphkpa">1</string>
@@ -128,8 +130,6 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="correct_VIN_length">The VIN must be 17 characters long.</string>
     <string name="username_or_e_mail">Username or E-mail</string>
     <string name="password">Password</string>
@@ -142,5 +142,6 @@
     <string name="charging_information_title">Charging Information</string>
     <string name="charging_infomation_summary">Only applicable to electric vehicles</string>
     <string name="enable_commands_summary">NOTICE: unavailable until Ford\'s public API is released.</string>
+    <string name="lvb_display_description">12V Battery Info Displayed</string>
 
 </resources>

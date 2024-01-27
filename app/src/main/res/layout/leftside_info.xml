@@ -40,20 +40,88 @@
         android:id="@+id/LVBOrDEF"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_below="@id/odometer"
         android:visibility="visible">
 
-        <TextView
-            android:id="@+id/LVBVoltage"
-            android:layout_width="120dp"
+        <RelativeLayout
+            android:id="@+id/LVBDisplay"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:text="LVB Volts: N/A"
-            android:textColor="@color/white"
-            android:textSize="12dp"
-            android:visibility="visible"/>
+            android:layout_alignParentEnd="true"
+            android:visibility="visible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/LVBVoltageText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/white"
+                    android:textSize="12dp"
+                    android:text = "LV Battery: " />
+
+                <ProgressBar
+                    android:id="@+id/LVBLevelGreen"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/LVBVoltageText"
+                    android:gravity="center_vertical"
+                    android:max="100"
+                    android:progress="95"
+                    android:progressBackgroundTint="@color/quantum_yellow"
+                    android:progressTint="@color/bright_green"
+                    android:visibility="gone"
+                    android:scaleY="4" />
+
+                <ProgressBar
+                    android:id="@+id/LVBLevelYellow"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/LVBVoltageText"
+                    android:gravity="center_vertical"
+                    android:max="100"
+                    android:progress="80"
+                    android:progressBackgroundTint="@color/quantum_yellow"
+                    android:progressTint="@color/mustard_yellow"
+                    android:visibility="gone"
+                    android:scaleY="4" />
+
+                <ProgressBar
+                    android:id="@+id/LVBLevelRed"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/LVBVoltageText"
+                    android:gravity="center_vertical"
+                    android:max="100"
+                    android:progress="50"
+                    android:progressBackgroundTint="@color/quantum_yellow"
+                    android:progressTint="@color/red"
+                    android:scaleY="4" />
+
+                <TextView
+                    android:id="@+id/LVBVoltage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_toEndOf="@id/LVBVoltageText"
+                    android:textSize="12dp"
+                    android:text = "12.7V" />
+            </RelativeLayout>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/DEFLevel"
