@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.khughes.machewidget.VehicleInfo
 import java.util.concurrent.Executors
 
-@Database(entities = [VehicleInfo::class], version = 9)
+@Database(entities = [VehicleInfo::class], version = 10)
 abstract class VehicleInfoDatabase : RoomDatabase() {
     abstract fun vehicleInfoDao(): VehicleInfoDao
 
@@ -28,6 +28,7 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                         MIGRATION_6_7,
                         MIGRATION_7_8,
                         MIGRATION_8_9,
+                        MIGRATION_9_10,
                     )
                     .fallbackToDestructiveMigration()
                     .setJournalMode(JournalMode.TRUNCATE)
