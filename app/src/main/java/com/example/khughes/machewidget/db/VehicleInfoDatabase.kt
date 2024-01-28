@@ -102,7 +102,7 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                     "`car_passengerdoor_value` TEXT, `car_rightreardoor_value` TEXT, " +
                     "`car_leftreardoor_value` TEXT, `car_hooddoor_value` TEXT, " +
                     "`car_tailgate_value` TEXT, `car_batteryhealth_value` TEXT, " +
-                    "`car_batterystatusactual_value` REAL, `batterystatusactual_percent` REAL, " +
+                    "`car_batterystatusactual_value` REAL, `car_batterystatusactual_percent` REAL, " +
                     "`car_leftfronttirestatus_value` TEXT, " +
                     "`car_leftfronttirepressure_value` TEXT, " +
                     "`car_rightfronttirestatus_value` TEXT, " +
@@ -156,6 +156,16 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
         }
         private val MIGRATION_9_10: Migration = object : Migration(9,10) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                // Create the new table
+                database.execSQL(newTable)
+                // Copy the data
+                database.execSQL(
+                    "INSERT INTO new_vehicle_info (${fields}) SELECT ${fields} FROM vehicle_info"
+                )
+                // Remove the old table
+                database.execSQL("DROP TABLE vehicle_info")
+                // Change the table name to the correct one
+                database.execSQL("ALTER TABLE new_vehicle_info RENAME TO vehicle_info")
             }
         }
     }
