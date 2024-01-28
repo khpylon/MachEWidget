@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.01.28-09
+### Fixed
+- A few bugs in vehicle database and processing status JSON info.
+
 ## 2024.01.27-13:30
 ### Added
 - Allow the choice of what and how information is displayed about the 12V (low-voltage) battery.  This is configurable under "Settings".
