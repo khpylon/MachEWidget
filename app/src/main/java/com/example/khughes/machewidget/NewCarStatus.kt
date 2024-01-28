@@ -265,7 +265,7 @@ class NewCarStatus(
 //    val gearLeverPosition: AlarmStatus,
 //    val heading: Heading,
         val hoodStatus: StringValue,
-        val hybridVehicleModeStatus: AlarmStatus,
+        val hybridVehicleModeStatus: AlarmStatus?,
         val ignitionStatus: AlarmStatus,
         val indicators: Map<String, Indicator>?,
 //    val outsideTemperature: AcceleratorPedalPosition,
@@ -288,7 +288,7 @@ class NewCarStatus(
         val xevPlugChargerStatus: StringValue?,
         val xevBatteryCapacity: DoubleValue?,
         val xevBatteryMaximumRange: DoubleValue?,
-        val xevBatteryRange: DoubleValue,
+        val xevBatteryRange: DoubleValue?,
         val xevBatteryStateOfCharge: DoubleValue?,
 //    val xevBatteryPerformanceStatus: AlarmStatus,
 ////    val torqueAtTransmission: AcceleratorPedalPosition,
@@ -296,20 +296,20 @@ class NewCarStatus(
 //    val tripXevBatteryRangeRegenerated: AcceleratorPedalPosition,
 //    val tripXevBatteryChargeRegenerated: AcceleratorPedalPosition,
 //    val panicAlarmStatus: AlarmStatus,
-        val xevBatteryEnergyRemaining: AcceleratorPedalPosition,
+        val xevBatteryEnergyRemaining: AcceleratorPedalPosition?,
         val xevBatteryChargeDisplayStatus: BatteryChargeDisplayStatus?,
-        val xevChargeStationPowerType: AlarmStatus, // AC_BASIC or DC_BASIC?
+        val xevChargeStationPowerType: AlarmStatus?, // AC_BASIC or DC_BASIC?
 //    val xevChargeStationCommunicationStatus: AlarmStatus,
         val displaySystemOfMeasure: AlarmStatus,
 //    val doorPresenceStatus: List<DoorStatus>,
-        val xevBatteryTemperature: AcceleratorPedalPosition,
-        val xevBatteryChargerCurrentOutput: AcceleratorPedalPosition,
-        val xevBatteryChargerVoltageOutput: AcceleratorPedalPosition,
+        val xevBatteryTemperature: AcceleratorPedalPosition?,
+        val xevBatteryChargerCurrentOutput: AcceleratorPedalPosition?,
+        val xevBatteryChargerVoltageOutput: AcceleratorPedalPosition?,
 
         // TODO: xevBatteryChargerVoltageOutput * xevBatteryChargerCurrentOutput == charging kW?
-        val xevBatteryActualStateOfCharge: AcceleratorPedalPosition,
-        val xevBatteryIoCurrent: AcceleratorPedalPosition,
-        val xevBatteryVoltage: AcceleratorPedalPosition,
+        val xevBatteryActualStateOfCharge: AcceleratorPedalPosition?,
+        val xevBatteryIoCurrent: AcceleratorPedalPosition?,
+        val xevBatteryVoltage: AcceleratorPedalPosition?,
 
 //    val xevTractionMotorCurrent: AcceleratorPedalPosition,
 //    val xevTractionMotorVoltage: AcceleratorPedalPosition
