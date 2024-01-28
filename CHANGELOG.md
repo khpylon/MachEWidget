@@ -23,7 +23,7 @@ but at this time the project does not adhere to [Semantic Versioning](https://se
 ### Added
 - Display 12V battery's state of charge.
 ### Fixed
-- Correct but in Manage Vehicles which used the old API.
+- Correct bug in Manage Vehicles which used the old API.
 ### Changed
 - The JSON format of the status information has changed completely, and since changes are based on what
   is discovered from observing actual vehicle data everything may not work.  I only have info for Mach-Es
