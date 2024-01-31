@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.01.30-14
+### Fixed
+- A few bugs in TMPS status and processing status JSON info.
+
 ## 2024.01.28-09
 ### Fixed
 - A few bugs in vehicle database and processing status JSON info.
