@@ -175,19 +175,21 @@ class NewCarStatus(
             windowPosition.passWindowPosition = WindowPosition.PassWindowPosition()
             windowPosition.rearDriverWindowPos = WindowPosition.RearDriverWindowPos()
             windowPosition.rearPassWindowPos = WindowPosition.RearPassWindowPos()
-            for (window in metrics.windowStatus) {
-                val state = if (window.value.doubleRange.lowerBound > 0.0) "open" else "fullyclosed"
-                if (window.vehicleWindow == "UNSPECIFIED_FRONT") {
-                    if (window.vehicleSide == "DRIVER") {
-                        windowPosition.driverWindowPosition!!.value = state
-                    } else {
-                        windowPosition.passWindowPosition!!.value = state
-                    }
-                } else if (window.vehicleWindow == "UNSPECIFIED_REAR") {
-                    if (window.vehicleSide == "DRIVER") {
-                        windowPosition.rearDriverWindowPos!!.value = state
-                    } else {
-                        windowPosition.rearPassWindowPos!!.value = state
+            metrics.windowStatus?.let {status ->
+                for (window in status) {
+                    val state = if (window.value.doubleRange.lowerBound > 0.0) "open" else "fullyclosed"
+                    if (window.vehicleWindow == "UNSPECIFIED_FRONT") {
+                        if (window.vehicleSide == "DRIVER") {
+                            windowPosition.driverWindowPosition!!.value = state
+                        } else {
+                            windowPosition.passWindowPosition!!.value = state
+                        }
+                    } else if (window.vehicleWindow == "UNSPECIFIED_REAR") {
+                        if (window.vehicleSide == "DRIVER") {
+                            windowPosition.rearDriverWindowPos!!.value = state
+                        } else {
+                            windowPosition.rearPassWindowPos!!.value = state
+                        }
                     }
                 }
             }
@@ -195,33 +197,47 @@ class NewCarStatus(
 
             val tpms = TPMS()
             metrics.tirePressure?.let {
-                tpms.leftFrontTireStatus = TPMS.LeftFrontTireStatus()
                 tpms.leftFrontTirePressure = TPMS.LeftFrontTirePressure()
-                tpms.rightFrontTireStatus = TPMS.RightFrontTireStatus()
                 tpms.rightFrontTirePressure = TPMS.RightFrontTirePressure()
-                tpms.outerLeftRearTireStatus = TPMS.OuterLeftRearTireStatus()
                 tpms.outerLeftRearTirePressure = TPMS.OuterLeftRearTirePressure()
-                tpms.outerRightRearTireStatus = TPMS.OuterRightRearTireStatus()
                 tpms.outerRightRearTirePressure = TPMS.OuterRightRearTirePressure()
-
                 for (tire in metrics.tirePressure) {
-                    val status = if (tire.value > 250.0) "Normal" else "Low"
                     val pressure = tire.value.toString()
                     when (tire.vehicleWheel) {
                         "FRONT_LEFT" -> {
                             tpms.leftFrontTirePressure!!.value = pressure
-                            tpms.leftFrontTireStatus!!.value = status
                         }
                         "FRONT_RIGHT" -> {
                             tpms.rightFrontTirePressure!!.value = pressure
-                            tpms.rightFrontTireStatus!!.value = status
                         }
                         "REAR_LEFT" -> {
                             tpms.outerLeftRearTirePressure!!.value = pressure
-                            tpms.outerLeftRearTireStatus!!.value = status
                         }
                         "REAR_RIGHT" -> {
                             tpms.outerRightRearTirePressure!!.value = pressure
+                        }
+                    }
+                }
+            }
+
+            metrics.tirePressureStatus?.let {
+                tpms.leftFrontTireStatus = TPMS.LeftFrontTireStatus()
+                tpms.rightFrontTireStatus = TPMS.RightFrontTireStatus()
+                tpms.outerLeftRearTireStatus = TPMS.OuterLeftRearTireStatus()
+                tpms.outerRightRearTireStatus = TPMS.OuterRightRearTireStatus()
+                for (tire in metrics.tirePressureStatus) {
+                    val status = if (tire.value == "NORMAL") "Normal" else "Low"
+                    when (tire.vehicleWheel) {
+                        "FRONT_LEFT" -> {
+                            tpms.leftFrontTireStatus!!.value = status
+                        }
+                        "FRONT_RIGHT" -> {
+                            tpms.rightFrontTireStatus!!.value = status
+                        }
+                        "REAR_LEFT" -> {
+                            tpms.outerLeftRearTireStatus!!.value = status
+                        }
+                        "REAR_RIGHT" -> {
                             tpms.outerRightRearTireStatus!!.value = status
                         }
                     }
@@ -283,7 +299,7 @@ class NewCarStatus(
         val tirePressure: List<TirePressure>?,
         val tirePressureSystemStatus: List<AlarmStatus>?,
         val vehicleLifeCycleMode: AlarmStatus,
-        val windowStatus: List<WindowStatus>,
+        val windowStatus: List<WindowStatus>?,
 //    val wheelTorqueStatus: AlarmStatus,
         val xevPlugChargerStatus: StringValue?,
         val xevBatteryCapacity: DoubleValue?,
