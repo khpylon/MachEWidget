@@ -245,14 +245,25 @@ class NewCarStatus(
             }
             vehicleStatus.tpms = tpms
 
-            // ICE/Diesel/Hybrid/PHEV fuel level
+            // ICE/Hybrid/PHEV fuel level
             val fuel = Vehiclestatus.Fuel()
             fuel.fuelLevel = metrics.fuelLevel?.value
             fuel.distanceToEmpty = metrics.fuelRange?.value
             vehicleStatus.fuel = fuel
-            vehicleStatus.diesel = DieselSystemStatus()
-            vehicleStatus.diesel!!.exhaustFluidLevel = DieselSystemStatus.ExhaustFluidLevel()
-            vehicleStatus.diesel!!.ureaRange = DieselSystemStatus.UreaRange()
+
+            // Diesel info
+            val diesel = DieselSystemStatus()
+            metrics.dieselExhaustFluidLevel?.value?.let {
+                val exhaustFluidLevel = DieselSystemStatus.ExhaustFluidLevel()
+                exhaustFluidLevel.value = it.toString()
+                diesel.exhaustFluidLevel = exhaustFluidLevel
+            }
+            metrics.dieselExhaustFluidLevelRangeRemaining?.value?.let {
+                val ureaRange = DieselSystemStatus.UreaRange()
+                ureaRange.value = it.toString()
+                diesel.ureaRange = ureaRange
+            }
+            vehicleStatus.diesel = diesel
 
             return carStatus
         }
@@ -269,6 +280,8 @@ class NewCarStatus(
 //    val brakePedalStatus: AlarmStatus,
 //    val brakeTorque: AcceleratorPedalPosition,
         val compassDirection: AlarmStatus,
+        val dieselExhaustFluidLevel: DoubleValue?,
+        val dieselExhaustFluidLevelRangeRemaining: DoubleValue?,
         val doorLockStatus: List<DoorStatus>?,
         val doorStatus: List<DoorStatus>,
 //    val engineCoolantTemp: DoubleValue,

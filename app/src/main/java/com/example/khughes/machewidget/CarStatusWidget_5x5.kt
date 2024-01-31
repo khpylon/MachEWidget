@@ -452,19 +452,19 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 when (mode) {
                     "showDEFLevel" -> {
                         nextMode = "showDEFRange"
-                        views.setViewVisibility(R.id.LVBVoltage, View.GONE)
+                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
                         views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
                         views.setViewVisibility(R.id.DEFRange, View.GONE)
                     }
                     "showDEFRange" -> {
                         nextMode = "showLVBVoltage"
-                        views.setViewVisibility(R.id.LVBVoltage, View.GONE)
+                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
                         views.setViewVisibility(R.id.DEFLevel, View.GONE)
                         views.setViewVisibility(R.id.DEFRange, View.VISIBLE)
                     }
                     else -> {
                         nextMode = "showDEFLevel"
-                        views.setViewVisibility(R.id.LVBVoltage, View.VISIBLE)
+                        views.setViewVisibility(R.id.LVBDisplay, View.VISIBLE)
                         views.setViewVisibility(R.id.DEFLevel, View.GONE)
                         views.setViewVisibility(R.id.DEFRange, View.GONE)
                     }
