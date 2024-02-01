@@ -42,7 +42,7 @@ interface DigitalServicesService {
         "upgrade-insecure-requests: 1",
         "user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
     )
-    @GET("fs/api/v2/vehicles/image/full")
+    @GET("vehicleimage/api/v1/vehicles/image/full")
     fun getVehicleImage(
         @Header("Application-Id") APID: String?,
         @Query("vin") VIN: String?,
