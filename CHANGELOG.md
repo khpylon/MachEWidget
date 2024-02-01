@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.02.01-16
+### Fixed
+- Restore ability to get images of vehicles.  These are shown on the large widget and also used to determine the vehicle's color automatically. 
+
 ## 2024.01.31-11
 ### Added
 - Add support specifically for diesel vehicles.
