@@ -43,7 +43,9 @@ object AppUpdates {
 
             // Disable automatic forced updates
             if (lastVersion < "2023.10.08") {
-                PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(context.resources.getString(R.string.forceUpdate_key),false).commit()
+                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                    .putBoolean(context.resources.getString(R.string.forceUpdate_key), false)
+                    .commit()
             }
 
             // Reset the program state to require a login
@@ -73,8 +75,19 @@ object AppUpdates {
                 }
             }
 
+            // Try to find any missing vehicle images
+            if (lastVersion < "2024.02.01-16") {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val info = InfoRepository(context)
+                    val userInfo = info.user
+                    for (vehicle in info.vehicles) {
+                        vehicle.vin?.let {vin ->
+                            NetworkCalls.getVehicleImage(context, vin, userInfo.country!!)
+                        }
+                    }
+                }
+            }
         }
-
 
 
         // Update internally
