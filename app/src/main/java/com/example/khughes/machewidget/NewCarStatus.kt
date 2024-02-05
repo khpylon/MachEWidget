@@ -245,6 +245,17 @@ class NewCarStatus(
             }
             vehicleStatus.tpms = tpms
 
+            // Doors locked status
+            val lockStatus = Vehiclestatus.LockStatus()
+            metrics.doorLockStatus?.let {doors ->
+                for (lock in doors) {
+                    if (lock.vehicleDoor == "ALL_DOORS") {
+                        lockStatus.value = lock.value
+                    }
+                }
+            }
+            vehicleStatus.lockStatus = lockStatus
+
             // ICE/Hybrid/PHEV fuel level
             val fuel = Vehiclestatus.Fuel()
             fuel.fuelLevel = metrics.fuelLevel?.value
@@ -264,6 +275,15 @@ class NewCarStatus(
                 diesel.ureaRange = ureaRange
             }
             vehicleStatus.diesel = diesel
+
+            // EV charging information
+            metrics.xevBatteryIoCurrent?.let { current ->
+                vehicleStatus.chargePower = -current.value *
+                        metrics.xevBatteryChargerVoltageOutput!!.value
+            }
+            metrics.xevBatteryChargeDisplayStatus?.xevChargerPowerType?.let {
+                vehicleStatus.chargeType = it
+            }
 
             return carStatus
         }
