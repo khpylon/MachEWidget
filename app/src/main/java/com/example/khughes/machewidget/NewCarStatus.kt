@@ -257,10 +257,12 @@ class NewCarStatus(
             vehicleStatus.lockStatus = lockStatus
 
             // ICE/Hybrid/PHEV fuel level
-            val fuel = Vehiclestatus.Fuel()
-            fuel.fuelLevel = metrics.fuelLevel?.value
-            fuel.distanceToEmpty = metrics.fuelRange?.value
-            vehicleStatus.fuel = fuel
+            metrics.fuelLevel?.value?.let {
+                val fuel = Vehiclestatus.Fuel()
+                fuel.fuelLevel = metrics.fuelLevel?.value
+                fuel.distanceToEmpty = metrics.fuelRange?.value
+                vehicleStatus.fuel = fuel
+            }
 
             // Diesel info
             val diesel = DieselSystemStatus()
