@@ -63,7 +63,6 @@
         android:id="@+id/action_charge"
         android:orderInCategory="30"
         android:title="View DCFC Logs"
-        android:enabled="false"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_update"

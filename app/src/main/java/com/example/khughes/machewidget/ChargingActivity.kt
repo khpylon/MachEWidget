@@ -487,28 +487,28 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
         )
         sessionDay.timeInMillis = pluginTime
 
-        Text(
-            text = "Session start time: " + sdfDay.format(sessionDay.time),
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Text(
-            text = "Charging network: " + session.network,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        var location = session.chargeLocationName as String
-        val prefix = session.network + " - "
-        if (location.startsWith(prefix, ignoreCase = false)) {
-            location = location.substring(prefix.length)
-        }
-
-        Text(
-            text = "Location: " + location.substring(0, min(35, location.length)),
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.fillMaxWidth()
-        )
+//        Text(
+//            text = "Session start time: " + sdfDay.format(sessionDay.time),
+//            color = MaterialTheme.colorScheme.secondary,
+//            modifier = Modifier.fillMaxWidth()
+//        )
+//        Text(
+//            text = "Charging network: " + session.network,
+//            color = MaterialTheme.colorScheme.secondary,
+//            modifier = Modifier.fillMaxWidth()
+//        )
+//
+//        var location = session.chargeLocationName as String
+//        val prefix = session.network + " - "
+//        if (location.startsWith(prefix, ignoreCase = false)) {
+//            location = location.substring(prefix.length)
+//        }
+//
+//        Text(
+//            text = "Location: " + location.substring(0, min(35, location.length)),
+//            color = MaterialTheme.colorScheme.secondary,
+//            modifier = Modifier.fillMaxWidth()
+//        )
 
         val maxPowerStr = String.format(
             "%.2f",

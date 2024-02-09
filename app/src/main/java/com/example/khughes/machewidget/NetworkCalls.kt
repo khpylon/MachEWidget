@@ -14,6 +14,7 @@ import android.os.Message
 import android.widget.Toast
 import androidx.core.os.ConfigurationCompat
 import androidx.preference.PreferenceManager
+import com.example.khughes.machewidget.CarStatus.CarStatus
 import com.example.khughes.machewidget.CarStatusWidget.Companion.updateWidget
 import com.example.khughes.machewidget.LogFile.e
 import com.example.khughes.machewidget.LogFile.i
@@ -37,7 +38,6 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.nio.file.Files
 import java.text.MessageFormat
-import java.text.ParseException
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -85,8 +85,8 @@ class NetworkCalls {
             var stage = 1
             val userDao = UserInfoDatabase.getInstance(context).userInfoDao()
             val userInfo = UserInfo()
-            val vehInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-            val vehicles = vehInfoDao.findVehicleInfo()
+//            val vehInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+//            val vehicles = vehInfoDao.findVehicleInfo()
             var userId: String? = null
             var token: String? = null
 
@@ -164,15 +164,20 @@ class NetworkCalls {
                                 units = context.resources.getString(R.string.units_kphbar)
                             }
                             val edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
-                            edit.putString(context.resources.getString(R.string.units_key),units)
+                            edit.putString(context.resources.getString(R.string.units_key), units)
                             edit.commit()
 
-                            val acctAutoClient = createAcctAutonomicService(AcctAutonomicService::class.java, context)
-                            call = acctAutoClient.getAccessToken(userInfo.accessToken!!,
+                            val acctAutoClient = createAcctAutonomicService(
+                                AcctAutonomicService::class.java,
+                                context
+                            )
+                            call = acctAutoClient.getAccessToken(
+                                userInfo.accessToken!!,
                                 "fordpass", "fordpass-prod",
                                 "urn:ietf:params:oauth:grant-type:token-exchange",
-                                "urn:ietf:params:oauth:token-type:jwt")
-                            val response2 = call!!.execute();
+                                "urn:ietf:params:oauth:token-type:jwt"
+                            )
+                            val response2 = call!!.execute()
                             accessToken = response2.body()!!
                             userInfo.autoAccessToken = accessToken.accessToken
                             val autoTime = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(
@@ -327,12 +332,17 @@ class NetworkCalls {
                                 time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                             userInfo.expiresIn = nextTime
 
-                            val acctAutoClient = createAcctAutonomicService(AcctAutonomicService::class.java, context)
-                            val call = acctAutoClient.getAccessToken(userInfo.accessToken!!,
+                            val acctAutoClient = createAcctAutonomicService(
+                                AcctAutonomicService::class.java,
+                                context
+                            )
+                            val call = acctAutoClient.getAccessToken(
+                                userInfo.accessToken!!,
                                 "fordpass", "fordpass-prod",
                                 "urn:ietf:params:oauth:grant-type:token-exchange",
-                                "urn:ietf:params:oauth:token-type:jwt")
-                            val response2 = call!!.execute();
+                                "urn:ietf:params:oauth:token-type:jwt"
+                            )
+                            val response2 = call!!.execute()
                             accessToken = response2.body()!!
                             userInfo.autoAccessToken = accessToken.accessToken
                             val autoTime = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(
@@ -475,7 +485,8 @@ class NetworkCalls {
                     )
                     if ((nowtime - lasttime) / (1000 * 60) > 6 * 60 &&
                         !(info.carStatus.vehiclestatus.deepSleepInProgress?.value ?: true) &&
-                        (info.carStatus.vehiclestatus.battery?.batteryStatusActual?.value ?: 0.0) > 12.0
+                        (info.carStatus.vehiclestatus.battery?.batteryStatusActual?.value
+                            ?: 0.0) > 12.0
                     ) {
                         CoroutineScope(Dispatchers.Main).launch {
                             updateStatus(context, info.vin)
@@ -493,167 +504,50 @@ class NetworkCalls {
                     for (retry in 2 downTo 0) {
                         try {
                             // Try to get the latest car status
-                            val statusClient = createApiAutonomicService(ApiAutonomicService::class.java, context)
+                            val statusClient =
+                                createApiAutonomicService(ApiAutonomicService::class.java, context)
                             val autoAccessToken = userInfo.autoAccessToken
-                            val callStatus = statusClient.getStatus(VIN, "01-01-1970 00:00:00","Bearer " + autoAccessToken)
+                            val callStatus = statusClient.getStatus(
+                                VIN,
+                                "01-01-1970 00:00:00",
+                                "Bearer " + autoAccessToken
+                            )
                             val responseStatus = callStatus!!.execute()
 
                             if (responseStatus.isSuccessful) {
                                 i(context, MainActivity.CHANNEL_ID, "status successful.")
-//                                val car = responseStatus.body() as CarStatus
-//                                if (car.status == Constants.HTTP_SERVER_ERROR) {
-//                                    i(context, MainActivity.CHANNEL_ID, "server is broken")
-//                                } else {
                                 val newCar = responseStatus.body() as NewCarStatus
                                 val car = NewCarStatus.getCarStatus(newCar)
-                                if (true)
-                                {
-                                    // If vehicle is charging and we're supposed to grab data, do so
-//                                    val queryCharging =
-//                                        PreferenceManager.getDefaultSharedPreferences(context)
-//                                            .getBoolean(
-//                                                context.resources
-//                                                    .getString(R.string.check_charging_key), false
-//                                            )
-//                                    if (queryCharging) {
-//                                        if (car.vehiclestatus.plugStatus?.value == 1) {
-//                                            val body = JSONObject().put("vin", VIN).toString()
-//                                                .toRequestBody("application/json; charset=utf-8".toMediaType())
-//                                            val chargeStatus =
-//                                                createAPIMPSService(
-//                                                    APIMPSService::class.java, context
-//                                                ).getChargingInfo(body, token)
-//                                            chargeStatus?.let {
-//                                                val response = it.execute()
-//                                                if (response.isSuccessful) {
-//                                                    val chargeInfo = response.body() as DCFCInfo
-//                                                    chargeInfo.plugInTime?.let {
-//                                                        car.vehiclestatus.chargePower =
-//                                                            chargeInfo.power ?: 0.0
-//                                                        car.vehiclestatus.chargeEnergy =
-//                                                            chargeInfo.energy ?: -1.0
-//                                                        car.vehiclestatus.initialDte =
-//                                                            chargeInfo.initialDte ?: 0.0
-//                                                        car.vehiclestatus.chargeType =
-//                                                            chargeInfo.chargeType ?: ""
-//
-//                                                        val reportDCFC =
-//                                                            PreferenceManager.getDefaultSharedPreferences(
-//                                                                context
-//                                                            )
-//                                                                .getBoolean(
-//                                                                    context.resources
-//                                                                        .getString(R.string.check_dcfastcharging_key),
-//                                                                    false
-//                                                                )
-//
-//                                                        if (reportDCFC && car.vehiclestatus.chargeType == "DcCharging") {
-//                                                            chargeInfo.time =
-//                                                                OTAViewActivity.convertMillisToDate(
-//                                                                    Instant.now().toEpochMilli(),
-//                                                                    Constants.CHARGETIMEFORMAT
-//                                                                )
-//                                                            chargeInfo.currentDte =
-//                                                                car.vehiclestatus.elVehDTE?.value
-//                                                            chargeInfo.batteryFillLevel =
-//                                                                car.vehiclestatus.batteryFillLevel?.value
-//
-//                                                            DCFC.updateChargingSession(
-//                                                                context,
-//                                                                chargeInfo
-//                                                            )
-//                                                            data.putExtra(
-//                                                                context.getString(R.string.dcfc_active),
-//                                                                true
-//                                                            )
-//                                                        }
-//                                                        i(
-//                                                            context,
-//                                                            MainActivity.CHANNEL_ID,
-//                                                            "received charge status response: power = "
-//                                                                    + car.vehiclestatus.chargePower +
-//                                                                    ", energy = " + car.vehiclestatus.chargeEnergy
-//                                                        )
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-//                                    }
 
-                                    // Experimental stuff to get some OTA information
-//                                    val queryOTA =
-//                                        PreferenceManager.getDefaultSharedPreferences(context)
-//                                            .getBoolean(
-//                                                "checkMMOTA", false
-//                                            )
-//
-//                                    if (queryOTA) {
-//                                        val body = JSONObject()
-//                                            .put("displayOTAStatusReport", "Display")
-//                                            .put("getDtcsViaApplink", "NoDisplay")
-//                                            .put("hmiPreferredLanguage", "en-us")
-//                                            .put("sdnLookup", "VSDN")
-//                                            .put("userAuthorization", "AUTHORIZED")
-//                                            .put("VIN", VIN)
-//                                            .toString()
-//                                            .toRequestBody("application/json; charset=utf-8".toMediaType())
-//                                        val chargeStatus =
-//                                            createAPIMPSService(
-//                                                APIMPSService::class.java, context
-//                                            ).getOTAInfo(
-//                                                body,
-//                                                token,
-//                                                Locale("", userInfo.country).getISO3Country()
-//                                            )
-//                                        chargeStatus?.let {
-//                                            val response = it.execute()
-//                                            if (response.isSuccessful) {
-////                                                val chargeInfo: Map<String, Any> =
-////                                                    Gson().fromJson(
-////                                                        response.body()?.string(),
-////                                                        object :
-////                                                            TypeToken<Map<String, Any>>() {}.type
-////                                                    )
-//                                                print(response.body()?.string())
-//                                            }
-//                                        }
-//                                    }
-
-                                    val lastRefreshTime = Calendar.getInstance()
-                                    val cal = Calendar.getInstance()
-                                    val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-                                    sdf.timeZone = TimeZone.getTimeZone("UTC")
-                                    cal.time = sdf.parse(car.lastRefresh) as Date
-                                    val currentRefreshTime =
-                                            lastRefreshTime.toInstant().toEpochMilli()
-
-//                                    var currentRefreshTime: Long = 0
-//                                    try {
-//                                        lastRefreshTime.time = sdf.parse(car.lastRefresh)
-//                                        currentRefreshTime =
-//                                            lastRefreshTime.toInstant().toEpochMilli()
-//                                    } catch (e: ParseException) {
-//                                        e(
-//                                            context,
-//                                            MainActivity.CHANNEL_ID,
-//                                            "exception in NetworkCalls.getStatus: ",
-//                                            e
-//                                        )
-//                                    }
-
-                                    // If the charging status changes, reset the old charge station info so we know to update it later
-                                    val priorRefreshTime = info.lastRefreshTime
-                                    if (priorRefreshTime <= currentRefreshTime) {
-                                        info.carStatus = car
-                                        info.setLastUpdateTime()
-                                        info.lastRefreshTime = currentRefreshTime
-                                        statusUpdated = true
-                                    }
-                                    checkLVBStatus(context, car, info)
-                                    checkTPMSStatus(context, car, info)
-                                    i(context, MainActivity.CHANNEL_ID, "got status")
-                                    nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
+                                val update = updateChargingStatus(context, info.carStatus, car, newCar)
+                                if (update != 0) {
+                                    data.putExtra(
+                                        context.getString(R.string.dcfc_active),
+                                        true
+                                    )
                                 }
+
+                                val lastRefreshTime = Calendar.getInstance()
+                                val sdf =
+                                    SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
+                                sdf.timeZone = TimeZone.getTimeZone("UTC")
+                                lastRefreshTime.time = sdf.parse(car.lastRefresh) as Date
+                                val currentRefreshTime =
+                                    lastRefreshTime.toInstant().toEpochMilli()
+
+                                // If the charging status changes, reset the old charge station info so we know to update it later
+                                val priorRefreshTime = info.lastRefreshTime
+                                if (priorRefreshTime <= currentRefreshTime) {
+                                    info.carStatus = car
+                                    info.setLastUpdateTime()
+                                    info.lastRefreshTime = currentRefreshTime
+                                    statusUpdated = true
+                                }
+
+                                checkLVBStatus(context, car, info)
+                                checkTPMSStatus(context, car, info)
+                                i(context, MainActivity.CHANNEL_ID, "got status")
+                                nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
                             } else {
                                 i(
                                     context,
@@ -813,6 +707,88 @@ class NetworkCalls {
             return data
         }
 
+        // Decide what to do with any charging data
+        fun updateChargingStatus(
+            context: Context,
+            infoCarStatus: CarStatus,
+            car: CarStatus,
+            newCar: NewCarStatus
+        ) : Int {
+            if (car.vehiclestatus.plugStatus?.value == 1) {
+                // If vehicle is charging and we're supposed to grab data, do so
+                val queryCharging =
+                    PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(
+                            context.resources
+                                .getString(R.string.check_charging_key), false
+                        )
+                if (queryCharging &&
+                    car.vehiclestatus.chargingStatus!!.value == Constants.CHARGING_STATUS_CHARGING_DC
+                ) {
+                    val chargeInfo = DCFCInfo()
+
+                    // If there is no plug-in time, then we must have started charging
+                    if (infoCarStatus.vehiclestatus.pluginTime == "") {
+                        car.vehiclestatus.pluginTime = car.vehiclestatus.lastRefresh!!
+                        car.vehiclestatus.initialDte = car.vehiclestatus.elVehDTE!!.value!!
+                    }
+                    // Otherwise re-use the prior information
+                    else {
+                        car.vehiclestatus.pluginTime = infoCarStatus.vehiclestatus.pluginTime
+                        car.vehiclestatus.initialDte = infoCarStatus.vehiclestatus.initialDte
+                    }
+
+                    // While charging, retain the original battery energy value.  This
+                    // is needed to calculate how much energy was added.
+                    if (car.vehiclestatus.chargingStatus!!.value != Constants.CHARGING_STATUS_COMPLETE) {
+                        car.vehiclestatus.xevBatteryEnergyRemaining =
+                            infoCarStatus.vehiclestatus.xevBatteryEnergyRemaining
+                    }
+
+                    // Calculate the amount of energy added for thsi update
+                    car.vehiclestatus.chargeEnergy = (newCar.metrics.xevBatteryEnergyRemaining!!.value - car.vehiclestatus.xevBatteryEnergyRemaining) * 1000
+
+                    val reportDCFC =
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                            .getBoolean(
+                                context.resources
+                                    .getString(R.string.check_dcfastcharging_key),
+                                false
+                            )
+                    if (reportDCFC) {
+                        chargeInfo.plugInTime = car.vehiclestatus.pluginTime
+                        chargeInfo.power = car.vehiclestatus.chargePower
+                        chargeInfo.chargeType = car.vehiclestatus.chargeType
+                        chargeInfo.energy = (newCar.metrics.xevBatteryEnergyRemaining!!.value
+                                - car.vehiclestatus.xevBatteryEnergyRemaining) * 1000
+                        chargeInfo.time = newCar.metrics.xevBatteryEnergyRemaining.updateTime
+                        chargeInfo.energy = car.vehiclestatus.chargeEnergy
+                        chargeInfo.initialDte = car.vehiclestatus.initialDte
+                        chargeInfo.currentDte = car.vehiclestatus.elVehDTE?.value
+                        chargeInfo.batteryFillLevel = car.vehiclestatus.batteryFillLevel?.value
+
+                        DCFC.updateChargingSession(
+                            context,
+                            chargeInfo
+                        )
+                    }
+                    i(
+                        context,
+                        MainActivity.CHANNEL_ID,
+                        "received charge status response: power = "
+                                + car.vehiclestatus.chargePower +
+                                ", energy = " + car.vehiclestatus.chargeEnergy
+                    )
+                    return 1
+                }
+            } else {
+                if (car.vehiclestatus.pluginTime != "") {
+                    car.vehiclestatus.pluginTime = ""
+                }
+            }
+            return 0
+        }
+
         fun getStatus(
             handler: Handler,
             context: Context?,
@@ -861,13 +837,18 @@ class NetworkCalls {
                 val userInfo = userDao.findUserInfo(userId)
                 val token = userInfo!!.accessToken
 
-                val statusClient = createApiAutonomicService(ApiAutonomicService::class.java, context)
+                val statusClient =
+                    createApiAutonomicService(ApiAutonomicService::class.java, context)
 
                 for (retry in 2 downTo 0) {
                     try {
                         // Try to get the latest car status
                         val autoAccessToken = userInfo.autoAccessToken
-                        val callStatus = statusClient.getStatus(VIN, "01-01-1970 00:00:00","Bearer " + autoAccessToken)
+                        val callStatus = statusClient.getStatus(
+                            VIN,
+                            "01-01-1970 00:00:00",
+                            "Bearer " + autoAccessToken
+                        )
                         val responseStatus = callStatus!!.execute()
 
                         if (responseStatus.isSuccessful) {
@@ -910,8 +891,9 @@ class NetworkCalls {
                             infoDao.insertVehicleInfo(info)
 
                             // If this vehicle is electric, update global setting
-                            if( car.isPropulsionElectric(car.propulsion) ||
-                                    car.isPropulsionPHEV(car.propulsion) ) {
+                            if (car.isPropulsionElectric(car.propulsion) ||
+                                car.isPropulsionPHEV(car.propulsion)
+                            ) {
                                 val appInfo = StoredData(context)
                                 appInfo.electricVehicles = true
                             }

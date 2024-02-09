@@ -3,6 +3,7 @@ package com.example.khughes.machewidget.CarStatus
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Ignore
+import com.example.khughes.machewidget.Constants
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import javax.annotation.Generated
@@ -41,6 +42,16 @@ class Vehiclestatus {
     @Expose
     @ColumnInfo(defaultValue = "0")
     var initialDte: Double = 0.0
+
+    @SerializedName("pluginTime")
+    @Expose
+    @ColumnInfo(defaultValue = "''")
+    var pluginTime: String = "null"
+
+    @SerializedName("xevBatteryEnergyRemaining")
+    @Expose
+    @ColumnInfo(defaultValue = "0", )
+    var xevBatteryEnergyRemaining: Double = 0.0
 
     @Generated("jsonschema2pojo")
     class Alarm {
