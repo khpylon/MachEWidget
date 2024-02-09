@@ -102,7 +102,7 @@
     <string name="check_dcfastcharging_key">check_DCfastcharging_key</string>
     <string name="dcfclog_key">save_DCfastcharging_key</string>
     <string name="lvb_display_key">lvb_display</string>
-
+    <string name="display_kWh_key">display_kWh</string>
 
     <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
     <string name="units_kphkpa">1</string>

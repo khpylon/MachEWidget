@@ -453,7 +453,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                         R.drawable.battery_icon_red
                     )
 
-                    Constants.CHARGING_STATUS_CHARGING_AC, Constants.CHARGING_STATUS_CHARGING_DC -> views.setImageViewResource(
+                    Constants.CHARGING_STATUS_CHARGING_AC, Constants.CHARGING_STATUS_CHARGING_DC ->
+                    views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_charging
                     )
@@ -519,6 +520,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 } else if (chargeStatus == Constants.CHARGING_STATUS_PRECONDITION) {
                     chargeMessage = "- Preconditioning"
                 } else {
+                    chargeMessage = "- Charging"
 //                    val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.US)
 //                    val endChargeTime = Calendar.getInstance()
 //                    try {
@@ -569,22 +571,26 @@ open class CarStatusWidget : AppWidgetProvider() {
 
             // High-voltage battery charge levels
             carStatus.vehiclestatus.batteryFillLevel?.value?.let {
-
                 views.setProgressBar(
                     R.id.HBVChargeProgress,
                     100,
                     min(100, (it + 0.5).roundToInt()),
                     false
                 )
-                views.setTextViewText(
-                    R.id.HVBChargePercent,
+                val displaykWh = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean(context.resources.getString(R.string.display_kWh_key), false)
+                val level = if (displaykWh) {
                     MessageFormat.format(
-                        "{0}%", DecimalFormat(
-                            "#.#",  // "#.0",
-                            DecimalFormatSymbols.getInstance(Locale.US)
-                        ).format(it)
-                    ) + if (displayTime) chargeMessage else ""
-                )
+                        "{0,number,#.#}% ({1,number,#.00}kWh)", it,
+                        0.0 // carStatus.vehiclestatus.xevBatteryEnergyRemaining,
+                    )
+                } else {
+                    MessageFormat.format(
+                        "{0,number,#.#}%", it,
+                    )
+                } + if (displayTime) chargeMessage else ""
+                views.setTextViewText(
+                    R.id.HVBChargePercent, level )
             }
         }
 
