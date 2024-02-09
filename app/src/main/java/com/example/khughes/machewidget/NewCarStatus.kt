@@ -73,15 +73,20 @@ class NewCarStatus(
             //   plugged in, charging -> "value": "IN_PROGRESS", "xevChargerPowerType": "AC", "xevBatteryType": "HIGH_VOLTAGE"
             //   plugged in, not charging -> "value": "SCHEDULED", "xevChargeStatusOrigin": "IN_VEHICLE"
 
-            // Status of charge
-            val chargingStatus = Vehiclestatus.ChargingStatus()
+            // Status of charge and battery energy remaining
             metrics.xevBatteryChargeDisplayStatus?.value.let {
+                val chargingStatus = Vehiclestatus.ChargingStatus()
                 // TODO: find out the other cases
                 when (it) {
                     Constants.CHARGING_STATUS_IN_PROGRESS -> {
-                        chargingStatus.value = Constants.CHARGING_STATUS_IN_PROGRESS
+                        if (metrics.xevBatteryChargeDisplayStatus!!.xevChargerPowerType!!.contains("AC") ) {
+                            chargingStatus.value = Constants.CHARGING_STATUS_CHARGING_AC
+                        } else  if (metrics.xevBatteryChargeDisplayStatus!!.xevChargerPowerType!!.contains("DC") ) {
+                            chargingStatus.value = Constants.CHARGING_STATUS_CHARGING_DC
+                        } else {
+                            chargingStatus.value = Constants.CHARGING_STATUS_IN_PROGRESS
+                        }
                     }
-
                     Constants.CHARGING_SCHEDULED -> {
                         chargingStatus.value = Constants.CHARGING_SCHEDULED
                     }
@@ -94,26 +99,22 @@ class NewCarStatus(
                         chargingStatus.value = Constants.CHARGING_STATUS_NOT_READY
                     }
                 }
+                vehicleStatus.chargingStatus = chargingStatus
+                vehicleStatus.xevBatteryEnergyRemaining = metrics.xevBatteryEnergyRemaining!!.value
+                vehicleStatus.pluginTime = ""
             }
-
-//            metrics.xevPlugChargerStatus.value.let {
-//                chargingStatus.value = when (it) {
-//                    "DISCONNECTED" -> Constants.CHARGING_STATUS_NOT_READY
-//                    "CONNECTED" -> Constants.CHARGING_STATUS_IN_PROGRESS
-//                    else -> ""
-//                }
-//            }
-            vehicleStatus.chargingStatus = chargingStatus
 
             // TODO: what value goes here
             val deepSleepInProgress = Vehiclestatus.DeepSleepInProgress()
             deepSleepInProgress.value = false
             vehicleStatus.deepSleepInProgress = deepSleepInProgress
 
-            // EV battery ranee estimate
-            val elVehDTE = Vehiclestatus.ElVehDTE()
-            elVehDTE.value = metrics.xevBatteryRange?.value
-            vehicleStatus.elVehDTE = elVehDTE
+            // EV battery range estimate
+            metrics.xevBatteryRange?.let {
+                val elVehDTE = Vehiclestatus.ElVehDTE()
+                elVehDTE.value = it.value
+                vehicleStatus.elVehDTE = elVehDTE
+            }
 
             // GPS location
             val gps = Vehiclestatus.Gps()
