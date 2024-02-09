@@ -582,7 +582,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 val level = if (displaykWh) {
                     MessageFormat.format(
                         "{0,number,#.#}% ({1,number,#.00}kWh)", it,
-                        0.0 // carStatus.vehiclestatus.xevBatteryEnergyRemaining,
+                        carStatus.vehiclestatus.xevBatteryEnergyRemaining,
                     )
                 } else {
                     MessageFormat.format(
