@@ -79,22 +79,21 @@ class NewCarStatus(
                 // TODO: find out the other cases
                 when (it) {
                     Constants.CHARGING_STATUS_IN_PROGRESS -> {
-                        if (metrics.xevBatteryChargeDisplayStatus!!.xevChargerPowerType!!.contains("AC") ) {
-                            chargingStatus.value = Constants.CHARGING_STATUS_CHARGING_AC
-                        } else  if (metrics.xevBatteryChargeDisplayStatus!!.xevChargerPowerType!!.contains("DC") ) {
-                            chargingStatus.value = Constants.CHARGING_STATUS_CHARGING_DC
-                        } else {
-                            chargingStatus.value = Constants.CHARGING_STATUS_IN_PROGRESS
+                        chargingStatus.value = Constants.CHARGING_STATUS_IN_PROGRESS
+                        metrics.xevBatteryChargeDisplayStatus!!.xevChargerPowerType?.let {type ->
+                            if (type.contains("AC") ) {
+                                chargingStatus.value = Constants.CHARGING_STATUS_CHARGING_AC
+                            } else if (type.contains("DC") ) {
+                                chargingStatus.value = Constants.CHARGING_STATUS_CHARGING_DC
+                            }
                         }
                     }
                     Constants.CHARGING_SCHEDULED -> {
                         chargingStatus.value = Constants.CHARGING_SCHEDULED
                     }
-
                     Constants.CHARGING_STATUS_COMPLETE -> {
                         chargingStatus.value = Constants.CHARGING_STATUS_COMPLETE
                     }
-
                     else -> {
                         chargingStatus.value = Constants.CHARGING_STATUS_NOT_READY
                     }

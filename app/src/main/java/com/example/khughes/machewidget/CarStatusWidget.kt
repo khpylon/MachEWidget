@@ -453,7 +453,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                         R.drawable.battery_icon_red
                     )
 
-                    Constants.CHARGING_STATUS_CHARGING_AC, Constants.CHARGING_STATUS_CHARGING_DC ->
+                    Constants.CHARGING_STATUS_CHARGING_AC, Constants.CHARGING_STATUS_CHARGING_DC,
+                    Constants.CHARGING_STATUS_IN_PROGRESS ->
                     views.setImageViewResource(
                         R.id.HVBIcon,
                         R.drawable.battery_charging
