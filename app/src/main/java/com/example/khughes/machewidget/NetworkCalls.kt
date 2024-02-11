@@ -756,6 +756,7 @@ class NetworkCalls {
                                 false
                             )
                     if (reportDCFC) {
+                        chargeInfo.VIN = car.vehiclestatus.vin
                         chargeInfo.plugInTime = car.vehiclestatus.pluginTime
                         chargeInfo.power = car.vehiclestatus.chargePower
                         chargeInfo.chargeType = car.vehiclestatus.chargeType
