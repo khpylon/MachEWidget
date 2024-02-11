@@ -74,10 +74,10 @@ class NewCarStatus(
             //   plugged in, not charging -> "value": "SCHEDULED", "xevChargeStatusOrigin": "IN_VEHICLE"
 
             // Status of charge and battery energy remaining
-            metrics.xevBatteryChargeDisplayStatus?.value.let {
+            metrics.xevBatteryChargeDisplayStatus?.let {
                 val chargingStatus = Vehiclestatus.ChargingStatus()
                 // TODO: find out the other cases
-                when (it) {
+                when (it.value) {
                     Constants.CHARGING_STATUS_IN_PROGRESS -> {
                         chargingStatus.value = Constants.CHARGING_STATUS_IN_PROGRESS
                         metrics.xevBatteryChargeDisplayStatus!!.xevChargerPowerType?.let {type ->
@@ -99,7 +99,7 @@ class NewCarStatus(
                     }
                 }
                 vehicleStatus.chargingStatus = chargingStatus
-                vehicleStatus.xevBatteryEnergyRemaining = metrics.xevBatteryEnergyRemaining!!.value
+                vehicleStatus.xevBatteryEnergyRemaining = metrics.xevBatteryEnergyRemaining?.value ?: 0.0
                 vehicleStatus.pluginTime = ""
             }
 
