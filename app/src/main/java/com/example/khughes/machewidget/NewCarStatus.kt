@@ -64,9 +64,12 @@ class NewCarStatus(
             vehicleStatus.chargeEndTime = chargeEndTime
 
             // Charging plug status
-            val plugStatus = Vehiclestatus.PlugStatus()
-            plugStatus.value = if (metrics.xevPlugChargerStatus?.value == "DISCONNECTED") 0 else 1
-            vehicleStatus.plugStatus = plugStatus
+            metrics.xevPlugChargerStatus?.let {
+                val plugStatus = Vehiclestatus.PlugStatus()
+                plugStatus.value =
+                    if (it.value == "CONNECTED") 1 else 0
+                vehicleStatus.plugStatus = plugStatus
+            }
 
             // .xevBatteryChargeDisplayStatus
             //   unplugged -> "value":"NOT_READY"

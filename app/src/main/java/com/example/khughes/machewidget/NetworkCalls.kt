@@ -714,7 +714,11 @@ class NetworkCalls {
             car: CarStatus,
             newCar: NewCarStatus
         ) : Int {
-            if (car.vehiclestatus.plugStatus?.value == 1) {
+            // It appears all vehicles contain a "xevPlugChargerStatus" field, and for
+            // gas or diesel its value is "CONNECTED".  So check that charging status
+            // information was also provided before checking the plug status
+            if (car.vehiclestatus.chargingStatus != null &&
+                car.vehiclestatus.plugStatus?.value == 1 ) {
                 // If vehicle is charging and we're supposed to grab data, do so
                 val queryCharging =
                     PreferenceManager.getDefaultSharedPreferences(context)
