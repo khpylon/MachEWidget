@@ -262,6 +262,10 @@ open class CarStatusWidget : AppWidgetProvider() {
             R.id.alarm,
             getPendingSelfIntent(context, id, AMBIENTTEMP_CLICK)
         )
+        views.setOnClickPendingIntent(
+            R.id.plug,
+            getPendingSelfIntent(context, id, KWH_CLICK)
+        )
         views.setViewVisibility(R.id.refresh, if (forceUpdates) View.VISIBLE else View.GONE)
         val enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.resources.getString(R.string.enable_commands_key), false)
@@ -458,10 +462,10 @@ open class CarStatusWidget : AppWidgetProvider() {
 
                     Constants.CHARGING_STATUS_CHARGING_AC, Constants.CHARGING_STATUS_CHARGING_DC,
                     Constants.CHARGING_STATUS_IN_PROGRESS ->
-                    views.setImageViewResource(
-                        R.id.HVBIcon,
-                        R.drawable.battery_charging
-                    )
+                        views.setImageViewResource(
+                            R.id.HVBIcon,
+                            R.drawable.battery_charging
+                        )
 
                     Constants.CHARGING_STATUS_TARGET_REACHED, Constants.CHARGING_STATUS_PRECONDITION,
                     Constants.CHARGING_STATUS_COMPLETE -> views.setImageViewResource(
@@ -581,20 +585,11 @@ open class CarStatusWidget : AppWidgetProvider() {
                     min(100, (it + 0.5).roundToInt()),
                     false
                 )
-                val displaykWh = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(context.resources.getString(R.string.display_kWh_key), false)
-                val level = if (displaykWh) {
-                    MessageFormat.format(
-                        "{0,number,#.#}% ({1,number,#.00}kWh)", it,
-                        carStatus.vehiclestatus.xevBatteryEnergyRemaining,
-                    )
-                } else {
-                    MessageFormat.format(
-                        "{0,number,#.#}%", it,
-                    )
-                } + if (displayTime) chargeMessage else ""
                 views.setTextViewText(
-                    R.id.HVBChargePercent, level )
+                    R.id.HVBChargePercent, MessageFormat.format(
+                        "{0,number,#.#}%", it
+                    ) + if (displayTime) chargeMessage else ""
+                )
             }
         }
 
@@ -690,15 +685,15 @@ open class CarStatusWidget : AppWidgetProvider() {
                         id = R.id.LVBLevelRed
                     }
                     views.setViewVisibility(id, View.VISIBLE)
-                    message = MessageFormat.format( "{0,number,#.0}V", LVBLevel )
+                    message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
                 } else if (displayLVB == "Volts") {
-                    message = MessageFormat.format( "{0,number,#.0}V", LVBLevel )
-                } else if (displayLVB == "SOC" ) {
-                    message = MessageFormat.format( "{0}%", LVBPercent )
+                    message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
+                } else if (displayLVB == "SOC") {
+                    message = MessageFormat.format("{0}%", LVBPercent)
                 } else {
-                    message = MessageFormat.format( "{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent )
+                    message = MessageFormat.format("{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent)
                 }
-                views.setTextViewText( R.id.LVBVoltage, message )
+                views.setTextViewText(R.id.LVBVoltage, message)
             } else {
                 views.setTextViewText(
                     R.id.LVBVoltage,
@@ -732,8 +727,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                 val range = ureaRange.toString().toDouble()
                 views.setTextViewText(
                     R.id.DEFRange,
-                    MessageFormat.format("DEF Range: {0} {1}",
-                        (range * distanceConversion).roundToInt(), distanceUnits)
+                    MessageFormat.format(
+                        "DEF Range: {0} {1}",
+                        (range * distanceConversion).roundToInt(), distanceUnits
+                    )
                 )
             } ?: run {
                 views.setTextViewText(R.id.DEFRange, "DEF Range: N/A")
@@ -1150,6 +1147,33 @@ open class CarStatusWidget : AppWidgetProvider() {
                 return
             }
 
+            KWH_CLICK -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val info = getInfo(context)
+                    val VIN = context.getSharedPreferences(
+                        Constants.WIDGET_FILE,
+                        Context.MODE_PRIVATE
+                    ).getString(widget_VIN, "")
+                    val vehInfo = info.getVehicleByVIN(VIN)
+                    val kWh = vehInfo.carStatus.vehiclestatus.xevBatteryEnergyRemaining
+                    val message: String
+                    if (kWh > 0.0) {
+                        message = MessageFormat.format(
+                            "{0,number,#.00}kWh.",
+                            vehInfo.carStatus.vehiclestatus.xevBatteryEnergyRemaining
+                        )
+
+                    } else {
+                        message = "unavailable."
+                    }
+                    Toast.makeText(
+                        context, "Battery energy remaining is " + message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return
+            }
+
             AMBIENTTEMP_CLICK -> {
                 CoroutineScope(Dispatchers.Main).launch {
                     val info = getInfo(context)
@@ -1177,7 +1201,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                             temperatureUnits = "\u2103"
                         }
                         message = MessageFormat.format(
-                            "{0}{1}.", degrees, temperatureUnits)
+                            "{0}{1}.", degrees, temperatureUnits
+                        )
                     } else {
                         message = "unavailable."
                     }
@@ -1185,7 +1210,6 @@ open class CarStatusWidget : AppWidgetProvider() {
                         context, "Ambient temperature is " + message,
                         Toast.LENGTH_SHORT
                     ).show()
-
                 }
                 return
             }
@@ -1356,6 +1380,7 @@ open class CarStatusWidget : AppWidgetProvider() {
         const val UPDATE_CLICK = "ForceUpdate"
         const val APPWIDGETID = "appWidgetId"
         const val AMBIENTTEMP_CLICK = "Temperature"
+        const val KWH_CLICK = "KiloWahtHout"
         const val PADDING = "   "
 
         // Mapping from long state/territory names to abbreviations
