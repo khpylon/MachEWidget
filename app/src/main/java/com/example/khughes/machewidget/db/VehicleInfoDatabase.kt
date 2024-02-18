@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.khughes.machewidget.VehicleInfo
 import java.util.concurrent.Executors
 
-@Database(entities = [VehicleInfo::class], version = 11)
+@Database(entities = [VehicleInfo::class], version = 12)
 abstract class VehicleInfoDatabase : RoomDatabase() {
     abstract fun vehicleInfoDao(): VehicleInfoDao
 
@@ -30,6 +30,7 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                         MIGRATION_8_9,
                         MIGRATION_9_10,
                         MIGRATION_10_11,
+                        MIGRATION_11_12,
                     )
                     .fallbackToDestructiveMigration()
                     .setJournalMode(JournalMode.TRUNCATE)
@@ -183,5 +184,12 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_11_12: Migration = object : Migration(11,12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN car_ambientTemp REAL DEFAULT 0 NOT NULL"
+                )
+            }
+        }
     }
 }

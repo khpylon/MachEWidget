@@ -53,6 +53,11 @@ class Vehiclestatus {
     @ColumnInfo(defaultValue = "0", )
     var xevBatteryEnergyRemaining: Double = 0.0
 
+    @SerializedName("ambientTemp")
+    @Expose
+    @ColumnInfo(defaultValue = "0", )
+    var ambientTemp: Double = 0.0
+
     @Generated("jsonschema2pojo")
     class Alarm {
         @SerializedName("value")

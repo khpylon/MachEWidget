@@ -83,7 +83,7 @@ class NewCarStatus(
                 when (it.value) {
                     Constants.CHARGING_STATUS_IN_PROGRESS -> {
                         chargingStatus.value = Constants.CHARGING_STATUS_IN_PROGRESS
-                        metrics.xevBatteryChargeDisplayStatus!!.xevChargerPowerType?.let {type ->
+                        metrics.xevBatteryChargeDisplayStatus.xevChargerPowerType?.let {type ->
                             if (type.contains("AC") ) {
                                 chargingStatus.value = Constants.CHARGING_STATUS_CHARGING_AC
                             } else if (type.contains("DC") ) {
@@ -290,6 +290,9 @@ class NewCarStatus(
                 vehicleStatus.chargeType = it
             }
 
+            // Vehicle's internal temperature
+            vehicleStatus.ambientTemp = metrics.ambientTemp?.value ?: 0.0
+
             return carStatus
         }
     }
@@ -299,7 +302,7 @@ class NewCarStatus(
         val alarmStatus: AlarmStatus?,
 //    val acceleration: Acceleration,
 //    val acceleratorPedalPosition: DoubleValue,
-//    val ambientTemp: AcceleratorPedalPosition,
+        val ambientTemp: DoubleValue?,
         val batteryStateOfCharge: AcceleratorPedalPosition?,
         val batteryVoltage: AcceleratorPedalPosition?,
 //    val brakePedalStatus: AlarmStatus,

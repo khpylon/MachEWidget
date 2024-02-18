@@ -259,6 +259,10 @@ open class CarStatusWidget : AppWidgetProvider() {
             R.id.refresh,
             getPendingSelfIntent(context, id, if (forceUpdates) UPDATE_CLICK else WIDGET_CLICK)
         )
+        views.setOnClickPendingIntent(
+            R.id.alarm,
+            getPendingSelfIntent(context, id, AMBIENTTEMP_CLICK)
+        )
         views.setViewVisibility(R.id.refresh, if (forceUpdates) View.VISIBLE else View.GONE)
         val enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.resources.getString(R.string.enable_commands_key), false)
@@ -1147,6 +1151,42 @@ open class CarStatusWidget : AppWidgetProvider() {
                 return
             }
 
+            AMBIENTTEMP_CLICK -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val info = getInfo(context)
+                    val VIN = context.getSharedPreferences(
+                        Constants.WIDGET_FILE,
+                        Context.MODE_PRIVATE
+                    ).getString(widget_VIN, null)
+                    val vehInfo = info.getVehicleByVIN(VIN)
+                    var temp = vehInfo.carStatus.vehiclestatus.ambientTemp
+                    if (temp > 0.0) {
+                        val units = PreferenceManager.getDefaultSharedPreferences(context)
+                            .getString(
+                                context.resources.getString(R.string.units_key),
+                                context.resources.getString(R.string.units_mphpsi)
+                            )!!.toInt()
+                        val degrees: Int
+                        val temperatureUnits: String
+                        if (units == Constants.UNITS_MPHPSI) {
+                            degrees = (temp * 9.0/5.0 + 32.0).roundToInt()
+                            temperatureUnits = "\u2109"
+                        } else {
+                            degrees = temp.toInt()
+                            temperatureUnits = "\u2103"
+                        }
+
+                        Toast.makeText(
+                            context,
+                            MessageFormat.format(
+                                "Ambient temperature is {0}{1}.", degrees, temperatureUnits),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                return
+            }
+
             IGNITION_CLICK, LOCK_CLICK, UPDATE_CLICK -> {
                 var clickCount =
                     context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
@@ -1312,6 +1352,7 @@ open class CarStatusWidget : AppWidgetProvider() {
         const val DIESELTOGGLE_CLICK = "DieselToggle"
         const val UPDATE_CLICK = "ForceUpdate"
         const val APPWIDGETID = "appWidgetId"
+        const val AMBIENTTEMP_CLICK = "Temperature"
         const val PADDING = "   "
 
         // Mapping from long state/territory names to abbreviations
