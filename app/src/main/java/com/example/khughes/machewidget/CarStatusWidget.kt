@@ -30,7 +30,6 @@ import com.example.khughes.machewidget.ProfileManager.changeProfile
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import com.example.khughes.machewidget.VehicleColor.Companion.drawColoredVehicle
 import kotlinx.coroutines.*
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
@@ -1160,6 +1159,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                     ).getString(widget_VIN, null)
                     val vehInfo = info.getVehicleByVIN(VIN)
                     var temp = vehInfo.carStatus.vehiclestatus.ambientTemp
+
+                    val message: String
                     if (temp > 0.0) {
                         val units = PreferenceManager.getDefaultSharedPreferences(context)
                             .getString(
@@ -1169,20 +1170,22 @@ open class CarStatusWidget : AppWidgetProvider() {
                         val degrees: Int
                         val temperatureUnits: String
                         if (units == Constants.UNITS_MPHPSI) {
-                            degrees = (temp * 9.0/5.0 + 32.0).roundToInt()
+                            degrees = (temp * 9.0 / 5.0 + 32.0).roundToInt()
                             temperatureUnits = "\u2109"
                         } else {
                             degrees = temp.toInt()
                             temperatureUnits = "\u2103"
                         }
-
-                        Toast.makeText(
-                            context,
-                            MessageFormat.format(
-                                "Ambient temperature is {0}{1}.", degrees, temperatureUnits),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        message = MessageFormat.format(
+                            "{0}{1}.", degrees, temperatureUnits)
+                    } else {
+                        message = "unavailable."
                     }
+                    Toast.makeText(
+                        context, "Ambient temperature is " + message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                 }
                 return
             }
