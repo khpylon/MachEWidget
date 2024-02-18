@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### 2024.02.18-10
+### Added
+- Display the kilowatt-hours remaining of the high-voltage battery using a single tap on the widget's plug icon (BEVs and PHEVs only).
+  **Note:** this is accessible through the current FordPass API and may not work in future releases.
+
 ### 2024.02.17-22
 ### Added
 - The vehicle's interior (ambient) temperature can be displayed by a single tap on the widget's alarm icon.
