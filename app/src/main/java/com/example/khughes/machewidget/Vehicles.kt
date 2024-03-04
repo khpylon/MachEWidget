@@ -29,6 +29,7 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_MACHE_SELECT_RWD = "K1R" // select RWD
         private const val NA_LINE_SERIES_MACHE_SELECT_AWD = "K1S" // select RWD (AWD?
         private const val NA_LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R" // Route 1 RWD
+        private const val NA_LINE_SERIES_MACHE_CAROUTE1_AWD = "K2S" // Route 1 AWD
         private const val NA_LINE_SERIES_MACHE_PREMIUM_RWD = "K3R" // Premium RWD
         private const val NA_LINE_SERIES_MACHE_PREMIUM_AWD = "K3S" // Premium AWD?
         private const val NA_LINE_SERIES_MACHE_GT_RWD = "K4S" // GT AWD
@@ -214,6 +215,7 @@ open class Vehicle(val VIN: String) {
                 NA_LINE_SERIES_MACHE_SELECT_RWD,
                 NA_LINE_SERIES_MACHE_SELECT_AWD,
                 NA_LINE_SERIES_MACHE_CAROUTE1_RWD,
+                NA_LINE_SERIES_MACHE_CAROUTE1_AWD,
                 NA_LINE_SERIES_MACHE_PREMIUM_RWD,
                 NA_LINE_SERIES_MACHE_PREMIUM_AWD,
                 NA_LINE_SERIES_MACHE_GT_RWD,
