@@ -27,12 +27,19 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_END_INDEX = 7
 
         private const val NA_LINE_SERIES_MACHE_SELECT_RWD = "K1R" // select RWD
-        private const val NA_LINE_SERIES_MACHE_SELECT_AWD = "K1S" // select RWD (AWD?
+        private const val NA_LINE_SERIES_MACHE_SELECT_AWD = "K1S" // select AWD
         private const val NA_LINE_SERIES_MACHE_CAROUTE1_RWD = "K2R" // Route 1 RWD
         private const val NA_LINE_SERIES_MACHE_CAROUTE1_AWD = "K2S" // Route 1 AWD
         private const val NA_LINE_SERIES_MACHE_PREMIUM_RWD = "K3R" // Premium RWD
-        private const val NA_LINE_SERIES_MACHE_PREMIUM_AWD = "K3S" // Premium AWD?
+        private const val NA_LINE_SERIES_MACHE_PREMIUM_AWD = "K3S" // Premium AWD
         private const val NA_LINE_SERIES_MACHE_GT_RWD = "K4S" // GT AWD
+        private const val AU_LINE_SERIES_MACHE_SELECT_RWD = "R1R" // select RWD
+        private const val AU_LINE_SERIES_MACHE_SELECT_AWD = "R1S" // select AWD
+        private const val AU_LINE_SERIES_MACHE_CAROUTE1_RWD = "R2R" // Route 1 RWD
+        private const val AU_LINE_SERIES_MACHE_CAROUTE1_AWD = "R2S" // Route 1 AWD
+        private const val AU_LINE_SERIES_MACHE_PREMIUM_RWD = "R3R" // Premium RWD
+        private const val AU_LINE_SERIES_MACHE_PREMIUM_AWD = "R3S" // Premium AWD
+        private const val AU_LINE_SERIES_MACHE_GT_RWD = "R4S" // GT AWD
 
         private const val NA_LINE_SERIES_F150_REGULAR_4X2 = "F1C" // 4x2 chassis, regular cab
         private const val NA_LINE_SERIES_F150_REGULAR_4X4 = "F1E" // 4x4 chassis, regular cab
@@ -219,6 +226,14 @@ open class Vehicle(val VIN: String) {
                 NA_LINE_SERIES_MACHE_PREMIUM_RWD,
                 NA_LINE_SERIES_MACHE_PREMIUM_AWD,
                 NA_LINE_SERIES_MACHE_GT_RWD,
+                AU_LINE_SERIES_MACHE_SELECT_RWD,
+                AU_LINE_SERIES_MACHE_SELECT_RWD,
+                AU_LINE_SERIES_MACHE_SELECT_AWD,
+                AU_LINE_SERIES_MACHE_CAROUTE1_RWD,
+                AU_LINE_SERIES_MACHE_CAROUTE1_AWD,
+                AU_LINE_SERIES_MACHE_PREMIUM_RWD,
+                AU_LINE_SERIES_MACHE_PREMIUM_AWD,
+                AU_LINE_SERIES_MACHE_GT_RWD,
             )
             val lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             return (wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY || wmi == WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)
