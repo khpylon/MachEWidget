@@ -28,3 +28,4 @@ output-metadata.json
 /app/playstore/production/app-playstore-production.apk
 /app/github/release/baselineProfiles/0/app-release.dm
 /app/github/release/baselineProfiles/1/app-release.dm
+/.idea/deploymentTargetSelector.xml
