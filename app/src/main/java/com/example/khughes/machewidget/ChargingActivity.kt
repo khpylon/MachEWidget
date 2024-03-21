@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -475,7 +476,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "Vehicle: " + session.VIN,
+            text = stringResource(R.string.vehicle_label) + session.VIN,
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
@@ -515,7 +516,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             (session.updates.maxBy { it.power!! }.power as Double) / 1000
         )
         Text(
-            text = "Max power: $maxPowerStr kW",
+            text = stringResource(R.string.max_power_label) + "$maxPowerStr kW",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
@@ -525,7 +526,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             session.updates.sumOf { it.power!! } / 1000 / session.updates.size
         )
         Text(
-            text = "Average power: $avgPowerStr kW",
+            text = stringResource(R.string.average_power_label) + "$avgPowerStr kW",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
@@ -535,7 +536,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             (session.updates.maxBy { it.energy!! }.energy as Double) / 1000
         )
         Text(
-            text = "Energy added: $energyStr kWh",
+            text = stringResource(R.string.energy_added_label) + "$energyStr kWh",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
@@ -549,7 +550,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
 
         val distanceUnits = "miles"
         Text(
-            text = "Range: $initialDTE $distanceUnits -> $finalDTE $distanceUnits",
+            text = stringResource(R.string.range_label) + "$initialDTE $distanceUnits -> $finalDTE $distanceUnits",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )

@@ -49,8 +49,8 @@ class ReminderActivity : AppCompatActivity() {
             // If no vehicles found, display a dialog instead
             if (VINs.size == 0) {
                 AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
-                    .setTitle("Error")
-                    .setMessage("No PHEVs or BEVs were found.")
+                    .setTitle(getString(R.string.misc_error_message))
+                    .setMessage(getString(R.string.activity_reminder_noEVs_description))
                     .setPositiveButton(
                         android.R.string.ok
                     ) { _: DialogInterface?, _: Int -> finish() }

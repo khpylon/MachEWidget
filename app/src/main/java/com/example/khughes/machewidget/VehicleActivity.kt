@@ -53,11 +53,13 @@ class VehicleActivity : AppCompatActivity() {
                 val bundle = msg.data
                 val action = bundle.getString("action")
                 if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    Toast.makeText(context, "Vehicle status successfully retrieved.", Toast.LENGTH_LONG)
+                    Toast.makeText(context,
+                        getString(R.string.activity_vehicle_status_success_description), Toast.LENGTH_LONG)
                         .show()
                     NetworkCalls.getVehicleImage(context, VIN, userInfo.country!!)
                 } else {
-                    Toast.makeText(context, "Unable to retrieve vehicle status.", Toast.LENGTH_LONG)
+                    Toast.makeText(context,
+                        getString(R.string.activity_vehicle_status_failure_description), Toast.LENGTH_LONG)
                         .show()
                 }
             }
@@ -88,7 +90,7 @@ class VehicleActivity : AppCompatActivity() {
                     R.style.AlertDialogCustom
                 )
             )
-                .setMessage("Enter new vehicle information:")
+                .setMessage(getString(R.string.activity_vehicle_enter_new_vehicle_information))
                 .setView(layout)
                 .setPositiveButton(android.R.string.ok, null)
                 .setNegativeButton(android.R.string.cancel, null)
@@ -103,11 +105,13 @@ class VehicleActivity : AppCompatActivity() {
                 mVehicleViewModel.allVehicles.value?.let {
                     for (tmp in it) {
                         if (tmp.vin == VIN) {
-                            Toast.makeText(context, "This VIN already exists.", Toast.LENGTH_LONG)
+                            Toast.makeText(context,
+                                getString(R.string.activitiy_vehicle_vin_exists), Toast.LENGTH_LONG)
                                 .show()
                             return@OnClickListener
                         } else if (nickname != "" && tmp.nickname == nickname) {
-                            Toast.makeText(context, "This nickname is already in use.", Toast.LENGTH_LONG)
+                            Toast.makeText(context,
+                                getString(R.string.vehicle_activity_nickname_exists), Toast.LENGTH_LONG)
                                 .show()
                             return@OnClickListener
                         }
@@ -175,8 +179,8 @@ class VehicleActivity : AppCompatActivity() {
                 AlertDialog.Builder(
                     ContextThemeWrapper(activity, R.style.AlertDialogCustom)
                 )
-                    .setTitle("Remove vehicle")
-                    .setMessage("Please confirm you want to remove this vehicle from the app.")
+                    .setTitle(getString(R.string.activity_vehicle_remove_vehicle_title))
+                    .setMessage(getString(R.string.activity_vehicle_remove_vehicle_description))
                     .setNegativeButton(
                         android.R.string.cancel
                     ) { _: DialogInterface?, _: Int ->
@@ -202,8 +206,8 @@ class VehicleActivity : AppCompatActivity() {
                 AlertDialog.Builder(
                     ContextThemeWrapper(activity, R.style.AlertDialogCustom)
                 )
-                    .setTitle("Error")
-                    .setMessage("Vehicles can't be added without a valid user; please log in first.")
+                    .setTitle(context.getString(R.string.misc_error_message))
+                    .setMessage(getString(R.string.activity_vehicle_userId_missing))
                     .setPositiveButton(
                         android.R.string.ok
                     ) { _: DialogInterface?, _: Int -> finish() }

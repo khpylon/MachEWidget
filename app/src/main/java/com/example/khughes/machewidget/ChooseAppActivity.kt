@@ -33,8 +33,8 @@ class ChooseAppActivity : AppCompatActivity() {
         // If there aren't any apps, show a dialog and exit
         if (apps.size == 1) {
             AlertDialog.Builder(ContextThemeWrapper(this, R.style.AlertDialogCustom))
-                .setTitle("Error")
-                .setMessage("No other apps were found.")
+                .setTitle(getString(R.string.error_title))
+                .setMessage(getString(R.string.no_apps_found))
                 .setPositiveButton(
                     android.R.string.ok
                 ) { _: DialogInterface?, _: Int -> finish() }
@@ -105,7 +105,7 @@ class ChooseAppActivity : AppCompatActivity() {
 
         // Sort by app name, then add a blank at the top of the list (for removing an item)
         applications.sortWith(compareBy { it.appName })
-        applications.add(0, AppList("Remove this app", null, null))
+        applications.add(0, AppList(getString(R.string.remove_app_selection), null, null))
         return applications
     }
 

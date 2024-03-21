@@ -239,9 +239,9 @@ class SettingsActivity : AppCompatActivity() {
     companion object {
         fun displayOptimizationMessage(context: Context) {
             if (Misc.ignoringBatteryOptimizations(context)) {
-                battery.summary = "Off (recommended)"
+                battery.summary = context.getString(R.string.settings_battery_opts_off_description)
             } else {
-                battery.summary = "On (may cause issues)"
+                battery.summary = context.getString(R.string.settings_battery_opts_on_description)
             }
         }
     }

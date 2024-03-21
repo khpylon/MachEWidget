@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.CarStatus.CarStatus
 import com.example.khughes.machewidget.Misc.Companion.ignoringBatteryOptimizations
+import java.text.MessageFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -117,8 +118,8 @@ class Notifications : BroadcastReceiver() {
                     val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                        .setContentTitle("LVB Status")
-                        .setContentText("The LVB's status is reporting \"low\".")
+                        .setContentTitle(context.getString(R.string.lvb_status_notification_title))
+                        .setContentText(context.getString(R.string.lbv_status_notification_description))
                         .setContentIntent(pendingIntent)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true)
@@ -134,38 +135,37 @@ class Notifications : BroadcastReceiver() {
 
         private const val TPMS_STATUS = 937
         private const val TPMS_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.TPMS"
-        private const val LEFT_FRONT_TIRE = "the left front tire is"
-        private const val RIGHT_FRONT_TIRE = "the right front tire is"
-        private const val LEFT_REAR_TIRE = "the left rear tire is"
-        private const val RIGHT_REAR_TIRE = "the right rear tire is"
-        private const val MANY_TIRES = "multiple tires are"
         private var TPMSNotificationVisible = false
 
         @JvmStatic
         fun checkTPMSStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
             val lastTPMSStatus = vehInfo.lastTPMSStatus
             val currentTPMSStatus: MutableMap<String, String> = HashMap()
-            currentTPMSStatus[LEFT_FRONT_TIRE] =
+            val leftFrontTire = context.getString(R.string.tpms_left_front_tire)
+            val rightFrontTire = context.getString(R.string.tpms_right_front_tire)
+            val leftRearTire = context.getString(R.string.tpms_left_rear_tire)
+            val rightRearTire = context.getString(R.string.tpms_right_rear_tire)
+            currentTPMSStatus[leftFrontTire] =
                 carStatus.vehiclestatus.tpms?.leftFrontTireStatus?.value ?: "Normal"
-            currentTPMSStatus[RIGHT_FRONT_TIRE] =
+            currentTPMSStatus[rightFrontTire] =
                 carStatus.vehiclestatus.tpms?.rightFrontTireStatus?.value ?: "Normal"
-            currentTPMSStatus[LEFT_REAR_TIRE] =
+            currentTPMSStatus[leftRearTire] =
                 carStatus.vehiclestatus.tpms?.outerLeftRearTireStatus?.value ?: "Normal"
-            currentTPMSStatus[RIGHT_REAR_TIRE] =
+            currentTPMSStatus[rightRearTire] =
                 carStatus.vehiclestatus.tpms?.outerRightRearTireStatus?.value ?: "Normal"
             var badTire = ""
             for (key in arrayOf(
-                LEFT_FRONT_TIRE,
-                RIGHT_FRONT_TIRE,
-                LEFT_REAR_TIRE,
-                RIGHT_REAR_TIRE
+                leftFrontTire,
+                rightFrontTire,
+                leftRearTire,
+                rightRearTire
             )) {
                 val tire = currentTPMSStatus[key]
                 if (tire != "Normal") {
                     badTire = if (badTire == "") {
                         key
                     } else {
-                        MANY_TIRES
+                        context.getString(R.string.tpms_multiple_tires)
                     }
                 }
             }
@@ -183,8 +183,8 @@ class Notifications : BroadcastReceiver() {
                     val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                        .setContentTitle("TPMS Status")
-                        .setContentText("The TPMS status on $badTire abnormal.")
+                        .setContentTitle(context.getString(R.string.tpms_status_notification_title))
+                        .setContentText(MessageFormat.format(context.getString(R.string.tpms_status_notification_format), badTire))
                         .setContentIntent(pendingIntent)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true)
@@ -213,8 +213,8 @@ class Notifications : BroadcastReceiver() {
                 val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
                     .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                    .setContentTitle("Charge Status")
-                    .setContentText("Charging is complete.")
+                    .setContentTitle(context.getString(R.string.charge_status_notification_title))
+                    .setContentText(context.getString(R.string.charge_status_notification_message))
                     .setContentIntent(pendingIntent)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setAutoCancel(true)
@@ -244,8 +244,8 @@ class Notifications : BroadcastReceiver() {
                     val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                        .setContentTitle("Battery Optimizations are on")
-                        .setContentText("This may interfere with the app's performance; consider disabling them.")
+                        .setContentTitle(context.getString(R.string.battery_optimization_notification_title))
+                        .setContentText(context.getString(R.string.battery_optimization_notification_description))
                         .setContentIntent(pendingIntent)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setAutoCancel(true)
@@ -272,8 +272,8 @@ class Notifications : BroadcastReceiver() {
             val builder = NotificationCompat.Builder(context, CHARGE_NOTIFICATIONS)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                .setContentTitle("Charge Reminder")
-                .setContentText("HVB level is below threshold and charger is not detected.")
+                .setContentTitle(context.getString(R.string.charge_reminder_notification_title))
+                .setContentText(context.getString(R.string.charge_reminder_notification_description))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
             // notificationId is a unique int for each notification that you must define
@@ -291,8 +291,8 @@ class Notifications : BroadcastReceiver() {
             )
                 .setSmallIcon(R.drawable.notification_icon)
                 .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                .setContentTitle("Login required")
-                .setContentText("Unable to refresh tokens: you need to log in again.")
+                .setContentTitle(context.getString(R.string.login_issue_notification_title))
+                .setContentText(context.getString(R.string.login_issue_notification_description))
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
@@ -316,8 +316,8 @@ class Notifications : BroadcastReceiver() {
                 val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
                     .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                    .setContentTitle("New survey available")
-                    .setContentText("Please take the survey to provide feedback to the developer.")
+                    .setContentTitle(context.getString(R.string.survey_notification_title))
+                    .setContentText(context.getString(R.string.survey_notification_description))
                     .setContentIntent(pendingIntent)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setAutoCancel(true)
@@ -333,8 +333,8 @@ class Notifications : BroadcastReceiver() {
                 val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
                     .setSmallIcon(R.drawable.notification_icon)
                     .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                    .setContentTitle("FordPass account disabled!")
-                    .setContentText("The app is unable to access your information.  Contact Ford to reactivate your account.")
+                    .setContentTitle(context.getString(R.string.account_disabled_notification_title))
+                    .setContentText(context.getString(R.string.account_disabled_notification_description))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true)
                 val notificationManager = NotificationManagerCompat.from(context)
@@ -354,8 +354,8 @@ class Notifications : BroadcastReceiver() {
             )
                 .setSmallIcon(R.drawable.notification_icon)
                 .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                .setContentTitle("No vehicles found")
-                .setContentText("No vehicles are associated with te app.")
+                .setContentTitle(context.getString(R.string.no_vehicles_notification_title))
+                .setContentText(context.getString(R.string.no_vehicles_notification_description))
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)

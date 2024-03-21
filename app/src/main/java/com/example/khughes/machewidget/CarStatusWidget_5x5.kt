@@ -240,7 +240,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         val timeFormat =
             if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
         drawLastRefresh(context, views, carStatus, timeFormat)
-        drawOdometer(views, carStatus, distanceConversion, distanceUnits)
+        drawOdometer(context, views, carStatus, distanceConversion, distanceUnits)
 
         // Ignition, alarm/sleep, plug icons
         drawIcons(views, carStatus)
@@ -268,13 +268,14 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 //            views.setTextViewText(R.id.odometer, "Odo: ---")
 //        }
         views.setTextViewText(R.id.odometer,
+            context.getString(R.string.odometer_label) +
             carStatus.vehiclestatus.odometer?.value?.let {
                 MessageFormat.format(
-                    "Odo: {0} {1}",
+                    "{0} {1}",
                     java.lang.Double.valueOf(it * distanceConversion).toInt(),
                     distanceUnits
                 )
-            } ?: "Odo: ---"
+            } ?: "---"
         )
 
         // Tire pressures

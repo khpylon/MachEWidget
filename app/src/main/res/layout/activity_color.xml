@@ -63,7 +63,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wireframe color"
+                android:text="@string/activity_color_wireframe_color"
                 android:textColor="@color/quantum_white_100"
                 android:textSize="16sp" />
 
@@ -79,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:checked="false"
-                    android:text="White"
+                    android:text="@string/activity_color_white"
                     android:typeface="sans" />
 
                 <RadioButton
@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:typeface="sans"
-                    android:text="Black" />
+                    android:text="@string/activity_color_black" />
 
                 <RadioButton
                     android:id="@+id/rightIcon"
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:typeface="sans"
-                    android:text="Auto" />
+                    android:text="@string/activity_color_auto" />
             </RadioGroup>
         </LinearLayout>
 
@@ -113,19 +113,19 @@
                 android:id="@+id/ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save"/>
+                android:text="@string/activity_color_save"/>
 
             <Button
                 android:id="@+id/reset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reset"/>
+                android:text="@string/activity_color_reset"/>
 
             <Button
                 android:id="@+id/auto_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Auto"/>
+                android:text="@string/activity_color_auto_button"/>
 
         </LinearLayout>
     </LinearLayout>

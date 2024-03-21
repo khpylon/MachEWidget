@@ -23,7 +23,7 @@
                 android:layout_centerVertical="true"
                 android:typeface="sans"
                 android:padding="8dp"
-                android:text="Link app to "/>
+                android:text="@string/activity_choose_app_link_app_to"/>
 
             <RadioGroup
                 android:layout_width="wrap_content"

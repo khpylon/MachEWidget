@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.*
+import android.icu.text.MessageFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -25,14 +26,10 @@ import kotlinx.coroutines.*
 import java.io.*
 import java.lang.Integer.min
 import java.nio.charset.StandardCharsets
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
@@ -241,7 +238,7 @@ class PrefManagement {
             )
             Toast.makeText(
                 context,
-                "Settings file $outputFilename copied to Download folder.",
+                context.getString(R.string.settings_copied_to_download_description, outputFilename),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -261,7 +258,8 @@ class PrefManagement {
 
         CoroutineScope(Dispatchers.Main).launch {
             writeSettingInfo(context, jsonObject!!)
-            Toast.makeText(context, "Settings restored.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,
+                context.getString(R.string.settings_restored_description), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -635,7 +633,7 @@ class Misc {
 
                     // Clear the crash log.
                     Runtime.getRuntime().exec("logcat -c")
-                    return "Logcat crash file \"${outputFilename}.txt\" copied to Download folder."
+                    return MessageFormat.format(context.getString(R.string.logcat_crashfile_formatstring),outputFilename)
                 }
             } catch (e: IOException) {
             }
@@ -643,39 +641,53 @@ class Misc {
         }
 
         @JvmStatic
-        fun elapsedSecondsToDescription(seconds: Long): String {
+        fun elapsedSecondsToDescription(
+            context: Context,
+            seconds: Long
+        ): String {
             val result = java.lang.StringBuilder()
             val minutes = seconds / 60
             val hours = minutes / 60
+            val seconds_abbreviation = context.getString(R.string.secconds_abbreviation)
+            val minutes_abbreviation = context.getString(R.string.minutes_abbreviation)
+            val hour_abbreviation = context.getString(R.string.single_hour_abbr)
+            val hours_abbreviation = context.getString(R.string.hours_abbr)
             // less than 1 minute
             if (minutes == 0L) {
-                result.append("$seconds sec")
+                result.append("$seconds" + seconds_abbreviation)
             } else if (hours == 0L) {
-                result.append("$minutes min")
+                result.append("$minutes" + minutes_abbreviation)
                 // not right on the minute
                 if (seconds % 60 != 0L) {
-                    result.append(", " + seconds % 60 + " sec")
+                    result.append(", " + seconds % 60 + seconds_abbreviation)
                 }
             } else {
-                result.append(if (hours == 1L) "1 hr" else "$hours hrs")
+                result.append(if (hours == 1L) hour_abbreviation else "$hours" + hours_abbreviation)
                 // not right on the hour
                 if (minutes % 60 != 0L) {
-                    result.append(", " + minutes % 60 + " min")
+                    result.append(", " + minutes % 60 + minutes_abbreviation)
                 }
             }
             return result.toString()
         }
 
         @JvmStatic
-        fun elapsedMinutesToDescription(minutes: Long): String {
+        fun elapsedMinutesToDescription(
+            context: Context,
+            minutes: Long
+        ): String {
             val result = java.lang.StringBuilder()
+            val minutes_abbreviation = context.getString(R.string.minutes_abbreviation)
+            val hours_abbreviation = context.getString(R.string.hours_abbr)
+            val day_abbreviation = context.getString(R.string.one_dat_abbv)
+            val days_abbreviation = context.getString(R.string.days_abbr)
 
             // less than an hour
             if (minutes < 60) {
-                result.append("$minutes min")
+                result.append("$minutes" + minutes_abbreviation)
                 // less than a day
             } else if (minutes / 60 < 24) {
-                result.append((minutes / 60).toString() + " hr")
+                result.append((minutes / 60).toString() + hours_abbreviation)
                 // right on the hour
                 if (minutes % 60 == 0L) {
                     if (minutes != 60L) {
@@ -686,11 +698,11 @@ class Misc {
                     if (minutes >= 120) {
                         result.append("s")
                     }
-                    result.append(", " + minutes % 60 + " min")
+                    result.append(", " + minutes % 60 + minutes_abbreviation)
                 }
             } else {
                 val days = minutes / (24 * 60)
-                result.append(if (days == 1L) "1 day" else "$days days")
+                result.append(if (days == 1L) day_abbreviation else "$days" + days_abbreviation)
             }
             return result.toString()
         }

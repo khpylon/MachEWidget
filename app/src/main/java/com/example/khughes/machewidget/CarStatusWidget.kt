@@ -138,7 +138,7 @@ open class CarStatusWidget : AppWidgetProvider() {
         longitude: String?
     ) {
         if (latitude != null && longitude != null) {
-            views.setTextViewText(R.id.location_line1, "Location:")
+            views.setTextViewText(R.id.location_line1, context?.getString(R.string.location))
 
             val mGeocoder = Geocoder(context!!, Locale.getDefault())
             val lat = latitude.toDouble()
@@ -501,7 +501,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                     && vehicleInfo.carStatus.vehiclestatus.chargeEnergy > 0
                 ) {
                     rangeMessage += MessageFormat.format(
-                        "\n{0}kW rate, {1}kWh added",
+                        context.getString(R.string.kw_rate_kwh_added),
                         DecimalFormat(
                             "#0.0",
                             DecimalFormatSymbols.getInstance(Locale.US)
@@ -516,19 +516,19 @@ open class CarStatusWidget : AppWidgetProvider() {
 
                 // Normally there will be something from the GOM; if so, display this info with it
                 if (chargeStatus == Constants.CHARGING_STATUS_TARGET_REACHED) {
-                    chargeMessage = "- Target Reached"
+                    chargeMessage = context.getString(R.string.charging_target_reached)
                     if (vehicleInfo.lastChargeStatus != Constants.CHARGING_STATUS_TARGET_REACHED) {
                         chargeComplete(context)
                     }
                 } else if (chargeStatus == Constants.CHARGING_STATUS_COMPLETE) {
-                    chargeMessage = "- Completed"
+                    chargeMessage = context.getString(R.string.charging_completed)
                     if (vehicleInfo.lastChargeStatus != Constants.CHARGING_STATUS_COMPLETE) {
                         chargeComplete(context)
                     }
                 } else if (chargeStatus == Constants.CHARGING_STATUS_PRECONDITION) {
-                    chargeMessage = "- Preconditioning"
+                    chargeMessage = context.getString(R.string.charging_preconditioning)
                 } else {
-                    chargeMessage = "- Charging"
+                    chargeMessage = context.getString(R.string.charging_just_charging)
 //                    val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.US)
 //                    val endChargeTime = Calendar.getInstance()
 //                    try {
@@ -697,15 +697,16 @@ open class CarStatusWidget : AppWidgetProvider() {
             } else {
                 views.setTextViewText(
                     R.id.LVBVoltage,
-                    MessageFormat.format(
-                        "LV Battery: {0}",
-                        (if (LVBStatus == "STATUS_GOOD") "Good" else "Warning")
-                    )
+                    context.getString(R.string.lv_battery_label) +
+                            context.getString(if (LVBStatus == "STATUS_GOOD") R.string.good else R.string.warning)
                 )
             }
         } ?: run {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
-            views.setTextViewText(R.id.LVBVoltage, "LV Battery: N/A")
+            views.setTextViewText(
+                R.id.LVBVoltage,
+                context.getString(R.string.lv_battery_label) + "N/A"
+            )
         }
 
         if (isDiesel) {
@@ -718,22 +719,30 @@ open class CarStatusWidget : AppWidgetProvider() {
                 val level = fluidLevel.toString().toDouble()
                 views.setTextViewText(
                     R.id.DEFLevel,
-                    MessageFormat.format("DEF Level: {0}%", level)
+                    context.getString(R.string.def_level_label) +
+                            MessageFormat.format("{0}%", level)
                 )
             } ?: run {
-                views.setTextViewText(R.id.DEFLevel, "DEF Level: N/A")
+                views.setTextViewText(
+                    R.id.DEFLevel,
+                    context.getString(R.string.def_level_label) + "N/A"
+                )
             }
             carStatus.vehiclestatus.diesel?.ureaRange?.value?.let { ureaRange ->
                 val range = ureaRange.toString().toDouble()
                 views.setTextViewText(
                     R.id.DEFRange,
-                    MessageFormat.format(
-                        "DEF Range: {0} {1}",
-                        (range * distanceConversion).roundToInt(), distanceUnits
-                    )
+                    context.getString(R.string.def_range_label) +
+                            MessageFormat.format(
+                                "{0} {1}",
+                                (range * distanceConversion).roundToInt(), distanceUnits
+                            )
                 )
             } ?: run {
-                views.setTextViewText(R.id.DEFRange, "DEF Range: N/A")
+                views.setTextViewText(
+                    R.id.DEFRange,
+                    context.getString(R.string.def_range_label) + "N/A"
+                )
             }
         }
     }
@@ -768,7 +777,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             MainActivity.CHANNEL_ID,
             "updateAppWidget(): last vehicle update was $minutes minutes ago."
         )
-        var refresh: String? = "Last refresh:\n  "
+        var refresh: String? = context.getString(R.string.last_refresh_label)
         val displayTime = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.resources.getString(R.string.last_refresh_time_key), false)
         if (displayTime) {
@@ -777,28 +786,30 @@ open class CarStatusWidget : AppWidgetProvider() {
         } else {
             // less than 1 minute
             refresh += if (minutes < 1) {
-                "just now"
+                context.getString(R.string.just_now_description)
             } else {
-                elapsedMinutesToDescription(minutes) + " ago"
+                elapsedMinutesToDescription(context, minutes) + context.getString(R.string.ago_description)
             }
         }
         views.setTextViewText(R.id.lastRefresh, refresh)
     }
 
     protected fun drawOdometer(
+        context: Context,
         views: RemoteViews,
         carStatus: CarStatus,
         distanceConversion: Double,
         distanceUnits: String?
     ) {
         views.setTextViewText(R.id.odometer,
+            context.getString(R.string.odometer_label) +
             carStatus.vehiclestatus.odometer?.value?.let {
                 MessageFormat.format(
-                    "Odo: {0} {1}",
+                    "{0} {1}",
                     java.lang.Double.valueOf(it * distanceConversion).toInt(),
                     distanceUnits
                 )
-            } ?: "Odo: ---"
+            }
         )
     }
 
@@ -1057,7 +1068,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                     } else {
                         appInfo.leftAppPackage = null
                         updateWidget(context)
-                        Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG)
+                        Toast.makeText(context,
+                            context.getString(R.string.app_no_longer_installed), Toast.LENGTH_LONG)
                             .show()
                     }
                 }
@@ -1075,7 +1087,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                     } else {
                         appInfo.rightAppPackage = null
                         updateWidget(context)
-                        Toast.makeText(context, "App is no longer installed", Toast.LENGTH_LONG)
+                        Toast.makeText(context,
+                            context.getString(R.string.app_no_longer_installed), Toast.LENGTH_LONG)
                             .show()
                     }
                 }
@@ -1112,14 +1125,15 @@ open class CarStatusWidget : AppWidgetProvider() {
                                 OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat)
                             Toast.makeText(
                                 context,
-                                "Last update at $lastUpdate",
+                                context.getString(R.string.last_update_label) + lastUpdate,
                                 Toast.LENGTH_SHORT
                             )
                                 .show()
                             val lastAlarmInMillis = StoredData(context).lastAlarmTime
                             val lastAlarm =
                                 OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat)
-                            Toast.makeText(context, "Last alarm at $lastAlarm", Toast.LENGTH_SHORT)
+                            Toast.makeText(context,
+                                context.getString(R.string.last_alarm_label) + lastAlarm, Toast.LENGTH_SHORT)
                                 .show()
                         } else if (clickCount > 1) {
                             changeProfile(context, widget_VIN)
@@ -1167,7 +1181,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                         message = "unavailable."
                     }
                     Toast.makeText(
-                        context, "Battery energy remaining is " + message,
+                        context, context.getString(R.string.battery_energy_remaining_label) + message,
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -1204,10 +1218,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                             "{0}{1}.", degrees, temperatureUnits
                         )
                     } else {
-                        message = "unavailable."
+                        message = context.getString(R.string.unavailable_label)
                     }
                     Toast.makeText(
-                        context, "Ambient temperature is " + message,
+                        context, context.getString(R.string.ambient_temperature_label) + message,
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -1285,7 +1299,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                                 if (seconds < 30) {
                                                     Toast.makeText(
                                                         context,
-                                                        "The token is being refreshed; this may take a minute.",
+                                                        context.getString(R.string.token_is_being_refreshed_description),
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                     nextAlarm(context, 2)
@@ -1297,7 +1311,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                                 } else {
                                                     Toast.makeText(
                                                         context,
-                                                        "Forcing a refresh; this may take 30 seconds.",
+                                                        context.getString(R.string.forcing_a_refresh_description),
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                     forceUpdate(context, VIN!!)
@@ -1305,7 +1319,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                             } else if (count < FIRST_LIMIT) {
                                                 Toast.makeText(
                                                     context,
-                                                    "Cannot force update for another " + elapsedSecondsToDescription(
+                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(context,
                                                         2 * 60 - seconds
                                                     ) + ".",
                                                     Toast.LENGTH_SHORT
@@ -1313,7 +1327,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                             } else if (count < SECOND_LIMIT) {
                                                 Toast.makeText(
                                                     context,
-                                                    "Cannot force update for another " + elapsedSecondsToDescription(
+                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(context,
                                                         10 * 60 - seconds
                                                     ) + "",
                                                     Toast.LENGTH_SHORT
@@ -1323,8 +1337,9 @@ open class CarStatusWidget : AppWidgetProvider() {
                                                     ((firstTime - nowTime) / MILLIS + TIMEOUT_INTERVAL) / SECONDS
                                                 Toast.makeText(
                                                     context,
-                                                    "Too many forced updates; feature disabled for " +
+                                                    context.getString(R.string.too_many_forced_updates_description) +
                                                             elapsedMinutesToDescription(
+                                                                context,
                                                                 remainingMinutes
                                                             ) + ".",
                                                     Toast.LENGTH_SHORT
@@ -1333,7 +1348,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                         } else {
                                             Toast.makeText(
                                                 context,
-                                                "The LVB status is not good.",
+                                                context.getString(R.string.lvb_status_bad_desacription),
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }

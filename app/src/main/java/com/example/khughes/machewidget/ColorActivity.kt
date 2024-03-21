@@ -65,11 +65,12 @@ class ColorActivity : AppCompatActivity() {
                 it.colorValue = oldColor
             }
         }
-        TooltipCompat.setTooltipText(binding.autoImage, "Use stored image as color source.")
+        TooltipCompat.setTooltipText(binding.autoImage,
+            getString(R.string.activity_color_autoImage_hint))
 
         binding.colorPickerView.setColorListener(ColorListener { color: Int, _: Boolean ->
             binding.colorValue.text = buildString {
-                append("RGB value: #")
+                append(getString(R.string.activity_color_rgb_value))
                 append(
                     Integer.toHexString(color).uppercase()
                     .substring(2)
