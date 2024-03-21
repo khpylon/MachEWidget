@@ -46,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
@@ -58,11 +59,15 @@ class MainActivity : AppCompatActivity() {
             .addPathHandler("/res/", ResourcesPathHandler(this))
             .build()
         surveyWebview.webViewClient = LocalContentWebViewClient(assetLoader)
-        val indexPage = "https://appassets.androidplatform.net/assets/fordpass.html"
+        val language = Locale.getDefault().language
+
+        val indexPage =
+            if (language == Locale.FRENCH.language) "https://appassets.androidplatform.net/assets/fordpass_fr.html"
+            else "https://appassets.androidplatform.net/assets/fordpass.html"
         surveyWebview.loadUrl(indexPage)
         AlertDialog.Builder(this)
             .setTitle(R.string.fordpass_description)
-            .setNegativeButton("Close") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+            .setNegativeButton(getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
             .setView(surveyWebview).show()
     }
 
@@ -78,10 +83,10 @@ class MainActivity : AppCompatActivity() {
         // if either is set, let the user know why they're disabled
         if (commands || forced) {
             AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
-                .setTitle("Remote commands have been disabled.")
-                .setNegativeButton("Close") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                .setTitle(getString(R.string.remote_commands_disabled_title))
+                .setNegativeButton(getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 .setMessage(
-                    "Ford has changed the API and remote commands (lock and start) no longer work.  If they are" +
+                    getString(R.string.remote_commands_disabled_description) +
                             "exposed in the future public API, they will automatically be re-enabled in the app."
                 )
                 .show()
@@ -191,7 +196,14 @@ class MainActivity : AppCompatActivity() {
             .addPathHandler("/res/", ResourcesPathHandler(this))
             .build()
         mWebView.webViewClient = LocalContentWebViewClient(assetLoader)
-        val indexPage = "https://appassets.androidplatform.net/assets/index_page.html"
+
+        // Use the system language to choose which webpage to display
+        val language = Locale.getDefault().language
+        val indexPage = if (language == Locale.FRENCH.language) {
+            "https://appassets.androidplatform.net/assets/index_page_fr.html"
+        } else {
+            "https://appassets.androidplatform.net/assets/index_page.html"
+        }
         mWebView.loadUrl(indexPage)
 
         // Update the widget
@@ -221,9 +233,11 @@ class MainActivity : AppCompatActivity() {
             1 -> if (grantResults.isNotEmpty()
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(this@MainActivity, "Permission Granted!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity,
+                    getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this@MainActivity, "Permission Denied!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity,
+                    getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -336,7 +350,7 @@ class MainActivity : AppCompatActivity() {
                 nextAlarm(applicationContext, 5)
                 Toast.makeText(
                     applicationContext,
-                    "Refresh scheduled in 5 seconds.",
+                    getString(R.string.refresh_in_5_seconds_description),
                     Toast.LENGTH_SHORT
                 ).show()
                 return true
@@ -395,7 +409,7 @@ class MainActivity : AppCompatActivity() {
                 applicationContext.sendBroadcast(intent)
                 Toast.makeText(
                     applicationContext,
-                    "Checking for an update; if one is found, a notification will appear.",
+                    getString(R.string.update_check_description),
                     Toast.LENGTH_SHORT
                 ).show()
                 return true

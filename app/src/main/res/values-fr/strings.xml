@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ford Status Widget</string>
+    <string name="action_fordpass">FordPass Alert</string>
+    <string name="action_login">FordPass Log-in</string>
+    <string name="action_profile">Gérer les Profils</string>
+    <string name="action_OTA">Informations de Mise à J-our OTA</string>
+    <string name="action_chooseapp">Choisissez Les Applications Liées</string>
+    <string name="action_refresh">Rafraîchir</string>
+    <string name="action_backup">Enregistrer Les Paramètres</string>
+    <string name="action_restore">Restaurer Les Paramètres</string>
+    <string name="action_copylog">"Enregistrer Le Fichier Journal "</string>
+    <string name="action_update">Vérifier Les Mises à Jour</string>
+    <string name="action_vehicle">Gérer Les Véhicules</string>
+    <string name="action_color">Définir La Couleur Du Véhicule</string>
+    <string name="activity_choose_app_link_app_to">Associer l\'appli à</string>
+
+    <string name="activity_color_wireframe_color">Couleur filaire</string>
+    <string name="activity_color_white">Blanc</string>
+    <string name="activity_color_black">Noir</string>
+    <string name="activity_color_auto">Auto</string>
+    <string name="activity_color_save">Sauvegarder</string>
+    <string name="activity_color_reset">Réinitialiser</string>
+    <string name="activity_color_auto_button">Auto</string>
+    <string name="activity_color_autoImage_hint">Utiliser l\'image stockée comme source de couleur.</string>
+    <string name="activity_color_rgb_value">Valeur RVB: #</string>
+
+    <string name="fordpass_description">informations sur le partage de votre identifiant FordPass.</string>
+
+    <string name="close_button">Fermer</string>
+
+</resources>
