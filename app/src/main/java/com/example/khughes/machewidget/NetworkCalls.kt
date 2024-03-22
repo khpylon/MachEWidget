@@ -1193,7 +1193,8 @@ class NetworkCalls {
                                 if (Looper.myLooper() == null) {
                                     Looper.prepare()
                                 }
-                                Toast.makeText(context, "Command transmitted.", Toast.LENGTH_SHORT)
+                                Toast.makeText(context,
+                                    context.getString(R.string.networkcalls_command_transmitted), Toast.LENGTH_SHORT)
                                     .show()
                                 data.putExtra(
                                     "action",
@@ -1386,7 +1387,7 @@ class NetworkCalls {
                                     }
                                     Toast.makeText(
                                         context,
-                                        "Command transmitted.",
+                                        context.getString(R.string.networkcalls_command_transmitted),
                                         Toast.LENGTH_SHORT
                                     )
                                         .show()

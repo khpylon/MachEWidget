@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:checked="false"
                     android:typeface="sans"
-                    android:text="Left button" />
+                    android:text="@string/activity_choose_left_button_text" />
 
                 <RadioButton
                     android:id="@+id/rightIcon"
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:typeface="sans"
-                    android:text="Right button" />
+                    android:text="@string/activity_choose_right_button_text" />
             </RadioGroup>
 
         </RelativeLayout>

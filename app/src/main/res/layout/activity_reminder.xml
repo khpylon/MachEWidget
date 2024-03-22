@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/quantum_white_100"
-                android:text="Notification enabled:"
+                android:text="@string/activity_reminder_notification_enabled"
                 android:checked="false" />
 
             <LinearLayout
@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/quantum_white_100"
-                    android:text="Notification time: "/>
+                    android:text="@string/activity_reminder_notification_time"/>
 
                 <Spinner
                     android:id="@+id/hourSetting"
@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/quantum_white_100"
-                android:text="Threshold battery level: "/>
+                android:text="@string/activity_reminder_threshold_battery_level"/>
 
             <Spinner
                 android:id="@+id/batteryLevel"

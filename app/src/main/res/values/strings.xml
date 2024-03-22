@@ -36,7 +36,7 @@
     </string>
 
     <!-- Preference Titles -->
-    <string name="VIN">"Your vehicle's VIN"</string>
+    <string name="VIN" >"Your vehicle's VIN"</string>
     <string name="widget_update_frequency">Time between widget updates</string>
     <string name="units">Units to display</string>
     <string name="enable_commands">Enable lock and start commands on widget double-tap</string>
@@ -70,48 +70,48 @@
     <string name="dcfclog">Save DCFC logs</string>
     <string name="dcfclog_summary">Save DC fast charging info so it can be viewed in the app (Display DCFC info must also be enabled).</string>
 
-    <string name="version">App version</string>
+    <string name="version" translatable="false">App version</string>
 
     <!-- Shared preference keys -->
-    <string name="VIN_key">"VIN"</string>
-    <string name="update_frequency_key">"update_frequency"</string>
-    <string name="units_key">units</string>
-    <string name="transp_bg_key">"transparentBackground"</string>
-    <string name="enable_commands_key">enableCommands</string>
-    <string name="show_app_links_key">"showAppLinks"</string>
-    <string name="show_all_apps_key">"showAllApps"</string>
-    <string name="last_refresh_time_key">refreshDisplayTime</string>
-    <string name="show_location_key">showLocation</string>
-    <string name="logging_key">logging</string>
-    <string name="save_credentials_key">saveCredentials</string>
-    <string name="github_repo_key">githubRepo</string>
-    <string name="version_key">appVersion</string>
-    <string name="last_version_key">lastVersion</string>
-    <string name="widget_mode_key">widget_mode</string>
-    <string name="battery_opt_key">batteryOptimization</string>
-    <string name="userId_key">userId</string>
-    <string name="forceUpdate_key">forceUpdate</string>
-    <string name="batteryNotification_key">batteryNotification</string>
-    <string name="user_forcedUpdate_key">userForcefUpdate</string>
-    <string name="use_colors_key">useColors</string>
-    <string name="use_image_key">useImage</string>
-    <string name="use_old_engine_key">useOldEngine</string>
-    <string name="zenmode_key">zenMode</string>
-    <string name="hibernate_api_key">hibernateAPI</string>
-    <string name="check_charging_key">checkCharging</string>
-    <string name="check_dcfastcharging_key">check_DCfastcharging_key</string>
-    <string name="dcfclog_key">save_DCfastcharging_key</string>
-    <string name="lvb_display_key">lvb_display</string>
-    <string name="display_kWh_key">display_kWh</string>
+    <string name="VIN_key" translatable="false">"VIN"</string>
+    <string name="update_frequency_key" translatable="false">"update_frequency"</string>
+    <string name="units_key" translatable="false">units</string>
+    <string name="transp_bg_key" translatable="false">"transparentBackground"</string>
+    <string name="enable_commands_key" translatable="false">enableCommands</string>
+    <string name="show_app_links_key" translatable="false">"showAppLinks"</string>
+    <string name="show_all_apps_key" translatable="false">"showAllApps"</string>
+    <string name="last_refresh_time_key" translatable="false">refreshDisplayTime</string>
+    <string name="show_location_key" translatable="false">showLocation</string>
+    <string name="logging_key" translatable="false">logging</string>
+    <string name="save_credentials_key" translatable="false">saveCredentials</string>
+    <string name="github_repo_key" translatable="false">githubRepo</string>
+    <string name="version_key" translatable="false">appVersion</string>
+    <string name="last_version_key" translatable="false">lastVersion</string>
+    <string name="widget_mode_key" translatable="false">widget_mode</string>
+    <string name="battery_opt_key" translatable="false">batteryOptimization</string>
+    <string name="userId_key" translatable="false">userId</string>
+    <string name="forceUpdate_key" translatable="false">forceUpdate</string>
+    <string name="batteryNotification_key" translatable="false">batteryNotification</string>
+    <string name="user_forcedUpdate_key" translatable="false">userForcefUpdate</string>
+    <string name="use_colors_key" translatable="false">useColors</string>
+    <string name="use_image_key" translatable="false">useImage</string>
+    <string name="use_old_engine_key" translatable="false">useOldEngine</string>
+    <string name="zenmode_key" translatable="false">zenMode</string>
+    <string name="hibernate_api_key" translatable="false">hibernateAPI</string>
+    <string name="check_charging_key" translatable="false">checkCharging</string>
+    <string name="check_dcfastcharging_key" translatable="false">check_DCfastcharging_key</string>
+    <string name="dcfclog_key" translatable="false">save_DCfastcharging_key</string>
+    <string name="lvb_display_key" translatable="false">lvb_display</string>
+    <string name="display_kWh_key" translatable="false">display_kWh</string>
 
     <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
-    <string name="units_kphkpa">1</string>
-    <string name="units_mphpsi">2</string>
-    <string name="units_kphpsi">3</string>
-    <string name="units_kphbar">4</string>
+    <string name="units_kphkpa" translatable="false">1</string>
+    <string name="units_mphpsi" translatable="false">2</string>
+    <string name="units_kphpsi" translatable="false">3</string>
+    <string name="units_kphbar" translatable="false">4</string>
 
     <!-- survey values -->
-    <string name="surveyVersion_key">surveyVersion</string>
+    <string name="surveyVersion_key" translatable="false">surveyVersion</string>
     <string name="fordpass_description">Please review this info about sharing your FordPass login.</string>
     <!-- <string name="survey_uri">https://github.com/khpylon/MachEWidget/blob/master/FAQ.md</string> -->
 
@@ -122,11 +122,12 @@
         Your login credentials are only used to gain access to your FordPass account.  They are not stored in the app.
     </string>
 
-    <string name="fordpassPackage">"com.ford.fordpass"</string>
-    <string name="title_activity_color">ColorActivity</string>
+    <string name="fordpassPackage" translatable="false">"com.ford.fordpass"</string>
+    <string name="title_activity_color" translatable="false">ColorActivity</string>
+
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="first_fragment_label" translatable="false">First Fragment</string>
+    <string name="second_fragment_label" translatable="false">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
@@ -138,7 +139,7 @@
     <string name="vehicle_s_nickname">Vehicle\'s Nickname</string>
     <string name="dcfc_active">dcfc</string>
     <string name="title_activity_charging">ChargingActivity</string>
-    <string name="charging_preferences_key">charging_preferences_key</string>
+    <string name="charging_preferences_key" translatable="false">charging_preferences_key</string>
     <string name="charging_information_title">Charging Information</string>
     <string name="charging_infomation_summary">Only applicable to electric vehicles</string>
     <string name="enable_commands_summary">NOTICE: unavailable until Ford\'s public API is released.</string>
@@ -241,5 +242,20 @@
     <string name="activity_vehicle_remove_vehicle_title">Remove vehicle</string>
     <string name="activity_vehicle_remove_vehicle_description">Please confirm you want to remove this vehicle from the app.</string>
     <string name="activity_vehicle_userId_missing">Vehicles can\'t be added without a valid user; please log in first.</string>
+    <string name="networkcalls_command_transmitted">Command transmitted.</string>
+    <string name="activity_reminder_notification_enabled">Notification enabled:</string>
+    <string name="activity_reminder_notification_time">Notification time:</string>
+    <string name="activity_reminder_threshold_battery_level">Threshold battery level:</string>
+    <string name="widgets_profile_label">Profile:</string>
+    <string name="widgets_last_refresh_label">Last refresh:\n N/A</string>
+    <string name="widgets_odometer_label">Odo: N/A</string>
+    <string name="widgets_def_level_label">DEF Level: N/A</string>
+    <string name="widgets_def_range_label">DEF Range: N/A</string>
+    <string name="widget_dte_label">200 miles</string>
+    <string name="widgets_gom_label">200 miles\nCharge complete</string>
+    <string name="widgets_nickname_label">Nickname</string>
+    <string name="widgets_lv_bat_label">LV Bat:</string>
+    <string name="activity_choose_left_button_text">Left button</string>
+    <string name="activity_choose_right_button_text">Right button</string>
 
 </resources>
