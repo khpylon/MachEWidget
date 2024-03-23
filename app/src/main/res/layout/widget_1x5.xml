@@ -102,7 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="N/A"
+                    android:text="@string/widgets_na_label"
                     android:textColor="@color/white"
                     android:textSize="10sp" />
 

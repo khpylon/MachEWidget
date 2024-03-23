@@ -194,7 +194,7 @@
                 android:ellipsize="end"
                 android:gravity="left"
                 android:maxLines="1"
-                android:text="   N/A"
+                android:text="@string/widgets_na3sp_label"
                 android:textColor="@color/white"
                 android:textSize="10dp" />
 
@@ -214,7 +214,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="@string/location"
+                    android:text="@string/widgets_location_label"
                     android:textColor="@color/white"
                     android:textSize="10dp" />
 
@@ -230,7 +230,7 @@
                     android:maxLines="1"
                     android:textColor="@color/white"
                     android:textSize="10dp"
-                    android:text="   N/A" />
+                    android:text="@string/widgets_na3sp_label" />
 
                 <TextView
                     android:id="@+id/location_line3"
@@ -382,7 +382,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="N/A"
+                        android:text="@string/widgets_na_label"
                         android:textColor="@color/white"
                         android:textSize="10sp" />
 

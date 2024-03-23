@@ -23,7 +23,7 @@
             android:layout_height="36dp"
             android:layout_alignParentEnd="true"
             android:gravity="center"
-            android:text="N/A"
+            android:text="@string/widgets_na_label"
             android:textColor="@color/white"
             android:textSize="12sp" />
 
@@ -54,7 +54,7 @@
                 android:layout_height="match_parent"
                 android:textSize="10sp"
                 android:gravity="center"
-                android:text="N/A"
+                android:text="@string/widgets_na_label"
                 android:textColor="@color/white"/>
 
         </RelativeLayout>
@@ -75,7 +75,7 @@
             android:layout_height="36dp"
             android:layout_alignParentEnd="true"
             android:gravity="center"
-            android:text="N/A"
+            android:text="@string/widgets_na_label"
             android:textColor="@color/white"
             android:textSize="12sp" />
 
@@ -114,7 +114,7 @@
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/HVBIcon"
                 android:gravity="center"
-                android:text="N/A"
+                android:text="@string/widgets_na_label"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
         </RelativeLayout>

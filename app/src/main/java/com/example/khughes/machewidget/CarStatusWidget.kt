@@ -138,7 +138,7 @@ open class CarStatusWidget : AppWidgetProvider() {
         longitude: String?
     ) {
         if (latitude != null && longitude != null) {
-            views.setTextViewText(R.id.location_line1, context?.getString(R.string.location))
+            views.setTextViewText(R.id.location_line1, context?.getString(R.string.widgets_location_label))
 
             val mGeocoder = Geocoder(context!!, Locale.getDefault())
             val lat = latitude.toDouble()
@@ -697,7 +697,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             } else {
                 views.setTextViewText(
                     R.id.LVBVoltage,
-                    context.getString(R.string.lv_battery_label) +
+                    context.getString(R.string.widgets_lv_battery_label) +
                             context.getString(if (LVBStatus == "STATUS_GOOD") R.string.good else R.string.warning)
                 )
             }
@@ -705,7 +705,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
             views.setTextViewText(
                 R.id.LVBVoltage,
-                context.getString(R.string.lv_battery_label) + "N/A"
+                context.getString(R.string.widgets_lv_battery_label) + "N/A"
             )
         }
 
@@ -1348,7 +1348,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                         } else {
                                             Toast.makeText(
                                                 context,
-                                                context.getString(R.string.lvb_status_bad_desacription),
+                                                context.getString(R.string.lvb_status_bad_description),
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }

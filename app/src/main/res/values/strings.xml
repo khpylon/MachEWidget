@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ford Status Widget</string>
 
@@ -21,22 +22,12 @@
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">Display status info for Ford vehicles</string>
 
-    <!-- Default value for last known OTA update time-->
-    <string name="unknown_OTA_time">Unknown</string>
-    <string name="last_ota_time">LastOTATime</string>
-
     <string name="reminder_instructions">Set a reminder time to plug in if the vehicle\'s charge is below a given threshold.</string>
     <string name="profile_instructions">Click on a profile to log in with that VIN.  Click on an unused entry to create a login for a new vehicle.  Click on the "X" to delete a profile.</string>
-    <string name="vehicle_instructions">
-        Select which vehicles should be visible within the widget.
-        Click on the \"+\" icon to add a new vehicle.
-        Swipe right on a vehicle to remove it.
-        Vehicles whose VIN are struck-through are not currently supported;
-        to request support, enable logging to capture data and create an issue on GitHub (https://github.com/khpylon/MachEWidget).
-    </string>
+    <string name="vehicle_instructions">Select which vehicles should be visible within the widget. Click on the \"+\" icon to add a new vehicle. Swipe right on a vehicle to remove it. Vehicles whose VIN are struck-through are not currently supported; to request support, enable logging to capture data and create an issue on GitHub (https://github.com/khpylon/MachEWidget).</string>
 
     <!-- Preference Titles -->
-    <string name="VIN" >"Your vehicle's VIN"</string>
+    <string name="VIN">"Your vehicle's VIN"</string>
     <string name="widget_update_frequency">Time between widget updates</string>
     <string name="units">Units to display</string>
     <string name="enable_commands">Enable lock and start commands on widget double-tap</string>
@@ -59,7 +50,7 @@
     <string name="user_force_updates_summary">Allow user-forced updates from the widget.  WARNING: This may cause a drain on the 12V battery.</string>
     <string name="use_colors">Enable color display of vehicle</string>
     <string name="use_image">Display vehicle photo instead of logo on full-size widget</string>
-    <string name="use_old_engine">Use older methods to determine fuel type</string>
+    <string name="use_old_engine" translatable="false">Use older methods to determine fuel type</string>
     <string name="zenmode">Do not update while Do Not Disturb is active</string>
     <string name="hibernate_api">Hibernate app</string>
     <string name="hibernate_api_summary">Don\'t pull data until public API is released</string>
@@ -69,7 +60,6 @@
     <string name="check_dcfastcharging_summary">When DC fast charging, request updates every 30 seconds</string>
     <string name="dcfclog">Save DCFC logs</string>
     <string name="dcfclog_summary">Save DC fast charging info so it can be viewed in the app (Display DCFC info must also be enabled).</string>
-
     <string name="version" translatable="false">App version</string>
 
     <!-- Shared preference keys -->
@@ -103,6 +93,7 @@
     <string name="dcfclog_key" translatable="false">save_DCfastcharging_key</string>
     <string name="lvb_display_key" translatable="false">lvb_display</string>
     <string name="display_kWh_key" translatable="false">display_kWh</string>
+    <string name="charging_preferences_key" translatable="false">charging_preferences_key</string>
 
     <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
     <string name="units_kphkpa" translatable="false">1</string>
@@ -113,21 +104,16 @@
     <!-- survey values -->
     <string name="surveyVersion_key" translatable="false">surveyVersion</string>
     <string name="fordpass_description">Please review this info about sharing your FordPass login.</string>
-    <!-- <string name="survey_uri">https://github.com/khpylon/MachEWidget/blob/master/FAQ.md</string> -->
 
     <string name="clear_alert">Clear Alert</string>
     <string name="install_update">Install Update</string>
 
-    <string name="disclamer">
-        Your login credentials are only used to gain access to your FordPass account.  They are not stored in the app.
-    </string>
+    <string name="disclamer">Your login credentials are only used to gain access to your FordPass account.  They are not stored in the app.</string>
 
     <string name="fordpassPackage" translatable="false">"com.ford.fordpass"</string>
     <string name="title_activity_color" translatable="false">ColorActivity</string>
 
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label" translatable="false">First Fragment</string>
-    <string name="second_fragment_label" translatable="false">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
@@ -137,22 +123,22 @@
     <string name="login">Login</string>
     <string name="vehicles_vin">Vehicle\'s VIN</string>
     <string name="vehicle_s_nickname">Vehicle\'s Nickname</string>
-    <string name="dcfc_active">dcfc</string>
-    <string name="title_activity_charging">ChargingActivity</string>
-    <string name="charging_preferences_key" translatable="false">charging_preferences_key</string>
+    <string name="dcfc_active" translatable="false">dcfc</string>
+
+    <string name="title_activity_charging" translatable="false">ChargingActivity</string>
     <string name="charging_information_title">Charging Information</string>
     <string name="charging_infomation_summary">Only applicable to electric vehicles</string>
     <string name="enable_commands_summary">NOTICE: unavailable until Ford\'s public API is released.</string>
     <string name="lvb_display_description">12V Battery Info Displayed</string>
 
     <!-- Strings used within the app in various activities-->
-    <string name="location">Location:</string>
+    <string name="widgets_location_label">Location:</string>
     <string name="kw_rate_kwh_added">\n{0}kW rate, {1}kWh added</string>
     <string name="charging_target_reached">- Target Reached</string>
     <string name="charging_completed">- Completed</string>
     <string name="charging_preconditioning">- Preconditioning</string>
     <string name="charging_just_charging">- Charging</string>
-    <string name="lv_battery_label">"LV Battery: "</string>
+    <string name="widgets_lv_battery_label">"LV Battery: "</string>
     <string name="good">Good</string>
     <string name="warning">Warning</string>
     <string name="def_level_label">"DEF Level: "</string>
@@ -171,7 +157,7 @@
     <string name="forcing_a_refresh_description">Forcing a refresh; this may take 30 seconds.</string>
     <string name="force_update_delay_description">"Cannot force update for another "</string>
     <string name="too_many_forced_updates_description">"Too many forced updates; feature disabled for "</string>
-    <string name="lvb_status_bad_desacription">The LVB status is not good.</string>
+    <string name="lvb_status_bad_description">The LVB status is not good.</string>
     <string name="vehicle_label">"Vehicle: "</string>
     <string name="max_power_label">"Max power: "</string>
     <string name="average_power_label">"Average power: "</string>
@@ -255,6 +241,9 @@
     <string name="widgets_gom_label">200 miles\nCharge complete</string>
     <string name="widgets_nickname_label">Nickname</string>
     <string name="widgets_lv_bat_label">LV Bat:</string>
+    <string name="widgets_na_label">N/A</string>
+    <string name="widgets_na3sp_label">"   N/A"</string>
+
     <string name="activity_choose_left_button_text">Left button</string>
     <string name="activity_choose_right_button_text">Right button</string>
 

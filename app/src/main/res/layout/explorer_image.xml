@@ -92,7 +92,7 @@
         android:layout_toStartOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
-        android:text="N/A"
+        android:text="@string/widgets_na_label"
         android:textColor="@color/white"
         android:textSize="10sp" />
 
@@ -105,7 +105,7 @@
         android:layout_toEndOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
-        android:text="N/A"
+        android:text="@string/widgets_na_label"
         android:textColor="@color/white"
         android:textSize="10sp" />
 
@@ -118,7 +118,7 @@
         android:layout_toStartOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
-        android:text="N/A"
+        android:text="@string/widgets_na_label"
         android:textColor="@color/white"
         android:textSize="10sp" />
 
@@ -131,7 +131,7 @@
         android:layout_toEndOf="@id/wireframe"
         android:background="@drawable/pressure_oval"
         android:gravity="center"
-        android:text="N/A"
+        android:text="@string/widgets_na_label"
         android:textColor="@color/white"
         android:textSize="10sp" />
 
