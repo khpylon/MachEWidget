@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.03.24-16
+### Added
+- New support for various languages.  French should be fully supported, with German partially supported and
+  rudimentary support for Spanish, Portuguese, and Norwegian.  Many thanks to @Papapoil from the 
+  Mach-E forum for editing and reviewing the French translations.
+
 ## 2024.03.13-09
 ### Added
 - Recognize Australian Mach-E series VINs.
