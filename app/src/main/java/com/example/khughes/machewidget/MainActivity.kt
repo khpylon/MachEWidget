@@ -49,6 +49,12 @@ import java.io.IOException
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
+
+    // Create Locales we can use for other languages
+    private val NORWAY_BOKMAL = Locale("nb")
+    private val SPANISH = Locale("es")
+    private val PORTUGUESE = Locale("pt")
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun fordPassInfo(context: Context?) {
         val surveyWebview = WebView(this)
@@ -62,8 +68,14 @@ class MainActivity : AppCompatActivity() {
         val language = Locale.getDefault().language
 
         val indexPage =
-            if (language == Locale.FRENCH.language) "https://appassets.androidplatform.net/assets/fordpass_fr.html"
-            else "https://appassets.androidplatform.net/assets/fordpass.html"
+            when (language) {
+                Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/fordpass_fr.html"
+                Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/fordpass_de.html"
+                NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/fordpass_no.html"
+                SPANISH.language -> "https://appassets.androidplatform.net/assets/fordpass_es.html"
+                PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/fordpass_pt.html"
+                else -> "https://appassets.androidplatform.net/assets/fordpass.html"
+            }
         surveyWebview.loadUrl(indexPage)
         AlertDialog.Builder(this)
             .setTitle(R.string.fordpass_description)
@@ -199,11 +211,15 @@ class MainActivity : AppCompatActivity() {
 
         // Use the system language to choose which webpage to display
         val language = Locale.getDefault().language
-        val indexPage = if (language == Locale.FRENCH.language) {
-            "https://appassets.androidplatform.net/assets/index_page_fr.html"
-        } else {
-            "https://appassets.androidplatform.net/assets/index_page.html"
-        }
+        val indexPage =
+            when (language) {
+                Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/index_page_fr.html"
+                Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/index_page_de.html"
+                NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/index_page_no.html"
+                SPANISH.language -> "https://appassets.androidplatform.net/assets/index_page_es.html"
+                PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/index_page_pt.html"
+                else -> "https://appassets.androidplatform.net/assets/index_page.html"
+            }
         mWebView.loadUrl(indexPage)
 
         // Update the widget
