@@ -3,117 +3,130 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
-<h2>Introduction</h2>
-The widget provides a quick view of many aspects of your Ford vehicle.  Once you log in to your FordPass account through the
-app, enter your vehicle information, and place the widget somewhere on your phone's screen, it will periodically update to show your car's status.<p>
+<!-- Corrections welcome -->
+<h3>Rettelser velkommen </h3>
+<!--
+The translations from English were done with Google Translate. If you see something
+incorrect, please create an
+<a href="https://github.com/khpylon/MachEWidget/blob/master/issues">issue on GitHub</a>
+with corrections.
+-->
+<p>
+Oversettelsene fra engelsk ble gjort med Google Translate. Hvis du ser noe feil, vennligst opprett et 
+problem på GitHub 
+<a href="https://github.com/khpylon/MachEWidget/blob/master/issues">issue on GitHub</a>
+med rettelser.
+</p>
+<h2>Introduksjon</h2>
+<p>
+Widgeten gir en rask oversikt over mange aspekter ved ditt Ford-kjøretøy. Når du logger på FordPass-kontoen din gjennom appen, skriver inn kjøretøyinformasjonen din og plasserer widgeten et sted på telefonens skjerm, vil den med jevne mellomrom oppdateres for å vise bilens status.
 
-The widget is shown below. Remember: <b>You need to place the widget on your phone's screen </b>
+Widgeten er vist nedenfor. Husk: <b>Du må plassere widgeten på telefonens skjerm</b>
 <ol>
-    <li>long press on an unoccupied spot on your screen</li>
-    <li>choose "Widgets"</li>
-    <li>scroll down until you find this app</li>
-    <li>press and drag the widget onto your screen</li>
+    <li>trykk lenge på et ledig sted på skjermen</li>
+    <li>velg "widgets"</li>
+    <li>rull ned til du finner denne appen</li>
+    <li>trykk og dra widgeten til skjermen</li>
 </ol>
 
 <img src="/assets/appwidget_sample.png" width="100%"><hr>
-<p><center>Full size widget</center></p>
+<p><center>Full størrelse widget</center></p>
 <img src="/assets/widget_2x4_preview.png" width="100%"><hr>
-<p><center>Medium size widget</center></p>
+<p><center>Middels størrelse widget</center></p>
 <img src="/assets/widget_1x5_preview.png" width="100%"><hr>
-<p><center>Miniature widget</center></p>
+<p><center>Miniatyr widget</center></p>
 
-<h2>Using The App</h2>
-<p>All controls are located in the three-dot menu.
+<h2>Bruker appen</h2>
+<p>Alle kontroller er plassert i menyen med tre prikker.
     <ul>
-    <li>Select "Ford Log-in" to get started.  Your user name and password are <b>not</b> stored.</li>
-    <li>Select "Manage Vehicles" to enter the VIN and nickname of your vehicle(s).</li>
-    <li>Select "Refresh" to force a query of Ford's servers.</li>
-    <li>Select "Choose Linked Apps" to choose which apps can be launched from the widget (located to the right of the
-        Settings ("gear") icon</li>
-    <li>Select "Set Vehicle Color" if you want to modify the color of the vehicle displayed in the widget.  You will also need
-    to set "Enable color display of vehicles" under "Settings".</li>
-    <li>Select "Save Settings" or "Restore Settings" to back-up or restore your personal data (useful when the app must be removed prior to a new install)</li>
-    <li>Select "Settings" to change various application settings.  You can control among other things:
+    <li>Velg "Ford Logg inn" for å komme i gang. Ditt brukernavn og passord er <b>ikke</b> lagret.
+    <li>Velg "Administrer kjøretøy" for å angi VIN og kallenavnet til kjøretøyet(e).</li>
+    <li>Velg "Oppdater" for å tvinge frem en spørring av Fords servere.</li>
+    <li>Velg "Velg koblede apper" for å velge hvilke apper som kan startes fra widgeten (plassert til høyre for Innstillinger ("tannhjul")-ikonet</li>
+    <li>Velg "Angi kjøretøyfarge" hvis du vil endre fargen på kjøretøyet som vises i widgeten. Du må også angi "Aktiver fargevisning av kjøretøy" under "Innstillinger".</li>
+    <li>Velg "Lagre innstillinger" eller "Gjenopprett innstillinger" for å sikkerhetskopiere eller gjenopprette dine personlige data (nyttig når appen må fjernes før en ny installasjon)</li>
+    <li>Velg "Innstillinger" for å endre ulike programinnstillinger. Du kan styre blant annet:
         <ul>
-            <li>set the frequency at which the widget updates</li>
-            <li>enable commands for lock/unlock and remote start when pressing the icons (future feature)</li>
-            <li>enable the location (if applicable) on the widget</li>
-            <li>display charging session information (see below)</li>
+            <li>angi frekvensen som widgeten oppdateres med</li>
+            <li>aktiver kommandoer for låse/låse opp og fjernstart når du trykker på ikonene (fremtidig funksjon)</li>
+            <li>aktiver plasseringen (hvis aktuelt) på widgeten</li>
+            <li>vise informasjon om ladeøkt (se nedenfor)</li>
         </ul>
     </ul>
 </p>
 
-<h2>Icon Information</h2>
-<p>Red is normally used to indicate something unusual happening when you're not using the car.  The hood/frunk, trunk/hatch/tailgate, and doors will be highlighted
-    in red to indicate they are not closed.  Similarly, if a window is not fully closed, either a red icon will appear near the corresponding door (full-sized widget) or
-    the actual window will appear in red (medium and miniature widgets).</p>
-<p>The bell icon <img src="/assets/alarm_green.png" width="18"> indicates the alarm status; green is armed, red is disarmed, and red with a "Z" indicates the vehicle is in deep sleep.
-</p>
-<p>The ignition icon <img src="/assets/ignition_green.png" width="18"> is green when the vehicle is on, gray when off, and yellow when remote start is active.</p>
-<p>The information displayed for the 12V (low-voltage or LV) battery can show voltage, state of charge (SoC), or both.  This is selectable under "Settings".  When shown in a progress bar,
-green indicates the SOC is above 80%, yellow above 50%, and red below 50%.</p>
-
-<h2>Accessing Other Features</h2>
+<h2>Ikoninformasjon</h2>
 <p>
-Tapping on various parts of the widget will give access to other features.
+Rødt brukes vanligvis for å indikere at noe uvanlig skjer når du ikke bruker bilen. Panseret/frunken, bagasjerommet/luken/bakluken og dørene vil være uthevet i rødt for å indikere at de ikke er lukket. På samme måte, hvis et vindu ikke er helt lukket, vil enten et rødt ikon vises nær den tilsvarende døren (widget i full størrelse) eller det faktiske vinduet vises i rødt (middels og miniatyr widgets).
+</p>
+
+<p>
+Klokkeikonet <img src="/assets/alarm_green.png" width="18"> indikerer alarmstatus; grønt er aktivert, rødt er deaktivert, og rødt med en "Z" indikerer at kjøretøyet er i dyp søvn.
+</p>
+
+<p>
+Tenningsikonet <img src="/assets/ignition_green.png" width="18"> er grønt når kjøretøyet er på, grått når det er av og gult når fjernstart er aktiv.
+</p>
+
+<p>Informasjonen som vises for 12V (lavspent eller LV) batteriet kan vise spenning, ladetilstand (SoC) eller begge deler. Dette kan velges under "Innstillinger". Når det vises i en fremdriftslinje, indikerer grønt at SOC er over 80 %, gult over 50 % og rødt under 50 %.
+</p>
+
+<h2>Få tilgang til andre funksjoner</h2>
+<p>
+Å trykke på ulike deler av widgeten vil gi tilgang til andre funksjoner.
 <ul>
-    <li>A single tap on the alarm icon <img src="/assets/alarm_green.png" width="18"> will display the vehicle's interior temperature.
-        This value is apparently only valid when the ignition is on.</li>
-    <li>A triple tap on the "Last refresh" text (or for the widget without "Last refresh", triple tap on the vehicle's image on the right) will show information about the last time the app
-        updated with widget and the last time information was read from the servers.</li>
-    <li>The ignition icon controls remote start/stop and the lock icon controls lock/unlock (remote commands can be enabled under Settings).  Double tap on the
-    icon to send the command to the vehicle; it may take up to 30 seconds for the vehicle to respond.  A yellow ignition icon indicates remote start is active.</li>
-    <li>The refresh icon on the lower left of the vehicle's image will send a command to the vehicle forcing it to refresh its status (this can be enabled under Settings).
-    <b>Warning</b>: Since this has the potential to drain the 12V battery, the app limits how often you can perform a refresh in a 24 hour period.</li>
-    <li>Plug-in hybrids only: a single tap on the percentage progress bar will switch between gas and electric information.</li>
-    <li>Diesels only: a single tap on the low-voltage battery display will switch between LV battery, DEF level, and DEF range.</li>
-    <li>Electric amd plug-in only: a single tap on the plug icon <img src="/assets/plug_green.png" height="18">
-        will display the kilowatt-hours remaining in the high-voltage battery.</li>
-    <li>A single tap on all other locations will take you to this page.</li>
+    <li>Et enkelt trykk på alarmikonet <img src="/assets/alarm_green.png" width="18"> vil vise kjøretøyets innvendige temperatur.
+        Denne verdien er tilsynelatende bare gyldig når tenningen er på.></li>
+    <li>Et trippeltrykk på "Siste oppdatering"-teksten (eller for widgeten uten "Siste oppdatering", trippeltrykk på kjøretøyets bilde 
+        til høyre) vil vise informasjon om sist gang appen oppdaterte med widget og sist informasjon ble lest fra serverne</li>
+    <li>Tenningsikonet kontrollerer fjernstart/stopp og låsikonet kontrollerer låsing/lås opp (fjernkommandoer kan aktiveres under 
+        Innstillinger). Dobbelttrykk på ikonet for å sende kommandoen til kjøretøyet; det kan ta opptil 30 sekunder før kjøretøyet 
+        reagerer. Et gult tenningsikon indikerer at fjernstart er aktiv.</li>
+    <li>Oppdateringsikonet nederst til venstre på kjøretøyets bilde vil sende en kommando til kjøretøyet som tvinger det til å 
+        oppdatere statusen (dette kan aktiveres under Innstillinger). <b>Advarsel:</b> Siden dette har potensial til å tømme 
+        12V-batteriet, begrenser appen hvor ofte du kan utføre en oppdatering i løpet av en 24-timers periode.</li>
+    <li>Kun plug-in hybrider: et enkelt trykk på fremdriftslinjen for prosent vil bytte mellom gass- og elektrisk informasjon.</li>
+    <li>Kun dieselmotorer: et enkelt trykk på lavspenningsbatteridisplayet vil bytte mellom LV-batteri, DEF-nivå og DEF-område.<li>
+    <li>Kun elektrisk amd plug-in: et enkelt trykk på pluggikonet <img src="/assets/plug_green.png" height="18">
+        vil vise de gjenværende kilowattimene i høyspentbatteriet.</li>
+    <li>Et enkelt trykk på alle andre steder tar deg til denne siden.</li>
 </ul>
 
 </p>
 
-<h2>Multiple Vehicles</h2>
-<p>If you own more than one vehicle compatible with FordPass, each vehicle's status can be accessed from the widget.  To see the next vehicle:
+<h2>Flere kjøretøy</h2>
+<p>Hvis du eier mer enn ett kjøretøy som er kompatibelt med FordPass, kan du få tilgang til hvert kjøretøys status fra widgeten. For å se neste kjøretøy:
 <ul>
-    <li><b>Smaller widgets</b>: double tap on the vehicle image on the right.</li>
-    <li><b>Large widget</b>: single tap on your vehicle's image in the upper left corner.</li>
+    <li><b>Mindre widgets:</b> dobbelttrykk på kjøretøybildet til høyre. </li>
+    <li><b>Stor widget:</b> ett trykk på kjøretøyets bilde i øvre venstre hjørne.</li>
 </ul>
-You can use "Manage Vehicles" in the three-dot menu to choose which vehicle(s) the app will display.
+Du kan bruke "Administrer kjøretøy" i menyen med tre prikker for å velge hvilket(e) kjøretøy appen skal vise.
 </p>
 
-<H2>Charging Information (for Plug-in Vehicles)</H2>
-<p>The charging status is indicated by icons for the charge plug
-<img src="/assets/plug_green.png" width="15">
-and the high-voltage battery (HVB)
-<img src="/assets/battery_charging.png" width="15">.
-A red charge plug and gray battery icon indicate the car is unplugged; a green charge plug indicates the car is plugged in.  When plugged in, the battery
-icon will indicate what is happening:
+<H2>Ladeinformasjon (for plug-in kjøretøy)</H2>
+<p>Ladestatusen indikeres med ikoner for ladepluggen <img src="/assets/plug_green.png" width="15">
+og høyspenningsbatteriet (HVB) <img src="/assets/battery_charging.png" width="15">.
+En rød ladeplugg og et grått batteriikon indikerer at bilen er koblet fra; en grønn ladeplugg indikerer at bilen er koblet til. Når den er koblet til, vil batteriikonet indikere hva som skjer:
 <ul>
-    <li>Not charging -- <img src="/assets/battery_red.png" width="15"></li>
-    <li>Charge scheduled -- <img src="/assets/battery_blue.png" width="25"></li>
-    <li>Charge paused -- <img src="/assets/battery_yellow.png" width="15"></li>
-    <li>Charging -- <img src="/assets/battery_charging.png" width="15"></li>
-    <li>Charge finished -- <img src="/assets/battery_full.png" width="15"></li>
+    <li>Lader ikke -- <img src="/assets/battery_red.png" width="15"></li>
+    <li>Ladning planlagt -- <img src="/assets/battery_blue.png" width="25"></li>
+    <li>Lading satt på pause -- <img src="/assets/battery_yellow.png" width="15"></li>
+    <li>Lader -- <img src="/assets/battery_charging.png" width="15"></li>
+    <li>Lading fullført -- <img src="/assets/battery_full.png" width="15"></li>
 </ul>
 </p>
-<p>Information about AC charging sessions can be displayed on the widget by enabling "Display charge
-session info" in "Settings".  When charging, the current power and total energy delivered will be
-shown on the charging progress bar.  Information about DC fast charging can be display by
-also enabling "Display DCFC info".  Once DC fast charging is detected by the app, it will automatically
-request updates from the servers every 30 seconds (note that you mey want to manually refresh
-once you initiate charging to have updates start sooner).
+<p>
+Informasjon om nivå 1 og 2 ladeøkter kan vises på widgeten ved å aktivere "Vis ladeøktinfo" i "Innstillinger". Ved lading vil
+gjeldende effekt og total levert energi vises på fremdriftslinjen for lading. Informasjon om DC hurtiglading kan vises ved også å
+aktivere "Vis hurtigladingsinfo". Når nivå 3-lading oppdages av appen, vil den automatisk be om oppdateringer fra serverne hvert 30.
+sekund (merk at du ønsker å oppdatere manuelt når du starter lading for å få oppdateringer til å starte tidligere).
 </p>
-<p>Enabling "Save DCFC logs" in addition to the above settings will allow you to view recent DC fast
-charging sessions via "View DCFC Logs" in the three-dot menu.  If you are currently charging, the
-data is updated in real-time as information is read from the servers. The logs will show power, energy,
-and SOC during each charging session.  Data for each session is stored for 180 days then deleted.
-All session data is deleted if this setting is disabled.
+<p>
+Aktivering av "Lagre hurtigladelogger" i tillegg til innstillingene ovenfor vil tillate deg å se nylige DC-hurtigladingsøkter via "Vis hurtigladingslogger" i trepunktsmenyen. Hvis du for øyeblikket lader, oppdateres dataene i sanntid ettersom informasjon leses fra serverne. Loggene vil vise strøm, energi og SOC under hver ladeøkt. Data for hver økt lagres i 180 dager og slettes deretter. Alle øktdata slettes hvis denne innstillingen er deaktivert.
 </p>
 
-<h2>FAQs and Other Information</h2>
-<p>See the <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">FAQ</a> on GitHub for other questions (feel free to submit suggestions for other questions).
+<h2>Vanlige spørsmål og annen informasjon</h2>
+<p>Se <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">FAQ</a> på GitHub for andre spørsmål (send gjerne inn forslag til andre spørsmål).
 
 </p>
 </body>

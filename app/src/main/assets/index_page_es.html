@@ -3,118 +3,130 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
-<h2>Introduction</h2>
-The widget provides a quick view of many aspects of your Ford vehicle.  Once you log in to your FordPass account through the
-app, enter your vehicle information, and place the widget somewhere on your phone's screen, it will periodically update to show your car's status.<p>
+<!-- Corrections welcome -->
+<h3>Correcciones bienvenidas</h3>
+<!--
+The translations from English were done with Google Translate. If you see something
+incorrect, please create an
+<a href="https://github.com/khpylon/MachEWidget/blob/master/issues">issue on GitHub</a>
+with corrections.
+-->
+<p>
+Las traducciones del inglés se realizaron con Google Translate. Si ve algo incorrecto, cree un 
+<a href="https://github.com/khpylon/MachEWidget/blob/master/issues">problema en GitHub</a>
+con correcciones.
+</p>
+<h2>Introducción</h2>
+<p>
+El widget proporciona una vista rápida de muchos aspectos de su vehículo Ford. Una vez que inicie sesión en su cuenta FordPass a través de la aplicación, ingrese la información de su vehículo y coloque el widget en algún lugar de la pantalla de su teléfono, se actualizará periódicamente para mostrar el estado de su automóvil.
+</p>
 
-The widget is shown below. Remember: <b>You need to place the widget on your phone's screen </b>
+El widget se muestra a continuación. Recuerde: <b>debe colocar el widget en la pantalla de su teléfono</b>
 <ol>
-    <li>long press on an unoccupied spot on your screen</li>
-    <li>choose "Widgets"</li>
-    <li>scroll down until you find this app</li>
-    <li>press and drag the widget onto your screen</li>
+    <li>mantenga presionado un lugar desocupado en su pantalla</li>
+    <li>elige "Widgets"</li>
+    <li>Desplázate hacia abajo hasta encontrar esta aplicación.</li>
+    <li>presiona y arrastra el widget a tu pantalla</li>
 </ol>
 
 <img src="/assets/appwidget_sample.png" width="100%"><hr>
-<p><center>Full size widget</center></p>
+<p><center>Widget de tamaño completo</center></p>
 <img src="/assets/widget_2x4_preview.png" width="100%"><hr>
-<p><center>Medium size widget</center></p>
+<p><center>Widget de tamaño mediano</center></p>
 <img src="/assets/widget_1x5_preview.png" width="100%"><hr>
-<p><center>Miniature widget</center></p>
+<p><center>Widget en miniatura</center></p>
 
-<h2>Using The App</h2>
-<p>All controls are located in the three-dot menu.
+<h2>Usando la aplicación</h2>
+<p>Todos los controles están ubicados en el menú de tres puntos.
     <ul>
-    <li>Select "Ford Log-in" to get started.  Your user name and password are <b>not</b> stored.</li>
-    <li>Select "Manage Vehicles" to enter the VIN and nickname of your vehicle(s).</li>
-    <li>Select "Refresh" to force a query of Ford's servers.</li>
-    <li>Select "Choose Linked Apps" to choose which apps can be launched from the widget (located to the right of the
-        Settings ("gear") icon</li>
-    <li>Select "Set Vehicle Color" if you want to modify the color of the vehicle displayed in the widget.  You will also need
-    to set "Enable color display of vehicles" under "Settings".</li>
-    <li>Select "Save Settings" or "Restore Settings" to back-up or restore your personal data (useful when the app must be removed prior to a new install)</li>
-    <li>Select "Settings" to change various application settings.  You can control among other things:
+        <li>Selecciona "Iniciar sesión en Ford" para comenzar. Su nombre de usuario y contraseña <b>no</b> se almacenan.</li>
+        <li>Seleccione "Administrar vehículos" para ingresar el VIN y el apodo de su(s) vehículo(s).</li>
+        <li>Seleccione "Actualizar" para forzar una consulta de los servidores de Ford.</li>
+        <li>Seleccione "Elegir aplicaciones vinculadas" para elegir qué aplicaciones se pueden iniciar desde el widget (ubicado a la derecha
+        del ícono de Configuración ("engranaje")</li>
+        <li>Seleccione "Establecer color del vehículo" si desea modificar el color del vehículo que se muestra en el widget. También deberá
+        configurar "Habilitar visualización en color de vehículos" en "Configuración".</li>
+        <li>Seleccione "Guardar configuración" o "Restaurar configuración" para hacer una copia de seguridad o restaurar sus datos personales
+        (útil cuando la aplicación debe eliminarse antes de una nueva instalación)</li>
+        <li>Seleccione "Configuración" para cambiar varias configuraciones de la aplicación. Podrás controlar entre otras cosas:</li>
+
         <ul>
-            <li>set the frequency at which the widget updates</li>
-            <li>enable commands for lock/unlock and remote start when pressing the icons (future feature)</li>
-            <li>enable the location (if applicable) on the widget</li>
-            <li>display charging session information (see below)</li>
+              <li>establecer la frecuencia con la que se actualiza el widget</li>
+              <li>habilitar comandos para bloqueo/desbloqueo e inicio remoto al presionar los íconos (función futura)</li>
+              <li>habilitar la ubicación (si corresponde) en el widget</li>
+              <li>mostrar información de la sesión de carga (ver más abajo)</li>
         </ul>
     </ul>
 </p>
 
-<h2>Icon Information</h2>
-<p>Red is normally used to indicate something unusual happening when you're not using the car.  The hood/frunk, trunk/hatch/tailgate, and doors will be highlighted
-    in red to indicate they are not closed.  Similarly, if a window is not fully closed, either a red icon will appear near the corresponding door (full-sized widget) or
-    the actual window will appear in red (medium and miniature widgets).</p>
-<p>The bell icon <img src="/assets/alarm_green.png" width="18"> indicates the alarm status; green is armed, red is disarmed, and red with a "Z" indicates the vehicle is in deep sleep.
-</p>
-<p>The ignition icon <img src="/assets/ignition_green.png" width="18"> is green when the vehicle is on, gray when off, and yellow when remote start is active.</p>
-<p>The information displayed for the 12V (low-voltage or LV) battery can show voltage, state of charge (SoC), or both.  This is selectable under "Settings".  When shown in a progress bar,
-green indicates the SOC is above 80%, yellow above 50%, and red below 50%.</p>
-
-<h2>Accessing Other Features</h2>
+<h2>Información del icono</h2>
 <p>
-Tapping on various parts of the widget will give access to other features.
+El rojo se utiliza normalmente para indicar que sucede algo inusual cuando no estás utilizando el coche. El capó/maletero, el maletero/la escotilla/el portón trasero y las puertas se resaltarán en rojo para indicar que no están cerrados. De manera similar, si una ventana no está completamente cerrada, aparecerá un ícono rojo cerca de la puerta correspondiente (widget de tamaño completo) o la ventana real aparecerá en rojo (widgets medianos y en miniatura).
+</p>
+
+<p>
+El icono de campana <img src="/assets/alarm_green.png" width="18"> indica el estado de la alarma; el verde está armado, el rojo está desarmado y el rojo con una "Z" indica que el vehículo está en sueño profundo.
+</p>
+
+<p>
+El ícono de encendido <img src="/assets/ignition_green.png" width="18"> es verde cuando el vehículo está encendido, gris cuando está apagado y amarillo cuando el arranque remoto está activo.
+</p>
+
+<p>
+La información que se muestra para la batería de 12 V (bajo voltaje o LV) puede mostrar el voltaje, el estado de carga (SoC) o ambos. Esto se puede seleccionar en "Configuración". Cuando se muestra en una barra de progreso, el verde indica que el SOC está por encima del 80%, el amarillo por encima del 50% y el rojo por debajo del 50%.
+</p>
+
+<h2>Acceder a otras funciones</h2>
+<p>
+Al tocar varias partes del widget, se accederá a otras funciones.
 <ul>
-    <li>A single tap on the alarm icon <img src="/assets/alarm_green.png" width="18"> will display the vehicle's interior temperature.
-        This value is apparently only valid when the ignition is on.</li>
-    <li>A triple tap on the "Last refresh" text (or for the widget without "Last refresh", triple tap on the vehicle's image on the right) will show information about the last time the app
-        updated with widget and the last time information was read from the servers.</li>
-    <li>The ignition icon controls remote start/stop and the lock icon controls lock/unlock (remote commands can be enabled under Settings).  Double tap on the
-    icon to send the command to the vehicle; it may take up to 30 seconds for the vehicle to respond.  A yellow ignition icon indicates remote start is active.</li>
-    <li>The refresh icon on the lower left of the vehicle's image will send a command to the vehicle forcing it to refresh its status (this can be enabled under Settings).
-    <b>Warning</b>: Since this has the potential to drain the 12V battery, the app limits how often you can perform a refresh in a 24 hour period.</li>
-    <li>Plug-in hybrids only: a single tap on the percentage progress bar will switch between gas and electric information.</li>
-    <li>Diesels only: a single tap on the low-voltage battery display will switch between LV battery, DEF level, and DEF range.</li>
-    <li>Electric amd plug-in only: a single tap on the plug icon <img src="/assets/plug_green.png" height="18">
-        will display the kilowatt-hours remaining in the high-voltage battery.</li>
-    <li>A single tap on all other locations will take you to this page.</li>
+    <li>Un solo toque en el ícono de alarma <img src="/assets/alarm_green.png" width="18"> mostrará la temperatura interior del 
+        vehículo. Aparentemente, este valor sólo es válido cuando el encendido está conectado.</li>
+    <li>Un triple toque en el texto "Última actualización" (o para el widget sin "Última actualización", un triple toque en la imagen del vehículo a la derecha) mostrará información sobre la última vez que la aplicación se actualizó con el widget y la última vez que se leyó la información. de los servidores.</li>
+    <li>El ícono de encendido controla el arranque/parada remotos y el ícono de bloqueo controla el bloqueo/desbloqueo (los comandos remotos se pueden habilitar en Configuración). Toque dos veces el icono para enviar el comando al vehículo; El vehículo puede tardar hasta 30 segundos en responder. Un icono de encendido amarillo indica que el arranque remoto está activo.</li>
+    <li>El ícono de actualización en la parte inferior izquierda de la imagen del vehículo enviará un comando al vehículo obligándolo a actualizar su estado (esto se puede habilitar en Configuración).
+    <b>Advertencia</b>: dado que esto tiene el potencial de agotar la batería de 12 V, la aplicación limita la frecuencia con la que puede realizar una actualización en un período de 24 horas.</li>
+    <li>Solo híbridos enchufables: un solo toque en la barra de progreso porcentual cambiará entre información de gasolina y electricidad.</li>
+    <li>Solo diésel: un solo toque en la pantalla de la batería de bajo voltaje cambiará entre batería LV, nivel de DEF y rango de DEF.
+</li>
+    <li>Solo eléctrico y enchufable: un solo toque en el ícono del enchufe <img src="/assets/plug_green.png" height="18"> mostrará los kilovatios-hora restantes en la batería de alto voltaje.</li>
+    <li>Un solo toque en todas las demás ubicaciones lo llevará a esta página.</li>
 </ul>
 
 </p>
 
-<h2>Multiple Vehicles</h2>
-<p>If you own more than one vehicle compatible with FordPass, each vehicle's status can be accessed from the widget.  To see the next vehicle:
+<h2>Múltiples vehículos</h2>
+<p>Si posee más de un vehículo compatible con FordPass, puede acceder al estado de cada vehículo desde el widget. Para ver el siguiente vehículo:
 <ul>
-    <li><b>Smaller widgets</b>: double tap on the vehicle image on the right.</li>
-    <li><b>Large widget</b>: single tap on your vehicle's image in the upper left corner.</li>
+    <li><b>Widgets más pequeños</b>: toca dos veces la imagen del vehículo a la derecha.</li>
+    <li><b>Widget grande</b>: toque una vez la imagen de su vehículo en la esquina superior izquierda.</li>
 </ul>
-You can use "Manage Vehicles" in the three-dot menu to choose which vehicle(s) the app will display.
+Puede usar "Administrar vehículos" en el menú de tres puntos para elegir qué vehículos mostrará la aplicación.
 </p>
 
-<H2>Charging Information (for Plug-in Vehicles)</H2>
-<p>The charging status is indicated by icons for the charge plug
+<h2>Información de carga (para vehículos enchufables)</h2>
+<p>El estado de carga se indica mediante iconos para el enchufe de carga
 <img src="/assets/plug_green.png" width="15">
-and the high-voltage battery (HVB)
+y la batería de alto voltaje (HVB)
 <img src="/assets/battery_charging.png" width="15">.
-A red charge plug and gray battery icon indicate the car is unplugged; a green charge plug indicates the car is plugged in.  When plugged in, the battery
-icon will indicate what is happening:
+Un enchufe de carga rojo y un ícono de batería gris indican que el automóvil está desconectado; un enchufe de carga verde indica que el automóvil está enchufado. Cuando esté enchufado, el ícono de la batería indicará lo que está sucediendo:
 <ul>
-    <li>Not charging -- <img src="/assets/battery_red.png" width="15"></li>
-    <li>Charge scheduled -- <img src="/assets/battery_blue.png" width="25"></li>
-    <li>Charge paused -- <img src="/assets/battery_yellow.png" width="15"></li>
-    <li>Charging -- <img src="/assets/battery_charging.png" width="15"></li>
-    <li>Charge finished -- <img src="/assets/battery_full.png" width="15"></li>
+    <li>No cobrar -- <img src="/assets/battery_red.png" width="15"></li>
+    <li>Carga programada -- <img src="/assets/battery_blue.png" width="25"></li>
+    <li>Carga en pausa -- <img src="/assets/battery_yellow.png" width="15"></li>
+    <li>Cargando -- <img src="/assets/battery_charging.png" width="15"></li>
+    <li>Carga terminada -- <img src="/assets/battery_full.png" width="15"></li>
 </ul>
 </p>
-<p>Information about AC charging sessions can be displayed on the widget by enabling "Display charge
-session info" in "Settings".  When charging, the current power and total energy delivered will be
-shown on the charging progress bar.  Information about DC fast charging can be display by
-also enabling "Display DCFC info".  Once DC fast charging is detected by the app, it will automatically
-request updates from the servers every 30 seconds (note that you mey want to manually refresh
-once you initiate charging to have updates start sooner).
+<p> La información sobre las sesiones de carga de Nivel 1 o 2 se puede mostrar en el widget habilitando "Mostrar información de la sesión de carga" en "Configuración". Durante la carga, la potencia actual y la energía total entregada se mostrarán en la barra de progreso de la carga. La información sobre la carga rápida se puede mostrar habilitando también "Mostrar información de carga rápida". Una vez que la aplicación detecta la carga rápida, solicitará automáticamente actualizaciones de los servidores cada 30 segundos (tenga en cuenta que es posible que desee actualizar manualmente una vez que inicie la carga para que las actualizaciones comiencen antes).
 </p>
-<p>Enabling "Save DCFC logs" in addition to the above settings will allow you to view recent DC fast
-charging sessions via "View DCFC Logs" in the three-dot menu.  If you are currently charging, the
-data is updated in real-time as information is read from the servers. The logs will show power, energy,
-and SOC during each charging session.  Data for each session is stored for 180 days then deleted.
-All session data is deleted if this setting is disabled.
+<p>
+Habilitar "Guardar registros de carga rápida" además de las configuraciones anteriores le permitirá ver sesiones de carga recientes de Nivel 3 a través de "Ver registros de carga rápida" en el menú de tres puntos. Si actualmente está cobrando, los datos se actualizan en tiempo real a medida que se lee la información de los servidores. Los registros mostrarán potencia, energía y SOC durante cada sesión de carga. Los datos de cada sesión se almacenan durante 180 días y luego se eliminan. Todos los datos de la sesión se eliminan si esta configuración está desactivada.
 </p>
 
-<h2>FAQs and Other Information</h2>
-<p>See the <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">FAQ</a> on GitHub for other questions (feel free to submit suggestions for other questions).
-
+<h2>Preguntas frecuentes y otra información</h2>
+<p> Consulte las <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">Preguntas Frecuentes</a> 
+en GitHub para otras preguntas (no dude en enviar sugerencias para otras preguntas).
 </p>
 </body>
 </html>
