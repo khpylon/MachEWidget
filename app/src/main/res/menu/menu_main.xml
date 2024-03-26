@@ -62,7 +62,7 @@
     <item
         android:id="@+id/action_charge"
         android:orderInCategory="30"
-        android:title="View DCFC Logs"
+        android:title="@string/action_view_dcfc_logs"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_update"

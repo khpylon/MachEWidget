@@ -11,6 +11,7 @@
     <string name="action_backup">Save Settings</string>
     <string name="action_restore">Restore Settings</string>
     <string name="action_copylog">Save Logfile</string>
+    <string name="action_view_dcfc_logs">View Fast Charge Logs</string>
     <string name="action_update">Check For Update</string>
     <string name="action_vehicle">Manage Vehicles</string>
     <string name="action_color">Set Vehicle Color</string>
