@@ -87,8 +87,8 @@
   <string name="ago_description">" vor"</string>
   <string name="odometer_label">"Tacho: "</string>
   <string name="app_no_longer_installed">App ist nicht mehr installiert</string>
-  <string name="last_update_label">Letztes Update um</string>
-  <string name="last_alarm_label">Letzter Alarm um</string>
+  <string name="last_update_label">"Letztes Update um "</string>
+  <string name="last_alarm_label">"Letzter Alarm um "</string>
   <string name="battery_energy_remaining_label">Verbleibende Batterieenergie beträgt</string>
   <string name="unavailable_label">nicht verfügbar.</string>
   <string name="ambient_temperature_label">Umgebungstemperatur ist</string>
