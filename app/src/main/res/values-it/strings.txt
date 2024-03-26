@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ford Status Widget</string>
+
+    <string name="action_fordpass">Avviso FordPass</string>
+    <string name="action_login">FordPass Log-in</string>
+    <string name="action_profile">Gestione Profili</string>
+    <string name="action_OTA">Info Aggiornamento OTA</string>
+    <string name="action_chooseapp">Scelta Applicazioni</string>
+    <string name="action_refresh">Aggiorna</string>
+    <string name="action_backup">Salva Impostazioni</string>
+    <string name="action_restore">Ripristina Impostazioni</string>
+    <string name="action_copylog">Salva Logfile</string>
+    <string name="action_update">Ricerca Aggiornamenti</string>
+    <string name="action_vehicle">Gestisci Veicoli</string>
+    <string name="action_color">Imposta Colore Veicolo</string>
+    <string name="action_reminder">Imposta Promemoria Ricarica</string>
+    <string name="update_info">Aggiorna Info</string>
+    <string name="action_settings">Impostazioni</string>
+
+    <!-- Widget things -->
+    <string name="add_widget">Aggiungi Widget</string>
+    <string name="app_widget_description">Mostra info veicolo Ford</string>
+
+    <string name="reminder_instructions">Imposta un promemoria per ricaricare se la carica è inferiore a una certa soglia.</string>
+    <string name="profile_instructions">Clicca su un profilo per effettuare il log in con quel VIN.  Clicca su una voce inutilizzata per creare un login per un nuovo veicolo. Clicca su "X" per eliminare un profilo.</string>
+    <string name="vehicle_instructions">Seleziona quali veicoli rendere visibili nel Widget. Clicca sull\'icona \"+\" per aggiungere un nuovo veicolo. Trascinare a destra un veicolo per eliminarlo. I veicoli il cui VIN è barrato non sono supportati; per chiedere supporto, abilita il log per registrare i dati e segnalare su GitHub (https://github.com/khpylon/MachEWidget).</string>
+
+    <!-- Preference Titles -->
+    <string name="VIN">"Il VIN del tuo veicolo"</string>
+    <string name="widget_update_frequency">Frequenza di aggiornamento del Widget</string>
+    <string name="units">Unità di misura</string>
+    <string name="enable_commands">Abilita comandi di avvio e chiusura sul Widget con duplice tocco</string>
+    <string name="enable_app_launchers">Abilita tasti di avvio applicazioni</string>
+    <string name="choose_apps_title">Consenti link per tutte le applicazioni nel Widget</string>
+    <string name="transparent_back">Usa sfondo trasparente</string>
+    <string name="last_refresh_time">Mostra ora dell\'ultimo aggiornamento invece del tempo trascorso</string>
+    <string name="show_location">Mostra posizione nel Widget</string>
+    <string name="save_credentials">Salva credenziali di log-in</string>
+    <string name="use_credentials">Usa credentiali salvate</string>
+    <string name="logging">Abilita log</string>
+    <string name="logging_summary">Salva informazioni di log su file</string>
+    <string name="github_title">GitHub repo</string>
+    <string name="github_summary">Link al repository</string>
+    <string name="battery_opt">Ottimizzazione batteria</string>
+    <string name="battery_notification_title">Abilita notifica ottimizzazione batteria</string>
+    <string name="force_updates">Aggiornamento automatico</string>
+    <string name="force_updates_summary">Se i dati del veicolo risalgono ad oltre 6 ore prima, aggiorna automaticamente.  ATTENZIONE: Questo può scaricare la batteria da 12V.</string>
+    <string name="user_force_updates">Abilita aggiornamento</string>
+    <string name="user_force_updates_summary">Abilita aggiornamento dal Widget. ATTENZIONE: Questo può scaricare la batteria da 12V.</string>
+    <string name="use_colors">Abilita la visualizzazione del colore del veicolo</string>
+    <string name="use_image">Mostra immagine del veicolo invece del logo sul Widget grande</string>
+    <string name="use_old_engine" translatable="false">Use older methods to determine fuel type</string>
+    <string name="zenmode">Non aggiornare quando "Non Disturbare" è attivato</string>
+    <string name="hibernate_api">Blocca app</string>
+    <string name="hibernate_api_summary">Non scaricare dati finchè una API pubblica non è disponibile</string>
+    <string name="check_charging">Mostra info della sessione di ricarica</string>
+    <string name="check_charging_summary">Durante la ricarica mostra potenza di carica ed energia aggiunta</string>
+    <string name="check_dcfastcharging_title">Mostra info ricarica DC</string>
+    <string name="check_dcfastcharging_summary">Durante la ricarica DC, richiedi aggiornamenti ogni 30 secondi</string>
+    <string name="dcfclog">Salva log ricarica DC</string>
+    <string name="dcfclog_summary">Salva info ricarica DC per mostrarle nell\'app (Mostra info ricarica DC deve essere abilitato).</string>
+    <string name="version" translatable="false">Versione App</string>
+
+    <!-- Shared preference keys -->
+    <string name="VIN_key" translatable="false">"VIN"</string>
+    <string name="update_frequency_key" translatable="false">"update_frequency"</string>
+    <string name="units_key" translatable="false">units</string>
+    <string name="transp_bg_key" translatable="false">"transparentBackground"</string>
+    <string name="enable_commands_key" translatable="false">enableCommands</string>
+    <string name="show_app_links_key" translatable="false">"showAppLinks"</string>
+    <string name="show_all_apps_key" translatable="false">"showAllApps"</string>
+    <string name="last_refresh_time_key" translatable="false">refreshDisplayTime</string>
+    <string name="show_location_key" translatable="false">showLocation</string>
+    <string name="logging_key" translatable="false">logging</string>
+    <string name="save_credentials_key" translatable="false">saveCredentials</string>
+    <string name="github_repo_key" translatable="false">githubRepo</string>
+    <string name="version_key" translatable="false">appVersion</string>
+    <string name="last_version_key" translatable="false">lastVersion</string>
+    <string name="widget_mode_key" translatable="false">widget_mode</string>
+    <string name="battery_opt_key" translatable="false">batteryOptimization</string>
+    <string name="userId_key" translatable="false">userId</string>
+    <string name="forceUpdate_key" translatable="false">forceUpdate</string>
+    <string name="batteryNotification_key" translatable="false">batteryNotification</string>
+    <string name="user_forcedUpdate_key" translatable="false">userForcefUpdate</string>
+    <string name="use_colors_key" translatable="false">useColors</string>
+    <string name="use_image_key" translatable="false">useImage</string>
+    <string name="use_old_engine_key" translatable="false">useOldEngine</string>
+    <string name="zenmode_key" translatable="false">zenMode</string>
+    <string name="hibernate_api_key" translatable="false">hibernateAPI</string>
+    <string name="check_charging_key" translatable="false">checkCharging</string>
+    <string name="check_dcfastcharging_key" translatable="false">check_DCfastcharging_key</string>
+    <string name="dcfclog_key" translatable="false">save_DCfastcharging_key</string>
+    <string name="lvb_display_key" translatable="false">lvb_display</string>
+    <string name="display_kWh_key" translatable="false">display_kWh</string>
+    <string name="charging_preferences_key" translatable="false">charging_preferences_key</string>
+
+    <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
+    <string name="units_kphkpa" translatable="false">1</string>
+    <string name="units_mphpsi" translatable="false">2</string>
+    <string name="units_kphpsi" translatable="false">3</string>
+    <string name="units_kphbar" translatable="false">4</string>
+
+    <!-- survey values -->
+    <string name="surveyVersion_key" translatable="false">surveyVersion</string>
+    <string name="fordpass_description">Leggere questa info sulla condivisione del tuo login FordPass.</string>
+
+    <string name="clear_alert">Cancella Avviso</string>
+    <string name="install_update">Installa Aggiornamento</string>
+
+    <string name="disclamer">Le tue credenziali sono usate solo per accedere al tuo account FordPass. Non sono memorizzate nell\'app.</string>
+
+    <string name="fordpassPackage" translatable="false">"com.ford.fordpass"</string>
+    <string name="title_activity_color" translatable="false">ColorActivity</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="next">Successivo</string>
+    <string name="previous">Precedente</string>
+
+    <string name="correct_VIN_length">Il VIN deve avere 17 caratteri.</string>
+    <string name="username_or_e_mail">Username o E-mail</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="vehicles_vin">VIN del veicolo</string>
+    <string name="vehicle_s_nickname">Nickname del veicolo</string>
+    <string name="dcfc_active" translatable="false">dcfc</string>
+
+    <string name="title_activity_charging" translatable="false">ChargingActivity</string>
+    <string name="charging_information_title">Info ricarica</string>
+    <string name="charging_infomation_summary">Applicabile solo a veicoli elettrici</string>
+    <string name="enable_commands_summary">NOTA: non disponibile fino al rilascio di una API pubblica da parte di Ford.</string>
+    <string name="lvb_display_description">Info batteria 12V</string>
+
+    <!-- Strings used within the app in various activities-->
+    <string name="widgets_location_label">Posizione:</string>
+    <string name="kw_rate_kwh_added">\n{0}kW potenza di carica, {1}kWh aggiunti</string>
+    <string name="charging_target_reached">- Obiettivo ricarica raggiunto</string>
+    <string name="charging_completed">- Ricarica Completata</string>
+    <string name="charging_preconditioning">- Precondizionamento</string>
+    <string name="charging_just_charging">- In carica</string>
+    <string name="widgets_lv_battery_label">"Batteria LV: "</string>
+    <string name="good">Bene</string>
+    <string name="warning">Attenzione</string>
+    <string name="def_level_label">"Livello DEF: "</string>
+    <string name="def_range_label">"DEF Range: "</string>
+    <string name="last_refresh_label">"Ultimo aggiornamento:\n  "</string>
+    <string name="just_now_description">Adesso</string>
+    <string name="ago_description">" fa"</string>
+    <string name="odometer_label">"Odo: "</string>
+    <string name="app_no_longer_installed">L\'App non è più installata</string>
+    <string name="last_update_label">"Ultimo aggiornamento alle "</string>
+    <string name="last_alarm_label">"Ultimo avviso alle "</string>
+    <string name="battery_energy_remaining_label">"L\'energia rimanente è "</string>
+    <string name="unavailable_label">Non disponibile.</string>
+    <string name="ambient_temperature_label">"La temperatura ambiente è "</string>
+    <string name="token_is_being_refreshed_description">Token in aggiornamento; può impiegare un minuto.</string>
+    <string name="forcing_a_refresh_description">Aggiornamento in corso; può impiegare 30 secondi.</string>
+    <string name="force_update_delay_description">"Impossibile forzare l\'aggiornamento per "</string>
+    <string name="too_many_forced_updates_description">"Troppi aggiornamenti forzati; funzione disattivata per "</string>
+    <string name="lvb_status_bad_description">Lo stato LVB non è buono.</string>
+    <string name="vehicle_label">"Veicolo: "</string>
+    <string name="max_power_label">"Potenza massima: "</string>
+    <string name="average_power_label">"Potenza media: "</string>
+    <string name="energy_added_label">"Energia aggiunta: "</string>
+    <string name="range_label">"Distanza: "</string>
+    <string name="error_title">Errore</string>
+    <string name="no_apps_found">Altre applicazioni non trovate.</string>
+    <string name="remove_app_selection">Rimuovi questa app</string>
+    <string name="activity_choose_app_link_app_to">Associa l\'app a</string>
+    <string name="activity_color_wireframe_color">Colore Wireframe</string>
+    <string name="activity_color_white">Bianco</string>
+    <string name="activity_color_black">Nero</string>
+    <string name="activity_color_auto">Auto</string>
+    <string name="activity_color_save">Salva</string>
+    <string name="activity_color_reset">Reset</string>
+    <string name="activity_color_auto_button">Auto</string>
+    <string name="activity_color_autoImage_hint">Usa l\'immagine come fonte colore.</string>
+    <string name="activity_color_rgb_value">Valore RGB: #</string>
+    <string name="close_button">Chiudi</string>
+    <string name="remote_commands_disabled_title">I comandi remoti sono stati disabilitati.</string>
+    <string name="remote_commands_disabled_description">Ford ha cambiato i comandi API e remoti (chiusura e avvio), non sono più funzionanti.
+        Se disponibili nella futura API pubblica, saranno automaticamente abilitati nell\'app.</string>
+    <string name="permission_granted">Permesso Concesso!</string>
+    <string name="permission_denied">Permesso Negato!</string>
+    <string name="refresh_in_5_seconds_description">Aggiornamento programmato tra 5 secondi.</string>
+    <string name="update_check_description">Controllo aggiornamento; se trovato, apparirà una notifica.</string>
+    <string name="settings_copied_to_download_description">File impostazioni %1$s copiato nella cartella Download.</string>
+    <string name="settings_restored_description">Impostazioni ripristinate.</string>
+    <string name="logcat_crashfile_formatstring">Il file degli errori\"{0}.txt\" copiato nella cartella Download.</string>
+    <string name="secconds_abbreviation">" sec"</string>
+    <string name="minutes_abbreviation">" min"</string>
+    <string name="single_hour_abbr">1 ora</string>
+    <string name="hours_abbr">" ore"</string>
+    <string name="one_dat_abbv">1 giorno</string>
+    <string name="days_abbr">" giorni"</string>
+    <string name="lvb_status_notification_title">Stato LVB</string>
+    <string name="lbv_status_notification_description">Lo stato LVB segnala \"basso\".</string>
+    <string name="tpms_status_notification_title">Stato TPMS</string>
+    <string name="tpms_status_notification_format">Lo stato TPMS su {0} è anomalo.</string>
+    <string name="tpms_left_front_tire">lo pneumatico anteriore sinistro è</string>
+    <string name="tpms_right_front_tire">lo pneumatico anteriore destro è</string>
+    <string name="tpms_left_rear_tire">lo pneumatico posteriore sinistro è</string>
+    <string name="tpms_right_rear_tire">lo pneumatico posteriore destro è</string>
+    <string name="tpms_multiple_tires">gli pneumatici sono</string>
+    <string name="charge_status_notification_title">Stato Ricarica</string>
+    <string name="charge_status_notification_message">La ricarica è completata.</string>
+    <string name="battery_optimization_notification_title">Ottimizzazione Batteria è abilitata</string>
+    <string name="battery_optimization_notification_description">Questo può interferire con le prestazioni dell\'app; considerare di disabilitarla.</string>
+    <string name="charge_reminder_notification_title">Promemoria ricarica</string>
+    <string name="charge_reminder_notification_description">Il livello HVB è sotto la soglia e il caricatore non è stato rilevato.</string>
+    <string name="login_issue_notification_title">Login richiesto</string>
+    <string name="login_issue_notification_description">Impossibile aggiornare i tokens: è necessario effettuare di nuovo il login.</string>
+    <string name="survey_notification_title">Nuovo questionario disponibile</string>
+    <string name="survey_notification_description">Prego compilare il questionario per inviare info allo sviluppatore.</string>
+    <string name="account_disabled_notification_title">FordPass account disabilitato!</string>
+    <string name="account_disabled_notification_description">L\'app non può accedere ai tuoi dati. Contatta Ford per riattivare il tuo account.</string>
+    <string name="no_vehicles_notification_title">Nessun veicolo trovato</string>
+    <string name="no_vehicles_notification_description">Nessun veicolo associato all\'app.</string>
+    <string name="misc_error_message">Errore</string>
+    <string name="activity_reminder_noEVs_description">Non sono stati trovati PHEVs or BEVs.</string>
+    <string name="settings_battery_opts_off_description">Off (raccomandato)</string>
+    <string name="settings_battery_opts_on_description">On (può causare problemi)</string>
+    <string name="activity_vehicle_status_success_description">Stato del veicolo letto con successo.</string>
+    <string name="activity_vehicle_status_failure_description">Impossibile leggere lo stato del veicolo.</string>
+    <string name="activity_vehicle_enter_new_vehicle_information">Inserisci le informazioni del nuovo veicolo:</string>
+    <string name="activitiy_vehicle_vin_exists">Questo VIN esiste già.</string>
+    <string name="vehicle_activity_nickname_exists">Questo nickname è già in uso.</string>
+    <string name="activity_vehicle_remove_vehicle_title">Rimuovi il veicolo</string>
+    <string name="activity_vehicle_remove_vehicle_description">Confermare la rimozione di questo veicolo dall\'app.</string>
+    <string name="activity_vehicle_userId_missing">I veicoli non possono essere aggiunti senza un valido utente; effettuare prima il login.</string>
+    <string name="networkcalls_command_transmitted">Comando trasmesso.</string>
+    <string name="activity_reminder_notification_enabled">Notifica abilitata:</string>
+    <string name="activity_reminder_notification_time">Ora di notifica:</string>
+    <string name="activity_reminder_threshold_battery_level">Soglia livello batteria:</string>
+    <string name="widgets_profile_label">Profilo:</string>
+    <string name="widgets_last_refresh_label">Ultimo aggiornamento:\n N/A</string>
+    <string name="widgets_odometer_label">Odo: N/A</string>
+    <string name="widgets_def_level_label">DEF Livello: N/A</string>
+    <string name="widgets_def_range_label">DEF Distanza: N/A</string>
+    <string name="widget_dte_label">200 km</string>
+    <string name="widgets_gom_label">200 km\nCarica completata</string>
+    <string name="widgets_nickname_label">Nickname</string>
+    <string name="widgets_lv_bat_label">LV Bat:</string>
+    <string name="widgets_na_label">N/A</string>
+    <string name="widgets_na3sp_label">"   N/A"</string>
+
+    <string name="activity_choose_left_button_text">Tasto sinistro</string>
+    <string name="activity_choose_right_button_text">Tasto destro</string>
+
+</resources>

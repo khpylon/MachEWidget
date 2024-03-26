@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
             when (language) {
                 Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/fordpass_fr.html"
                 Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/fordpass_de.html"
+                Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/fordpass_it.html"
                 NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/fordpass_no.html"
                 SPANISH.language -> "https://appassets.androidplatform.net/assets/fordpass_es.html"
                 PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/fordpass_pt.html"
@@ -215,6 +216,7 @@ class MainActivity : AppCompatActivity() {
             when (language) {
                 Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/index_page_fr.html"
                 Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/index_page_de.html"
+                Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/index_page_it.html"
                 NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/index_page_no.html"
                 SPANISH.language -> "https://appassets.androidplatform.net/assets/index_page_es.html"
                 PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/index_page_pt.html"
