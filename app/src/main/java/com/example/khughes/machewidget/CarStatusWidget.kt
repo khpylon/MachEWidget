@@ -33,6 +33,8 @@ import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -675,23 +677,28 @@ open class CarStatusWidget : AppWidgetProvider() {
                 val displayLVB = PreferenceManager.getDefaultSharedPreferences(context)
                     .getString(context.resources.getString(R.string.lvb_display_key), "")
                 val message: String
-                if (displayLVB == "Graph") {
-                    val id: Int
-                    if (LVBPercent >= 80.0) {
-                        id = R.id.LVBLevelGreen
-                    } else if (LVBPercent >= 50.0) {
-                        id = R.id.LVBLevelYellow
-                    } else {
-                        id = R.id.LVBLevelRed
+                when (displayLVB) {
+                    "Graph" -> {
+                        val id: Int
+                        id = if (LVBPercent >= 80.0) {
+                            R.id.LVBLevelGreen
+                        } else if (LVBPercent >= 50.0) {
+                            R.id.LVBLevelYellow
+                        } else {
+                            R.id.LVBLevelRed
+                        }
+                        views.setViewVisibility(id, View.VISIBLE)
+                        message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
                     }
-                    views.setViewVisibility(id, View.VISIBLE)
-                    message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
-                } else if (displayLVB == "Volts") {
-                    message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
-                } else if (displayLVB == "SOC") {
-                    message = MessageFormat.format("{0}%", LVBPercent)
-                } else {
-                    message = MessageFormat.format("{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent)
+                    "Volts" -> {
+                        message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
+                    }
+                    "SOC" -> {
+                        message = MessageFormat.format("{0}%", LVBPercent)
+                    }
+                    else -> {
+                        message = MessageFormat.format("{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent)
+                    }
                 }
                 views.setTextViewText(R.id.LVBVoltage, message)
             } else {
@@ -716,7 +723,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 distanceConversion = 1.0 / Constants.KMTOMILES
             }
             carStatus.vehiclestatus.diesel?.exhaustFluidLevel?.value?.let { fluidLevel ->
-                val level = fluidLevel.toString().toDouble()
+                val level = fluidLevel.toDouble()
                 views.setTextViewText(
                     R.id.DEFLevel,
                     context.getString(R.string.def_level_label) +
@@ -729,7 +736,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 )
             }
             carStatus.vehiclestatus.diesel?.ureaRange?.value?.let { ureaRange ->
-                val range = ureaRange.toString().toDouble()
+                val range = ureaRange.toDouble()
                 views.setTextViewText(
                     R.id.DEFRange,
                     context.getString(R.string.def_range_label) +
@@ -755,7 +762,7 @@ open class CarStatusWidget : AppWidgetProvider() {
     ) {
         // Fill in the last update time
         val lastUpdateTime = Calendar.getInstance()
-        var sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
+        val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         try {
             lastUpdateTime.time = carStatus.lastRefresh?.let { sdf.parse(it) } ?: Date(0)
@@ -768,6 +775,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             )
         }
         val currentTime = Calendar.getInstance()
+
         val minutes = (Duration.between(
             lastUpdateTime.toInstant(),
             currentTime.toInstant()
@@ -780,12 +788,14 @@ open class CarStatusWidget : AppWidgetProvider() {
         var refresh: String? = context.getString(R.string.last_refresh_label)
         val displayTime = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.resources.getString(R.string.last_refresh_time_key), false)
-        if (displayTime) {
-            sdf = SimpleDateFormat(timeFormat, Locale.ENGLISH)
-            refresh += sdf.format(lastUpdateTime.time)
+        refresh += if (displayTime) {
+            val zoneId = TimeZone.getDefault()
+            val time = ZonedDateTime.ofInstant(lastUpdateTime.toInstant(),zoneId.toZoneId())
+            val timeText = time.format(DateTimeFormatter.ofPattern(timeFormat))
+            timeText
         } else {
             // less than 1 minute
-            refresh += if (minutes < 1) {
+            if (minutes < 1) {
                 context.getString(R.string.just_now_description)
             } else {
                 elapsedMinutesToDescription(context, minutes) + context.getString(R.string.ago_description)
@@ -1171,14 +1181,13 @@ open class CarStatusWidget : AppWidgetProvider() {
                     val vehInfo = info.getVehicleByVIN(VIN)
                     val kWh = vehInfo.carStatus.vehiclestatus.xevBatteryEnergyRemaining
                     val message: String
-                    if (kWh > 0.0) {
-                        message = MessageFormat.format(
+                    message = if (kWh > 0.0) {
+                        MessageFormat.format(
                             "{0,number,#.00}kWh.",
                             vehInfo.carStatus.vehiclestatus.xevBatteryEnergyRemaining
                         )
-
                     } else {
-                        message = "unavailable."
+                        "unavailable."
                     }
                     Toast.makeText(
                         context, context.getString(R.string.battery_energy_remaining_label) + message,
@@ -1196,7 +1205,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                         Context.MODE_PRIVATE
                     ).getString(widget_VIN, null)
                     val vehInfo = info.getVehicleByVIN(VIN)
-                    var temp = vehInfo.carStatus.vehiclestatus.ambientTemp
+                    val temp = vehInfo.carStatus.vehiclestatus.ambientTemp
 
                     val message: String
                     if (temp > 0.0) {
