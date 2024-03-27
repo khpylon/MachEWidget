@@ -27,7 +27,7 @@ this [app-release.apk](https://github.com/khpylon/MachEWidget/blob/master/app/gi
 
 ## Requirements
 
-- Android 9 through 13 (may work on earlier Android versions, but not tested)
+- Android 9 through 14 (may work on earlier Android versions, but not tested)
 - [FordPass account](https://sso.ci.ford.com/authsvc/mtfim/sps/authsvc?PolicyId=urn:ibm:security:authentication:asf:basicldapuser&Target=https%3A%2F%2Fsso.ci.ford.com%2Foidc%2Fendpoint%2Fdefault%2Fauthorize%3FqsId%3D1f0281db-c684-454a-8d31-0c0f297cc9ed%26client_id%3D880cf418-6345-4e3b-81cd-7b623309b571&identity_source_id=75d08ad1-510f-468a-b69b-5ebc34f773e3#appID=CCCA9FB8-B941-46AD-A89F-F9D9D699DD68&propertySpecificContentKey=brand_ford&originURL=https%3A%2F%2Fwww.ford.com%2F&lang=en_us&fsURL=https%3A%2F%2Fapi.mps.ford.com) (has to be working with FordPass app, and NOT MyFord Mobile)
 
 ## Features
@@ -88,7 +88,11 @@ Thanks to [tonesto7](https://github.com/tonesto7/fordpass-scriptable) for his wo
 [d4v3y0rk](https://github.com/d4v3y0rk) for finding out the information about the Ford api.
 Thanks to [@DevSecOps](https://www.macheforum.com/site/members/devsecops.7076/) on the [Mach-E Forums](https://www.macheforum.com/site/) 
 for his valuable input and help with updating the appearance of the widget and permitting the use of the assets from his app.
-Additional thanks to [marco79cgn](https://github.com/marco79cgn) and [Tobias Battenberg](https://github.com/mountbatt) for your widgets.  Also, thanks to those
+Additional thanks to [marco79cgn](https://github.com/marco79cgn) and [Tobias Battenberg](https://github.com/mountbatt) for your widgets.  
+Thanks to [@Papapoil](https://www.macheforum.com/site/members/papapoil.10902/),
+[@su-ch-mache](https://www.macheforum.com/site/members/su-ch-mache.13995/),
+and [@aulander](https://www.macheforum.com/site/members/aulander.10944/) for their input in porting the app to other
+languages.  Also, thanks to those
 who have funded the project via PayPal so that I have funds to purchase additional resources to further enhance the app.
 
 The [ColorPickerView](https://github.com/skydoves/ColorPickerView) was written by skydoves (Jawwoong Eum), and copyrighted 2017 under the [Apache Licence, Version 2.0]
