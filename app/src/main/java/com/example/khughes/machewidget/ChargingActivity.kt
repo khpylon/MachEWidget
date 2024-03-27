@@ -3,6 +3,7 @@ package com.example.khughes.machewidget
 import android.content.DialogInterface
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Paint
+import android.icu.text.MessageFormat
 import android.os.Build
 import android.os.Bundle
 import android.os.FileObserver
@@ -101,9 +102,8 @@ class ChargingActivity : ComponentActivity() {
 
             // If there is a log file, it must be empty, so explain what to do
             if (DCFC.logFileExists(context = context)) {
-                error = "The log file is empty."
-                message = "Once you begin DC fast charging, " +
-                        "manually refresh the app to start capturing data."
+                error = getString(R.string.activity_charging_logfile_error)
+                message = getString(R.string.activity_charging_logfile_message)
             }
 
             // Otherwise some settings are disabled.  Explain which need to be enabled.
@@ -122,22 +122,19 @@ class ChargingActivity : ComponentActivity() {
                 val logDCFC = prefs.getBoolean(logDCFCKey, false)
 
                 if (!checkCharging) {
-                    error = "None of the required settings are enabled."
-                    message = "Under Settings, enable \"" + chargeTitle + "\", \"" +
-                            dcfcTitle + "\", and \"" + logDCFCTitle + "\"." +
-                            "\n\nDo you want to enable these settings?"
+                    error = getString(R.string.activity_charging_three_missing_settings_error)
+                    val pattern =
+                        getString(R.string.activity_charging_three_missing_settings_pattern)
+                    message = MessageFormat.format(pattern, chargeTitle, dcfcTitle, logDCFCTitle)
                 } else if (!checkDCFC) {
-                    error = "Two of the required settings are disabled."
-                    message = "Under Settings, enable both \"" + dcfcTitle + "\" and \"" +
-                            logDCFCTitle + "\"." +
-                            "\n\nDo you want to enable these settings?"
+                    error = getString(R.string.activity_charging_two_missing_settings_error)
+                    message = getString(R.string.activity_charging_two_missing_settings_patterm)
                 } else if (!logDCFC) {
-                    error = "One of the required settings is disabled."
-                    message = "Under Settings, enable \"" + logDCFCTitle + "\"." +
-                            "\n\nDo you want to enable this setting?"
+                    error = getString(R.string.activity_charging_one_missing_setting_error)
+                    message = getString(R.string.activity_charging_one_missing_setting_pattern)
                 } else {
-                    error = "There is an unexpected issue."
-                    message = "Please file a bug report on github."
+                    error = getString(R.string.activity_charging_unexpected_issue_error)
+                    message = getString(R.string.activity_charging_unexpected_issue_description)
                     finish()
                 }
             }
@@ -240,18 +237,25 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
             }
         }
     }
-    var whatInfo by rememberSaveable { mutableStateOf("Energy") }
+
+    val energy = stringResource(R.string.activity_charging_energy_button)
+    val power = stringResource(R.string.activity_charging_power_button)
+    val soc = stringResource(R.string.activity_charging_soc_button)
+    val seconds = stringResource(R.string.activity_charging_seconds_label)
+
+    var whatInfo by rememberSaveable { mutableStateOf(energy) }
     val buttonText = when (whatInfo) {
-        "Energy" -> {
-            listOf("Power", "SOC", "kW")
+        energy -> {
+            // the first two entries are button labels.  The last is the units to display on the graph
+            listOf(power, soc, "kW")
         }
 
-        "Power" -> {
-            listOf("SOC", "Energy", "kWh")
+        power -> {
+            listOf(soc, energy, "kWh")
         }
 
         else -> {
-            listOf("Energy", "Power", "%")
+            listOf(energy, power, "%")
         }
     }
 
@@ -261,11 +265,11 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
 
     for (item in info) {
         when (whatInfo) {
-            "Energy" -> {
+            energy -> {
                 values.add(item.energy!! / 1000f)
             }
 
-            "Power" -> {
+            power -> {
                 values.add(item.power!! / 1000f)
             }
 
@@ -353,7 +357,7 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
 
                 val xAxisSpace = (right - left) / 10
 
-                /** placing x axis points */
+                /* placing x axis points */
                 for (i in 0..10) {
                     val index = (i.toDouble() / 10f * elapsedSeconds.toDouble()).toInt()
 
@@ -373,10 +377,9 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
                     )
                 }
 
-                val text = "Seconds"
-                textPaint.getTextBounds(text, 0, text.length, rect)
+                textPaint.getTextBounds(seconds, 0, seconds.length, rect)
                 drawContext.canvas.nativeCanvas.drawText(
-                    text,
+                    seconds,
                     (left + (right - left) / 2) - rect.width() / 2,
                     size.height - 15, textPaint
                 )
@@ -390,7 +393,7 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
                 )
                 drawContext.canvas.nativeCanvas.restore()
 
-                /** placing y axis points */
+                /* placing y axis points */
                 var i = 0.0
                 while (i < maxYScale) {
                     val text = "$i"
@@ -482,10 +485,6 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
         )
 
         val sessionDay = Calendar.getInstance()
-        val sdfDay = SimpleDateFormat(
-            Constants.LOCALTIMEFORMATUS // "EEE, d MMM"
-            , Locale.ENGLISH
-        )
         sessionDay.timeInMillis = pluginTime
 
 //        Text(

@@ -247,5 +247,19 @@
 
     <string name="activity_choose_left_button_text">Left button</string>
     <string name="activity_choose_right_button_text">Right button</string>
+    <string name="activity_charging_three_missing_settings_error">None of the required settings are enabled.</string>
+    <string name="activity_charging_two_missing_settings_error">Two of the required settings are disabled.</string>
+    <string name="activity_charging_one_missing_setting_error">One of the required settings is disabled.</string>
+    <string name="activity_charging_unexpected_issue_error">There is an unexpected issue.</string>
+    <string name="activity_charging_unexpected_issue_description">Please file a bug report on github.</string>
+    <string name="activity_charging_three_missing_settings_pattern">Under Settings, enable \"{0}\", \"{1}\", and \"{2}\".\n\nDo you want to enable these settings?</string>
+    <string name="activity_charging_two_missing_settings_patterm">Under Settings, enable both \"{0}\" and \"{1}\".\n\nDo you want to enable these settings?</string>
+    <string name="activity_charging_one_missing_setting_pattern">Under Settings, enable \"{0\".\n\nDo you want to enable this setting?</string>
+    <string name="activity_charging_logfile_error">The log file is empty.</string>
+    <string name="activity_charging_logfile_message">Once you begin fast charging, manually refresh the app to start capturing data.</string>
+    <string name="activity_charging_seconds_label">Seconds</string>
+    <string name="activity_charging_energy_button">Energy</string>
+    <string name="activity_charging_power_button">Power</string>
+    <string name="activity_charging_soc_button">Charge %</string>
 
 </resources>
