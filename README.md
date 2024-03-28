@@ -52,6 +52,11 @@ If you would like to use the app but your vehicle is not currently supported, th
 2. Consider contributing the necessary graphics for your vehicle.  Free drawings would be great (provided they are usable and *actually free*), but chipping in a donation towards the purchase of SVG CAD drawings is also encouraged.
 3. Encourage fellow owners to do the same.
 
+## Contributing Language Translations
+
+If you would like to use the app in your preferred language but there is no translation for it, 
+read [how to submit one.](https://github.com/khpylon/MachEWidget/blob/master/TRANSLATIONS.md])
+
 ## Bug Reports
 
 If you discover something which doesn't work the way you expect, check first on the forums to see whether someone else has
