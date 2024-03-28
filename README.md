@@ -55,7 +55,7 @@ If you would like to use the app but your vehicle is not currently supported, th
 ## Contributing Language Translations
 
 If you would like to use the app in your preferred language but there is no translation for it, 
-read [how to submit one.](https://github.com/khpylon/MachEWidget/blob/master/TRANSLATIONS.md])
+read [how to submit one.](https://github.com/khpylon/MachEWidget/blob/master/TRANSLATIONS.md)
 
 ## Bug Reports
 
