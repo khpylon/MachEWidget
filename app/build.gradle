@@ -25,7 +25,10 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-        resConfigs "en", "fr", "de", "no", "es", "pt", "it"
+    }
+
+    androidResources {
+      generateLocaleConfig = true
     }
 
     buildTypes {
@@ -106,6 +109,7 @@ Application-name: com.example.khughes.machewidget
         kotlinCompilerExtensionVersion '1.3.2'
     }
     namespace 'com.example.khughes.machewidget'
+    compileSdk 34
 }
 
 dependencies {
