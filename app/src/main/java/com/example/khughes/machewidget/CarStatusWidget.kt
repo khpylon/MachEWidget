@@ -734,7 +734,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             } ?: run {
                 views.setTextViewText(
                     R.id.DEFLevel,
-                    context.getString(R.string.def_level_label) + "N/A"
+                    context.getString(R.string.widgets_def_level_label)
                 )
             }
             carStatus.vehiclestatus.diesel?.ureaRange?.value?.let { ureaRange ->
@@ -750,7 +750,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             } ?: run {
                 views.setTextViewText(
                     R.id.DEFRange,
-                    context.getString(R.string.def_range_label) + "N/A"
+                    context.getString(R.string.widgets_def_range_label)
                 )
             }
         }
