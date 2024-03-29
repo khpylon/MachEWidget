@@ -50,12 +50,12 @@ import androidx.compose.ui.unit.sp
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
 import java.io.File
-import java.lang.Integer.min
-import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 import kotlin.math.log10
 import kotlin.math.pow
 
@@ -128,7 +128,7 @@ class ChargingActivity : ComponentActivity() {
                     message = MessageFormat.format(pattern, chargeTitle, dcfcTitle, logDCFCTitle)
                 } else if (!checkDCFC) {
                     error = getString(R.string.activity_charging_two_missing_settings_error)
-                    message = getString(R.string.activity_charging_two_missing_settings_patterm)
+                    message = getString(R.string.activity_charging_two_missing_settings_pattern)
                 } else if (!logDCFC) {
                     error = getString(R.string.activity_charging_one_missing_setting_error)
                     message = getString(R.string.activity_charging_one_missing_setting_pattern)
@@ -219,11 +219,17 @@ class ChargingActivity : ComponentActivity() {
 
 private
 fun getEpochMillis(time: String): Long {
-    val cal = Calendar.getInstance()
-    val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-    sdf.timeZone = TimeZone.getTimeZone("UTC")
-    cal.time = sdf.parse(time) as Date
-    return cal.toInstant().toEpochMilli()
+//    val cal = Calendar.getInstance()
+//    val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
+//    sdf.timeZone = TimeZone.getTimeZone("UTC")
+//    cal.time = sdf.parse(time) as Date
+//    return cal.toInstant().toEpochMilli()
+
+    val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
+    val time = LocalDateTime.parse(time, formatter).atZone(ZoneOffset.UTC)
+            .withZoneSameInstant(ZoneId.systemDefault())
+    return time.toInstant().toEpochMilli()
+
 }
 
 @Composable

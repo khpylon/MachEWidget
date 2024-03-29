@@ -24,9 +24,12 @@ import java.io.PrintStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
-import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import javax.annotation.Generated
 
@@ -335,13 +338,17 @@ class DCFC {
                 // process each entry in the log file
                 for (line in reader.lineSequence()) {
                     val data = gson.fromJson(line, DCFCSession::class.java)
-                    sdf.timeZone = TimeZone.getTimeZone("UTC")
                     var thisTime = cutOffTime
                     try {
-                        data.plugInTime?.let { sdf.parse(it)?.let { cal.time = it } }
-                        thisTime = cal.toInstant().toEpochMilli()
+                        val formatter =
+                            DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
+                        val time =
+                            LocalDateTime.parse(data.plugInTime, formatter).atZone(ZoneOffset.UTC)
+                                .withZoneSameInstant(ZoneId.systemDefault())
+                        thisTime = time.toInstant().toEpochMilli()
                     } catch (_: ParseException) {
                     }
+
                     // Copy all times after the cut-off time
                     if (thisTime >= cutOffTime) {
                         printStream.println(line)

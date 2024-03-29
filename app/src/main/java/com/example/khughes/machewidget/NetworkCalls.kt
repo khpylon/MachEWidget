@@ -3,8 +3,6 @@ package com.example.khughes.machewidget
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.icu.text.SimpleDateFormat
-import android.icu.util.TimeZone
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -41,9 +39,9 @@ import java.text.MessageFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
-import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
@@ -527,13 +525,10 @@ class NetworkCalls {
                                     )
                                 }
 
-                                val lastRefreshTime = Calendar.getInstance()
-                                val sdf =
-                                    SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-                                sdf.timeZone = TimeZone.getTimeZone("UTC")
-                                lastRefreshTime.time = sdf.parse(car.lastRefresh) as Date
-                                val currentRefreshTime =
-                                    lastRefreshTime.toInstant().toEpochMilli()
+                                val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
+                                val lastRefreshTIme = LocalDateTime.parse(car.lastRefresh, formatter).atZone(ZoneOffset.UTC)
+                                    .withZoneSameInstant(ZoneId.systemDefault())
+                                val currentRefreshTime = lastRefreshTIme.toInstant().toEpochMilli()
 
                                 // If the charging status changes, reset the old charge station info so we know to update it later
                                 val priorRefreshTime = info.lastRefreshTime
@@ -861,14 +856,18 @@ class NetworkCalls {
                             val newCar = responseStatus.body() as NewCarStatus
                             val car = NewCarStatus.getCarStatus(newCar)
 
-                            val lastRefreshTime = Calendar.getInstance()
-                            val cal = Calendar.getInstance()
-                            val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-                            sdf.timeZone = TimeZone.getTimeZone("UTC")
-                            cal.time = sdf.parse(car.lastRefresh) as Date
-                            val currentRefreshTime =
-                                lastRefreshTime.toInstant().toEpochMilli()
+//                            val lastRefreshTime = Calendar.getInstance()
+//                            val cal = Calendar.getInstance()
+//                            val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
+//                            sdf.timeZone = TimeZone.getTimeZone("UTC")
+//                            cal.time = sdf.parse(car.lastRefresh) as Date
+//                            val currentRefreshTime =
+//                                lastRefreshTime.toInstant().toEpochMilli()
 
+                            val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
+                            val time = LocalDateTime.parse(car.lastRefresh, formatter).atZone(ZoneOffset.UTC)
+                                .withZoneSameInstant(ZoneId.systemDefault())
+                            val currentRefreshTime = time.toInstant().toEpochMilli()
 
 //                            val lastRefreshTime = Calendar.getInstance()
 //                            val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)

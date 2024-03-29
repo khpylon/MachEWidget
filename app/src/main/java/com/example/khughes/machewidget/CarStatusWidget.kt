@@ -30,9 +30,11 @@ import com.example.khughes.machewidget.ProfileManager.changeProfile
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import com.example.khughes.machewidget.VehicleColor.Companion.drawColoredVehicle
 import kotlinx.coroutines.*
-import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -761,19 +763,9 @@ open class CarStatusWidget : AppWidgetProvider() {
         timeFormat: String?
     ) {
         // Fill in the last update time
-        val lastUpdateTime = Calendar.getInstance()
-        val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-        sdf.timeZone = TimeZone.getTimeZone("UTC")
-        try {
-            lastUpdateTime.time = carStatus.lastRefresh?.let { sdf.parse(it) } ?: Date(0)
-        } catch (e: Exception) {
-            LogFile.e(
-                context,
-                MainActivity.CHANNEL_ID,
-                "exception in CarStatusWidget.updateAppWidget: ",
-                e
-            )
-        }
+        val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
+        val lastUpdateTime = LocalDateTime.parse(carStatus.lastRefresh, formatter).atZone(UTC)
+
         val currentTime = Calendar.getInstance()
 
         val minutes = (Duration.between(
@@ -789,8 +781,8 @@ open class CarStatusWidget : AppWidgetProvider() {
         val displayTime = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.resources.getString(R.string.last_refresh_time_key), false)
         refresh += if (displayTime) {
-            val zoneId = TimeZone.getDefault()
-            val time = ZonedDateTime.ofInstant(lastUpdateTime.toInstant(),zoneId.toZoneId())
+            val zoneId = ZoneId.systemDefault()
+            val time = ZonedDateTime.ofInstant(lastUpdateTime.toInstant(),zoneId)
             val timeText = time.format(DateTimeFormatter.ofPattern(timeFormat))
             timeText
         } else {
