@@ -679,7 +679,7 @@ class Misc {
             val result = java.lang.StringBuilder()
             val minutes_abbreviation = context.getString(R.string.minutes_abbreviation)
             val hours_abbreviation = context.getString(R.string.hours_abbr)
-            val day_abbreviation = context.getString(R.string.one_dat_abbv)
+            val day_abbreviation = context.getString(R.string.one_day_abbr)
             val days_abbreviation = context.getString(R.string.days_abbr)
 
             // less than an hour

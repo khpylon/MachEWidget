@@ -17,7 +17,6 @@
   <string name="action_reminder">Définir un rappel de recharge</string>
   <string name="update_info">Mettre à jour les informations</string>
   <string name="action_settings">Paramètres</string>
-  <string name="add_widget">Ajouter un widget</string>
   <string name="app_widget_description">Afficher les informations d\'état pour les véhicules Ford</string>
   <string name="reminder_instructions">Définissez une heure de rappel pour brancher si la charge du véhicule est inférieure à un seuil donné.</string>
   <string name="profile_instructions">Cliquez sur un profil pour vous connecter avec ce NIV. Cliquez sur une entrée inutilisée pour créer un identifiant pour un nouveau véhicule. Cliquez sur le «X» pour supprimer un profil.</string>
@@ -129,7 +128,7 @@
   <string name="minutes_abbreviation">" min."</string>
   <string name="single_hour_abbr">1 h</string>
   <string name="hours_abbr">h</string>
-  <string name="one_dat_abbv">1 jour</string>
+  <string name="one_day_abbr">1 jour</string>
   <string name="days_abbr">" jours"</string>
   <string name="lvb_status_notification_title">État batterie BT</string>
   <string name="lbv_status_notification_description">L\'état de la batterie BT indique « faible ».</string>
@@ -162,7 +161,7 @@
   <string name="activity_vehicle_status_failure_description">Impossible de récupérer l\'état du véhicule.</string>
   <string name="activity_vehicle_enter_new_vehicle_information">Entrez les informations sur le nouveau véhicule :</string>
   <string name="activitiy_vehicle_vin_exists">Ce NIV existe déjà.</string>
-  <string name="vehicle_activity_nickname_exists">Ce pseudo est déjà utilisé.</string>
+  <string name="activity_vehicle_nickname_exists">Ce pseudo est déjà utilisé.</string>
   <string name="activity_vehicle_remove_vehicle_title">Supprimer le véhicule</string>
   <string name="activity_vehicle_remove_vehicle_description">Veuillez confirmer que vous souhaitez supprimer ce véhicule de l\'application.</string>
   <string name="activity_vehicle_userId_missing">Des véhicules ne peuvent pas être ajoutés sans un utilisateur valide; veuillez d\'abord vous connecter.</string>
@@ -183,5 +182,21 @@
   <string name="widgets_na3sp_label">"   S.O."</string>
   <string name="activity_choose_left_button_text">Bouton gauche</string>
   <string name="activity_choose_right_button_text">Bouton droit</string>
-  <string name="disclamer">Vos identifiants de connexion ne sont utilisés que pour accéder à votre compte FordPass. Ils ne sont pas stockés dans l\'application.</string>
+  <string name="disclaimer">Vos identifiants de connexion ne sont utilisés que pour accéder à votre compte FordPass. Ils ne sont pas stockés dans l\'application.</string>
+
+  <string name="activity_charging_three_missing_settings_error">Aucun des paramètres requis n\'est activé.</string>
+  <string name="activity_charging_two_missing_settings_error">Deux des paramètres requis sont désactivés.</string>
+  <string name="activity_charging_one_missing_setting_error">L\'un des paramètres requis est désactivé.</string>
+  <string name="activity_charging_unexpected_issue_error">Il y a un problème inattendu.</string>
+  <string name="activity_charging_unexpected_issue_description">Veuillez déposer un rapport de bug sur github.</string>
+  <string name="activity_charging_three_missing_settings_pattern">Sous Paramètres, activez \"{0}\", \"{1}\" et \"{2}\".\n\nVoulez-vous activer ces paramètres ?</string>
+  <string name="activity_charging_two_missing_settings_pattern">Sous Paramètres, activez \"{0}\" et \"{1}\".\n\nVoulez-vous activer ces paramètres ?</string>
+  <string name="activity_charging_one_missing_setting_pattern">Sous Paramètres, activez \"{0\".\n\nVoulez-vous activer ce paramètre ?</string>
+  <string name="activity_charging_logfile_error">Le fichier journal est vide.</string>
+  <string name="activity_charging_logfile_message">Une fois que vous avez commencé la charge rapide, actualisez manuellement l\'application pour commencer à capturer des données.</string>
+  <string name="activity_charging_seconds_label">Secondes</string>
+  <string name="activity_charging_energy_button">Énergie</string>
+  <string name="activity_charging_power_button">Pouvoir</string>
+  <string name="activity_charging_soc_button">EDC</string>
+
 </resources>

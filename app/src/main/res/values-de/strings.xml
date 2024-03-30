@@ -17,7 +17,6 @@
   <string name="action_reminder">Ladeerinnerung festlegen</string>
   <string name="update_info">Update Informationen</string>
   <string name="action_settings">Einstellungen</string>
-  <string name="add_widget">Widget hinzufügen</string>
   <string name="app_widget_description">Statusinformationen für Ford-Fahrzeuge anzeigen</string>
   <string name="reminder_instructions">Erinnerungszeit festlegen, um das Gerät anzuschließen, wenn der Ladezustand des Fahrzeugs unter einem bestimmten Schwellenwert liegt.</string>
   <string name="profile_instructions">Klicken Sie auf ein Profil, um sich mit dieser VIN anzumelden. Klicken Sie auf einen unbenutzten Eintrag, um ein Login für ein neues Fahrzeug zu erstellen. Klicken Sie auf das „X“, um ein Profil zu löschen.</string>
@@ -129,7 +128,7 @@
   <string name="minutes_abbreviation">" Min"</string>
   <string name="single_hour_abbr">1 Std</string>
   <string name="hours_abbr">" Std"</string>
-  <string name="one_dat_abbv">1 Tag</string>
+  <string name="one_day_abbr">1 Tag</string>
   <string name="days_abbr">" Tage"</string>
   <string name="lvb_status_notification_title">LVB-Status</string>
   <string name="lbv_status_notification_description">Der Status des LVB ist „niedrig“.</string>
@@ -162,7 +161,7 @@
   <string name="activity_vehicle_status_failure_description">Der Fahrzeugstatus kann nicht abgerufen werden.</string>
   <string name="activity_vehicle_enter_new_vehicle_information">Geben Sie neue Fahrzeug-Informationen ein:</string>
   <string name="activitiy_vehicle_vin_exists">Diese VIN existiert bereits.</string>
-  <string name="vehicle_activity_nickname_exists">Der Benutzername wird bereits verwendet.</string>
+  <string name="activity_vehicle_nickname_exists">Der Benutzername wird bereits verwendet.</string>
   <string name="activity_vehicle_remove_vehicle_title">Fahrzeug entfernen</string>
   <string name="activity_vehicle_remove_vehicle_description">Bitte bestätigen Sie, dass Sie dieses Fahrzeug aus der App entfernen möchten.</string>
   <string name="activity_vehicle_userId_missing">Ohne einen gültigen Benutzer können keine Fahrzeuge hinzugefügt werden; Bitte loggen Sie sich zuerst ein.</string>
@@ -183,5 +182,21 @@
   <string name="widgets_na3sp_label">"   N.V."</string>
   <string name="activity_choose_left_button_text">Linker Taste</string>
   <string name="activity_choose_right_button_text">Rechte Taste</string>
-  <string name="disclamer">Ihre Anmeldedaten werden nur verwendet, um Zugriff auf Ihr FordPass-Konto zu erhalten. Sie werden nicht in der App gespeichert.</string>
-</resources>
+  <string name="disclaimer">Ihre Anmeldedaten werden nur verwendet, um Zugriff auf Ihr FordPass-Konto zu erhalten. Sie werden nicht in der App gespeichert.</string>
+
+  <string name="activity_charging_three_missing_settings_error">Keine der erforderlichen Einstellungen ist aktiviert</string>
+  <string name="activity_charging_two_missing_settings_error">Zwei der erforderlichen Einstellungen sind deaktiviert</string>
+  <string name="activity_charging_one_missing_setting_error">Eine der erforderlichen Einstellungen sind deaktiviert</string>
+  <string name="activity_charging_unexpected_issue_error">Ein unerwarteter Fehler ist aufgetreten</string>
+  <string name="activity_charging_unexpected_issue_description">Bitte reichen Sie einen Fehlerbericht auf github ein.</string>
+  <string name="activity_charging_three_missing_settings_pattern">Aktivieren Sie unter Einstellungen \"{0}\"-\"{1}\"-\"{2}\" Möchten Sie diese Einstellungen aktivieren?</string>
+  <string name="activity_charging_two_missing_settings_pattern">Aktivieren Sie unter Einstellungen sowohl \"{0}\"-\"{1}\" Möchten Sie diese Einstellungen aktivieren?</string>
+  <string name="activity_charging_one_missing_setting_pattern">Aktivieren Sie unter Einstellungen \"{0}\" Möchten Sie diese Einstellungen aktivieren?</string>
+  <string name="activity_charging_logfile_error">Die Protokolldatei ist leer.</string>
+  <string name="activity_charging_logfile_message">Wenn Schnellladen startet, die App manuell aktualisieren um mit der Datenerfassung zu beginnen.</string>
+  <string name="activity_charging_seconds_label">Sekunden</string>
+  <string name="activity_charging_energy_button">Ladegeschwindigkeit</string>
+  <string name="activity_charging_power_button">Hinzugefügte Energie</string>
+  <string name="activity_charging_soc_button">SoH</string>
+
+    </resources>

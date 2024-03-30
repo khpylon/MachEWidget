@@ -111,7 +111,7 @@ class VehicleActivity : AppCompatActivity() {
                             return@OnClickListener
                         } else if (nickname != "" && tmp.nickname == nickname) {
                             Toast.makeText(context,
-                                getString(R.string.vehicle_activity_nickname_exists), Toast.LENGTH_LONG)
+                                getString(R.string.activity_vehicle_nickname_exists), Toast.LENGTH_LONG)
                                 .show()
                             return@OnClickListener
                         }

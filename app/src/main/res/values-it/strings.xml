@@ -11,6 +11,7 @@
     <string name="action_backup">Salva Impostazioni</string>
     <string name="action_restore">Ripristina Impostazioni</string>
     <string name="action_copylog">Salva Logfile</string>
+    <string name="action_view_dcfc_logs">Mostra log ricarica rapida</string>
     <string name="action_update">Ricerca Aggiornamenti</string>
     <string name="action_vehicle">Gestisci Veicoli</string>
     <string name="action_color">Imposta Colore Veicolo</string>
@@ -19,7 +20,6 @@
     <string name="action_settings">Impostazioni</string>
 
     <!-- Widget things -->
-    <string name="add_widget">Aggiungi Widget</string>
     <string name="app_widget_description">Mostra info veicolo Ford</string>
 
     <string name="reminder_instructions">Imposta un promemoria per ricaricare se la carica è inferiore a una certa soglia.</string>
@@ -67,7 +67,7 @@
     <string name="clear_alert">Cancella Avviso</string>
     <string name="install_update">Installa Aggiornamento</string>
 
-    <string name="disclamer">Le tue credenziali sono usate solo per accedere al tuo account FordPass. Non sono memorizzate nell\'app.</string>
+    <string name="disclaimer">Le tue credenziali sono usate solo per accedere al tuo account FordPass. Non sono memorizzate nell\'app.</string>
 
 
     <!-- Strings used for fragments for navigation -->
@@ -146,7 +146,7 @@
     <string name="minutes_abbreviation">" min"</string>
     <string name="single_hour_abbr">1 ora</string>
     <string name="hours_abbr">" ore"</string>
-    <string name="one_dat_abbv">1 giorno</string>
+    <string name="one_day_abbr">1 giorno</string>
     <string name="days_abbr">" giorni"</string>
     <string name="lvb_status_notification_title">Stato LVB</string>
     <string name="lbv_status_notification_description">Lo stato LVB segnala \"basso\".</string>
@@ -179,7 +179,7 @@
     <string name="activity_vehicle_status_failure_description">Impossibile leggere lo stato del veicolo.</string>
     <string name="activity_vehicle_enter_new_vehicle_information">Inserisci le informazioni del nuovo veicolo:</string>
     <string name="activitiy_vehicle_vin_exists">Questo VIN esiste già.</string>
-    <string name="vehicle_activity_nickname_exists">Questo nickname è già in uso.</string>
+    <string name="activity_vehicle_nickname_exists">Questo nickname è già in uso.</string>
     <string name="activity_vehicle_remove_vehicle_title">Rimuovi il veicolo</string>
     <string name="activity_vehicle_remove_vehicle_description">Confermare la rimozione di questo veicolo dall\'app.</string>
     <string name="activity_vehicle_userId_missing">I veicoli non possono essere aggiunti senza un valido utente; effettuare prima il login.</string>
@@ -201,5 +201,20 @@
 
     <string name="activity_choose_left_button_text">Tasto sinistro</string>
     <string name="activity_choose_right_button_text">Tasto destro</string>
+
+    <string name="activity_charging_three_missing_settings_error">Nessuna delle impostazioni richieste è abilitata.</string>
+    <string name="activity_charging_two_missing_settings_error">Due delle impostazioni richieste sono disabilitate.</string>
+    <string name="activity_charging_one_missing_setting_error">Una delle impostazioni richieste è disabilitata.</string>
+    <string name="activity_charging_unexpected_issue_error">Si è verificato un problema imprevisto.</string>
+    <string name="activity_charging_unexpected_issue_description">Per favore invia un report degli errori su github.</string>
+    <string name="activity_charging_three_missing_settings_pattern">In Impostazioni, abilita \"{0}\", \"{1}\", and \"{2}\".\n\nVuoi abilitare queste impostazioni?</string>
+    <string name="activity_charging_two_missing_settings_pattern">In Impostazioni, abilita entrambi \"{0}\" and \"{1}\".\n\nVuoi abilitare queste impostazioni?</string>
+    <string name="activity_charging_one_missing_setting_pattern">In Impostazioni, abilita \"{0\".\n\nVuoi abilitare questa impostazione?</string>
+    <string name="activity_charging_logfile_error">Il file di log è vuoto.</string>
+    <string name="activity_charging_logfile_message">Quando avvii una ricarica rapida, aggiorna l\'app manualmente per iniziare a registrare i dati.</string>
+    <string name="activity_charging_seconds_label">Secondi</string>
+    <string name="activity_charging_energy_button">Energia</string>
+    <string name="activity_charging_power_button">Potenza</string>
+    <string name="activity_charging_soc_button">SoC</string>
 
 </resources>

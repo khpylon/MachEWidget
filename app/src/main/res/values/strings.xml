@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Ford Status Widget</string>
 
     <string name="action_fordpass">FordPass Alert</string>
@@ -20,14 +20,13 @@
     <string name="action_settings">Settings</string>
 
     <!-- Widget things -->
-    <string name="add_widget">Add widget</string>
     <string name="app_widget_description">Display status info for Ford vehicles</string>
 
     <string name="reminder_instructions">Set a reminder time to plug in if the vehicle\'s charge is below a given threshold.</string>
     <string name="profile_instructions">Click on a profile to log in with that VIN.  Click on an unused entry to create a login for a new vehicle.  Click on the "X" to delete a profile.</string>
     <string name="vehicle_instructions">Select which vehicles should be visible within the widget. Click on the \"+\" icon to add a new vehicle. Swipe right on a vehicle to remove it. Vehicles whose VIN are struck-through are not currently supported; to request support, enable logging to capture data and create an issue on GitHub (https://github.com/khpylon/MachEWidget).</string>
 
-    <!-- Preference Titles -->
+    <!-- Preference Titles and Summaries-->
     <string name="VIN">"Your vehicle's VIN"</string>
     <string name="widget_update_frequency">Time between widget updates</string>
     <string name="units">Units to display</string>
@@ -60,7 +59,10 @@
     <string name="check_dcfastcharging_title">Display DCFC info</string>
     <string name="check_dcfastcharging_summary">When DC fast charging, request updates every 30 seconds</string>
     <string name="dcfclog">Save DCFC logs</string>
-    <string name="dcfclog_summary">Save DC fast charging info so it can be viewed in the app (Display DCFC info must also be enabled).</string>
+    <string name="dcfclog_summary">Save fast charging info so it can be viewed in the app (Display DCFC info must also be enabled).</string>
+    <string name="language_title">Language</string>
+    <string name="language_summary">Language used by the app</string>
+
     <string name="version" translatable="false">App version</string>
 
     <!-- Shared preference keys -->
@@ -95,6 +97,7 @@
     <string name="lvb_display_key" translatable="false">lvb_display</string>
     <string name="display_kWh_key" translatable="false">display_kWh</string>
     <string name="charging_preferences_key" translatable="false">charging_preferences_key</string>
+    <string name="language_key">language_key</string>
 
     <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
     <string name="units_kphkpa" translatable="false">1</string>
@@ -109,7 +112,7 @@
     <string name="clear_alert">Clear Alert</string>
     <string name="install_update">Install Update</string>
 
-    <string name="disclamer">Your login credentials are only used to gain access to your FordPass account.  They are not stored in the app.</string>
+    <string name="disclaimer">Your login credentials are only used to gain access to your FordPass account.  They are not stored in the app.</string>
 
     <string name="fordpassPackage" translatable="false">"com.ford.fordpass"</string>
     <string name="title_activity_color" translatable="false">ColorActivity</string>
@@ -133,21 +136,15 @@
     <string name="lvb_display_description">12V Battery Info Displayed</string>
 
     <!-- Strings used within the app in various activities-->
-    <string name="widgets_location_label">Location:</string>
     <string name="kw_rate_kwh_added">\n{0}kW rate, {1}kWh added</string>
     <string name="charging_target_reached">- Target Reached</string>
     <string name="charging_completed">- Completed</string>
     <string name="charging_preconditioning">- Preconditioning</string>
     <string name="charging_just_charging">- Charging</string>
-    <string name="widgets_lv_battery_label">"LV Battery: "</string>
     <string name="good">Good</string>
     <string name="warning">Warning</string>
-    <string name="def_level_label">"DEF Level: "</string>
-    <string name="def_range_label">"DEF Range: "</string>
-    <string name="last_refresh_label">"Last refresh:\n  "</string>
     <string name="just_now_description">just now</string>
     <string name="ago_description">" ago"</string>
-    <string name="odometer_label">"Odo: "</string>
     <string name="app_no_longer_installed">App is no longer installed</string>
     <string name="last_update_label">"Last update at "</string>
     <string name="last_alarm_label">"Last alarm at "</string>
@@ -159,11 +156,6 @@
     <string name="force_update_delay_description">"Cannot force update for another "</string>
     <string name="too_many_forced_updates_description">"Too many forced updates; feature disabled for "</string>
     <string name="lvb_status_bad_description">The LVB status is not good.</string>
-    <string name="vehicle_label">"Vehicle: "</string>
-    <string name="max_power_label">"Max power: "</string>
-    <string name="average_power_label">"Average power: "</string>
-    <string name="energy_added_label">"Energy added: "</string>
-    <string name="range_label">"Range: "</string>
     <string name="error_title">Error</string>
     <string name="no_apps_found">No other apps were found.</string>
     <string name="remove_app_selection">Remove this app</string>
@@ -179,20 +171,19 @@
     <string name="activity_color_rgb_value">RGB value: #</string>
     <string name="close_button">Close</string>
     <string name="remote_commands_disabled_title">Remote commands have been disabled.</string>
-    <string name="remote_commands_disabled_description">Ford has changed the API and remote commands (lock and start) no longer work.
-        If they are exposed in the future public API, they will automatically be re-enabled in the app.</string>
+    <string name="remote_commands_disabled_description">Ford has changed the API and remote commands (lock and start) no longer work. If they are exposed in the future public API, they will automatically be re-enabled in the app.</string>
     <string name="permission_granted">Permission Granted!</string>
     <string name="permission_denied">Permission Denied!</string>
     <string name="refresh_in_5_seconds_description">Refresh scheduled in 5 seconds.</string>
     <string name="update_check_description">Checking for an update; if one is found, a notification will appear.</string>
     <string name="settings_copied_to_download_description">Settings file %1$s copied to Download folder.</string>
     <string name="settings_restored_description">Settings restored.</string>
-    <string name="logcat_crashfile_formatstring">Logcat crash file \"{0}.txt\" copied to Download folder.</string>
+    <string name="logcat_crashfile_formatstring">Logcat crash file \"<xliff:g>{0}.txt</xliff:g>\" copied to Download folder.</string>
     <string name="secconds_abbreviation">" sec"</string>
     <string name="minutes_abbreviation">" min"</string>
     <string name="single_hour_abbr">1 hr</string>
     <string name="hours_abbr">" hrs"</string>
-    <string name="one_dat_abbv">1 day</string>
+    <string name="one_day_abbr">1 day</string>
     <string name="days_abbr">" days"</string>
     <string name="lvb_status_notification_title">LVB Status</string>
     <string name="lbv_status_notification_description">The LVB\'s status is reporting \"low\".</string>
@@ -224,16 +215,34 @@
     <string name="activity_vehicle_status_success_description">Vehicle status successfully retrieved.</string>
     <string name="activity_vehicle_status_failure_description">Unable to retrieve vehicle status.</string>
     <string name="activity_vehicle_enter_new_vehicle_information">Enter new vehicle information:</string>
+
     <string name="activitiy_vehicle_vin_exists">This VIN already exists.</string>
-    <string name="vehicle_activity_nickname_exists">This nickname is already in use.</string>
+    <string name="activity_vehicle_nickname_exists">This nickname is already in use.</string>
     <string name="activity_vehicle_remove_vehicle_title">Remove vehicle</string>
     <string name="activity_vehicle_remove_vehicle_description">Please confirm you want to remove this vehicle from the app.</string>
     <string name="activity_vehicle_userId_missing">Vehicles can\'t be added without a valid user; please log in first.</string>
-    <string name="networkcalls_command_transmitted">Command transmitted.</string>
+
+    <!-- strings used in the Reminder activity -->
     <string name="activity_reminder_notification_enabled">Notification enabled:</string>
     <string name="activity_reminder_notification_time">Notification time:</string>
     <string name="activity_reminder_threshold_battery_level">Threshold battery level:</string>
-    <string name="widgets_profile_label">Profile:</string>
+
+    <!-- Used in NetworkCalls.kt -->>
+    <string name="networkcalls_command_transmitted">Command transmitted.</string>
+
+    <!-- strings used in the actual widgets -->
+    <string name="widgets_location_label">Location:</string>
+    <string name="widgets_lv_battery_label">"LV Battery: "</string>
+    <string name="def_level_label">"DEF Level: "</string>
+    <string name="def_range_label">"DEF Range: "</string>
+    <string name="last_refresh_label">"Last refresh:\n  "</string>
+    <string name="odometer_label">"Odo: "</string>
+    <string name="vehicle_label">"Vehicle: "</string>
+    <string name="max_power_label">"Max power: "</string>
+    <string name="average_power_label">"Average power: "</string>
+    <string name="energy_added_label">"Energy added: "</string>
+    <string name="range_label">"Range: "</string>
+    <string name="widgets_profile_label">"Profile: "</string>
     <string name="widgets_last_refresh_label">Last refresh:\n N/A</string>
     <string name="widgets_odometer_label">Odo: N/A</string>
     <string name="widgets_def_level_label">DEF Level: N/A</string>
@@ -247,19 +256,23 @@
 
     <string name="activity_choose_left_button_text">Left button</string>
     <string name="activity_choose_right_button_text">Right button</string>
-    <string name="activity_charging_three_missing_settings_error">None of the required settings are enabled.</string>
+
+    <string name="activity_charging_three_missing_settings_error">All of the required settings are disabled.</string>
     <string name="activity_charging_two_missing_settings_error">Two of the required settings are disabled.</string>
     <string name="activity_charging_one_missing_setting_error">One of the required settings is disabled.</string>
     <string name="activity_charging_unexpected_issue_error">There is an unexpected issue.</string>
-    <string name="activity_charging_unexpected_issue_description">Please file a bug report on github.</string>
-    <string name="activity_charging_three_missing_settings_pattern">Under Settings, enable \"{0}\", \"{1}\", and \"{2}\".\n\nDo you want to enable these settings?</string>
-    <string name="activity_charging_two_missing_settings_patterm">Under Settings, enable both \"{0}\" and \"{1}\".\n\nDo you want to enable these settings?</string>
-    <string name="activity_charging_one_missing_setting_pattern">Under Settings, enable \"{0\".\n\nDo you want to enable this setting?</string>
+    <string name="activity_charging_unexpected_issue_description">Please file a bug report on GitHub.</string>
+    <string name="activity_charging_three_missing_settings_pattern">Under Settings, enable \"<xliff:g>{0}</xliff:g>\", \"<xliff:g>{1}</xliff:g>\", and \"<xliff:g>{2}</xliff:g>\".\n\nDo you want to enable these settings?</string>
+
+    <string name="activity_charging_two_missing_settings_pattern">Under Settings, enable both \"\"<xliff:g>{0}</xliff:g>\"\" and \"\"<xliff:g>{1}</xliff:g>\"\".\n\nDo you want to enable these settings?</string>
+    <string name="activity_charging_one_missing_setting_pattern">Under Settings, enable \"\"<xliff:g>{0}</xliff:g>\"\".\n\nDo you want to enable this setting?</string>
     <string name="activity_charging_logfile_error">The log file is empty.</string>
     <string name="activity_charging_logfile_message">Once you begin fast charging, manually refresh the app to start capturing data.</string>
     <string name="activity_charging_seconds_label">Seconds</string>
     <string name="activity_charging_energy_button">Energy</string>
     <string name="activity_charging_power_button">Power</string>
     <string name="activity_charging_soc_button">Charge %</string>
+
+    <string name="activity_settings_system_default_label">System default</string>
 
 </resources>

@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -99,8 +101,7 @@ class MainActivity : AppCompatActivity() {
                 .setTitle(getString(R.string.remote_commands_disabled_title))
                 .setNegativeButton(getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 .setMessage(
-                    getString(R.string.remote_commands_disabled_description) +
-                            "exposed in the future public API, they will automatically be re-enabled in the app."
+                    getString(R.string.remote_commands_disabled_description)
                 )
                 .show()
 

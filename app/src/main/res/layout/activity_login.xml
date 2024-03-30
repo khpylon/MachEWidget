@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/username"
         android:textSize="16sp"
-        android:text="@string/disclamer"/>
+        android:text="@string/disclaimer"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/username"
