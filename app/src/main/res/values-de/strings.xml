@@ -126,10 +126,24 @@
   <string name="logcat_crashfile_formatstring">Die Logcat-Absturzdatei „{0}.txt“ wurde in den Download-Ordner kopiert.</string>
   <string name="secconds_abbreviation">" Sek"</string>
   <string name="minutes_abbreviation">" Min"</string>
+  <string name="five_minutes_abbreviation">5 Min</string>
+  <string name="ten_minutes_abbreviation">10 Min</string>
+  <string name="fifteen_minutes_abbreviation">15 Min</string>
+  <string name="twenty_minutes_abbreviation">20 Min</string>
+  <string name="thirty_minutes_abbreviation">30 Min</string>
+  <string name="manual_updates_description">Manuelle Updates</string>
+
   <string name="single_hour_abbr">1 Std</string>
+  <string name="two_hour_abbr">2 Std</string>
   <string name="hours_abbr">" Std"</string>
   <string name="one_day_abbr">1 Tag</string>
   <string name="days_abbr">" Tage"</string>
+
+  <string name="settings_lvd_display_voltage">Stromspannung</string>
+  <string name="settings_lvd_display_soc">Ladezustand</string>
+  <string name="settings_lvd_display_both">Spannung und SoH</string>
+  <string name="settings_lvd_display_progress">SoH als Fortschrittsbalken</string>
+
   <string name="lvb_status_notification_title">LVB-Status</string>
   <string name="lbv_status_notification_description">Der Status des LVB ist „niedrig“.</string>
   <string name="tpms_status_notification_title">TPMS-Status</string>
@@ -160,7 +174,7 @@
   <string name="activity_vehicle_status_success_description">Fahrzeugstatus erfolgreich abgerufen.</string>
   <string name="activity_vehicle_status_failure_description">Der Fahrzeugstatus kann nicht abgerufen werden.</string>
   <string name="activity_vehicle_enter_new_vehicle_information">Geben Sie neue Fahrzeug-Informationen ein:</string>
-  <string name="activitiy_vehicle_vin_exists">Diese VIN existiert bereits.</string>
+  <string name="activity_vehicle_vin_exists">Diese VIN existiert bereits.</string>
   <string name="activity_vehicle_nickname_exists">Der Benutzername wird bereits verwendet.</string>
   <string name="activity_vehicle_remove_vehicle_title">Fahrzeug entfernen</string>
   <string name="activity_vehicle_remove_vehicle_description">Bitte bestätigen Sie, dass Sie dieses Fahrzeug aus der App entfernen möchten.</string>
@@ -199,4 +213,6 @@
   <string name="activity_charging_power_button">Hinzugefügte Energie</string>
   <string name="activity_charging_soc_button">SoH</string>
 
-    </resources>
+  <string name="activity_settings_system_default_label">Systemsprache</string>
+
+</resources>

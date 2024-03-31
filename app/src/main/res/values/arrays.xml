@@ -1,14 +1,14 @@
 <resources>
 
     <string-array name="pref_update_titles">
-        <item>5 min</item>
-        <item>10 min</item>
-        <item>15 min</item>
-        <item>20 min</item>
-        <item>30 min</item>
-        <item>One hour</item>
-        <item>Two hours</item>
-        <item>Manual updates</item>
+        <item>@string/five_minutes_abbreviation</item>
+        <item>@string/ten_minutes_abbreviation</item>
+        <item>@string/fifteen_minutes_abbreviation</item>
+        <item>@string/twenty_minutes_abbreviation</item>
+        <item>@string/thirty_minutes_abbreviation</item>
+        <item>@string/single_hour_abbr</item>
+        <item>@string/two_hour_abbr</item>
+        <item>@string/manual_updates_description</item>
     </string-array>
 
     <string-array name="pref_update_values">
@@ -38,10 +38,10 @@
     </string-array>
 
     <string-array name="lvb_titles">
-        <item>Voltage</item>
-        <item>State of Charge</item>
-        <item>Voltage and SOC</item>
-        <item>SOC as Progress Bar</item>
+        <item>@string/settings_lvd_display_voltage</item>
+        <item>@string/settings_lvd_display_soc</item>
+        <item>@string/settings_lvd_display_both</item>
+        <item>@string/settings_lvd_display_progress</item>
     </string-array>
 
     <!-- make sure these match values in Constants.java -->

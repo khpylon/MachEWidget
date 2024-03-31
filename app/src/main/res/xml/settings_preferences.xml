@@ -1,5 +1,4 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
         app:key="@string/VIN_key"
@@ -44,6 +43,16 @@
         app:positiveButtonText="@null"
         app:title="@string/widget_update_frequency"
         app:useSimpleSummaryProvider="true" />
+
+    <ListPreference
+        app:key="@string/language_key"
+        app:defaultValue="-1"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/language_title"
+        app:summary="@string/language_summary"
+        app:useSimpleSummaryProvider="true"
+        app:isPreferenceVisible="false"/>
 
     <SwitchPreferenceCompat
         app:key="@string/zenmode_key"

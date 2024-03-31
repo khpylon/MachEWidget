@@ -144,10 +144,24 @@
     <string name="logcat_crashfile_formatstring">Il file degli errori\"{0}.txt\" copiato nella cartella Download.</string>
     <string name="secconds_abbreviation">" sec"</string>
     <string name="minutes_abbreviation">" min"</string>
+    <string name="five_minutes_abbreviation">5 min</string>
+    <string name="ten_minutes_abbreviation">10 min</string>
+    <string name="fifteen_minutes_abbreviation">15 min</string>
+    <string name="twenty_minutes_abbreviation">20 min</string>
+    <string name="thirty_minutes_abbreviation">30 min</string>
+    <string name="manual_updates_description">Aggiornamento manuale</string>
+
     <string name="single_hour_abbr">1 ora</string>
+    <string name="two_hour_abbr">2 ore</string>
     <string name="hours_abbr">" ore"</string>
     <string name="one_day_abbr">1 giorno</string>
     <string name="days_abbr">" giorni"</string>
+
+    <string name="settings_lvd_display_voltage">Voltaggio</string>
+    <string name="settings_lvd_display_soc">Stato di carica</string>
+    <string name="settings_lvd_display_both">Voltaggio e SoC</string>
+    <string name="settings_lvd_display_progress">SoC come barra di avanzamento</string>
+
     <string name="lvb_status_notification_title">Stato LVB</string>
     <string name="lbv_status_notification_description">Lo stato LVB segnala \"basso\".</string>
     <string name="tpms_status_notification_title">Stato TPMS</string>
@@ -178,7 +192,7 @@
     <string name="activity_vehicle_status_success_description">Stato del veicolo letto con successo.</string>
     <string name="activity_vehicle_status_failure_description">Impossibile leggere lo stato del veicolo.</string>
     <string name="activity_vehicle_enter_new_vehicle_information">Inserisci le informazioni del nuovo veicolo:</string>
-    <string name="activitiy_vehicle_vin_exists">Questo VIN esiste già.</string>
+    <string name="activity_vehicle_vin_exists">Questo VIN esiste già.</string>
     <string name="activity_vehicle_nickname_exists">Questo nickname è già in uso.</string>
     <string name="activity_vehicle_remove_vehicle_title">Rimuovi il veicolo</string>
     <string name="activity_vehicle_remove_vehicle_description">Confermare la rimozione di questo veicolo dall\'app.</string>
@@ -216,5 +230,7 @@
     <string name="activity_charging_energy_button">Energia</string>
     <string name="activity_charging_power_button">Potenza</string>
     <string name="activity_charging_soc_button">SoC</string>
+
+    <string name="activity_settings_system_default_label">Langue di système</string>
 
 </resources>

@@ -181,10 +181,24 @@
     <string name="logcat_crashfile_formatstring">Logcat crash file \"<xliff:g>{0}.txt</xliff:g>\" copied to Download folder.</string>
     <string name="secconds_abbreviation">" sec"</string>
     <string name="minutes_abbreviation">" min"</string>
+    <string name="five_minutes_abbreviation">5 min</string>
+    <string name="ten_minutes_abbreviation">10 min</string>
+    <string name="fifteen_minutes_abbreviation">15 min</string>
+    <string name="twenty_minutes_abbreviation">20 min</string>
+    <string name="thirty_minutes_abbreviation">30 min</string>
+    <string name="manual_updates_description">Manual updates</string>
+
     <string name="single_hour_abbr">1 hr</string>
+    <string name="two_hour_abbr">2 hrs</string>
     <string name="hours_abbr">" hrs"</string>
     <string name="one_day_abbr">1 day</string>
     <string name="days_abbr">" days"</string>
+
+    <string name="settings_lvd_display_voltage">Voltage</string>
+    <string name="settings_lvd_display_soc">State of Charge</string>
+    <string name="settings_lvd_display_both">Voltage and SOC</string>
+    <string name="settings_lvd_display_progress">SOC as Progress Bar</string>
+
     <string name="lvb_status_notification_title">LVB Status</string>
     <string name="lbv_status_notification_description">The LVB\'s status is reporting \"low\".</string>
     <string name="tpms_status_notification_title">TPMS Status</string>
@@ -216,7 +230,7 @@
     <string name="activity_vehicle_status_failure_description">Unable to retrieve vehicle status.</string>
     <string name="activity_vehicle_enter_new_vehicle_information">Enter new vehicle information:</string>
 
-    <string name="activitiy_vehicle_vin_exists">This VIN already exists.</string>
+    <string name="activity_vehicle_vin_exists">This VIN already exists.</string>
     <string name="activity_vehicle_nickname_exists">This nickname is already in use.</string>
     <string name="activity_vehicle_remove_vehicle_title">Remove vehicle</string>
     <string name="activity_vehicle_remove_vehicle_description">Please confirm you want to remove this vehicle from the app.</string>

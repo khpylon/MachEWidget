@@ -106,7 +106,7 @@ class VehicleActivity : AppCompatActivity() {
                     for (tmp in it) {
                         if (tmp.vin == VIN) {
                             Toast.makeText(context,
-                                getString(R.string.activitiy_vehicle_vin_exists), Toast.LENGTH_LONG)
+                                getString(R.string.activity_vehicle_vin_exists), Toast.LENGTH_LONG)
                                 .show()
                             return@OnClickListener
                         } else if (nickname != "" && tmp.nickname == nickname) {

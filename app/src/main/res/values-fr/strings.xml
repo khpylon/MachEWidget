@@ -18,7 +18,7 @@
   <string name="update_info">Mettre à jour les informations</string>
   <string name="action_settings">Paramètres</string>
   <string name="app_widget_description">Afficher les informations d\'état pour les véhicules Ford</string>
-  <string name="reminder_instructions">Définissez une heure de rappel pour brancher si la charge du véhicule est inférieure à un seuil donné.</string>
+  <string name="reminder_instructions">Définissez une activity_charging_one_missing_setting_errore de rappel pour brancher si la charge du véhicule est inférieure à un seuil donné.</string>
   <string name="profile_instructions">Cliquez sur un profil pour vous connecter avec ce NIV. Cliquez sur une entrée inutilisée pour créer un identifiant pour un nouveau véhicule. Cliquez sur le «X» pour supprimer un profil.</string>
   <string name="vehicle_instructions">Sélectionnez les véhicules qui doivent être visibles dans le widget. Cliquez sur l\'icône «+» pour ajouter un nouveau véhicule. Balayez vers la droite sur un véhicule pour le supprimer. Les véhicules dont le NIV est barré ne sont actuellement pas pris en charge; demander de l\'aide</string>
   <string name="VIN">Le NIV de votre véhicule</string>
@@ -126,10 +126,24 @@
   <string name="logcat_crashfile_formatstring">Fichier de crash Logcat \"{0}.txt\" copié dans le dossier de téléchargement.</string>
   <string name="secconds_abbreviation">" sec."</string>
   <string name="minutes_abbreviation">" min."</string>
+  <string name="five_minutes_abbreviation">5 min.</string>
+  <string name="ten_minutes_abbreviation">10 min.</string>
+  <string name="fifteen_minutes_abbreviation">15 min.</string>
+  <string name="twenty_minutes_abbreviation">20 min.</string>
+  <string name="thirty_minutes_abbreviation">30 min.</string>
+  <string name="manual_updates_description">Mises à jour manuelles</string>
+
   <string name="single_hour_abbr">1 h</string>
-  <string name="hours_abbr">h</string>
+  <string name="two_hour_abbr">2 h</string>
+  <string name="hours_abbr">" h"</string>
   <string name="one_day_abbr">1 jour</string>
   <string name="days_abbr">" jours"</string>
+
+  <string name="settings_lvd_display_voltage">Tension</string>
+  <string name="settings_lvd_display_soc">État de charge</string>
+  <string name="settings_lvd_display_both">Tension et EDC</string>
+  <string name="settings_lvd_display_progress">EDC comme barre de progression</string>
+
   <string name="lvb_status_notification_title">État batterie BT</string>
   <string name="lbv_status_notification_description">L\'état de la batterie BT indique « faible ».</string>
   <string name="tpms_status_notification_title">État SSPP</string>
@@ -160,7 +174,7 @@
   <string name="activity_vehicle_status_success_description">État du véhicule récupéré avec succès.</string>
   <string name="activity_vehicle_status_failure_description">Impossible de récupérer l\'état du véhicule.</string>
   <string name="activity_vehicle_enter_new_vehicle_information">Entrez les informations sur le nouveau véhicule :</string>
-  <string name="activitiy_vehicle_vin_exists">Ce NIV existe déjà.</string>
+  <string name="activity_vehicle_vin_exists">Ce NIV existe déjà.</string>
   <string name="activity_vehicle_nickname_exists">Ce pseudo est déjà utilisé.</string>
   <string name="activity_vehicle_remove_vehicle_title">Supprimer le véhicule</string>
   <string name="activity_vehicle_remove_vehicle_description">Veuillez confirmer que vous souhaitez supprimer ce véhicule de l\'application.</string>
@@ -198,5 +212,7 @@
   <string name="activity_charging_energy_button">Énergie</string>
   <string name="activity_charging_power_button">Pouvoir</string>
   <string name="activity_charging_soc_button">EDC</string>
+
+  <string name="activity_settings_system_default_label">Langue du système</string>
 
 </resources>
