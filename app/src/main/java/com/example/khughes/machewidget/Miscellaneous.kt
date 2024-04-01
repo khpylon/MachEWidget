@@ -678,6 +678,7 @@ class Misc {
         ): String {
             val result = java.lang.StringBuilder()
             val minutes_abbreviation = context.getString(R.string.minutes_abbreviation)
+            val hour_abbreviation = context.getString(R.string.single_hour_abbr)
             val hours_abbreviation = context.getString(R.string.hours_abbr)
             val day_abbreviation = context.getString(R.string.one_day_abbr)
             val days_abbreviation = context.getString(R.string.days_abbr)
@@ -687,18 +688,17 @@ class Misc {
                 result.append("$minutes" + minutes_abbreviation)
                 // less than a day
             } else if (minutes / 60 < 24) {
-                result.append((minutes / 60).toString() + hours_abbreviation)
-                // right on the hour
-                if (minutes % 60 == 0L) {
-                    if (minutes != 60L) {
-                        result.append("s")
-                    }
-                    // hours and minutes
-                } else {
-                    if (minutes >= 120) {
-                        result.append("s")
-                    }
-                    result.append(", " + minutes % 60 + minutes_abbreviation)
+                // display multiple hours
+                if (minutes >= 120L) {
+                    result.append((minutes / 60).toString() + hours_abbreviation)
+                }
+                // display single hour
+                else if (minutes >= 60L){
+                    result.append(hour_abbreviation)
+                }
+                // display minutes
+                if (minutes % 60 != 0L) {
+                    result.append(", " + (minutes % 60) + minutes_abbreviation)
                 }
             } else {
                 val days = minutes / (24 * 60)
