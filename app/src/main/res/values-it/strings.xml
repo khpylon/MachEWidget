@@ -223,7 +223,7 @@
     <string name="activity_charging_unexpected_issue_description">Per favore invia un report degli errori su github.</string>
     <string name="activity_charging_three_missing_settings_pattern">In Impostazioni, abilita \"{0}\", \"{1}\", and \"{2}\".\n\nVuoi abilitare queste impostazioni?</string>
     <string name="activity_charging_two_missing_settings_pattern">In Impostazioni, abilita entrambi \"{0}\" and \"{1}\".\n\nVuoi abilitare queste impostazioni?</string>
-    <string name="activity_charging_one_missing_setting_pattern">In Impostazioni, abilita \"{0\".\n\nVuoi abilitare questa impostazione?</string>
+    <string name="activity_charging_one_missing_setting_pattern">In Impostazioni, abilita \"{0}\".\n\nVuoi abilitare questa impostazione?</string>
     <string name="activity_charging_logfile_error">Il file di log è vuoto.</string>
     <string name="activity_charging_logfile_message">Quando avvii una ricarica rapida, aggiorna l\'app manualmente per iniziare a registrare i dati.</string>
     <string name="activity_charging_seconds_label">Secondi</string>

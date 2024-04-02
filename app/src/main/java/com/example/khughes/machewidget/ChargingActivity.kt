@@ -128,10 +128,13 @@ class ChargingActivity : ComponentActivity() {
                     message = MessageFormat.format(pattern, chargeTitle, dcfcTitle, logDCFCTitle)
                 } else if (!checkDCFC) {
                     error = getString(R.string.activity_charging_two_missing_settings_error)
-                    message = getString(R.string.activity_charging_two_missing_settings_pattern)
+                    val pattern =
+                        getString(R.string.activity_charging_two_missing_settings_pattern)
+                    message = MessageFormat.format(pattern, dcfcTitle, logDCFCTitle)
                 } else if (!logDCFC) {
                     error = getString(R.string.activity_charging_one_missing_setting_error)
-                    message = getString(R.string.activity_charging_one_missing_setting_pattern)
+                    val pattern = getString(R.string.activity_charging_one_missing_setting_pattern)
+                    message = MessageFormat.format(pattern, logDCFCTitle)
                 } else {
                     error = getString(R.string.activity_charging_unexpected_issue_error)
                     message = getString(R.string.activity_charging_unexpected_issue_description)

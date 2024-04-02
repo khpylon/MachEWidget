@@ -276,10 +276,10 @@
     <string name="activity_charging_one_missing_setting_error">One of the required settings is disabled.</string>
     <string name="activity_charging_unexpected_issue_error">There is an unexpected issue.</string>
     <string name="activity_charging_unexpected_issue_description">Please file a bug report on GitHub.</string>
-    <string name="activity_charging_three_missing_settings_pattern">Under Settings, enable \"<xliff:g>{0}</xliff:g>\", \"<xliff:g>{1}</xliff:g>\", and \"<xliff:g>{2}</xliff:g>\".\n\nDo you want to enable these settings?</string>
+    <string name="activity_charging_three_missing_settings_pattern">Under Settings, enable \"{0}", \"{1}\", and \"{2}\".\n\nDo you want to enable these settings?</string>
 
-    <string name="activity_charging_two_missing_settings_pattern">Under Settings, enable both \"\"<xliff:g>{0}</xliff:g>\"\" and \"\"<xliff:g>{1}</xliff:g>\"\".\n\nDo you want to enable these settings?</string>
-    <string name="activity_charging_one_missing_setting_pattern">Under Settings, enable \"\"<xliff:g>{0}</xliff:g>\"\".\n\nDo you want to enable this setting?</string>
+    <string name="activity_charging_two_missing_settings_pattern">Under Settings, enable both \"{0}\" and \"{1}\".\n\nDo you want to enable these settings?</string>
+    <string name="activity_charging_one_missing_setting_pattern">Under Settings, enable \"{0}\".\n\nDo you want to enable this setting?</string>
     <string name="activity_charging_logfile_error">The log file is empty.</string>
     <string name="activity_charging_logfile_message">Once you begin fast charging, manually refresh the app to start capturing data.</string>
     <string name="activity_charging_seconds_label">Seconds</string>

@@ -205,7 +205,7 @@
   <string name="activity_charging_unexpected_issue_description">Veuillez déposer un rapport de bug sur github.</string>
   <string name="activity_charging_three_missing_settings_pattern">Sous Paramètres, activez \"{0}\", \"{1}\" et \"{2}\".\n\nVoulez-vous activer ces paramètres ?</string>
   <string name="activity_charging_two_missing_settings_pattern">Sous Paramètres, activez \"{0}\" et \"{1}\".\n\nVoulez-vous activer ces paramètres ?</string>
-  <string name="activity_charging_one_missing_setting_pattern">Sous Paramètres, activez \"{0\".\n\nVoulez-vous activer ce paramètre ?</string>
+  <string name="activity_charging_one_missing_setting_pattern">Sous Paramètres, activez \"{0}\".\n\nVoulez-vous activer ce paramètre ?</string>
   <string name="activity_charging_logfile_error">Le fichier journal est vide.</string>
   <string name="activity_charging_logfile_message">Une fois que vous avez commencé la charge rapide, actualisez manuellement l\'application pour commencer à capturer des données.</string>
   <string name="activity_charging_seconds_label">Secondes</string>
