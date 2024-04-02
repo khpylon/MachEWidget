@@ -97,7 +97,7 @@
     <string name="lvb_display_key" translatable="false">lvb_display</string>
     <string name="display_kWh_key" translatable="false">display_kWh</string>
     <string name="charging_preferences_key" translatable="false">charging_preferences_key</string>
-    <string name="language_key">language_key</string>
+    <string name="language_key" translatable="false">language_key</string>
 
     <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
     <string name="units_kphkpa" translatable="false">1</string>
@@ -288,5 +288,12 @@
     <string name="activity_charging_soc_button">Charge %</string>
 
     <string name="activity_settings_system_default_label">System default</string>
+
+    <string name="activity_login_enter_username_toast">Please enter your username.</string>
+    <string name="activity_login_enter_password_toast">Please enter your password.</string>
+    <string name="activity_login_login_successful_toast">Login successful; updating in 5 seconds.</string>
+    <string name="activity_login_check_username__password_toast">Unable to login to server: check your username and/or password?</string>
+    <string name="activity_login_attempting_to_log_in_toast">Attempting to log in...</string>
+    <string name="activity_login_account_disabled_error_toast">Your account has been disabled (error {0}): contact Ford via the FordPass app to reactivate.</string>
 
 </resources>

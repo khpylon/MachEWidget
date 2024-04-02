@@ -53,7 +53,6 @@
   <string name="check_dcfastcharging_summary">Beim Schnellladen</string>
   <string name="dcfclog">Schnellladeprotokolle speichern</string>
   <string name="dcfclog_summary">Schnellladeinformationen speichern, damit sie in der App angezeigt werden können (Schnellladeinformationen anzeigen muss ebenfalls aktiviert sein).</string>
-  <string name="version">App Version</string>
   <string name="fordpass_description">Bitte lesen Sie diese Informationen zum Teilen Ihres FordPass-Logins.</string>
   <string name="clear_alert">Klare Warnung</string>
   <string name="install_update">Installations-Update</string>
@@ -65,7 +64,6 @@
   <string name="login">Anmeldung</string>
   <string name="vehicles_vin">Fahrzeug-FIN</string>
   <string name="vehicle_s_nickname">Spitzname des Fahrzeugs</string>
-  <string name="charging_preferences_key">Ladepräferenztaste</string>
   <string name="charging_information_title">Ladeinformationen</string>
   <string name="charging_infomation_summary">Gilt nur für Elektrofahrzeuge</string>
   <string name="enable_commands_summary">HINWEIS: Nicht verfügbar, bis die öffentliche Ford API veröffentlicht wird.</string>
@@ -214,5 +212,15 @@
   <string name="activity_charging_soc_button">SoH</string>
 
   <string name="activity_settings_system_default_label">Systemsprache</string>
+
+  <string name="activity_login_enter_username_toast">Bitte geben Sie Ihren Benutzernamen ein</string>
+  <string name="activity_login_enter_password_toast">Bitte geben Sie Ihr Passwort ein</string>
+  <string name="activity_login_login_successful_toast">Anmeldung erfolgreich; Aktualisierung in 5 Sekunden.</string>
+  <string name="activity_login_check_username__password_toast">Anmeldung erfolgreich; Aktualisierung in 5 Sekunden.</string>
+  <string name="activity_login_attempting_to_log_in_toast">Es wird versucht, sich anzumelden...</string>
+  <string name="activity_login_account_disabled_error_toast">Ihr Konto wurde deaktiviert (Fehler {0}): Kontaktieren Sie Ford über die FordPass-App, um es erneut zu aktivieren.</string>
+  <string name="language_title">Sprache</string>
+  <string name="language_title">Sprache</string>
+  <string name="language_summary">Von der App verwendete Sprache</string>
 
 </resources>

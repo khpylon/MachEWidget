@@ -53,7 +53,6 @@
   <string name="check_dcfastcharging_summary">Lors de la recharge rapide en CC</string>
   <string name="dcfclog">Enregistrer les journaux RRCC</string>
   <string name="dcfclog_summary">Enregistrez les informations de recharge rapide en CC afin qu\'elles puissent être consultées dans l\'application (l\'affichage des informations RRCC doit également être activé).</string>
-  <string name="version">Version de l\'application</string>
   <string name="fordpass_description">Veuillez consulter ces informations sur le partage de votre connexion FordPass.</string>
   <string name="clear_alert">Effacer l\'alerte</string>
   <string name="install_update">Installer la mise à jour</string>
@@ -65,7 +64,6 @@
   <string name="login">Se connecter</string>
   <string name="vehicles_vin">NIV du véhicule</string>
   <string name="vehicle_s_nickname">Surnom du véhicule</string>
-  <string name="charging_preferences_key">Bouton_préférences_de_recharge</string>
   <string name="charging_information_title">Informations sur la recharge</string>
   <string name="charging_infomation_summary">Uniquement applicable aux véhicules électriques</string>
   <string name="enable_commands_summary">AVIS : indisponible jusqu\'à la sortie de l\'API publique de Ford.</string>
@@ -214,5 +212,14 @@
   <string name="activity_charging_soc_button">EDC</string>
 
   <string name="activity_settings_system_default_label">Langue du système</string>
+
+  <string name="activity_login_enter_username_toast">s\'il vous plaît entrez votre nom d\'utilisateur</string>
+  <string name="activity_login_enter_password_toast">s\'il vous plait entrez votre mot de passe</string>
+  <string name="activity_login_login_successful_toast">Connexion réussie; mise à jour en 5 secondes.</string>
+  <string name="activity_login_check_username__password_toast">Impossible de vous connecter au serveur : vérifiez votre nom d\'utilisateur et/ou votre mot de passe</string>
+  <string name="activity_login_attempting_to_log_in_toast">Tentative de connexion...</string>
+  <string name="activity_login_account_disabled_error_toast">Votre compte a été désactivé (erreur {0}) : contactez Ford via l\'application FordPass pour le réactiver.</string>
+  <string name="language_title">Langue</string>
+  <string name="language_summary">Langue utilisée par l\'application</string>
 
 </resources>
