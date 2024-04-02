@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.04.02-08
+### Fixed
+- Fix a few minor bugs.
+
 ## 2024.03.32-16
 ### Fixed
 - Fix some options in Settings which did not display correctly in the system or pre-app language.
