@@ -79,8 +79,8 @@
   <string name="widgets_lv_battery_label">"LV-Batterie: "</string>
   <string name="good">Gut</string>
   <string name="warning">Warnung</string>
-  <string name="def_level_label">"DEF-Level: "</string>
-  <string name="def_range_label">"DEF-Bereich: "</string>
+  <string name="def_level_label">"AdBlue-Level: "</string>
+  <string name="def_range_label">"AdBlue-Bereich: "</string>
   <string name="last_refresh_label">"Letzte Aktualisierung:\n  "</string>
   <string name="just_now_description">soeben</string>
   <string name="ago_description">" vor"</string>
@@ -186,8 +186,8 @@
   <string name="widgets_profile_label">Profil:</string>
   <string name="widgets_last_refresh_label">Letzte Aktualisierung:\n N.V.</string>
   <string name="widgets_odometer_label">Tacho: N.V.</string>
-  <string name="widgets_def_level_label">DEF-Level: N.V.</string>
-  <string name="widgets_def_range_label">DEF-Bereich: N.V.</string>
+  <string name="widgets_def_level_label">AdBlue-Level: N.V.</string>
+  <string name="widgets_def_range_label">AdBlue-Bereich: N.V.</string>
   <string name="widget_dte_label">200 Meilen</string>
   <string name="widgets_gom_label">200 Meilen\nLadevorgang abgeschlossen</string>
   <string name="widgets_nickname_label">Spitzname</string>
