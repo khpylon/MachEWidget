@@ -3,9 +3,11 @@ package com.example.khughes.machewidget
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -66,6 +68,34 @@ class VehicleActivity : AppCompatActivity() {
         }
 
         NetworkCalls.getStatus(statusHandler, context, userInfo, VIN, nickname)
+    }
+
+    private var defaultLanguage: Locale? = null
+
+    private fun getContextForLanguage(context: Context): Context {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
+
+        if( defaultLanguage == null) {
+            defaultLanguage = Resources.getSystem().configuration.locales[0]
+        }
+
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val languageTag =
+            sharedPref.getString(context.resources.getString(R.string.language_key), "")
+        val locale = if (languageTag!!.isEmpty()) {
+            defaultLanguage as Locale
+        } else {
+            Locale.forLanguageTag(languageTag)
+        }
+        Locale.setDefault(locale)
+        val resources: Resources = context.resources
+        val configuration: Configuration = resources.configuration
+        configuration.setLocale(locale)
+        return context.createConfigurationContext(configuration)
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(getContextForLanguage(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

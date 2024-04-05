@@ -1,7 +1,10 @@
 package com.example.khughes.machewidget
 
+import android.content.Context
 import android.content.DialogInterface
+import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.content.res.Resources
 import android.graphics.Paint
 import android.icu.text.MessageFormat
 import android.os.Build
@@ -86,6 +89,33 @@ class ChargingActivity : ComponentActivity() {
         ) {
             directoryFileObserver.stopWatching()
         }
+    }
+
+    private var defaultLanguage: Locale? = null
+
+    private fun getContextForLanguage(context: Context): Context {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
+
+        if (defaultLanguage == null) {
+            defaultLanguage = Resources.getSystem().configuration.locales[0]
+        }
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val languageTag =
+            sharedPref.getString(context.resources.getString(R.string.language_key), "")
+        val locale = if (languageTag!!.isEmpty()) {
+            defaultLanguage as Locale
+        } else {
+            Locale.forLanguageTag(languageTag)
+        }
+        Locale.setDefault(locale)
+        val resources: Resources = context.resources
+        val configuration: Configuration = resources.configuration
+        configuration.setLocale(locale)
+        return context.createConfigurationContext(configuration)
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(getContextForLanguage(newBase))
     }
 
     private lateinit var sessions: MutableList<DCFCSession>

@@ -49,18 +49,8 @@
         app:defaultValue="-1"
         app:negativeButtonText="@null"
         app:positiveButtonText="@null"
-        app:title="@string/language_title"
-        app:summary="@string/language_summary"
-        app:useSimpleSummaryProvider="true"
-        app:isPreferenceVisible="false"/>
-
-    <ListPreference
-        app:key="@string/language_key"
-        app:defaultValue="-1"
-        app:negativeButtonText="@null"
-        app:positiveButtonText="@null"
-        app:title="@string/language_title"
-        app:summary="@string/language_summary"
+        app:title="@string/activity_settings_language_title"
+        app:summary="@string/activity_settings_language_summary"
         app:useSimpleSummaryProvider="true"/>
 
     <SwitchPreferenceCompat

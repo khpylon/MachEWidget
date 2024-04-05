@@ -60,8 +60,8 @@
     <string name="check_dcfastcharging_summary">When DC fast charging, request updates every 30 seconds</string>
     <string name="dcfclog">Save DCFC logs</string>
     <string name="dcfclog_summary">Save fast charging info so it can be viewed in the app (Display DCFC info must also be enabled).</string>
-    <string name="language_title">Language</string>
-    <string name="language_summary">Language used by the app</string>
+    <string name="activity_settings_language_title">Language</string>
+    <string name="activity_settings_language_summary">Language used by the app</string>
 
     <string name="version" translatable="false">App version</string>
 

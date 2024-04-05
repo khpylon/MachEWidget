@@ -221,8 +221,8 @@
     <string name="activity_charging_one_missing_setting_error">Una delle impostazioni richieste è disabilitata.</string>
     <string name="activity_charging_unexpected_issue_error">Si è verificato un problema imprevisto.</string>
     <string name="activity_charging_unexpected_issue_description">Per favore invia un report degli errori su github.</string>
-    <string name="activity_charging_three_missing_settings_pattern">In Impostazioni, abilita \"{0}\", \"{1}\", and \"{2}\".\n\nVuoi abilitare queste impostazioni?</string>
-    <string name="activity_charging_two_missing_settings_pattern">In Impostazioni, abilita entrambi \"{0}\" and \"{1}\".\n\nVuoi abilitare queste impostazioni?</string>
+    <string name="activity_charging_three_missing_settings_pattern">In Impostazioni, abilita \"{0}\", \"{1}\", e \"{2}\".\n\nVuoi abilitare queste impostazioni?</string>
+    <string name="activity_charging_two_missing_settings_pattern">In Impostazioni, abilita entrambi \"{0}\" e \"{1}\".\n\nVuoi abilitare queste impostazioni?</string>
     <string name="activity_charging_one_missing_setting_pattern">In Impostazioni, abilita \"{0}\".\n\nVuoi abilitare questa impostazione?</string>
     <string name="activity_charging_logfile_error">Il file di log è vuoto.</string>
     <string name="activity_charging_logfile_message">Quando avvii una ricarica rapida, aggiorna l\'app manualmente per iniziare a registrare i dati.</string>
@@ -231,16 +231,15 @@
     <string name="activity_charging_power_button">Potenza</string>
     <string name="activity_charging_soc_button">SoC</string>
 
-    <string name="activity_settings_system_default_label">Langue di système</string>
-
-    <string name="activity_login_enter_username_toast">Per favore inserisci il tuo cognome</string>
-    <string name="activity_login_enter_password_toast">Per favore inserisci LA TUA password</string>
+    <string name="activity_login_enter_username_toast">Per favore inserisci il tuo username.</string>
+    <string name="activity_login_enter_password_toast">Per favore inserisci la tua password.</string>
     <string name="activity_login_login_successful_toast">Accesso riuscito; aggiornamento in 5 secondi.</string>
     <string name="activity_login_check_username__password_toast">Accesso riuscito; aggiornamento in 5 secondi.</string>
     <string name="activity_login_attempting_to_log_in_toast">Tentativo di accesso...</string>
     <string name="activity_login_account_disabled_error_toast">Il tuo account è stato disattivato (errore {0}): contatta Ford tramite l\'app FordPass per riattivarlo.</string>
-    <string name="language_title">Lingua</string>
-    <string name="language_summary">Lingua utilizzata dall\'app</string>
 
+    <string name="activity_settings_system_default_label">Langue di système</string>
+    <string name="activity_settings_language_title">Lingua di sistema</string>
+    <string name="activity_settings_language_summary">Lingua utilizzata dall\'app</string>
 
 </resources>

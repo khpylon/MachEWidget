@@ -2,24 +2,55 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.icu.text.MessageFormat
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.ConfigurationCompat
+import androidx.core.os.LocaleListCompat
 import androidx.preference.*
 import com.example.khughes.machewidget.ProfileManager.finish
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.util.Locale
 
-private const val LAUNCH_BATTERY_OPTIMIZATIONS = 1
 private lateinit var battery: Preference
 
 class SettingsActivity : AppCompatActivity() {
+
+    private var defaultLanguage: Locale? = null
+
+    private fun getContextForLanguage(context: Context): Context {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
+
+        if (defaultLanguage == null) {
+            defaultLanguage = Resources.getSystem().configuration.locales[0]
+        }
+
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val languageTag =
+            sharedPref.getString(context.resources.getString(R.string.language_key), "")
+        val locale = if (languageTag!!.isEmpty()) {
+            defaultLanguage as Locale
+        } else {
+            Locale.forLanguageTag(languageTag)
+        }
+        Locale.setDefault(locale)
+        val resources: Resources = context.resources
+        val configuration: Configuration = resources.configuration
+        configuration.setLocale(locale)
+        return context.createConfigurationContext(configuration)
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(getContextForLanguage(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +64,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
-        var resultLauncher =
+        private var resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 displayOptimizationMessage(requireContext())
             }
@@ -41,6 +72,55 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val context = context as Context
+
+            // get the system language
+            val locales = ConfigurationCompat.getLocales(Resources.getSystem().configuration)
+            val systemLanguage = locales[0]!!.toLanguageTag()
+
+            // get the setting saved within the app
+            val settingsLanguage = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.resources.getString(R.string.language_key), "") as String
+
+            var currentLanguage : String
+
+            // For Android 13 and later, have to jump through some hoops
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // get per-application locale info
+                val applicationLocales = AppCompatDelegate.getApplicationLocales()
+                // either get language tag, or if no per-application locale use empty string
+                // (to indicate system language setting)
+                currentLanguage =
+                    if (applicationLocales.size() > 0) applicationLocales[0]!!.toLanguageTag() else ""
+            }
+            // Android 12 and earlier, not so much
+            else {
+                currentLanguage = settingsLanguage
+            }
+
+            // Construct a ListPreference from available languages
+            val languages = findPreference(getString(R.string.language_key)) as ListPreference?
+            val entries: MutableList<String> =
+                mutableListOf(getString(R.string.activity_settings_system_default_label))
+            val entriesValue: MutableList<String> = mutableListOf("")
+            languages!!.value = currentLanguage
+            for (i in 0 until locales.size()) {
+                val locale = locales[i]
+                entries.add(locale!!.displayName)
+                entriesValue.add(locale.toLanguageTag())
+            }
+
+            languages.entries = entries.toTypedArray()
+            languages.entryValues = entriesValue.toTypedArray()
+            languages.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any? ->
+                    val newInterval = newValue as String
+                    val appLocale = if (newInterval == "")
+                        LocaleListCompat.getEmptyLocaleList()
+                    else
+                        LocaleListCompat.forLanguageTags(newInterval)
+                    AppCompatDelegate.setApplicationLocales(appLocale)
+                    true
+                }
 
             val commands = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(
@@ -52,10 +132,10 @@ class SettingsActivity : AppCompatActivity() {
                     context.resources.getString(R.string.user_forcedUpdate_key),
                     false
                 )
-            if(commands == true || forced == true) {
+            if (commands || forced) {
                 val intent = Intent(context, MainActivity::class.java)
                 startActivity(intent)
-                finish();
+                finish()
             }
 
             // If update frequency is changed, sent the info to the Alarm Manager
@@ -79,7 +159,7 @@ class SettingsActivity : AppCompatActivity() {
                 }
 
             // Update the widget once the user picks a new LVB status preference.
-            var lvbDisplay: Preference? =
+            val lvbDisplay: Preference? =
                 findPreference(this.resources.getString(R.string.lvb_display_key))
             lvbDisplay?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _: Preference?, _: Any? ->
@@ -107,7 +187,7 @@ class SettingsActivity : AppCompatActivity() {
                 val dcfcLogs =
                     findPreference(context.resources.getString(R.string.dcfclog_key)) as SwitchPreferenceCompat?
                 dcfcLogs?.onPreferenceChangeListener =
-                    Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                    Preference.OnPreferenceChangeListener { _: Preference?, _: Any ->
                         DCFC.clearLogFile(context)
                         true
                     }

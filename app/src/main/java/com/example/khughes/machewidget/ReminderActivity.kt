@@ -2,6 +2,9 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.Configuration
+import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -11,11 +14,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.databinding.ActivityReminderBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 
 private lateinit var info: InfoRepository
@@ -28,6 +33,33 @@ class ReminderActivity : AppCompatActivity() {
     var level: Int = 0
 
     private lateinit var binding: ActivityReminderBinding
+
+    private var defaultLanguage: Locale? = null
+
+    private fun getContextForLanguage(context: Context): Context {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
+
+        if (defaultLanguage == null) {
+            defaultLanguage = Resources.getSystem().configuration.locales[0]
+        }
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val languageTag =
+            sharedPref.getString(context.resources.getString(R.string.language_key), "")
+        val locale = if (languageTag!!.isEmpty()) {
+            defaultLanguage as Locale
+        } else {
+            Locale.forLanguageTag(languageTag)
+        }
+        Locale.setDefault(locale)
+        val resources: Resources = context.resources
+        val configuration: Configuration = resources.configuration
+        configuration.setLocale(locale)
+        return context.createConfigurationContext(configuration)
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(getContextForLanguage(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

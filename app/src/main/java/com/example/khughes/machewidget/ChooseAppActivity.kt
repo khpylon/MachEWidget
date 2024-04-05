@@ -6,8 +6,10 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -21,10 +23,38 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.khughes.machewidget.databinding.ActivityChooseAppBinding
+import java.util.Locale
 
 private lateinit var binding: ActivityChooseAppBinding
 
 class ChooseAppActivity : AppCompatActivity() {
+
+    private var defaultLanguage: Locale? = null
+
+    private fun getContextForLanguage(context: Context): Context {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
+
+        if( defaultLanguage == null) {
+            defaultLanguage = Resources.getSystem().configuration.locales[0]
+        }
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val languageTag =
+            sharedPref.getString(context.resources.getString(R.string.language_key), "")
+        val locale = if (languageTag!!.isEmpty()) {
+            defaultLanguage as Locale
+        } else {
+            Locale.forLanguageTag(languageTag)
+        }
+        Locale.setDefault(locale)
+        val resources: Resources = context.resources
+        val configuration: Configuration = resources.configuration
+        configuration.setLocale(locale)
+        return context.createConfigurationContext(configuration)
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(getContextForLanguage(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -219,7 +219,7 @@
   <string name="activity_login_check_username__password_toast">Anmeldung erfolgreich; Aktualisierung in 5 Sekunden.</string>
   <string name="activity_login_attempting_to_log_in_toast">Es wird versucht, sich anzumelden...</string>
   <string name="activity_login_account_disabled_error_toast">Ihr Konto wurde deaktiviert (Fehler {0}): Kontaktieren Sie Ford über die FordPass-App, um es erneut zu aktivieren.</string>
-  <string name="language_title">Sprache</string>
-  <string name="language_summary">Von der App verwendete Sprache</string>
+  <string name="activity_settings_language_title">Sprache</string>
+  <string name="activity_settings_language_summary">Von der App verwendete Sprache</string>
 
 </resources>

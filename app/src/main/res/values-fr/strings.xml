@@ -219,7 +219,7 @@
   <string name="activity_login_check_username__password_toast">Impossible de vous connecter au serveur : vérifiez votre nom d\'utilisateur et/ou votre mot de passe</string>
   <string name="activity_login_attempting_to_log_in_toast">Tentative de connexion...</string>
   <string name="activity_login_account_disabled_error_toast">Votre compte a été désactivé (erreur {0}) : contactez Ford via l\'application FordPass pour le réactiver.</string>
-  <string name="language_title">Langue</string>
-  <string name="language_summary">Langue utilisée par l\'application</string>
+  <string name="activity_settings_language_title">Langue</string>
+  <string name="activity_settings_language_summary">Langue utilisée par l\'application</string>
 
 </resources>

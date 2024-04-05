@@ -1,20 +1,25 @@
 package com.example.khughes.machewidget
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.TooltipCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.databinding.ActivityColorBinding
 import com.skydoves.colorpickerview.listeners.ColorListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 private lateinit var binding: ActivityColorBinding
 private var mVehicleInfo: VehicleInfo? = null
@@ -24,6 +29,34 @@ private lateinit var arrayList: MutableList<String>
 private var wireframeMode = VehicleColor.WIREFRAME_WHITE
 
 class ColorActivity : AppCompatActivity() {
+
+    private var defaultLanguage: Locale? = null
+
+    private fun getContextForLanguage(context: Context): Context {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
+
+        if (defaultLanguage == null) {
+            defaultLanguage = Resources.getSystem().configuration.locales[0]
+        }
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val languageTag =
+            sharedPref.getString(context.resources.getString(R.string.language_key), "")
+        val locale = if (languageTag!!.isEmpty()) {
+            defaultLanguage as Locale
+        } else {
+            Locale.forLanguageTag(languageTag)
+        }
+        Locale.setDefault(locale)
+        val resources: Resources = context.resources
+        val configuration: Configuration = resources.configuration
+        configuration.setLocale(locale)
+        return context.createConfigurationContext(configuration)
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(getContextForLanguage(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityColorBinding.inflate(layoutInflater)
@@ -41,11 +74,11 @@ class ColorActivity : AppCompatActivity() {
 
         binding.ok.setOnClickListener {
             mVehicleInfo?.let {
-                    it.colorValue =
-                        binding.colorPickerView.color and VehicleColor.ARGB_MASK or wireframeMode
-                    info.setVehicle(it)
-                    CarStatusWidget.updateWidget(applicationContext)
-                }
+                it.colorValue =
+                    binding.colorPickerView.color and VehicleColor.ARGB_MASK or wireframeMode
+                info.setVehicle(it)
+                CarStatusWidget.updateWidget(applicationContext)
+            }
         }
 
         binding.reset.setOnClickListener {
@@ -65,19 +98,21 @@ class ColorActivity : AppCompatActivity() {
                 it.colorValue = oldColor
             }
         }
-        TooltipCompat.setTooltipText(binding.autoImage,
-            getString(R.string.activity_color_autoImage_hint))
+        TooltipCompat.setTooltipText(
+            binding.autoImage,
+            getString(R.string.activity_color_autoImage_hint)
+        )
 
         binding.colorPickerView.setColorListener(ColorListener { color: Int, _: Boolean ->
             binding.colorValue.text = buildString {
                 append(getString(R.string.activity_color_rgb_value))
                 append(
                     Integer.toHexString(color).uppercase()
-                    .substring(2)
-                    )
+                        .substring(2)
+                )
             }
             drawVehicle(color and VehicleColor.ARGB_MASK or wireframeMode)
-        } )
+        })
         binding.colorPickerView.attachBrightnessSlider(binding.brightnessSlide)
 
         arrayList = mutableListOf()
