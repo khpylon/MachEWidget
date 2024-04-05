@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     private val NORWAY_BOKMAL = Locale("nb")
     private val SPANISH = Locale("es")
     private val PORTUGUESE = Locale("pt")
+    private val POLISH = Locale("pl")
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun fordPassInfo(context: Context?) {
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                 Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/fordpass_fr.html"
                 Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/fordpass_de.html"
                 Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/fordpass_it.html"
+                POLISH.language -> "https://appassets.androidplatform.net/assets/fordpass_pl.html"
                 NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/fordpass_no.html"
                 SPANISH.language -> "https://appassets.androidplatform.net/assets/fordpass_es.html"
                 PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/fordpass_pt.html"
@@ -247,6 +249,7 @@ class MainActivity : AppCompatActivity() {
                 Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/index_page_fr.html"
                 Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/index_page_de.html"
                 Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/index_page_it.html"
+                POLISH.language -> "https://appassets.androidplatform.net/assets/index_page_pl.html"
                 NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/index_page_no.html"
                 SPANISH.language -> "https://appassets.androidplatform.net/assets/index_page_es.html"
                 PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/index_page_pt.html"
