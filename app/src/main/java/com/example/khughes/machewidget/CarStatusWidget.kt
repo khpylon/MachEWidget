@@ -666,6 +666,10 @@ open class CarStatusWidget : AppWidgetProvider() {
         views.setViewVisibility(R.id.LVBLevelGreen, View.GONE)
         views.setViewVisibility(R.id.LVBLevelYellow, View.GONE)
         views.setViewVisibility(R.id.LVBLevelRed, View.GONE)
+
+        // Redraw LVB label, to guarantee it's displayed in the correct locale
+        views.setTextViewText(R.id.LVBVoltageText, context.getString(R.string.widgets_lv_bat_label))
+
         carStatus.vehiclestatus.battery?.batteryStatusActual?.value?.let { LVBLevel ->
             val LVBStatus =
                 carStatus.vehiclestatus.battery?.batteryHealth?.value ?: "STATUS_GOOD"
@@ -706,7 +710,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             } else {
                 views.setTextViewText(
                     R.id.LVBVoltage,
-                    context.getString(R.string.widgets_lv_battery_label) +
+                    context.getString(R.string.widgets_lv_bat_label) +
                             context.getString(if (LVBStatus == "STATUS_GOOD") R.string.good else R.string.warning)
                 )
             }
@@ -714,7 +718,8 @@ open class CarStatusWidget : AppWidgetProvider() {
             views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
             views.setTextViewText(
                 R.id.LVBVoltage,
-                context.getString(R.string.widgets_lv_battery_label) + "N/A"
+                context.getString(R.string.widgets_lv_bat_label) +
+                    context.getString(R.string.widgets_na_label)
             )
         }
 
