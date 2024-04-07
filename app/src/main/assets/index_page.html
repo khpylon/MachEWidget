@@ -67,7 +67,7 @@ Tapping on various parts of the widget will give access to other features.
     <b>Warning</b>: Since this has the potential to drain the 12V battery, the app limits how often you can perform a refresh in a 24 hour period.</li>
     <li>Plug-in hybrids only: a single tap on the percentage progress bar will switch between gas and electric information.</li>
     <li>Diesels only: a single tap on the low-voltage battery display will switch between LV battery, DEF level, and DEF range.</li>
-    <li>Electric amd plug-in only: a single tap on the plug icon <img src="/assets/plug_green.png" height="18">
+    <li>Electric and plug-in only: a single tap on the plug icon <img src="/assets/plug_green.png" height="18">
         will display the kilowatt-hours remaining in the high-voltage battery.</li>
     <li>A single tap on all other locations will take you to this page.</li>
 </ul>
@@ -101,12 +101,12 @@ icon will indicate what is happening:
 <p>Information about AC charging sessions can be displayed on the widget by enabling "Display charge
 session info" in "Settings".  When charging, the current power and total energy delivered will be
 shown on the charging progress bar.  Information about DC fast charging can be display by
-also enabling "Display DCFC info".  Once DC fast charging is detected by the app, it will automatically
+also enabling "Display charge session info".  Once DC fast charging is detected by the app, it will automatically
 request updates from the servers every 30 seconds (note that you mey want to manually refresh
 once you initiate charging to have updates start sooner).
 </p>
 <p>Enabling "Save DCFC logs" in addition to the above settings will allow you to view recent DC fast
-charging sessions via "View DCFC Logs" in the three-dot menu.  If you are currently charging, the
+charging sessions via "View Fast Charge Logs" in the three-dot menu.  If you are currently charging, the
 data is updated in real-time as information is read from the servers. The logs will show power, energy,
 and SOC during each charging session.  Data for each session is stored for 180 days then deleted.
 All session data is deleted if this setting is disabled.
@@ -115,10 +115,14 @@ All session data is deleted if this setting is disabled.
 <h2>Per-app Language Preferences</h2>
 <p>
 If your phone is running Android 13 or later, you can select the language for the app. Under your phone's settings, find the app and click on "Language".
+Under "Settings", you can now choose the language used in the app.  Currently only French, German, Italian, Polish, Norwegian, Spanish, and
+Portuguese are supported.  If you would like support for another language, read
+<a href="https://github.com/khpylon/MachEWidget/blob/master/TRANSLATIONS.md">"Translations to Other Languages"
+(https://github.com/khpylon/MachEWidget/blob/master/TRANSLATIONS.md)</a> for instructions.
 </p>
 
 <h2>FAQs and Other Information</h2>
-<p>See the <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">FAQ</a> on GitHub for other questions (feel free to submit suggestions for other questions).
+<p>See the <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">FAQ (https://github.com/khpylon/MachEWidget/blob/master/FAQ.md)</a> on GitHub for other questions (feel free to submit suggestions for other questions).
 
 </p>
 </body>

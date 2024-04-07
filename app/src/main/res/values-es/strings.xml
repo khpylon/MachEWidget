@@ -129,8 +129,8 @@
   <string name="days_abbr">" días"</string>
   <string name="settings_lvd_display_voltage">"Voltaje"</string>
   <string name="settings_lvd_display_soc">"Estado de carga"</string>
-  <string name="settings_lvd_display_both">"Tensión y SOC"</string>
-  <string name="settings_lvd_display_progress">"SOC como barra de progreso"</string>
+  <string name="settings_lvd_display_both">"Tensión y EDC"</string>
+  <string name="settings_lvd_display_progress">"EDC como barra de progreso"</string>
   <string name="lvb_status_notification_title">"Estado LVB"</string>
   <string name="lbv_status_notification_description">"El estado del LVB es \"bajo\"."</string>
   <string name="tpms_status_notification_title">"Estado del TPMS"</string>
@@ -189,7 +189,7 @@
   <string name="widget_dte_label">"200 km"</string>
   <string name="widgets_gom_label">"200 km\nCarga completa"</string>
   <string name="widgets_nickname_label">"Apodo"</string>
-  <string name="widgets_lv_bat_label">"Murciélago LV: "</string>
+  <string name="widgets_lv_bat_label">"Bat. BT: "</string>
   <string name="widgets_na_label">"N / A"</string>
   <string name="widgets_na3sp_label">"   N / A"</string>
   <string name="activity_choose_left_button_text">"Botón izquierdo"</string>
@@ -207,7 +207,7 @@
   <string name="activity_charging_seconds_label">"Segundos"</string>
   <string name="activity_charging_energy_button">"Energia"</string>
   <string name="activity_charging_power_button">"Poder"</string>
-  <string name="activity_charging_soc_button">"Cobrar %"</string>
+  <string name="activity_charging_soc_button">"Cargar %"</string>
   <string name="activity_settings_system_default_label">"Sistema padrão"</string>
   <string name="activity_login_enter_username_toast">"Por favor insira seu nome de usuário."</string>
   <string name="activity_login_enter_password_toast">"Por favor, insira sua senha."</string>

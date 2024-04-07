@@ -264,7 +264,7 @@
     <string name="widget_dte_label">200 miles</string>
     <string name="widgets_gom_label">200 miles\nCharge complete</string>
     <string name="widgets_nickname_label">Nickname</string>
-    <string name="widgets_lv_bat_label">LV Bat:</string>
+    <string name="widgets_lv_bat_label">"LV Bat: "</string>
     <string name="widgets_na_label">N/A</string>
     <string name="widgets_na3sp_label">"   N/A"</string>
 

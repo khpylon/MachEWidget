@@ -90,7 +90,7 @@
     <string name="forcing_a_refresh_description">"Forçando uma atualização; isso pode levar 30 segundos."</string>
     <string name="force_update_delay_description">"Não é possível forçar a atualização para outro "</string>
     <string name="too_many_forced_updates_description">"Muitas atualizações forçadas; recurso desativado para "</string>
-    <string name="lvb_status_bad_description">"O status LVB não é bom."</string>
+    <string name="lvb_status_bad_description">"O status BVB não é bom."</string>
     <string name="error_title">"Erro"</string>
     <string name="no_apps_found">"Nenhum outro aplicativo foi encontrado."</string>
     <string name="remove_app_selection">"Remover este aplicativo"</string>
@@ -103,7 +103,7 @@
     <string name="activity_color_reset">"Reiniciar"</string>
     <string name="activity_color_auto_button">"Auto"</string>
     <string name="activity_color_autoImage_hint">"Usar imagem armazenada como fonte de cor."</string>
-    <string name="activity_color_rgb_value">"Valor RGB:#"</string>
+    <string name="activity_color_rgb_value">"Valor RGB: #"</string>
     <string name="close_button">"Fechar"</string>
     <string name="remote_commands_disabled_title">"Os comandos remotos foram desativados."</string>
     <string name="remote_commands_disabled_description">“A Ford alterou a API e os comandos remotos (bloquear e iniciar) não funcionam mais. Se forem expostos na futura API pública, serão automaticamente reativados no aplicativo.”</string>
@@ -129,10 +129,10 @@
     <string name="days_abbr">" dias"</string>
     <string name="settings_lvd_display_voltage">"Tensão"</string>
     <string name="settings_lvd_display_soc">"Estado de Carga"</string>
-    <string name="settings_lvd_display_both">"Tensão e SOC"</string>
-    <string name="settings_lvd_display_progress">"SOC como barra de progresso"</string>
-    <string name="lvb_status_notification_title">"Status LVB"</string>
-    <string name="lbv_status_notification_description">"O status do LVB está reportando \"baixo\"."</string>
+    <string name="settings_lvd_display_both">"Tensão e EDC"</string>
+    <string name="settings_lvd_display_progress">"EDC como barra de progresso"</string>
+    <string name="lvb_status_notification_title">"Status BVB"</string>
+    <string name="lbv_status_notification_description">"O status do BVB está reportando \"baixo\"."</string>
     <string name="tpms_status_notification_title">"Status do TPMS"</string>
     <string name="tpms_status_notification_format">"O status do TPMS em {0} anormal."</string>
     <string name="tpms_left_front_tire">"o pneu dianteiro esquerdo é"</string>
@@ -171,7 +171,7 @@
     <string name="activity_reminder_threshold_battery_level">"Nível limite da bateria:"</string>
     <string name="networkcalls_command_transmitted">"Comando transmitido."</string>
     <string name="widgets_location_label">"Localização: "</string>
-    <string name="widgets_lv_battery_label">"Bateria LV: "</string>
+    <string name="widgets_lv_battery_label">"Bateria BT: "</string>
     <string name="def_level_label">"Nível DEF: "</string>
     <string name="def_range_label">"Intervalo DEF: "</string>
     <string name="last_refresh_label">"Última atualização:\n "</string>
@@ -189,7 +189,7 @@
     <string name="widget_dte_label">"200 km"</string>
     <string name="widgets_gom_label">"200 km\nCarga concluída"</string>
     <string name="widgets_nickname_label">"Apelido"</string>
-    <string name="widgets_lv_bat_label">"LV Morcego: "</string>
+    <string name="widgets_lv_bat_label">"Bat. BT: "</string>
     <string name="widgets_na_label">"N / D"</string>
     <string name="widgets_na3sp_label">"   N / D"</string>
     <string name="activity_choose_left_button_text">"Botão esquerdo"</string>

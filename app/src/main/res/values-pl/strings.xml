@@ -75,7 +75,7 @@
 	<string name="charging_completed">- Zakończono</string>
 	<string name="charging_preconditioning">- Preconditioning</string>
 	<string name="charging_just_charging">- Ładowanie</string>
-	<string name="widgets_lv_battery_label">"Akumulator 12V: "</string>
+	<string name="widgets_lv_battery_label">"Aku 12V: "</string>
 	<string name="good">Good</string>
 	<string name="warning">Ostrzeżenie</string>
 	<string name="def_level_label">"Poziom AdBlue: "</string>
@@ -187,7 +187,7 @@
 	<string name="widget_dte_label">200 mil</string>
 	<string name="widgets_gom_label">200 mil\nŁadowanie zakończone</string>
 	<string name="widgets_nickname_label">Pseudonim</string>
-	<string name="widgets_lv_bat_label">Aku 12V:</string>
+	<string name="widgets_lv_bat_label">"Aku 12V: "</string>
 	<string name="widgets_na_label">N/A</string>
 	<string name="widgets_na3sp_label">"   N/A"</string>
 	<string name="activity_choose_left_button_text">Lewy przycisk</string>
