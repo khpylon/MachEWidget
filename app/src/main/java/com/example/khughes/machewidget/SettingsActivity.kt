@@ -119,6 +119,7 @@ class SettingsActivity : AppCompatActivity() {
                     else
                         LocaleListCompat.forLanguageTags(newInterval)
                     AppCompatDelegate.setApplicationLocales(appLocale)
+                    CarStatusWidget.updateWidget(context)
                     true
                 }
 
