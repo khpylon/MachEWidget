@@ -18,17 +18,31 @@
         android:layout_marginTop="12dp"
         android:layout_weight="1"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:maxLines="1"
         android:gravity="left"
-        android:text="@string/widgets_last_refresh_label"
+        android:text="@string/widget_last_refresh_label"
         android:textColor="@color/white"
         android:textSize="12dp" />
+
+        <TextView
+            android:id="@+id/lastRefreshInfo"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lastRefresh"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:gravity="left"
+            android:text="@string/widgets_na_label"
+            android:textColor="@color/white"
+            android:textSize="12dp" />
 
     <TextView
         android:id="@+id/odometer"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lastRefresh"
+        android:layout_below="@id/lastRefreshInfo"
         android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:gravity="left"
@@ -67,7 +81,7 @@
                     android:gravity="center_vertical"
                     android:textColor="@color/white"
                     android:textSize="12dp"
-                    android:text = "@string/widgets_lv_battery_label" />
+                    android:text = "@string/widgets_lv_bat_label" />
 
                 <ProgressBar
                     android:id="@+id/LVBLevelGreen"
@@ -178,7 +192,7 @@
             android:ellipsize="end"
             android:gravity="left"
             android:maxLines="1"
-            android:text="@string/widgets_na3sp_label"
+            android:text="@string/widgets_sp_label"
             android:textColor="@color/white"
             android:textSize="12dp" />
 
@@ -209,12 +223,13 @@
             android:layout_below="@id/location_line1"
             android:layout_alignParentLeft="true"
             android:layout_weight="1"
+            android:layout_marginStart="12dp"
             android:gravity="left"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="12dp"
-            android:text="@string/widgets_na3sp_label" />
+            android:text="@string/widgets_na_label" />
 
         <TextView
             android:id="@+id/location_line3"
@@ -223,6 +238,7 @@
             android:layout_below="@id/location_line2"
             android:layout_alignParentLeft="true"
             android:layout_weight="1"
+            android:layout_marginStart="12dp"
             android:gravity="left"
             android:ellipsize="end"
             android:maxLines="1"

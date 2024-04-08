@@ -96,7 +96,7 @@ open class CarStatusWidget : AppWidgetProvider() {
         addresses: MutableList<Address>
     ) {
         // If an address was found, go with the first entry
-        var streetName = PADDING
+        var streetName = ""
         var cityState = ""
 
         if (addresses.isNotEmpty()) {
@@ -116,19 +116,19 @@ open class CarStatusWidget : AppWidgetProvider() {
                 if (states.containsKey(adminArea)) {
                     adminArea = states[adminArea]
                 }
-                cityState = PADDING + address.locality + ", " + adminArea
+                cityState = address.locality + ", " + adminArea
             }
 
             // If no street, move city/state up
-            if (streetName == PADDING) {
+            if (streetName.isEmpty()) {
                 streetName = cityState
                 cityState = ""
             }
         } else {
-            streetName = PADDING + "N/A"
+            streetName = "N/A"
         }
-        //        streetName = PADDING + "45500 Fremont Blvd";
-        //        cityState = PADDING + "Fremont, CA";
+        //        streetName = "45500 Fremont Blvd";
+        //        cityState = "Fremont, CA";
         views.setTextViewText(R.id.location_line2, streetName)
         views.setTextViewText(R.id.location_line3, cityState)
     }
@@ -767,6 +767,8 @@ open class CarStatusWidget : AppWidgetProvider() {
         carStatus: CarStatus,
         timeFormat: String?
     ) {
+        views.setTextViewText(R.id.lastRefresh, context.getString(R.string.widget_last_refresh_label))
+
         // Fill in the last update time
         val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
         val lastUpdateTime = LocalDateTime.parse(carStatus.lastRefresh, formatter).atZone(UTC)
@@ -782,10 +784,9 @@ open class CarStatusWidget : AppWidgetProvider() {
             MainActivity.CHANNEL_ID,
             "updateAppWidget(): last vehicle update was $minutes minutes ago."
         )
-        var refresh: String? = context.getString(R.string.last_refresh_label)
         val displayTime = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.resources.getString(R.string.last_refresh_time_key), false)
-        refresh += if (displayTime) {
+        var refresh = if (displayTime) {
             val zoneId = ZoneId.systemDefault()
             val time = ZonedDateTime.ofInstant(lastUpdateTime.toInstant(),zoneId)
             val timeText = time.format(DateTimeFormatter.ofPattern(timeFormat))
@@ -798,7 +799,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 elapsedMinutesToDescription(context, minutes) + context.getString(R.string.ago_description)
             }
         }
-        views.setTextViewText(R.id.lastRefresh, refresh)
+        views.setTextViewText(R.id.lastRefreshInfo, refresh)
     }
 
     protected fun drawOdometer(
