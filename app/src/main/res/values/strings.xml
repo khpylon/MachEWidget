@@ -50,7 +50,6 @@
     <string name="user_force_updates_summary">Allow user-forced updates from the widget.  WARNING: This may cause a drain on the 12V battery.</string>
     <string name="use_colors">Enable color display of vehicle</string>
     <string name="use_image">Display vehicle photo instead of logo on full-size widget</string>
-    <string name="use_old_engine" translatable="false">Use older methods to determine fuel type</string>
     <string name="zenmode">Do not update while Do Not Disturb is active</string>
     <string name="hibernate_api">Hibernate app</string>
     <string name="hibernate_api_summary">Don\'t pull data until public API is released</string>
@@ -88,7 +87,6 @@
     <string name="user_forcedUpdate_key" translatable="false">userForcefUpdate</string>
     <string name="use_colors_key" translatable="false">useColors</string>
     <string name="use_image_key" translatable="false">useImage</string>
-    <string name="use_old_engine_key" translatable="false">useOldEngine</string>
     <string name="zenmode_key" translatable="false">zenMode</string>
     <string name="hibernate_api_key" translatable="false">hibernateAPI</string>
     <string name="check_charging_key" translatable="false">checkCharging</string>
@@ -246,10 +244,9 @@
 
     <!-- strings used in the actual widgets -->
     <string name="widgets_location_label">Location:</string>
-    <string name="widgets_lv_battery_label">"LV Battery: "</string>
     <string name="def_level_label">"DEF Level: "</string>
     <string name="def_range_label">"DEF Range: "</string>
-    <string name="last_refresh_label">"Last refresh:\n  "</string>
+    <string name="widget_last_refresh_label">"Last refresh:"</string>
     <string name="odometer_label">"Odo: "</string>
     <string name="vehicle_label">"Vehicle: "</string>
     <string name="max_power_label">"Max power: "</string>
@@ -257,7 +254,6 @@
     <string name="energy_added_label">"Energy added: "</string>
     <string name="range_label">"Range: "</string>
     <string name="widgets_profile_label">"Profile: "</string>
-    <string name="widgets_last_refresh_label">Last refresh:\n N/A</string>
     <string name="widgets_odometer_label">Odo: N/A</string>
     <string name="widgets_def_level_label">DEF Level: N/A</string>
     <string name="widgets_def_range_label">DEF Range: N/A</string>
@@ -266,7 +262,6 @@
     <string name="widgets_nickname_label">Nickname</string>
     <string name="widgets_lv_bat_label">"LV Bat: "</string>
     <string name="widgets_na_label">N/A</string>
-    <string name="widgets_na3sp_label">"   N/A"</string>
 
     <string name="activity_choose_left_button_text">Left button</string>
     <string name="activity_choose_right_button_text">Right button</string>

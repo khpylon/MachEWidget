@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Ford Status Widget</string>
 
     <string name="action_fordpass">Avviso FordPass</string>
@@ -26,7 +26,7 @@
     <string name="profile_instructions">Clicca su un profilo per effettuare il log in con quel VIN.  Clicca su una voce inutilizzata per creare un login per un nuovo veicolo. Clicca su "X" per eliminare un profilo.</string>
     <string name="vehicle_instructions">Seleziona quali veicoli rendere visibili nel Widget. Clicca sull\'icona \"+\" per aggiungere un nuovo veicolo. Trascinare a destra un veicolo per eliminarlo. I veicoli il cui VIN è barrato non sono supportati; per chiedere supporto, abilita il log per registrare i dati e segnalare su GitHub (https://github.com/khpylon/MachEWidget).</string>
 
-    <!-- Preference Titles -->
+    <!-- Preference Titles and Summaries-->
     <string name="VIN">"Il VIN del tuo veicolo"</string>
     <string name="widget_update_frequency">Frequenza di aggiornamento del Widget</string>
     <string name="units">Unità di misura</string>
@@ -59,7 +59,13 @@
     <string name="check_dcfastcharging_summary">Durante la ricarica DC, richiedi aggiornamenti ogni 30 secondi</string>
     <string name="dcfclog">Salva log ricarica DC</string>
     <string name="dcfclog_summary">Salva info ricarica DC per mostrarle nell\'app (Mostra info ricarica DC deve essere abilitato).</string>
+    <string name="activity_settings_language_title">Lingua di sistema</string>
+    <string name="activity_settings_language_summary">Lingua utilizzata dall\'app</string>
 
+
+    <!-- Shared preference keys -->
+
+    <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
 
     <!-- survey values -->
     <string name="fordpass_description">Leggere questa info sulla condivisione del tuo login FordPass.</string>
@@ -87,21 +93,15 @@
     <string name="lvb_display_description">Info batteria 12V</string>
 
     <!-- Strings used within the app in various activities-->
-    <string name="widgets_location_label">Posizione:</string>
     <string name="kw_rate_kwh_added">\n{0}kW potenza di carica, {1}kWh aggiunti</string>
     <string name="charging_target_reached">- Obiettivo ricarica raggiunto</string>
     <string name="charging_completed">- Ricarica Completata</string>
     <string name="charging_preconditioning">- Precondizionamento</string>
     <string name="charging_just_charging">- In carica</string>
-    <string name="widgets_lv_battery_label">"Batteria LV: "</string>
     <string name="good">Bene</string>
     <string name="warning">Attenzione</string>
-    <string name="def_level_label">"Livello DEF: "</string>
-    <string name="def_range_label">"DEF Range: "</string>
-    <string name="last_refresh_label">"Ultimo aggior.:\n  "</string>
     <string name="just_now_description">Adesso</string>
     <string name="ago_description">" fa"</string>
-    <string name="odometer_label">"Odo: "</string>
     <string name="app_no_longer_installed">L\'App non è più installata</string>
     <string name="last_update_label">"Ultimo aggiornamento alle "</string>
     <string name="last_alarm_label">"Ultimo avviso alle "</string>
@@ -113,11 +113,6 @@
     <string name="force_update_delay_description">"Impossibile forzare l\'aggiornamento per "</string>
     <string name="too_many_forced_updates_description">"Troppi aggiornamenti forzati; funzione disattivata per "</string>
     <string name="lvb_status_bad_description">Lo stato LVB non è buono.</string>
-    <string name="vehicle_label">"Veicolo: "</string>
-    <string name="max_power_label">"Potenza massima: "</string>
-    <string name="average_power_label">"Potenza media: "</string>
-    <string name="energy_added_label">"Energia aggiunta: "</string>
-    <string name="range_label">"Distanza: "</string>
     <string name="error_title">Errore</string>
     <string name="no_apps_found">Altre applicazioni non trovate.</string>
     <string name="remove_app_selection">Rimuovi questa app</string>
@@ -133,8 +128,7 @@
     <string name="activity_color_rgb_value">Valore RGB: #</string>
     <string name="close_button">Chiudi</string>
     <string name="remote_commands_disabled_title">I comandi remoti sono stati disabilitati.</string>
-    <string name="remote_commands_disabled_description">Ford ha cambiato i comandi API e remoti (chiusura e avvio), non sono più funzionanti.
-        Se disponibili nella futura API pubblica, saranno automaticamente abilitati nell\'app.</string>
+    <string name="remote_commands_disabled_description">Ford ha cambiato i comandi API e remoti (chiusura e avvio), non sono più funzionanti.</string>
     <string name="permission_granted">Permesso Concesso!</string>
     <string name="permission_denied">Permesso Negato!</string>
     <string name="refresh_in_5_seconds_description">Aggiornamento programmato tra 5 secondi.</string>
@@ -192,26 +186,41 @@
     <string name="activity_vehicle_status_success_description">Stato del veicolo letto con successo.</string>
     <string name="activity_vehicle_status_failure_description">Impossibile leggere lo stato del veicolo.</string>
     <string name="activity_vehicle_enter_new_vehicle_information">Inserisci le informazioni del nuovo veicolo:</string>
+
     <string name="activity_vehicle_vin_exists">Questo VIN esiste già.</string>
     <string name="activity_vehicle_nickname_exists">Questo nickname è già in uso.</string>
     <string name="activity_vehicle_remove_vehicle_title">Rimuovi il veicolo</string>
     <string name="activity_vehicle_remove_vehicle_description">Confermare la rimozione di questo veicolo dall\'app.</string>
     <string name="activity_vehicle_userId_missing">I veicoli non possono essere aggiunti senza un valido utente; effettuare prima il login.</string>
-    <string name="networkcalls_command_transmitted">Comando trasmesso.</string>
+
+    <!-- strings used in the Reminder activity -->
     <string name="activity_reminder_notification_enabled">Notifica abilitata:</string>
     <string name="activity_reminder_notification_time">Ora di notifica:</string>
     <string name="activity_reminder_threshold_battery_level">Soglia livello batteria:</string>
+
+    <!-- Used in NetworkCalls.kt -->>
+    <string name="networkcalls_command_transmitted">Comando trasmesso.</string>
+
+    <!-- strings used in the actual widgets -->
+    <string name="widgets_location_label">Posizione:</string>
+    <string name="def_level_label">"Livello DEF: "</string>
+    <string name="def_range_label">"DEF Range: "</string>
+    <string name="widget_last_refresh_label">"Ultimo aggior.:"</string>
+    <string name="odometer_label">"Odo: "</string>
+    <string name="vehicle_label">"Veicolo: "</string>
+    <string name="max_power_label">"Potenza massima: "</string>
+    <string name="average_power_label">"Potenza media: "</string>
+    <string name="energy_added_label">"Energia aggiunta: "</string>
+    <string name="range_label">"Distanza: "</string>
     <string name="widgets_profile_label">Profilo:</string>
-    <string name="widgets_last_refresh_label">Ultimo aggior.:\n N/A</string>
     <string name="widgets_odometer_label">Odo: N/A</string>
     <string name="widgets_def_level_label">DEF Livello: N/A</string>
     <string name="widgets_def_range_label">DEF Distanza: N/A</string>
     <string name="widget_dte_label">200 km</string>
     <string name="widgets_gom_label">200 km\nCarica completata</string>
     <string name="widgets_nickname_label">Nickname</string>
-    <string name="widgets_lv_bat_label">Batteria LV:</string>
+    <string name="widgets_lv_bat_label">Batt LV:</string>
     <string name="widgets_na_label">N/A</string>
-    <string name="widgets_na3sp_label">"   N/A"</string>
 
     <string name="activity_choose_left_button_text">Tasto sinistro</string>
     <string name="activity_choose_right_button_text">Tasto destro</string>
@@ -222,6 +231,7 @@
     <string name="activity_charging_unexpected_issue_error">Si è verificato un problema imprevisto.</string>
     <string name="activity_charging_unexpected_issue_description">Per favore invia un report degli errori su github.</string>
     <string name="activity_charging_three_missing_settings_pattern">In Impostazioni, abilita \"{0}\", \"{1}\", e \"{2}\".\n\nVuoi abilitare queste impostazioni?</string>
+
     <string name="activity_charging_two_missing_settings_pattern">In Impostazioni, abilita entrambi \"{0}\" e \"{1}\".\n\nVuoi abilitare queste impostazioni?</string>
     <string name="activity_charging_one_missing_setting_pattern">In Impostazioni, abilita \"{0}\".\n\nVuoi abilitare questa impostazione?</string>
     <string name="activity_charging_logfile_error">Il file di log è vuoto.</string>
@@ -231,15 +241,13 @@
     <string name="activity_charging_power_button">Potenza</string>
     <string name="activity_charging_soc_button">SoC</string>
 
+    <string name="activity_settings_system_default_label">Lingua di sistema</string>
+
     <string name="activity_login_enter_username_toast">Per favore inserisci il tuo username.</string>
     <string name="activity_login_enter_password_toast">Per favore inserisci la tua password.</string>
     <string name="activity_login_login_successful_toast">Accesso riuscito; aggiornamento in 5 secondi.</string>
     <string name="activity_login_check_username__password_toast">Accesso riuscito; aggiornamento in 5 secondi.</string>
-    <string name="activity_login_attempting_to_log_in_toast">Tentativo di accesso...</string>
+    <string name="activity_login_attempting_to_log_in_toast">Tentativo di accesso…</string>
     <string name="activity_login_account_disabled_error_toast">Il tuo account è stato disattivato (errore {0}): contatta Ford tramite l\'app FordPass per riattivarlo.</string>
-
-    <string name="activity_settings_system_default_label">Langue di système</string>
-    <string name="activity_settings_language_title">Lingua di sistema</string>
-    <string name="activity_settings_language_summary">Lingua utilizzata dall\'app</string>
 
 </resources>

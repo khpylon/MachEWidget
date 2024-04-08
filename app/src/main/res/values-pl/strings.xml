@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 	<string name="app_name">Ford Status Widżet</string>
+
 	<string name="action_fordpass">FordPass Alert</string>
 	<string name="action_login">Logowanie do FordPass</string>
 	<string name="action_profile">Zarządzaj profilami</string>
@@ -17,10 +18,15 @@
 	<string name="action_reminder">Przypomnienie o ładowaniu</string>
 	<string name="update_info">Aktualizuj</string>
 	<string name="action_settings">Ustawienia</string>
+
+    <!-- Widget things -->
 	<string name="app_widget_description">Wyświetl status pojazdów Ford</string>
+
 	<string name="reminder_instructions">Ustaw przypomnienie o ładowaniu jeśli poziom naładowania baterii jest poniżej zadanego poziomu.</string>
 	<string name="profile_instructions">Kliknij profil, aby zalogować się przy użyciu tego VIN. Kliknij na niezajęte pole, aby utworzyć logowanie dla nowego pojazdu. Kliknij  "X", aby usunąć profil.</string>
 	<string name="vehicle_instructions">Wybierz, które pojazdy powinny być widoczne w widżecie. Kliknij na ikonę "+" aby dodać nowy pojazd. Przesuń w prawo na pojeździe, aby go usunąć. Pojazdy, których numery VIN są przekreślone, obecnie nie są obsługiwane; aby poprosić o wsparcie, włącz zapis logów, aby przechwycić dane i utwórz zgłoszenie na GitHubie (https://github.com/khpylon/MachEWidget).</string>
+
+    <!-- Preference Titles and Summaries-->
 	<string name="VIN">"VIN twojego samochodu"</string>
 	<string name="widget_update_frequency">Interwały aktualizacji danych</string>
 	<string name="units">Jednostki do wyświetlenia</string>
@@ -44,7 +50,7 @@
 	<string name="user_force_updates_summary">Zezwalaj na ręczne aktualizacje widżetu. UWAGA: Może to spowodować rozładowanie akumulatora 12V.</string>
 	<string name="use_colors">Włącz wyświetlanie koloru pojazdu</string>
 	<string name="use_image">Wyświetl zdjęcie pojazdu zamiast logo na pełnowymiarowym widżecie</string>
-	<string name="zenmode">Nie aktualizuj jeśłi tryb Nie Przeszkadzać jest aktywny</string>
+    <string name="zenmode">Nie aktualizuj jeśli tryb Nie Przeszkadzać jest aktywny</string>
 	<string name="hibernate_api">Hibernuj aplikację</string>
 	<string name="hibernate_api_summary">Nie pobieraj danych, dopóki publiczne API nie zostanie wydane</string>
 	<string name="check_charging">Wyświetl informacje o ładowaniu DC</string>
@@ -53,37 +59,49 @@
 	<string name="check_dcfastcharging_summary">Podczas szybkiego ładowania prądem stałym, żądaj aktualizacji co 30 sekund</string>
 	<string name="dcfclog">Zapisuj logi ładowania DC</string>
 	<string name="dcfclog_summary">Zapisz informacje o szybkim ładowaniu prądem stałym, aby można je było zobaczyć w aplikacji (wyświetlanie informacji o DC również musi być włączone).</string>
+error; activity_settings_language_title string not found
+error; activity_settings_language_summary string not found
+
+
+    <!-- Shared preference keys -->
+
+    <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
+
+    <!-- survey values -->
 	<string name="fordpass_description">Prosimy o zapoznanie się z tymi informacjami dotyczącymi udostępniania swojego loginu do FordPass.</string>
+
 	<string name="clear_alert">Wyczyść alert</string>
 	<string name="install_update">Zainstaluj aktualizację</string>
+
 	<string name="disclaimer">Twoje dane logowania są używane tylko do uzyskania dostępu do konta FordPass i nie są przechowywane w aplikacji.</string>
+
+
+    <!-- Strings used for fragments for navigation -->
 	<string name="next">Dalej</string>
 	<string name="previous">Wstecz</string>
+
 	<string name="correct_VIN_length">Numer VIN musi mieć 17 znaków.</string>
 	<string name="username_or_e_mail">Nazwa użytkownika lub e-mail</string>
 	<string name="password">Hasło</string>
 	<string name="login">Zaloguj</string>
 	<string name="vehicles_vin">Numer VIN pojazdu</string>
 	<string name="vehicle_s_nickname">Nazwa pojazdu</string>
+
 	<string name="charging_information_title">Informacje o ładowaniu</string>
 	<string name="charging_infomation_summary">Dotyczy tylko pojazdów elektrycznych</string>
 	<string name="enable_commands_summary">UWAGA: niedostępne do czasu wydania publicznego API Forda.</string>
 	<string name="lvb_display_description">Informacje o akumulatorze 12V</string>
-	<string name="widgets_location_label">Lokalizacja:</string>
+
+    <!-- Strings used within the app in various activities-->
 	<string name="kw_rate_kwh_added">\n{0}kW moc, {1}kWh dodane</string>
 	<string name="charging_target_reached">- Cel osiągnięty</string>
 	<string name="charging_completed">- Zakończono</string>
 	<string name="charging_preconditioning">- Preconditioning</string>
 	<string name="charging_just_charging">- Ładowanie</string>
-	<string name="widgets_lv_battery_label">"Aku 12V: "</string>
 	<string name="good">Good</string>
 	<string name="warning">Ostrzeżenie</string>
-	<string name="def_level_label">"Poziom AdBlue: "</string>
-	<string name="def_range_label">"Zasięg AdBlue: "</string>
-	<string name="last_refresh_label">"Ostatnie odświeżenie:\n  "</string>
 	<string name="just_now_description">przed chwilą</string>
 	<string name="ago_description">" temu"</string>
-	<string name="odometer_label">"Przebieg: "</string>
 	<string name="app_no_longer_installed">Aplikacja została odinstalowana</string>
 	<string name="last_update_label">"Ostatnia aktualizacja "</string>
 	<string name="last_alarm_label">"Ostatni alarm "</string>
@@ -95,11 +113,6 @@
 	<string name="force_update_delay_description">"Nie można wymusić kolejnej aktualizacji przez "</string>
 	<string name="too_many_forced_updates_description">"Zbyt wiele wymuszonych aktualizacji; funkcja wyłączona na "</string>
 	<string name="lvb_status_bad_description">Zły stan akumulatora 12V.</string>
-	<string name="vehicle_label">"Pojazd: "</string>
-	<string name="max_power_label">"Maksymalna moc: "</string>
-	<string name="average_power_label">"Średnia moc: "</string>
-	<string name="energy_added_label">"Dodana energia: "</string>
-	<string name="range_label">"Zasięg: "</string>
 	<string name="error_title">Błąd</string>
 	<string name="no_apps_found">Nie znaleziono innych aplikacji.</string>
 	<string name="remove_app_selection">Usuń tę aplikację</string>
@@ -115,7 +128,7 @@
 	<string name="activity_color_rgb_value">Wartość RGB: #</string>
 	<string name="close_button">Zamknij</string>
 	<string name="remote_commands_disabled_title">Polecenia zdalne zostały wyłączone</string>
-	<string name="remote_commands_disabled_description">Ford zmienił API, a polecenia zdalne (blokowanie i uruchamianie) nie działają już. Jeśli zostaną one udostępnione w przyszłym publicznym API, automatycznie zostaną ponownie włączone w aplikacji.</string>
+	<string name="remote_commands_disabled_description">Ford zmienił API, a polecenia zdalne (blokowanie i uruchamianie) nie działają już.  Jeśli zostaną one udostępnione w przyszłym publicznym API, automatycznie zostaną ponownie włączone w aplikacji.</string>
 	<string name="permission_granted">Uprawnienie udzielone!</string>
 	<string name="permission_denied">Uprawnienie odmówione!</string>
 	<string name="refresh_in_5_seconds_description">Odświeżenie zaplanowane za 5 sekund.</string>
@@ -131,15 +144,18 @@
 	<string name="twenty_minutes_abbreviation">20 min</string>
 	<string name="thirty_minutes_abbreviation">30 min</string>
 	<string name="manual_updates_description">Aktualizacja ręczna</string>
+
 	<string name="single_hour_abbr">1 godz.</string>
 	<string name="two_hour_abbr">2 godz.</string>
 	<string name="hours_abbr">" godz."</string>
 	<string name="one_day_abbr">1 dzień</string>
 	<string name="days_abbr">" dni"</string>
+
 	<string name="settings_lvd_display_voltage">Napięcie</string>
 	<string name="settings_lvd_display_soc">Stan naładowania</string>
 	<string name="settings_lvd_display_both">Napięcie i ładunek</string>
 	<string name="settings_lvd_display_progress">Ładuj jako pasek postępu</string>
+
 	<string name="lvb_status_notification_title">Stan akumulatora 12V</string>
 	<string name="lbv_status_notification_description">Stan akumulatora 12V raportowany jako \"niski\".</string>
 	<string name="tpms_status_notification_title">Status TPMS</string>
@@ -170,34 +186,52 @@
 	<string name="activity_vehicle_status_success_description">Status pojazdu został pomyślnie pobrany.</string>
 	<string name="activity_vehicle_status_failure_description">Nie można pobrać statusu pojazdu.</string>
 	<string name="activity_vehicle_enter_new_vehicle_information">Wprowadź informacje o nowym pojeździe:</string>
+
 	<string name="activity_vehicle_vin_exists">Ten numer VIN już istnieje.</string>
 	<string name="activity_vehicle_nickname_exists">Ta nazwa użytkownika jest już używana.</string>
 	<string name="activity_vehicle_remove_vehicle_title">Usuń pojazd</string>
 	<string name="activity_vehicle_remove_vehicle_description">Potwierdź, że chcesz usunąć ten pojazd z aplikacji.</string>
 	<string name="activity_vehicle_userId_missing">Pojazdy nie mogą zostać dodane; najpierw zaloguj się.</string>
-	<string name="networkcalls_command_transmitted">ComWysłano polecenie.mand transmitted.</string>
+
+    <!-- strings used in the Reminder activity -->
 	<string name="activity_reminder_notification_enabled">Powiadomienia włączone:</string>
 	<string name="activity_reminder_notification_time">Czas powiadomienia:</string>
 	<string name="activity_reminder_threshold_battery_level">Dolny próg naładowania:</string>
+
+    <!-- Used in NetworkCalls.kt -->>
+	<string name="networkcalls_command_transmitted">ComWysłano polecenie.mand transmitted.</string>
+
+    <!-- strings used in the actual widgets -->
+	<string name="widgets_location_label">Lokalizacja:</string>
+	<string name="def_level_label">"Poziom AdBlue: "</string>
+	<string name="def_range_label">"Zasięg AdBlue: "</string>
+	<string name="widget_last_refresh_label">"Aktualizacja:"</string>
+	<string name="odometer_label">"Przebieg: "</string>
+	<string name="vehicle_label">"Pojazd: "</string>
+	<string name="max_power_label">"Maksymalna moc: "</string>
+	<string name="average_power_label">"Średnia moc: "</string>
+	<string name="energy_added_label">"Dodana energia: "</string>
+	<string name="range_label">"Zasięg: "</string>
 	<string name="widgets_profile_label">Profil:</string>
-	<string name="widgets_last_refresh_label">Ostatnie odświeżenie:\n N/A</string>
 	<string name="widgets_odometer_label">Przebieg: N/A</string>
 	<string name="widgets_def_level_label">Poziom AdBlue: N/A</string>
 	<string name="widgets_def_range_label">Zasięg AdBlue: N/A</string>
 	<string name="widget_dte_label">200 mil</string>
 	<string name="widgets_gom_label">200 mil\nŁadowanie zakończone</string>
 	<string name="widgets_nickname_label">Pseudonim</string>
-	<string name="widgets_lv_bat_label">"Aku 12V: "</string>
+	<string name="widgets_lv_bat_label">"Aku. 12V: "</string>
 	<string name="widgets_na_label">N/A</string>
-	<string name="widgets_na3sp_label">"   N/A"</string>
+
 	<string name="activity_choose_left_button_text">Lewy przycisk</string>
 	<string name="activity_choose_right_button_text">Prawy przycisk</string>
+
 	<string name="activity_charging_three_missing_settings_error">Żadne z wymaganych ustawień nie jest włączone.</string>
 	<string name="activity_charging_two_missing_settings_error">Dwa z wymaganych ustawień są wyłączone.</string>
 	<string name="activity_charging_one_missing_setting_error">Jedno z wymaganych ustawień jest wyłączone.</string>
 	<string name="activity_charging_unexpected_issue_error">Wystąpił nieoczekiwany problem.</string>
 	<string name="activity_charging_unexpected_issue_description">Proszę zgłosić błąd na githubie.</string>
 	<string name="activity_charging_three_missing_settings_pattern">W ustawieniach włącz \"{0}\", \"{1}\", and \"{2}\".\n\nCzy chcesz włączyć te ustawienia?</string>
+
 	<string name="activity_charging_two_missing_settings_pattern">W ustawieniach włącz jednocześnie \"{0}\" and \"{1}\".\n\nCzy chcesz włączyć te ustawienia?</string>
 	<string name="activity_charging_one_missing_setting_pattern">W ustawieniach włącz \"{0}\".\n\nCzy chcesz włączyć to ustawienie?</string>
 	<string name="activity_charging_logfile_error">Plik dziennika jest pusty.</string>
@@ -206,4 +240,14 @@
 	<string name="activity_charging_energy_button">Energia</string>
 	<string name="activity_charging_power_button">Moc</string>
 	<string name="activity_charging_soc_button">Naładowanie %</string>
+
+error; activity_settings_system_default_label string not found
+
+error; activity_login_enter_username_toast string not found
+error; activity_login_enter_password_toast string not found
+error; activity_login_login_successful_toast string not found
+error; activity_login_check_username__password_toast string not found
+error; activity_login_attempting_to_log_in_toast string not found
+error; activity_login_account_disabled_error_toast string not found
+
 </resources>

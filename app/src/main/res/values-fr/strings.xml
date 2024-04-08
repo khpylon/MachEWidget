@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_name">Widget d\'état Ford</string>
+
   <string name="action_fordpass">Alerte FordPass</string>
   <string name="action_login">Connexion FordPass</string>
   <string name="action_profile">Gérer les profils</string>
@@ -10,17 +11,22 @@
   <string name="action_backup">Enregistrer les paramètres</string>
   <string name="action_restore">Restaurer les paramètres</string>
   <string name="action_copylog">Enregistrer le fichier journal</string>
-  <string name="action_view_dcfc_logs">Afficher les journaux de charge rapide</string>
+  <string name="action_view_dcfc_logs">Afficher les journaux de recharge rapide</string>
   <string name="action_update">Rechercher une mise à jour</string>
   <string name="action_vehicle">Gérer les véhicules</string>
   <string name="action_color">Définir la couleur du véhicule</string>
   <string name="action_reminder">Définir un rappel de recharge</string>
   <string name="update_info">Mettre à jour les informations</string>
   <string name="action_settings">Paramètres</string>
+
+    <!-- Widget things -->
   <string name="app_widget_description">Afficher les informations d\'état pour les véhicules Ford</string>
+
   <string name="reminder_instructions">Définissez une activity_charging_one_missing_setting_errore de rappel pour brancher si la charge du véhicule est inférieure à un seuil donné.</string>
   <string name="profile_instructions">Cliquez sur un profil pour vous connecter avec ce NIV. Cliquez sur une entrée inutilisée pour créer un identifiant pour un nouveau véhicule. Cliquez sur le «X» pour supprimer un profil.</string>
   <string name="vehicle_instructions">Sélectionnez les véhicules qui doivent être visibles dans le widget. Cliquez sur l\'icône «+» pour ajouter un nouveau véhicule. Balayez vers la droite sur un véhicule pour le supprimer. Les véhicules dont le NIV est barré ne sont actuellement pas pris en charge; demander de l\'aide</string>
+
+    <!-- Preference Titles and Summaries-->
   <string name="VIN">Le NIV de votre véhicule</string>
   <string name="widget_update_frequency">Temps entre les mises à jour du widget</string>
   <string name="units">Unités à afficher</string>
@@ -53,36 +59,49 @@
   <string name="check_dcfastcharging_summary">Lors de la recharge rapide en CC</string>
   <string name="dcfclog">Enregistrer les journaux RRCC</string>
   <string name="dcfclog_summary">Enregistrez les informations de recharge rapide en CC afin qu\'elles puissent être consultées dans l\'application (l\'affichage des informations RRCC doit également être activé).</string>
-  <string name="fordpass_description">Veuillez consulter ces informations sur le partage de votre connexion FordPass.</string>
-  <string name="clear_alert">Effacer l\'alerte</string>
-  <string name="install_update">Installer la mise à jour</string>
-  <string name="next">Suivant</string>
-  <string name="previous">Précédent</string>
-  <string name="correct_VIN_length">Le NIV doit comporter 17 caractères.</string>
-  <string name="username_or_e_mail">Nom d\'utilisateur ou courriel</string>
-  <string name="password">Mot de passe</string>
-  <string name="login">Se connecter</string>
-  <string name="vehicles_vin">NIV du véhicule</string>
-  <string name="vehicle_s_nickname">Surnom du véhicule</string>
-  <string name="charging_information_title">Informations sur la recharge</string>
-  <string name="charging_infomation_summary">Uniquement applicable aux véhicules électriques</string>
-  <string name="enable_commands_summary">AVIS : indisponible jusqu\'à la sortie de l\'API publique de Ford.</string>
-  <string name="lvb_display_description">Informations sur la batterie 12 V affichées</string>
-  <string name="widgets_location_label">Emplacement :</string>
+  <string name="activity_settings_language_title">Langue</string>
+  <string name="activity_settings_language_summary">Langue utilisée par l\'application</string>
+
+
+    <!-- Shared preference keys -->
+
+    <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
+
+    <!-- survey values -->
+    <string name="fordpass_description">Veuillez consulter ces informations sur le partage de votre connexion FordPass.</string>
+
+    <string name="clear_alert">Effacer l\'alerte</string>
+    <string name="install_update">Installer la mise à jour</string>
+
+    <string name="disclaimer">Vos identifiants de connexion ne sont utilisés que pour accéder à votre compte FordPass. Ils ne sont pas stockés dans l\'application.</string>
+
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="next">Suivant</string>
+    <string name="previous">Précédent</string>
+
+    <string name="correct_VIN_length">Le NIV doit comporter 17 caractères.</string>
+    <string name="username_or_e_mail">Nom d\'utilisateur ou courriel</string>
+    <string name="password">Mot de passe</string>
+    <string name="login">Se connecter</string>
+    <string name="vehicles_vin">NIV du véhicule</string>
+    <string name="vehicle_s_nickname">Surnom du véhicule</string>
+
+    <string name="charging_information_title">Informations sur la recharge</string>
+    <string name="charging_infomation_summary">Uniquement applicable aux véhicules électriques</string>
+    <string name="enable_commands_summary">AVIS : indisponible jusqu\'à la sortie de l\'API publique de Ford.</string>
+    <string name="lvb_display_description">Informations sur la batterie 12 V affichées</string>
+
+    <!-- Strings used within the app in various activities-->
   <string name="kw_rate_kwh_added">\n{0} débit kW</string>
   <string name="charging_target_reached">- Cible atteinte</string>
   <string name="charging_completed">- Complété</string>
   <string name="charging_preconditioning">- Préconditionnement</string>
   <string name="charging_just_charging">- Recharge</string>
-  <string name="widgets_lv_battery_label">"Batterie BT : "</string>
   <string name="good">Bon</string>
   <string name="warning">Avertissement</string>
-  <string name="def_level_label">"Niveau FED : "</string>
-  <string name="def_range_label">"Plage FED : "</string>
-  <string name="last_refresh_label">"Dern. actualisation :\n  "</string>
   <string name="just_now_description">maintenant</string>
-  <string name="ago_description">""</string>
-  <string name="odometer_label">"Odom. : "</string>
+  <string name="ago_description"/>
   <string name="app_no_longer_installed">L\'application n\'est plus installée</string>
   <string name="last_update_label">"Dernière mise à jour à "</string>
   <string name="last_alarm_label">"Dernière alarme à "</string>
@@ -94,11 +113,6 @@
   <string name="force_update_delay_description">Impossible de forcer la mise à jour pour un autre</string>
   <string name="too_many_forced_updates_description">Trop de mises à jour forcées; fonctionnalité désactivée pour</string>
   <string name="lvb_status_bad_description">L\'état de la batterie B.T. n\'est pas bon.</string>
-  <string name="vehicle_label">"Véhicule : "</string>
-  <string name="max_power_label">"Puissance maximale : "</string>
-  <string name="average_power_label">"Puissance moyenne : "</string>
-  <string name="energy_added_label">"Énergie ajoutée : "</string>
-  <string name="range_label">Autonomie</string>
   <string name="error_title">Erreur</string>
   <string name="no_apps_found">Aucune autre application n\'a été trouvée.</string>
   <string name="remove_app_selection">Supprimer cette application</string>
@@ -159,8 +173,8 @@
   <string name="charge_reminder_notification_description">Le niveau de la BHT est inférieur au seuil et le chargeur n’est pas détecté.</string>
   <string name="login_issue_notification_title">Connexion requise</string>
   <string name="login_issue_notification_description">Impossible d\'actualiser les jetons : vous devez vous reconnecter.</string>
-  <string name="survey_notification_title">Nouvelle enquête disponible</string>
-  <string name="survey_notification_description">Veuillez répondre à l\'enquête pour fournir des commentaires au développeur.</string>
+  <string name="survey_notification_title">Nouvelle sondage disponible</string>
+  <string name="survey_notification_description">Veuillez répondre au sondage pour fournir des commentaires au développeur.</string>
   <string name="account_disabled_notification_title">Compte FordPass désactivé!</string>
   <string name="account_disabled_notification_description">L\'application ne parvient pas à accéder à vos informations. Contactez Ford pour réactiver votre compte.</string>
   <string name="no_vehicles_notification_title">Aucun véhicule trouvé</string>
@@ -172,17 +186,33 @@
   <string name="activity_vehicle_status_success_description">État du véhicule récupéré avec succès.</string>
   <string name="activity_vehicle_status_failure_description">Impossible de récupérer l\'état du véhicule.</string>
   <string name="activity_vehicle_enter_new_vehicle_information">Entrez les informations sur le nouveau véhicule :</string>
+
   <string name="activity_vehicle_vin_exists">Ce NIV existe déjà.</string>
   <string name="activity_vehicle_nickname_exists">Ce pseudo est déjà utilisé.</string>
   <string name="activity_vehicle_remove_vehicle_title">Supprimer le véhicule</string>
   <string name="activity_vehicle_remove_vehicle_description">Veuillez confirmer que vous souhaitez supprimer ce véhicule de l\'application.</string>
   <string name="activity_vehicle_userId_missing">Des véhicules ne peuvent pas être ajoutés sans un utilisateur valide; veuillez d\'abord vous connecter.</string>
-  <string name="networkcalls_command_transmitted">Commande transmise.</string>
+
+    <!-- strings used in the Reminder activity -->
   <string name="activity_reminder_notification_enabled">Notification activée :</string>
   <string name="activity_reminder_notification_time">Heure de notification :</string>
   <string name="activity_reminder_threshold_battery_level">Seuil du niveau de batterie</string>
+
+    <!-- Used in NetworkCalls.kt -->>
+  <string name="networkcalls_command_transmitted">Commande transmise.</string>
+
+    <!-- strings used in the actual widgets -->
+  <string name="widgets_location_label">Emplacement :</string>
+  <string name="def_level_label">"Niveau FED : "</string>
+  <string name="def_range_label">"Plage FED : "</string>
+  <string name="widget_last_refresh_label">"Dern. actualisation :"</string>
+  <string name="odometer_label">"Odom. : "</string>
+  <string name="vehicle_label">"Véhicule : "</string>
+  <string name="max_power_label">"Puissance maximale : "</string>
+  <string name="average_power_label">"Puissance moyenne : "</string>
+  <string name="energy_added_label">"Énergie ajoutée : "</string>
+  <string name="range_label">Autonomie</string>
   <string name="widgets_profile_label">Profil :</string>
-  <string name="widgets_last_refresh_label">"Dern. actualisation :\n  S.O."</string>
   <string name="widgets_odometer_label">Odom. : S.O.</string>
   <string name="widgets_def_level_label">Niveau FED: S.O.</string>
   <string name="widgets_def_range_label">Plage FED: S.O.</string>
@@ -191,35 +221,33 @@
   <string name="widgets_nickname_label">Surnom</string>
   <string name="widgets_lv_bat_label">Batt. B.T.</string>
   <string name="widgets_na_label">S.O.</string>
-  <string name="widgets_na3sp_label">"   S.O."</string>
+
   <string name="activity_choose_left_button_text">Bouton gauche</string>
   <string name="activity_choose_right_button_text">Bouton droit</string>
-  <string name="disclaimer">Vos identifiants de connexion ne sont utilisés que pour accéder à votre compte FordPass. Ils ne sont pas stockés dans l\'application.</string>
 
   <string name="activity_charging_three_missing_settings_error">Aucun des paramètres requis n\'est activé.</string>
   <string name="activity_charging_two_missing_settings_error">Deux des paramètres requis sont désactivés.</string>
   <string name="activity_charging_one_missing_setting_error">L\'un des paramètres requis est désactivé.</string>
   <string name="activity_charging_unexpected_issue_error">Il y a un problème inattendu.</string>
-  <string name="activity_charging_unexpected_issue_description">Veuillez déposer un rapport de bug sur github.</string>
+  <string name="activity_charging_unexpected_issue_description">Veuillez déposer un rapport de bogue sur github.</string>
   <string name="activity_charging_three_missing_settings_pattern">Sous Paramètres, activez \"{0}\", \"{1}\" et \"{2}\".\n\nVoulez-vous activer ces paramètres ?</string>
+
   <string name="activity_charging_two_missing_settings_pattern">Sous Paramètres, activez \"{0}\" et \"{1}\".\n\nVoulez-vous activer ces paramètres ?</string>
   <string name="activity_charging_one_missing_setting_pattern">Sous Paramètres, activez \"{0}\".\n\nVoulez-vous activer ce paramètre ?</string>
   <string name="activity_charging_logfile_error">Le fichier journal est vide.</string>
-  <string name="activity_charging_logfile_message">Une fois que vous avez commencé la charge rapide, actualisez manuellement l\'application pour commencer à capturer des données.</string>
+  <string name="activity_charging_logfile_message">Une fois que vous avez commencé la recharge rapide, actualisez manuellement l\'application pour commencer à capturer des données.</string>
   <string name="activity_charging_seconds_label">Secondes</string>
   <string name="activity_charging_energy_button">Énergie</string>
-  <string name="activity_charging_power_button">Pouvoir</string>
+  <string name="activity_charging_power_button">Puissance</string>
   <string name="activity_charging_soc_button">EDC</string>
 
   <string name="activity_settings_system_default_label">Langue du système</string>
 
-  <string name="activity_login_enter_username_toast">s\'il vous plaît entrez votre nom d\'utilisateur</string>
-  <string name="activity_login_enter_password_toast">s\'il vous plait entrez votre mot de passe</string>
-  <string name="activity_login_login_successful_toast">Connexion réussie; mise à jour en 5 secondes.</string>
+  <string name="activity_login_enter_username_toast">Veuillez entrez votre nom d\'utilisateur.</string>
+  <string name="activity_login_enter_password_toast">Veuillez entrez votre mot de passe.</string>
+  <string name="activity_login_login_successful_toast">Connexion réussie; mise à jour dans 5 secondes.</string>
   <string name="activity_login_check_username__password_toast">Impossible de vous connecter au serveur : vérifiez votre nom d\'utilisateur et/ou votre mot de passe</string>
-  <string name="activity_login_attempting_to_log_in_toast">Tentative de connexion...</string>
+  <string name="activity_login_attempting_to_log_in_toast">Tentative de connexion…</string>
   <string name="activity_login_account_disabled_error_toast">Votre compte a été désactivé (erreur {0}) : contactez Ford via l\'application FordPass pour le réactiver.</string>
-  <string name="activity_settings_language_title">Langue</string>
-  <string name="activity_settings_language_summary">Langue utilisée par l\'application</string>
 
 </resources>

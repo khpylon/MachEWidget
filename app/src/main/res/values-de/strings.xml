@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_name">Ford-Status-Widget</string>
+
   <string name="action_fordpass">FordPass-Alarm</string>
   <string name="action_login">FordPass Anmeldung</string>
   <string name="action_profile">Profil verwalten</string>
@@ -10,17 +11,22 @@
   <string name="action_backup">Einstellungen speichern</string>
   <string name="action_restore">Einstellungen zurücksetzen</string>
   <string name="action_copylog">Logdatei speichern</string>
-  <string name="action_update">Auf Updates überprüfen</string>
   <string name="action_view_dcfc_logs">Schnellladeprotokolle anzeigen</string>
+  <string name="action_update">Auf Updates überprüfen</string>
   <string name="action_vehicle">Fahrzeuge verwalten</string>
   <string name="action_color">Fahrzeugfarbe einstellen</string>
   <string name="action_reminder">Ladeerinnerung festlegen</string>
   <string name="update_info">Update Informationen</string>
   <string name="action_settings">Einstellungen</string>
+
+    <!-- Widget things -->
   <string name="app_widget_description">Statusinformationen für Ford-Fahrzeuge anzeigen</string>
+
   <string name="reminder_instructions">Erinnerungszeit festlegen, um das Gerät anzuschließen, wenn der Ladezustand des Fahrzeugs unter einem bestimmten Schwellenwert liegt.</string>
   <string name="profile_instructions">Klicken Sie auf ein Profil, um sich mit dieser VIN anzumelden. Klicken Sie auf einen unbenutzten Eintrag, um ein Login für ein neues Fahrzeug zu erstellen. Klicken Sie auf das „X“, um ein Profil zu löschen.</string>
   <string name="vehicle_instructions">Wählen Sie aus, welche Fahrzeuge im Widget sichtbar sein sollen. Klicken Sie auf das Symbol „+“, um ein neues Fahrzeug hinzuzufügen. Wischen Sie auf einem Fahrzeug nach rechts, um es zu entfernen. Fahrzeuge, deren Fahrgestellnummer durchgestrichen ist, werden derzeit nicht unterstützt; um Unterstützung anzufordern</string>
+
+    <!-- Preference Titles and Summaries-->
   <string name="VIN">Die Fahrgestellnummer Ihres Fahrzeugs</string>
   <string name="widget_update_frequency">Zeit zwischen Widget-Updates</string>
   <string name="units">Anzuzeigende Einheiten</string>
@@ -53,36 +59,49 @@
   <string name="check_dcfastcharging_summary">Beim Schnellladen</string>
   <string name="dcfclog">Schnellladeprotokolle speichern</string>
   <string name="dcfclog_summary">Schnellladeinformationen speichern, damit sie in der App angezeigt werden können (Schnellladeinformationen anzeigen muss ebenfalls aktiviert sein).</string>
+  <string name="activity_settings_language_title">Sprache</string>
+  <string name="activity_settings_language_summary">Von der App verwendete Sprache</string>
+
+
+    <!-- Shared preference keys -->
+
+    <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
+
+    <!-- survey values -->
   <string name="fordpass_description">Bitte lesen Sie diese Informationen zum Teilen Ihres FordPass-Logins.</string>
+
   <string name="clear_alert">Klare Warnung</string>
   <string name="install_update">Installations-Update</string>
+
+  <string name="disclaimer">Ihre Anmeldedaten werden nur verwendet, um Zugriff auf Ihr FordPass-Konto zu erhalten. Sie werden nicht in der App gespeichert.</string>
+
+
+    <!-- Strings used for fragments for navigation -->
   <string name="next">Nächste</string>
   <string name="previous">Vorherige</string>
+
   <string name="correct_VIN_length">Die VIN muss 17 Zeichen lang sein.</string>
   <string name="username_or_e_mail">Benutzername oder E-Mail-Adresse</string>
   <string name="password">Passwort</string>
   <string name="login">Anmeldung</string>
   <string name="vehicles_vin">Fahrzeug-FIN</string>
   <string name="vehicle_s_nickname">Spitzname des Fahrzeugs</string>
+
   <string name="charging_information_title">Ladeinformationen</string>
   <string name="charging_infomation_summary">Gilt nur für Elektrofahrzeuge</string>
   <string name="enable_commands_summary">HINWEIS: Nicht verfügbar, bis die öffentliche Ford API veröffentlicht wird.</string>
   <string name="lvb_display_description">12-V-Batterieinformationsanzeige</string>
-  <string name="widgets_location_label">Standort:</string>
+
+    <!-- Strings used within the app in various activities-->
   <string name="kw_rate_kwh_added">\n{0}kW-Rate</string>
   <string name="charging_target_reached">- Ziel erreicht</string>
   <string name="charging_completed">- Vollendet</string>
   <string name="charging_preconditioning">- Vorkonditionierung</string>
   <string name="charging_just_charging">- Aufladen</string>
-  <string name="widgets_lv_battery_label">"LV-Batterie: "</string>
   <string name="good">Gut</string>
   <string name="warning">Warnung</string>
-  <string name="def_level_label">"AdBlue-Level: "</string>
-  <string name="def_range_label">"AdBlue-Bereich: "</string>
-  <string name="last_refresh_label">"Letzte Aktualisierung:\n  "</string>
   <string name="just_now_description">soeben</string>
   <string name="ago_description">" vor"</string>
-  <string name="odometer_label">"Tacho: "</string>
   <string name="app_no_longer_installed">App ist nicht mehr installiert</string>
   <string name="last_update_label">"Letztes Update um "</string>
   <string name="last_alarm_label">"Letzter Alarm um "</string>
@@ -94,11 +113,6 @@
   <string name="force_update_delay_description">Das Update für ein anderes kann nicht erzwungen werden</string>
   <string name="too_many_forced_updates_description">Zu viele erzwungene Updates; Funktion deaktiviert für</string>
   <string name="lvb_status_bad_description">Der LVB-Status ist nicht gut.</string>
-  <string name="vehicle_label">"Fahrzeug: "</string>
-  <string name="max_power_label">"Maximale Leistung: "</string>
-  <string name="average_power_label">"Durchschnittliche Leistung: "</string>
-  <string name="energy_added_label">"Hinzugefügte Energie: "</string>
-  <string name="range_label">"Reichweite: "</string>
   <string name="error_title">Fehler</string>
   <string name="no_apps_found">Es wurden keine anderen Apps gefunden.</string>
   <string name="remove_app_selection">Entfernen Sie diese App</string>
@@ -172,17 +186,33 @@
   <string name="activity_vehicle_status_success_description">Fahrzeugstatus erfolgreich abgerufen.</string>
   <string name="activity_vehicle_status_failure_description">Der Fahrzeugstatus kann nicht abgerufen werden.</string>
   <string name="activity_vehicle_enter_new_vehicle_information">Geben Sie neue Fahrzeug-Informationen ein:</string>
+
   <string name="activity_vehicle_vin_exists">Diese VIN existiert bereits.</string>
   <string name="activity_vehicle_nickname_exists">Der Benutzername wird bereits verwendet.</string>
   <string name="activity_vehicle_remove_vehicle_title">Fahrzeug entfernen</string>
   <string name="activity_vehicle_remove_vehicle_description">Bitte bestätigen Sie, dass Sie dieses Fahrzeug aus der App entfernen möchten.</string>
   <string name="activity_vehicle_userId_missing">Ohne einen gültigen Benutzer können keine Fahrzeuge hinzugefügt werden; Bitte loggen Sie sich zuerst ein.</string>
-  <string name="networkcalls_command_transmitted">Befehl übermittelt.</string>
+
+    <!-- strings used in the Reminder activity -->
   <string name="activity_reminder_notification_enabled">Benachrichtigung aktiviert:</string>
   <string name="activity_reminder_notification_time">Benachrichtigungszeit:</string>
   <string name="activity_reminder_threshold_battery_level">Schwellenwert des Batteriestands:</string>
+
+    <!-- Used in NetworkCalls.kt -->>
+  <string name="networkcalls_command_transmitted">Befehl übermittelt.</string>
+
+    <!-- strings used in the actual widgets -->
+  <string name="widgets_location_label">Standort:</string>
+  <string name="def_level_label">"AdBlue-Level: "</string>
+  <string name="def_range_label">"AdBlue-Bereich: "</string>
+  <string name="widget_last_refresh_label">"Letzte Aktualisierung:"</string>
+  <string name="odometer_label">"Tacho: "</string>
+  <string name="vehicle_label">"Fahrzeug: "</string>
+  <string name="max_power_label">"Maximale Leistung: "</string>
+  <string name="average_power_label">"Durchschnittliche Leistung: "</string>
+  <string name="energy_added_label">"Hinzugefügte Energie: "</string>
+  <string name="range_label">"Reichweite: "</string>
   <string name="widgets_profile_label">Profil:</string>
-  <string name="widgets_last_refresh_label">Letzte Aktualisierung:\n N.V.</string>
   <string name="widgets_odometer_label">Tacho: N.V.</string>
   <string name="widgets_def_level_label">AdBlue-Level: N.V.</string>
   <string name="widgets_def_range_label">AdBlue-Bereich: N.V.</string>
@@ -191,10 +221,9 @@
   <string name="widgets_nickname_label">Spitzname</string>
   <string name="widgets_lv_bat_label">"LV-Batterie: "</string>
   <string name="widgets_na_label">N.V.</string>
-  <string name="widgets_na3sp_label">"   N.V."</string>
+
   <string name="activity_choose_left_button_text">Linker Taste</string>
   <string name="activity_choose_right_button_text">Rechte Taste</string>
-  <string name="disclaimer">Ihre Anmeldedaten werden nur verwendet, um Zugriff auf Ihr FordPass-Konto zu erhalten. Sie werden nicht in der App gespeichert.</string>
 
   <string name="activity_charging_three_missing_settings_error">Keine der erforderlichen Einstellungen ist aktiviert</string>
   <string name="activity_charging_two_missing_settings_error">Zwei der erforderlichen Einstellungen sind deaktiviert</string>
@@ -202,6 +231,7 @@
   <string name="activity_charging_unexpected_issue_error">Ein unerwarteter Fehler ist aufgetreten</string>
   <string name="activity_charging_unexpected_issue_description">Bitte reichen Sie einen Fehlerbericht auf github ein.</string>
   <string name="activity_charging_three_missing_settings_pattern">Aktivieren Sie unter Einstellungen \"{0}\"-\"{1}\"-\"{2}\" Möchten Sie diese Einstellungen aktivieren?</string>
+
   <string name="activity_charging_two_missing_settings_pattern">Aktivieren Sie unter Einstellungen sowohl \"{0}\"-\"{1}\" Möchten Sie diese Einstellungen aktivieren?</string>
   <string name="activity_charging_one_missing_setting_pattern">Aktivieren Sie unter Einstellungen \"{0}\" Möchten Sie diese Einstellungen aktivieren?</string>
   <string name="activity_charging_logfile_error">Die Protokolldatei ist leer.</string>
@@ -217,9 +247,7 @@
   <string name="activity_login_enter_password_toast">Bitte geben Sie Ihr Passwort ein</string>
   <string name="activity_login_login_successful_toast">Anmeldung erfolgreich; Aktualisierung in 5 Sekunden.</string>
   <string name="activity_login_check_username__password_toast">Anmeldung erfolgreich; Aktualisierung in 5 Sekunden.</string>
-  <string name="activity_login_attempting_to_log_in_toast">Es wird versucht, sich anzumelden...</string>
+  <string name="activity_login_attempting_to_log_in_toast">Es wird versucht, sich anzumelden…</string>
   <string name="activity_login_account_disabled_error_toast">Ihr Konto wurde deaktiviert (Fehler {0}): Kontaktieren Sie Ford über die FordPass-App, um es erneut zu aktivieren.</string>
-  <string name="activity_settings_language_title">Sprache</string>
-  <string name="activity_settings_language_summary">Von der App verwendete Sprache</string>
 
 </resources>

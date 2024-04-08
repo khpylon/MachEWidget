@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">"Ford Status Widget"</string>
+
     <string name="action_fordpass">"FordPass Alert"</string>
     <string name="action_login">"FordPass-pålogging"</string>
     <string name="action_profile">"Administrer profiler"</string>
@@ -17,10 +18,15 @@
     <string name="action_reminder">"Angi ladepåminnelse"</string>
     <string name="update_info">"Oppdater informasjon"</string>
     <string name="action_settings">"Innstillinger"</string>
+
+    <!-- Widget things -->
     <string name="app_widget_description">"Vis statusinformasjon for Ford-biler"</string>
+
     <string name="reminder_instructions">"Angi en påminnelsestid for å koble til hvis kjøretøyets lading er under en gitt terskel."</string>
     <string name="profile_instructions">"Klikk på en profil for å logge inn med det VIN-nummeret. Klikk på en ubrukt oppføring for å opprette en pålogging for et nytt kjøretøy. Klikk på \"X\" for å slette en profil."</string>
     <string name="vehicle_instructions">"Velg hvilke kjøretøyer som skal være synlige i widgeten. Klikk på \"+\"-ikonet for å legge til et nytt kjøretøy. Sveip til høyre på et kjøretøy for å fjerne det. Kjøretøy med VIN-nummer er ikke støttet for øyeblikket; for å be om støtte , aktiver logging for å fange data og opprette et problem på GitHub (https://github.com/khpylon/MachEWidget)."</string>
+
+    <!-- Preference Titles and Summaries-->
     <string name="VIN">"Kjøretøyets VIN"</string>
     <string name="widget_update_frequency">"Tid mellom widgetoppdateringer"</string>
     <string name="units">"Enheter som skal vises"</string>
@@ -55,22 +61,38 @@
     <string name="dcfclog_summary">"Lagre informasjon om hurtiglading slik at den kan ses i appen (Vis DCFC-info må også være aktivert)."</string>
     <string name="activity_settings_language_title">"Språk"</string>
     <string name="activity_settings_language_summary">"Språk som brukes av appen"</string>
+
+
+    <!-- Shared preference keys -->
+
+    <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
+
+    <!-- survey values -->
     <string name="fordpass_description">"Vennligst se gjennom denne informasjonen om å dele din FordPass-pålogging."</string>
+
     <string name="clear_alert">"Tøm varsel"</string>
     <string name="install_update">"Installer oppdatering"</string>
+
     <string name="disclaimer">"Din påloggingsinformasjon brukes kun for å få tilgang til din FordPass-konto. De lagres ikke i appen."</string>
+
+
+    <!-- Strings used for fragments for navigation -->
     <string name="next">"Neste"</string>
     <string name="previous">"Tidligere"</string>
+
     <string name="correct_VIN_length">"VIN må være på 17 tegn."</string>
     <string name="username_or_e_mail">"Brukernavn eller e-post"</string>
     <string name="password">"Passord"</string>
     <string name="login">"Logg Inn"</string>
     <string name="vehicles_vin">"Kjøretøyets VIN"</string>
     <string name="vehicle_s_nickname">"Kjøretøyets kallenavn"</string>
+
     <string name="charging_information_title">"Ladeinformasjon"</string>
     <string name="charging_infomation_summary">"Gjelder kun for elektriske kjøretøy"</string>
     <string name="enable_commands_summary">"MERKNAD: utilgjengelig før Fords offentlige API er utgitt."</string>
     <string name="lvb_display_description">"12V batteriinformasjon vises"</string>
+
+    <!-- Strings used within the app in various activities-->
     <string name="kw_rate_kwh_added">"\n{0}kW-hastighet, {1}kWh lagt til"</string>
     <string name="charging_target_reached">"- Målet nådd"</string>
     <string name="charging_completed">"- Fullført"</string>
@@ -122,15 +144,18 @@
     <string name="twenty_minutes_abbreviation">"20 min"</string>
     <string name="thirty_minutes_abbreviation">"30 min"</string>
     <string name="manual_updates_description">"Manuelle oppdateringer"</string>
+
     <string name="single_hour_abbr">"1 time"</string>
     <string name="two_hour_abbr">"2 timer"</string>
     <string name="hours_abbr">" timer"</string>
     <string name="one_day_abbr">"1 dag"</string>
     <string name="days_abbr">" dager"</string>
+
     <string name="settings_lvd_display_voltage">"Spenning"</string>
     <string name="settings_lvd_display_soc">"State of charge"</string>
     <string name="settings_lvd_display_both">"Spenning og SOC"</string>
     <string name="settings_lvd_display_progress">"SOC som fremdriftslinje"</string>
+
     <string name="lvb_status_notification_title">"LSB Status"</string>
     <string name="lbv_status_notification_description">"LSBs status rapporterer \"lav\"."</string>
     <string name="tpms_status_notification_title">"TPMS-status"</string>
@@ -161,20 +186,26 @@
     <string name="activity_vehicle_status_success_description">"Kjøretøystatus ble hentet."</string>
     <string name="activity_vehicle_status_failure_description">"Kan ikke hente kjøretøystatus."</string>
     <string name="activity_vehicle_enter_new_vehicle_information">"Skriv inn ny kjøretøyinformasjon:"</string>
+
     <string name="activity_vehicle_vin_exists">"Denne VIN-koden eksisterer allerede."</string>
     <string name="activity_vehicle_nickname_exists">"Dette kallenavnet er allerede i bruk."</string>
     <string name="activity_vehicle_remove_vehicle_title">"Fjern kjøretøy"</string>
     <string name="activity_vehicle_remove_vehicle_description">"Bekreft at du vil fjerne dette kjøretøyet fra appen."</string>
     <string name="activity_vehicle_userId_missing">"Kjøretøy kan ikke legges til uten en gyldig bruker; logg inn først."</string>
+
+    <!-- strings used in the Reminder activity -->
     <string name="activity_reminder_notification_enabled">"Varsling aktivert:"</string>
     <string name="activity_reminder_notification_time">"Varslingstid:"</string>
     <string name="activity_reminder_threshold_battery_level">"Terskel batterinivå:"</string>
+
+    <!-- Used in NetworkCalls.kt -->>
     <string name="networkcalls_command_transmitted">"Kommando overført."</string>
+
+    <!-- strings used in the actual widgets -->
     <string name="widgets_location_label">"Plassering: "</string>
-    <string name="widgets_lv_battery_label">"LS bat.: "</string>
     <string name="def_level_label">"DEF-nivå: "</string>
     <string name="def_range_label">"DEF Range: "</string>
-    <string name="last_refresh_label">"Siste oppdatering:\n  "</string>
+    <string name="widget_last_refresh_label">"Siste oppdatering:"</string>
     <string name="odometer_label">"Odo: "</string>
     <string name="vehicle_label">"Kjøretøy:"</string>
     <string name="max_power_label">"Max power:"</string>
@@ -182,7 +213,6 @@
     <string name="energy_added_label">"Energi lagt til: "</string>
     <string name="range_label">"Område: "</string>
     <string name="widgets_profile_label">"Profil: "</string>
-    <string name="widgets_last_refresh_label">"Siste opdatering:\n  N/A"</string>
     <string name="widgets_odometer_label">"Odo: N/A"</string>
     <string name="widgets_def_level_label">"DEF-nivå: N/A"</string>
     <string name="widgets_def_range_label">"DEF-område: N/A"</string>
@@ -191,15 +221,17 @@
     <string name="widgets_nickname_label">"Kallenavn"</string>
     <string name="widgets_lv_bat_label">"LS bat.: "</string>
     <string name="widgets_na_label">"N/A"</string>
-    <string name="widgets_na3sp_label">"   N/A"</string>
+
     <string name="activity_choose_left_button_text">"Venstre knapp"</string>
     <string name="activity_choose_right_button_text">"Høyre knapp"</string>
+
     <string name="activity_charging_three_missing_settings_error">"Alle nødvendige innstillinger er deaktivert."</string>
     <string name="activity_charging_two_missing_settings_error">"To av de nødvendige innstillingene er deaktivert."</string>
     <string name="activity_charging_one_missing_setting_error">"En av de nødvendige innstillingene er deaktivert."</string>
     <string name="activity_charging_unexpected_issue_error">"Det er et uventet problem."</string>
     <string name="activity_charging_unexpected_issue_description">"Vennligst send inn en feilrapport på GitHub."</string>
     <string name="activity_charging_three_missing_settings_pattern">"Under Innstillinger, aktiver \"{0}\", \"{1}\", og \"{2}\".\n\nVil du aktivere disse innstillingene?"</string>
+
     <string name="activity_charging_two_missing_settings_pattern">"Under Innstillinger, aktiver både \"{0}\" og \"{1}\".\n\nVil du aktivere disse innstillingene?"</string>
     <string name="activity_charging_one_missing_setting_pattern">"Under Innstillinger, aktiver \"{0}\".\n\nVil du aktivere denne innstillingen?"</string>
     <string name="activity_charging_logfile_error">"Loggfilen er tom."</string>
@@ -208,11 +240,14 @@
     <string name="activity_charging_energy_button">"Energi"</string>
     <string name="activity_charging_power_button">"Makt"</string>
     <string name="activity_charging_soc_button">"Lade %"</string>
+
     <string name="activity_settings_system_default_label">"System standard"</string>
+
     <string name="activity_login_enter_username_toast">"Vennligst skriv inn brukernavnet ditt."</string>
     <string name="activity_login_enter_password_toast">"Vennligst skriv inn passordet ditt."</string>
     <string name="activity_login_login_successful_toast">"Logging vellykket; oppdatering om 5 sekunder."</string>
     <string name="activity_login_check_username__password_toast">"Kan ikke logge på serveren: sjekk brukernavnet og/eller passordet ditt?"</string>
     <string name="activity_login_attempting_to_log_in_toast">"Forsøker å logge inn…"</string>
     <string name="activity_login_account_disabled_error_toast">"Kontoen din har blitt deaktivert (feil {0}): kontakt Ford via FordPass-appen for å aktivere på nytt."</string>
+
 </resources>
