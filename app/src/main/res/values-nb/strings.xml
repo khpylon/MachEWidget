@@ -101,7 +101,6 @@
     <string name="good">"Flink"</string>
     <string name="warning">"Advarsel"</string>
     <string name="just_now_description">"akkurat nå"</string>
-    <string name="ago_description">" siden"</string>
     <string name="app_no_longer_installed">"Appen er ikke lenger installert"</string>
     <string name="last_update_label">"Siste oppdatering kl."</string>
     <string name="last_alarm_label">"Siste alarm kl."</string>
@@ -136,20 +135,29 @@
     <string name="settings_copied_to_download_description">"Innstillingsfil %1$s kopiert til nedlastingsmappe."</string>
     <string name="settings_restored_description">"Innstillinger gjenopprettet."</string>
     <string name="logcat_crashfile_formatstring">"Logcat-krasjfilen \"{0}.txt\" kopiert til nedlastingsmappen."</string>
-    <string name="secconds_abbreviation">"sek"</string>
+    
     <string name="minutes_abbreviation">" min"</string>
+    <string name="hours_abbr">" timer"</string>
+    <string name="one_day_abbr">"1 dag"</string>
+    <string name="days_abbr">" dager"</string>
+    <string name="seconds_abbreviation">"sek"</string>
+
+    <string name="elapsed_minutes_pattern">{0} min siden</string>
+    <string name="elapsed_one_hour">1 time siden</string>
+    <string name="elapsed_hours_pattern">{0} timer siden</string>
+    <string name="elapsed_one_hour_and_minutes_pattern">1 time, {0} min siden</string>
+    <string name="elapsed_hours_and_minutes_pattern">{0} timer, {1} min siden</string>
+    <string name="elapsed_one_day">1 dag siden</string>
+    <string name="elapsed_days_pattern">{0} dager siden</string>
+
     <string name="five_minutes_abbreviation">"5 min"</string>
     <string name="ten_minutes_abbreviation">"10 min"</string>
     <string name="fifteen_minutes_abbreviation">"15 min"</string>
     <string name="twenty_minutes_abbreviation">"20 min"</string>
     <string name="thirty_minutes_abbreviation">"30 min"</string>
-    <string name="manual_updates_description">"Manuelle oppdateringer"</string>
-
     <string name="single_hour_abbr">"1 time"</string>
     <string name="two_hour_abbr">"2 timer"</string>
-    <string name="hours_abbr">" timer"</string>
-    <string name="one_day_abbr">"1 dag"</string>
-    <string name="days_abbr">" dager"</string>
+    <string name="manual_updates_description">"Manuelle oppdateringer"</string>
 
     <string name="settings_lvd_display_voltage">"Spenning"</string>
     <string name="settings_lvd_display_soc">"State of charge"</string>

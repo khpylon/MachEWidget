@@ -101,7 +101,6 @@
   <string name="good">Bon</string>
   <string name="warning">Avertissement</string>
   <string name="just_now_description">maintenant</string>
-  <string name="ago_description"/>
   <string name="app_no_longer_installed">L\'application n\'est plus installée</string>
   <string name="last_update_label">"Dernière mise à jour à "</string>
   <string name="last_alarm_label">"Dernière alarme à "</string>
@@ -136,20 +135,29 @@
   <string name="settings_copied_to_download_description">Fichier de paramètres %1$s copié dans le dossier de téléchargement.</string>
   <string name="settings_restored_description">Paramètres restaurés.</string>
   <string name="logcat_crashfile_formatstring">Fichier de crash Logcat \"{0}.txt\" copié dans le dossier de téléchargement.</string>
-  <string name="secconds_abbreviation">" sec."</string>
+    
   <string name="minutes_abbreviation">" min."</string>
+  <string name="hours_abbr">" h"</string>
+  <string name="one_day_abbr">1 jour</string>
+  <string name="days_abbr">" jours"</string>
+  <string name="seconds_abbreviation">" sec."</string>
+
+  <string name="elapsed_minutes_pattern">{0} min.</string>
+  <string name="elapsed_one_hour">1 h</string>
+  <string name="elapsed_hours_pattern">{0} h</string>
+  <string name="elapsed_one_hour_and_minutes_pattern">1 h {0} min.</string>
+  <string name="elapsed_hours_and_minutes_pattern">{0} h {1} min.</string>
+  <string name="elapsed_one_day">1 jour</string>
+  <string name="elapsed_days_pattern">{0} jours</string>
+
   <string name="five_minutes_abbreviation">5 min.</string>
   <string name="ten_minutes_abbreviation">10 min.</string>
   <string name="fifteen_minutes_abbreviation">15 min.</string>
   <string name="twenty_minutes_abbreviation">20 min.</string>
   <string name="thirty_minutes_abbreviation">30 min.</string>
-  <string name="manual_updates_description">Mises à jour manuelles</string>
-
   <string name="single_hour_abbr">1 h</string>
   <string name="two_hour_abbr">2 h</string>
-  <string name="hours_abbr">" h"</string>
-  <string name="one_day_abbr">1 jour</string>
-  <string name="days_abbr">" jours"</string>
+  <string name="manual_updates_description">Mises à jour manuelles</string>
 
   <string name="settings_lvd_display_voltage">Tension</string>
   <string name="settings_lvd_display_soc">État de charge</string>

@@ -101,7 +101,6 @@
     <string name="good">Bene</string>
     <string name="warning">Attenzione</string>
     <string name="just_now_description">Adesso</string>
-    <string name="ago_description">" fa"</string>
     <string name="app_no_longer_installed">L\'App non è più installata</string>
     <string name="last_update_label">"Ultimo aggiornamento alle "</string>
     <string name="last_alarm_label">"Ultimo avviso alle "</string>
@@ -136,20 +135,29 @@
     <string name="settings_copied_to_download_description">File impostazioni %1$s copiato nella cartella Download.</string>
     <string name="settings_restored_description">Impostazioni ripristinate.</string>
     <string name="logcat_crashfile_formatstring">Il file degli errori\"{0}.txt\" copiato nella cartella Download.</string>
-    <string name="secconds_abbreviation">" sec"</string>
+    
     <string name="minutes_abbreviation">" min"</string>
+    <string name="hours_abbr">" ore"</string>
+    <string name="one_day_abbr">1 giorno</string>
+    <string name="days_abbr">" giorni"</string>
+    <string name="seconds_abbreviation">" sec"</string>
+
+    <string name="elapsed_minutes_pattern">{0} min fa</string>
+    <string name="elapsed_one_hour">1 ora fa</string>
+    <string name="elapsed_hours_pattern">{0} ore fa</string>
+    <string name="elapsed_one_hour_and_minutes_pattern">1 ora, {0} min fa</string>
+    <string name="elapsed_hours_and_minutes_pattern">{0} ore, {1} min fa</string>
+    <string name="elapsed_one_day">1 giorno fa</string>
+    <string name="elapsed_days_pattern">{0} giorni fa</string>
+
     <string name="five_minutes_abbreviation">5 min</string>
     <string name="ten_minutes_abbreviation">10 min</string>
     <string name="fifteen_minutes_abbreviation">15 min</string>
     <string name="twenty_minutes_abbreviation">20 min</string>
     <string name="thirty_minutes_abbreviation">30 min</string>
-    <string name="manual_updates_description">Aggiornamento manuale</string>
-
     <string name="single_hour_abbr">1 ora</string>
     <string name="two_hour_abbr">2 ore</string>
-    <string name="hours_abbr">" ore"</string>
-    <string name="one_day_abbr">1 giorno</string>
-    <string name="days_abbr">" giorni"</string>
+    <string name="manual_updates_description">Aggiornamento manuale</string>
 
     <string name="settings_lvd_display_voltage">Voltaggio</string>
     <string name="settings_lvd_display_soc">Stato di carica</string>

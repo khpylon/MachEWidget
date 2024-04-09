@@ -648,7 +648,7 @@ class Misc {
             val result = java.lang.StringBuilder()
             val minutes = seconds / 60
             val hours = minutes / 60
-            val seconds_abbreviation = context.getString(R.string.secconds_abbreviation)
+            val seconds_abbreviation = context.getString(R.string.seconds_abbreviation)
             val minutes_abbreviation = context.getString(R.string.minutes_abbreviation)
             val hour_abbreviation = context.getString(R.string.single_hour_abbr)
             val hours_abbreviation = context.getString(R.string.hours_abbr)
@@ -676,35 +676,63 @@ class Misc {
             context: Context,
             minutes: Long
         ): String {
-            val result = java.lang.StringBuilder()
-            val minutes_abbreviation = context.getString(R.string.minutes_abbreviation)
-            val hour_abbreviation = context.getString(R.string.single_hour_abbr)
-            val hours_abbreviation = context.getString(R.string.hours_abbr)
-            val day_abbreviation = context.getString(R.string.one_day_abbr)
-            val days_abbreviation = context.getString(R.string.days_abbr)
+            val hours = (minutes / 60) % 24
+            val days = minutes/ 60 / 24
+
+            if( minutes < 60) {
+                return MessageFormat.format(
+                    context.getString(R.string.elapsed_minutes_pattern),
+                    minutes
+                )
+            } else if( minutes == 60L) {
+                return context.getString(R.string.elapsed_one_hour)
+            }else if( minutes < 120) {
+                return MessageFormat.format(
+                    context.getString(R.string.elapsed_one_hour_and_minutes_pattern),
+                    minutes
+                )
+            }else if (days < 1) {
+                return if ((minutes % 60) == 0L)
+                    MessageFormat.format(
+                        context.getString(R.string.elapsed_hours_pattern),
+                        hours
+                    )
+                else
+                    MessageFormat.format(
+                        context.getString(R.string.elapsed_hours_and_minutes_pattern),
+                        hours, minutes
+                    )
+            } else if (days == 1L) {
+                return context.getString(R.string.elapsed_one_day)
+            } else {
+                return MessageFormat.format(
+                    context.getString(R.string.elapsed_days_pattern),
+                    days
+                )
+            }
 
             // less than an hour
-            if (minutes < 60) {
-                result.append("$minutes" + minutes_abbreviation)
-                // less than a day
-            } else if (minutes / 60 < 24) {
-                // display multiple hours
-                if (minutes >= 120L) {
-                    result.append((minutes / 60).toString() + hours_abbreviation)
-                }
-                // display single hour
-                else if (minutes >= 60L){
-                    result.append(hour_abbreviation)
-                }
-                // display minutes
-                if (minutes % 60 != 0L) {
-                    result.append(", " + (minutes % 60) + minutes_abbreviation)
-                }
-            } else {
-                val days = minutes / (24 * 60)
-                result.append(if (days == 1L) day_abbreviation else "$days" + days_abbreviation)
-            }
-            return result.toString()
+//            if (minutes < 60) {
+//                result.append("$minutes" + minutes_abbreviation)
+//                // less than a day
+//            } else if (minutes / 60 < 24) {
+//                // display multiple hours
+//                if (minutes >= 120L) {
+//                    result.append((minutes / 60).toString() + hours_abbreviation)
+//                }
+//                // display single hour
+//                else if (minutes >= 60L){
+//                    result.append(hour_abbreviation)
+//                }
+//                // display minutes
+//                if (minutes % 60 != 0L) {
+//                    result.append(", " + (minutes % 60) + minutes_abbreviation)
+//                }
+//            } else {
+//                val days = minutes / (24 * 60)
+//                result.append(if (days == 1L) day_abbreviation else "$days" + days_abbreviation)
+//            }
+//            return result.toString()
         }
 
 //        @JvmStatic

@@ -59,8 +59,8 @@
 	<string name="check_dcfastcharging_summary">Podczas szybkiego ładowania prądem stałym, żądaj aktualizacji co 30 sekund</string>
 	<string name="dcfclog">Zapisuj logi ładowania DC</string>
 	<string name="dcfclog_summary">Zapisz informacje o szybkim ładowaniu prądem stałym, aby można je było zobaczyć w aplikacji (wyświetlanie informacji o DC również musi być włączone).</string>
-error; activity_settings_language_title string not found
-error; activity_settings_language_summary string not found
+<string name="activity_settings_language_title">Język</string>
+<string name="activity_settings_language_summary">Język aplikacji</string>
 
 
     <!-- Shared preference keys -->
@@ -101,7 +101,6 @@ error; activity_settings_language_summary string not found
 	<string name="good">Good</string>
 	<string name="warning">Ostrzeżenie</string>
 	<string name="just_now_description">przed chwilą</string>
-	<string name="ago_description">" temu"</string>
 	<string name="app_no_longer_installed">Aplikacja została odinstalowana</string>
 	<string name="last_update_label">"Ostatnia aktualizacja "</string>
 	<string name="last_alarm_label">"Ostatni alarm "</string>
@@ -136,20 +135,29 @@ error; activity_settings_language_summary string not found
 	<string name="settings_copied_to_download_description">Plik ustawień %1$s został skopiowany do folderu Pobrane.</string>
 	<string name="settings_restored_description">Ustawienia przywrócone.</string>
 	<string name="logcat_crashfile_formatstring">Plik Logcat \"{0}.txt\" został skopiowany do folderu Pobrane.</string>
-	<string name="secconds_abbreviation">" sek"</string>
+    
 	<string name="minutes_abbreviation">" min"</string>
+	<string name="hours_abbr">" godz."</string>
+	<string name="one_day_abbr">1 dzień</string>
+	<string name="days_abbr">" dni"</string>
+	<string name="seconds_abbreviation">" sek"</string>
+
+	<string name="elapsed_minutes_pattern">{0} min temu</string>
+	<string name="elapsed_one_hour">1 godz. temu</string>
+	<string name="elapsed_hours_pattern">{0} godz. temu</string>
+	<string name="elapsed_one_hour_and_minutes_pattern">1 godz., {0} min temu</string>
+	<string name="elapsed_hours_and_minutes_pattern">{0} godz., {1} min temu</string>
+	<string name="elapsed_one_day">1 dzień temu</string>
+	<string name="elapsed_days_pattern">{0} dni temu</string>
+
 	<string name="five_minutes_abbreviation">5 min</string>
 	<string name="ten_minutes_abbreviation">10 min</string>
 	<string name="fifteen_minutes_abbreviation">15 min</string>
 	<string name="twenty_minutes_abbreviation">20 min</string>
 	<string name="thirty_minutes_abbreviation">30 min</string>
-	<string name="manual_updates_description">Aktualizacja ręczna</string>
-
 	<string name="single_hour_abbr">1 godz.</string>
 	<string name="two_hour_abbr">2 godz.</string>
-	<string name="hours_abbr">" godz."</string>
-	<string name="one_day_abbr">1 dzień</string>
-	<string name="days_abbr">" dni"</string>
+	<string name="manual_updates_description">Aktualizacja ręczna</string>
 
 	<string name="settings_lvd_display_voltage">Napięcie</string>
 	<string name="settings_lvd_display_soc">Stan naładowania</string>
@@ -241,13 +249,13 @@ error; activity_settings_language_summary string not found
 	<string name="activity_charging_power_button">Moc</string>
 	<string name="activity_charging_soc_button">Naładowanie %</string>
 
-error; activity_settings_system_default_label string not found
+        <string name="activity_settings_system_default_label">Systemowy</string>
 
-error; activity_login_enter_username_toast string not found
-error; activity_login_enter_password_toast string not found
-error; activity_login_login_successful_toast string not found
-error; activity_login_check_username__password_toast string not found
-error; activity_login_attempting_to_log_in_toast string not found
-error; activity_login_account_disabled_error_toast string not found
+        <string name="activity_login_enter_username_toast">Podaj nazwę użytkownika</string>
+        <string name="activity_login_enter_password_toast">Hasło</string>
+        <string name="activity_login_login_successful_toast">Zalogowano; aktualizacja za 5 sekund.</string>
+        <string name="activity_login_check_username__password_toast">Nie można zalogować do serwera: sprawdź nazwę użytkownika i/lub hasło.</string>
+        <string name="activity_login_attempting_to_log_in_toast">Logowanie…</string>
+        <string name="activity_login_account_disabled_error_toast">Twoje konto zostało zablokowane (Błąd {0}): skontaktuj się z Fordem przez aplikację FordPass w celu odblokowania.</string>
 
 </resources>

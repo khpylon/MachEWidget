@@ -142,7 +142,6 @@
     <string name="good">Good</string>
     <string name="warning">Warning</string>
     <string name="just_now_description">just now</string>
-    <string name="ago_description">" ago"</string>
     <string name="app_no_longer_installed">App is no longer installed</string>
     <string name="last_update_label">"Last update at "</string>
     <string name="last_alarm_label">"Last alarm at "</string>
@@ -177,20 +176,29 @@
     <string name="settings_copied_to_download_description">Settings file %1$s copied to Download folder.</string>
     <string name="settings_restored_description">Settings restored.</string>
     <string name="logcat_crashfile_formatstring">Logcat crash file \"<xliff:g>{0}.txt</xliff:g>\" copied to Download folder.</string>
-    <string name="secconds_abbreviation">" sec"</string>
+    
     <string name="minutes_abbreviation">" min"</string>
+    <string name="hours_abbr">" hrs"</string>
+    <string name="one_day_abbr">1 day</string>
+    <string name="days_abbr">" days"</string>
+    <string name="seconds_abbreviation">" sec"</string>
+
+    <string name="elapsed_minutes_pattern">{0} min ago</string>
+    <string name="elapsed_one_hour">1 hr ago</string>
+    <string name="elapsed_hours_pattern">{0} hrs ago</string>
+    <string name="elapsed_one_hour_and_minutes_pattern">1 hr, {0} min ago</string>
+    <string name="elapsed_hours_and_minutes_pattern">{0} hrs, {1} min ago</string>
+    <string name="elapsed_one_day">1 day ago</string>
+    <string name="elapsed_days_pattern">{0} days ago</string>
+
     <string name="five_minutes_abbreviation">5 min</string>
     <string name="ten_minutes_abbreviation">10 min</string>
     <string name="fifteen_minutes_abbreviation">15 min</string>
     <string name="twenty_minutes_abbreviation">20 min</string>
     <string name="thirty_minutes_abbreviation">30 min</string>
-    <string name="manual_updates_description">Manual updates</string>
-
     <string name="single_hour_abbr">1 hr</string>
     <string name="two_hour_abbr">2 hrs</string>
-    <string name="hours_abbr">" hrs"</string>
-    <string name="one_day_abbr">1 day</string>
-    <string name="days_abbr">" days"</string>
+    <string name="manual_updates_description">Manual updates</string>
 
     <string name="settings_lvd_display_voltage">Voltage</string>
     <string name="settings_lvd_display_soc">State of Charge</string>

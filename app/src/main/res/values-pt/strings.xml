@@ -101,7 +101,6 @@
     <string name="good">"Bom"</string>
     <string name="warning">"Aviso"</string>
     <string name="just_now_description">"agora mesmo"</string>
-    <string name="ago_description">" atrás"</string>
     <string name="app_no_longer_installed">"O aplicativo não está mais instalado"</string>
     <string name="last_update_label">"Última atualização em "</string>
     <string name="last_alarm_label">"Último alarme em "</string>
@@ -136,20 +135,29 @@
     <string name="settings_copied_to_download_description">"Arquivo de configurações %1$s copiado para a pasta Download."</string>
     <string name="settings_restored_description">"Configurações restauradas."</string>
     <string name="logcat_crashfile_formatstring">"Arquivo de falha do Logcat \"{0}.txt\" copiado para a pasta Download."</string>
-    <string name="secconds_abbreviation">"seg"</string>
-    <string name="minutes_abbreviation">"min"</string>
-    <string name="five_minutes_abbreviation">"5 minutos"</string>
-    <string name="ten_minutes_abbreviation">"10 minutos"</string>
-    <string name="fifteen_minutes_abbreviation">"15 minutos"</string>
-    <string name="twenty_minutes_abbreviation">"20 minutos"</string>
-    <string name="thirty_minutes_abbreviation">"30 minutos"</string>
-    <string name="manual_updates_description">"Atualizações manuais"</string>
-
-    <string name="single_hour_abbr">"1 hora"</string>
-    <string name="two_hour_abbr">"2 horas"</string>
+    
+    <string name="minutes_abbreviation">" min"</string>
     <string name="hours_abbr">"horas"</string>
     <string name="one_day_abbr">"1 dia"</string>
     <string name="days_abbr">" dias"</string>
+    <string name="seconds_abbreviation">" seg"</string>
+
+    <string name="elapsed_minutes_pattern">{0} min atrás</string>
+    <string name="elapsed_one_hour">1 hr atrás</string>
+    <string name="elapsed_hours_pattern">{0} hrs atrás</string>
+    <string name="elapsed_one_hour_and_minutes_pattern">1 hr, {0} min atrás</string>
+    <string name="elapsed_hours_and_minutes_pattern">{0} hrs, {1} min atrás</string>
+    <string name="elapsed_one_day">1 dai atrás</string>
+    <string name="elapsed_days_pattern">{0} dias atrás</string>
+
+    <string name="five_minutes_abbreviation">"5 min"</string>
+    <string name="ten_minutes_abbreviation">"10 min"</string>
+    <string name="fifteen_minutes_abbreviation">"15 min"</string>
+    <string name="twenty_minutes_abbreviation">"20 min"</string>
+    <string name="thirty_minutes_abbreviation">"30 min"</string>
+    <string name="single_hour_abbr">"1 hora"</string>
+    <string name="two_hour_abbr">"2 horas"</string>
+    <string name="manual_updates_description">"Atualizações manuais"</string>
 
     <string name="settings_lvd_display_voltage">"Tensão"</string>
     <string name="settings_lvd_display_soc">"Estado de Carga"</string>

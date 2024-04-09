@@ -796,7 +796,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             if (minutes < 1) {
                 context.getString(R.string.just_now_description)
             } else {
-                elapsedMinutesToDescription(context, minutes) + context.getString(R.string.ago_description)
+                elapsedMinutesToDescription(context, minutes)
             }
         }
         views.setTextViewText(R.id.lastRefreshInfo, refresh)
