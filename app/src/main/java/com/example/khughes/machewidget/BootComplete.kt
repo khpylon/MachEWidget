@@ -11,6 +11,11 @@ import androidx.preference.PreferenceManager
 class BootComplete : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
+        if (action.equals(Intent.ACTION_LOCALE_CHANGED, ignoreCase = true) ) {
+            LogFile.d(context, MainActivity.CHANNEL_ID, "BootComplete received action $action")
+            CarStatusWidget.updateWidget(context)
+        }
+
         if (action.equals(Intent.ACTION_BOOT_COMPLETED, ignoreCase = true) ||
             action.equals(Intent.ACTION_MY_PACKAGE_REPLACED, ignoreCase = true)
         ) {
