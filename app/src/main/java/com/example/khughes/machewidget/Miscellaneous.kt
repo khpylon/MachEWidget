@@ -674,24 +674,25 @@ class Misc {
         @JvmStatic
         fun elapsedMinutesToDescription(
             context: Context,
-            minutes: Long
+            interval: Long
         ): String {
-            val hours = (minutes / 60) % 24
-            val days = minutes/ 60 / 24
+            val hours = (interval / 60) % 24
+            val days = interval / 60 / 24
+            val minutes = interval % 60
 
-            if( minutes < 60) {
+            if (interval < 60) {
                 return MessageFormat.format(
                     context.getString(R.string.elapsed_minutes_pattern),
                     minutes
                 )
-            } else if( minutes == 60L) {
+            } else if (interval == 60L) {
                 return context.getString(R.string.elapsed_one_hour)
-            }else if( minutes < 120) {
+            } else if (interval < 120) {
                 return MessageFormat.format(
                     context.getString(R.string.elapsed_one_hour_and_minutes_pattern),
                     minutes
                 )
-            }else if (days < 1) {
+            } else if (days < 1) {
                 return if ((minutes % 60) == 0L)
                     MessageFormat.format(
                         context.getString(R.string.elapsed_hours_pattern),
@@ -711,28 +712,6 @@ class Misc {
                 )
             }
 
-            // less than an hour
-//            if (minutes < 60) {
-//                result.append("$minutes" + minutes_abbreviation)
-//                // less than a day
-//            } else if (minutes / 60 < 24) {
-//                // display multiple hours
-//                if (minutes >= 120L) {
-//                    result.append((minutes / 60).toString() + hours_abbreviation)
-//                }
-//                // display single hour
-//                else if (minutes >= 60L){
-//                    result.append(hour_abbreviation)
-//                }
-//                // display minutes
-//                if (minutes % 60 != 0L) {
-//                    result.append(", " + (minutes % 60) + minutes_abbreviation)
-//                }
-//            } else {
-//                val days = minutes / (24 * 60)
-//                result.append(if (days == 1L) day_abbreviation else "$days" + days_abbreviation)
-//            }
-//            return result.toString()
         }
 
 //        @JvmStatic
