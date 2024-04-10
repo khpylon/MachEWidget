@@ -13,8 +13,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.webkit.WebView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.ColorUtils
+import androidx.core.os.LocaleListCompat
 import androidx.preference.PreferenceManager
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
@@ -443,6 +445,15 @@ class PrefManagement {
 
                 // Make sure units use the new values
                 Misc.updateUnits(context)
+
+                // Restore per-app language settings on Android 13 and higher
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val language = PreferenceManager.getDefaultSharedPreferences(context).getString(
+                        context.resources.getString(R.string.language_key), ""
+                    )
+                    val locale = LocaleListCompat.forLanguageTags(language)
+                    AppCompatDelegate.setApplicationLocales(locale)
+                }
 
                 // Tell the widget to update
                 CarStatusWidget.updateWidget(context)
