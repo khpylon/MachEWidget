@@ -126,6 +126,7 @@
     <string name="activity_color_autoImage_hint">"Bruk lagret bilde som fargekilde."</string>
     <string name="activity_color_rgb_value">"RGB-verdi: #"</string>
     <string name="close_button">"Lukk"</string>
+    <string name="ignore_button">Overse</string>
     <string name="remote_commands_disabled_title">"Fjernkommandoer har blitt deaktivert."</string>
     <string name="remote_commands_disabled_description">"Ford har endret API og fjernkommandoer (lås og start) fungerer ikke lenger. Hvis de blir eksponert i fremtidens offentlige API, vil de automatisk bli reaktivert i appen."</string>
     <string name="permission_granted">"Tillatelse gitt!"</string>
@@ -257,5 +258,13 @@
     <string name="activity_login_check_username__password_toast">"Kan ikke logge på serveren: sjekk brukernavnet og/eller passordet ditt?"</string>
     <string name="activity_login_attempting_to_log_in_toast">"Forsøker å logge inn…"</string>
     <string name="activity_login_account_disabled_error_toast">"Kontoen din har blitt deaktivert (feil {0}): kontakt Ford via FordPass-appen for å aktivere på nytt."</string>
+
+    <string name="activity_update_app_permissions">Appen trenger tillatelse for å installere ukjente apper. For mer informasjon, les FAQ på GitHub.</string>
+    <string name="activity_update_updating_dialog_title">Legge merke til</string>
+    <string name="activity_update_updating_dialog_message">Etter at appen er oppdatert, lukkes den.</string>
+    <string name="activity_update_ignore_dialog_title">Advarsel</string>
+    <string name="activity_update_ignore_dialog_message">Ignorering av denne oppdateringen kan ikke angres. Fortsette?</string>
+    <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Forsøker å laste ned filen CHANGELOG.md...</h2></body></html>]]</string>
+    <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Det oppsto en feil ved nedlasting av CHANGELOG.md</h2></body></html>]]</string>
 
 </resources>

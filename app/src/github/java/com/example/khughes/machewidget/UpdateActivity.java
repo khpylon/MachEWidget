@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Base64;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -46,14 +45,13 @@ public class UpdateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Context context = getApplicationContext();
 
-        String newVersion = "## " + new StoredData(context).getLatestVersion();
-        String currentVersion = "## " + BuildConfig.VERSION_NAME;
+        StoredData appInfo = new StoredData(context);
 
-        if (newVersion.compareTo(currentVersion) <= 0) {
-            Toast.makeText(context, "No update found.", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+        // Get new version value
+        String newVersion = appInfo.getLatestVersion();
+
+        // Assume update is cancelled or abandoned, so set "new version" back to current version.
+        appInfo.setLatestVersion(BuildConfig.VERSION_NAME);
 
         // Make sure we have permission to install apps
         String packageName = "package:" + context.getPackageName();
@@ -72,21 +70,41 @@ public class UpdateActivity extends AppCompatActivity {
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
             WebSettingsCompat.setForceDark(mWebView.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
         }
-        String encodedHtml = Base64.encodeToString("<html><body><h2>Attempting to download CHANGELOG.md file...</h2></body></html>".getBytes(), Base64.NO_PADDING);
+        String encodedHtml = Base64.encodeToString(getString(R.string.activity_update_downloading_html).getBytes(), Base64.NO_PADDING);
 
         mWebView.loadData(encodedHtml, "text/html", "base64");
 
         new DownloadChangelog(context, mWebView).execute(CHANGELOG_URL);
 
+        Button cancelButton = findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(view -> {
+            // If update is cancelled, then skip this version
+            new AlertDialog.Builder(//
+                    new ContextThemeWrapper(this,R.style.AlertDialogCustom))
+
+                    .setTitle(R.string.activity_update_ignore_dialog_title)
+                    .setMessage(R.string.activity_update_ignore_dialog_message)
+                    .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                                appInfo.setLatestVersion(newVersion);
+                                finish();
+                            }
+                    )
+                    .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {
+                            }
+                    )
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        });
+
         Button applyButton = findViewById(R.id.apply_button);
         applyButton.setOnClickListener(view -> {
             if (!context.getPackageManager().canRequestPackageInstalls()) {
-                Toast.makeText(context, "The app needs permission to install unknown apps. For more info, read the FAQ on GitHub.", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.activity_update_app_permissions, Toast.LENGTH_LONG).show();
             } else {
                 new AlertDialog.Builder(//
-                        new ContextThemeWrapper(this,R.style.AlertDialogCustom))// )
-                        .setTitle("Notice")
-                        .setMessage("After the app is updated, it will close.")
+                        new ContextThemeWrapper(this,R.style.AlertDialogCustom))
+                        .setTitle(R.string.activity_update_updating_dialog_title)
+                        .setMessage(R.string.activity_update_updating_dialog_message)
                         .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                             progressBar.setVisibility(View.VISIBLE);
                             new DownloadApp(context, progressBar).execute(appUrl);
@@ -127,7 +145,7 @@ public class UpdateActivity extends AppCompatActivity {
                 input.close();
             } catch (Exception e) {
                 LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.DownloadChangelog()" + e);
-                current = new StringBuilder("<html><body><h2>Error occurred downloading CHANGELOG.md</h2></body></html>");
+                current = new StringBuilder(context.getString(R.string.activity_update_download_error_html));
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -195,7 +213,7 @@ public class UpdateActivity extends AppCompatActivity {
                 input.close();
                 output.close();
             } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.DownloadApp()" + e);
+                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateActivity.DownloadApp()" + e);
                 apkFile = null;
             } finally {
                 if (urlConnection != null) {

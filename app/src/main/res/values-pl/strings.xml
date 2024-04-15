@@ -126,6 +126,7 @@
 	<string name="activity_color_autoImage_hint">Użyj zapisanego obrazu jako źródła koloru.</string>
 	<string name="activity_color_rgb_value">Wartość RGB: #</string>
 	<string name="close_button">Zamknij</string>
+	<string name="ignore_button">Ignorować</string>
 	<string name="remote_commands_disabled_title">Polecenia zdalne zostały wyłączone</string>
 	<string name="remote_commands_disabled_description">Ford zmienił API, a polecenia zdalne (blokowanie i uruchamianie) nie działają już.  Jeśli zostaną one udostępnione w przyszłym publicznym API, automatycznie zostaną ponownie włączone w aplikacji.</string>
 	<string name="permission_granted">Uprawnienie udzielone!</string>
@@ -249,13 +250,21 @@
 	<string name="activity_charging_power_button">Moc</string>
 	<string name="activity_charging_soc_button">Naładowanie %</string>
 
-        <string name="activity_settings_system_default_label">Systemowy</string>
+	<string name="activity_settings_system_default_label">Systemowy</string>
 
-        <string name="activity_login_enter_username_toast">Podaj nazwę użytkownika</string>
-        <string name="activity_login_enter_password_toast">Hasło</string>
-        <string name="activity_login_login_successful_toast">Zalogowano; aktualizacja za 5 sekund.</string>
-        <string name="activity_login_check_username__password_toast">Nie można zalogować do serwera: sprawdź nazwę użytkownika i/lub hasło.</string>
-        <string name="activity_login_attempting_to_log_in_toast">Logowanie…</string>
-        <string name="activity_login_account_disabled_error_toast">Twoje konto zostało zablokowane (Błąd {0}): skontaktuj się z Fordem przez aplikację FordPass w celu odblokowania.</string>
+	<string name="activity_login_enter_username_toast">Podaj nazwę użytkownika</string>
+	<string name="activity_login_enter_password_toast">Hasło</string>
+	<string name="activity_login_login_successful_toast">Zalogowano; aktualizacja za 5 sekund.</string>
+	<string name="activity_login_check_username__password_toast">Nie można zalogować do serwera: sprawdź nazwę użytkownika i/lub hasło.</string>
+	<string name="activity_login_attempting_to_log_in_toast">Logowanie…</string>
+	<string name="activity_login_account_disabled_error_toast">Twoje konto zostało zablokowane (Błąd {0}): skontaktuj się z Fordem przez aplikację FordPass w celu odblokowania.</string>
+
+	<string name="activity_update_app_permissions">Aplikacja wymaga pozwolenia na instalowanie nieznanych aplikacji. Aby uzyskać więcej informacji, przeczytaj często zadawane pytania w serwisie GitHub.</string>
+	<string name="activity_update_updating_dialog_title">Ogłoszenie</string>
+	<string name="activity_update_updating_dialog_message">Po zaktualizowaniu aplikacja zostanie zamknięta.</string>
+	<string name="activity_update_ignore_dialog_title">Ostrzeżenie</string>
+	<string name="activity_update_ignore_dialog_message">v</string>
+	<string name="activity_update_downloading_html">![CDATA[<html><body><h2>Próba pobrania pliku CHANGELOG.md...</h2></body></html>]]</string>
+	<string name="activity_update_download_error_html">![CDATA[<html><body><h2>Wystąpił błąd podczas pobierania CHANGELOG.md</h2></body></html>]]</string>
 
 </resources>

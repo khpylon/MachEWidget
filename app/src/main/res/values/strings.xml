@@ -167,6 +167,7 @@
     <string name="activity_color_autoImage_hint">Use stored image as color source.</string>
     <string name="activity_color_rgb_value">RGB value: #</string>
     <string name="close_button">Close</string>
+    <string name="ignore_button">Ignore</string>
     <string name="remote_commands_disabled_title">Remote commands have been disabled.</string>
     <string name="remote_commands_disabled_description">Ford has changed the API and remote commands (lock and start) no longer work. If they are exposed in the future public API, they will automatically be re-enabled in the app.</string>
     <string name="permission_granted">Permission Granted!</string>
@@ -175,7 +176,7 @@
     <string name="update_check_description">Checking for an update; if one is found, a notification will appear.</string>
     <string name="settings_copied_to_download_description">Settings file %1$s copied to Download folder.</string>
     <string name="settings_restored_description">Settings restored.</string>
-    <string name="logcat_crashfile_formatstring">Logcat crash file \"<xliff:g>{0}.txt</xliff:g>\" copied to Download folder.</string>
+    <string name="logcat_crashfile_formatstring">Logcat crash file \"{0}.txt\" copied to Download folder.</string>
     
     <string name="minutes_abbreviation">" min"</string>
     <string name="hours_abbr">" hrs"</string>
@@ -280,7 +281,6 @@
     <string name="activity_charging_unexpected_issue_error">There is an unexpected issue.</string>
     <string name="activity_charging_unexpected_issue_description">Please file a bug report on GitHub.</string>
     <string name="activity_charging_three_missing_settings_pattern">Under Settings, enable \"{0}", \"{1}\", and \"{2}\".\n\nDo you want to enable these settings?</string>
-
     <string name="activity_charging_two_missing_settings_pattern">Under Settings, enable both \"{0}\" and \"{1}\".\n\nDo you want to enable these settings?</string>
     <string name="activity_charging_one_missing_setting_pattern">Under Settings, enable \"{0}\".\n\nDo you want to enable this setting?</string>
     <string name="activity_charging_logfile_error">The log file is empty.</string>
@@ -298,5 +298,13 @@
     <string name="activity_login_check_username__password_toast">Unable to login to server: check your username and/or password?</string>
     <string name="activity_login_attempting_to_log_in_toast">Attempting to log in…</string>
     <string name="activity_login_account_disabled_error_toast">Your account has been disabled (error {0}): contact Ford via the FordPass app to reactivate.</string>
+
+    <string name="activity_update_app_permissions">The app needs permission to install unknown apps. For more info, read the FAQ on GitHub.</string>
+    <string name="activity_update_updating_dialog_title">Notice</string>
+    <string name="activity_update_updating_dialog_message">After the app is updated, it will close.</string>
+    <string name="activity_update_ignore_dialog_title">Warning</string>
+    <string name="activity_update_ignore_dialog_message">Ignoring this update cannot be undone. Proceed?</string>
+    <string name="activity_update_downloading_html"><![CDATA[<html><body><h2>Attempting to download CHANGELOG.md file...</h2></body></html>]]></string>
+    <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Error occurred downloading CHANGELOG.md</h2></body></html>]]></string>
 
 </resources>

@@ -19,14 +19,31 @@
             android:id="@+id/changelog_webview"
             android:layout_width="match_parent"
             android:layout_weight="90"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/apply_button"
-            android:layout_width="wrap_content"
+        </WebView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/install_update"
-            android:layout_margin="4dp"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:text="@string/ignore_button" />
+
+            <Button
+                android:id="@+id/apply_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:text="@string/install_update" />
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progressBar"

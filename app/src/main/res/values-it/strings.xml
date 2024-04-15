@@ -126,6 +126,7 @@
     <string name="activity_color_autoImage_hint">Usa l\'immagine come fonte colore.</string>
     <string name="activity_color_rgb_value">Valore RGB: #</string>
     <string name="close_button">Chiudi</string>
+    <string name="ignore_button">Ignorare</string>
     <string name="remote_commands_disabled_title">I comandi remoti sono stati disabilitati.</string>
     <string name="remote_commands_disabled_description">Ford ha cambiato i comandi API e remoti (chiusura e avvio), non sono più funzionanti.</string>
     <string name="permission_granted">Permesso Concesso!</string>
@@ -257,5 +258,13 @@
     <string name="activity_login_check_username__password_toast">Accesso riuscito; aggiornamento in 5 secondi.</string>
     <string name="activity_login_attempting_to_log_in_toast">Tentativo di accesso…</string>
     <string name="activity_login_account_disabled_error_toast">Il tuo account è stato disattivato (errore {0}): contatta Ford tramite l\'app FordPass per riattivarlo.</string>
+
+    <string name="activity_update_app_permissions">L\'app necessita dell\'autorizzazione per installare app sconosciute. Per maggiori informazioni, leggere le FAQ su GitHub.</string>
+    <string name="activity_update_updating_dialog_title">Avviso</string>
+    <string name="activity_update_updating_dialog_message">Una volta aggiornata, l\'app verrà chiusa.</string>
+    <string name="activity_update_ignore_dialog_title">Avvertimento</string>
+    <string name="activity_update_ignore_dialog_message">Ignorare questo aggiornamento non può essere annullato. Procedere?</string>
+    <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Tentativo di scaricare il file CHANGELOG.md...</h2></body></html>]]</string>
+    <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Si è verificato un errore durante il download di CHANGELOG.md</h2></body></html>]]</string>
 
 </resources>

@@ -126,6 +126,7 @@
   <string name="activity_color_autoImage_hint">Gespeichertes Bild als Farbquelle verwenden.</string>
   <string name="activity_color_rgb_value">RGB-Wert: #</string>
   <string name="close_button">Schließen</string>
+  <string name="ignore_button">Ignorieren</string>
   <string name="remote_commands_disabled_title">Fernbefehle wurden deaktiviert.</string>
   <string name="remote_commands_disabled_description">Ford hat die API geändert und Fernbefehle (Sperren und Starten) funktionieren nicht mehr. Wenn sie in der zukünftigen öffentlichen API verfügbar gemacht werden</string>
   <string name="permission_granted">Zugriff erteilt!</string>
@@ -257,5 +258,13 @@
   <string name="activity_login_check_username__password_toast">Anmeldung erfolgreich; Aktualisierung in 5 Sekunden.</string>
   <string name="activity_login_attempting_to_log_in_toast">Es wird versucht, sich anzumelden…</string>
   <string name="activity_login_account_disabled_error_toast">Ihr Konto wurde deaktiviert (Fehler {0}): Kontaktieren Sie Ford über die FordPass-App, um es erneut zu aktivieren.</string>
+
+  <string name="activity_update_app_permissions">Die App benötigt die Erlaubnis, unbekannte Apps zu installieren. Weitere Informationen finden Sie in den FAQ auf GitHub.</string>
+  <string name="activity_update_updating_dialog_title">Beachten</string>
+  <string name="activity_update_updating_dialog_message">Nachdem die App aktualisiert wurde, wird sie geschlossen.</string>
+  <string name="activity_update_ignore_dialog_title">Warnung</string>
+  <string name="activity_update_ignore_dialog_message">Das Ignorieren dieses Updates kann nicht rückgängig gemacht werden. Fortfahren?</string>
+  <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Versuch, die CHANGELOG.md-Datei herunterzuladen...</h2></body></html>]]</string>
+  <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Fehler beim Herunterladen von CHANGELOG.md</h2></body></html>]]</string>
 
 </resources>

@@ -126,6 +126,7 @@
   <string name="activity_color_autoImage_hint">Utilisez l\'image stockée comme source de couleur.</string>
   <string name="activity_color_rgb_value">Valeur RVB : #</string>
   <string name="close_button">Fermer</string>
+  <string name="ignore_button">Ignorer</string>
   <string name="remote_commands_disabled_title">Les commandes à distance ont été désactivées.</string>
   <string name="remote_commands_disabled_description">Ford a modifié l\'API et les commandes à distance (verrouillage et démarrage) ne fonctionnent plus. S\'ils sont visibles dans la future API publique</string>
   <string name="permission_granted">Permission accordée!</string>
@@ -257,5 +258,13 @@
   <string name="activity_login_check_username__password_toast">Impossible de vous connecter au serveur : vérifiez votre nom d\'utilisateur et/ou votre mot de passe</string>
   <string name="activity_login_attempting_to_log_in_toast">Tentative de connexion…</string>
   <string name="activity_login_account_disabled_error_toast">Votre compte a été désactivé (erreur {0}) : contactez Ford via l\'application FordPass pour le réactiver.</string>
+
+  <string name="activity_update_app_permissions">L\'application a besoin d\'une autorisation pour installer des applications inconnues. Pour plus d\'informations, lisez la FAQ sur GitHub.</string>
+  <string name="activity_update_updating_dialog_title">Avis</string>
+  <string name="activity_update_updating_dialog_message">Une fois l\'application mise à jour, elle se fermera.</string>
+  <string name="activity_update_ignore_dialog_title">Avertissement</string>
+  <string name="activity_update_ignore_dialog_message">Ignorer cette mise à jour ne peut pas être annulé. Procéder?</string>
+  <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Tentative de téléchargement du fichier CHANGELOG.md...</h2></body></html>]]</string>
+  <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Une erreur s\'est produite lors du téléchargement de CHANGELOG.md</h2></body></html>]]</string>
 
 </resources>

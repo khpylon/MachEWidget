@@ -126,6 +126,7 @@
     <string name="activity_color_autoImage_hint">"Usar imagem armazenada como fonte de cor."</string>
     <string name="activity_color_rgb_value">"Valor RGB: #"</string>
     <string name="close_button">"Fechar"</string>
+    <string name="ignore_button">Ignorar</string>
     <string name="remote_commands_disabled_title">"Os comandos remotos foram desativados."</string>
     <string name="remote_commands_disabled_description">“A Ford alterou a API e os comandos remotos (bloquear e iniciar) não funcionam mais. Se forem expostos na futura API pública, serão automaticamente reativados no aplicativo.”</string>
     <string name="permission_granted">"Permissão garantida!"</string>
@@ -257,5 +258,13 @@
     <string name="activity_login_check_username__password_toast">"Não é possível fazer login no servidor: verifique seu nome de usuário e/ou senha?"</string>
     <string name="activity_login_attempting_to_log_in_toast">"Tentando fazer login…"</string>
     <string name="activity_login_account_disabled_error_toast">"Sua conta foi desativada (erro {0}): entre em contato com a Ford por meio do aplicativo FordPass para reativar."</string>
+
+    <string name="activity_update_app_permissions">O aplicativo precisa de permissão para instalar aplicativos desconhecidos. Para obter mais informações, leia o FAQ no GitHub.</string>
+    <string name="activity_update_updating_dialog_title">Perceber</string>
+    <string name="activity_update_updating_dialog_message">Depois que o aplicativo for atualizado, ele será fechado.</string>
+    <string name="activity_update_ignore_dialog_title">Aviso</string>
+    <string name="activity_update_ignore_dialog_message">Ignorar esta atualização não pode ser desfeito. Continuar?</string>
+    <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Tentando baixar o arquivo CHANGELOG.md...</h2></body></html>]]</string>
+    <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Ocorreu um erro ao baixar CHANGELOG.md</h2></body></html>]]</string>
 
 </resources>

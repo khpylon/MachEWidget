@@ -5,9 +5,11 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.text.format.DateUtils;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -76,11 +78,14 @@ public class UpdateReceiver extends BroadcastReceiver {
             StoredData appInfo = new StoredData(context);
             final String latestVersion = appInfo.getLatestVersion();
             for (String item : result.split("\n")) {
-                if (item.contains(Version)) {
+                if (item.contains(Version) || true) {
                     String newVersion = item.replace(Version, "");
+                    newVersion = "2024.04.14-13";
                     LogFile.e(context, MainActivity.CHANNEL_ID, "UpdateReceiver.onPostExecute(): newest version is " + newVersion);
                     if (newVersion.compareTo(BuildConfig.VERSION_NAME) > 0 &&
                             newVersion.compareTo(latestVersion) > 0) {
+
+                        // Save new version for UpdateActivity
                         appInfo.setLatestVersion(newVersion);
                         newApp(context);
                         LogFile.e(context, MainActivity.CHANNEL_ID, "UpdateReceiver.onPostExecute(): launching notification");
@@ -99,15 +104,16 @@ public class UpdateReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Notifications.Companion.getNORMAL_NOTIFICATIONS())
                 .setSmallIcon(R.drawable.notification_icon)
-                .setColor(ContextCompat.getColor(context,R.color.light_blue_900))
+                .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
                 .setContentTitle("App update")
                 .setContentText("A new app version was found.")
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(APP_NOTIFICATION, builder.build());
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(APP_NOTIFICATION, builder.build());
+        }
     }
 
 

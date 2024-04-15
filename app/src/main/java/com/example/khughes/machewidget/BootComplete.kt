@@ -61,6 +61,15 @@ class BootComplete : BroadcastReceiver() {
 
         if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED, ignoreCase = true)) {
             LogFile.d(context, MainActivity.CHANNEL_ID, "BootComplete: running package updates")
+
+            // If package was replaced, then the "new version" is this version.
+            val appInfo = StoredData(context);
+            val version = appInfo.latestVersion;
+            if (version != null && BuildConfig.VERSION_NAME.compareTo(version) >= 0 ) {
+                LogFile.d(context, MainActivity.CHANNEL_ID, "BootComplete: new app version found")
+                appInfo.latestVersion = BuildConfig.VERSION_NAME
+            }
+
             Misc.removeAPK(context)
             AppUpdates.performUpdates(context)
             CarStatusWidget.updateWidget(context)
