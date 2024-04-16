@@ -1,243 +1,235 @@
-package com.example.khughes.machewidget;
+package com.example.khughes.machewidget
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Base64;
-import android.view.ContextThemeWrapper;
-import android.view.View;
-import android.webkit.WebView;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.res.Configuration
+import android.net.Uri
+import android.os.Bundle
+import android.provider.Settings
+import android.util.Base64
+import android.view.ContextThemeWrapper
+import android.view.View
+import android.webkit.WebView
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
+import com.example.khughes.machewidget.Misc.Companion.checkDarkMode
+import com.example.khughes.machewidget.Misc.Companion.removeAPK
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.ResponseBody
+import org.commonmark.parser.Parser
+import org.commonmark.renderer.html.HtmlRenderer
+import java.io.File
+import java.io.FileOutputStream
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-import androidx.webkit.WebSettingsCompat;
-import androidx.webkit.WebViewFeature;
+class UpdateActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val context = applicationContext
 
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
-public class UpdateActivity extends AppCompatActivity {
-
-    private static final String CHANGELOG_URL = "https://raw.githubusercontent.com/khpylon/MachEWidget/master/CHANGELOG.md";
-    private static final String appUrl = "https://github.com/khpylon/MachEWidget/blob/master/app/github/release/app-release.apk?raw=true";
-
-    private static final int progressIntervals = 20;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Context context = getApplicationContext();
-
-        StoredData appInfo = new StoredData(context);
+        val appInfo = StoredData(context)
 
         // Get new version value
-        String newVersion = appInfo.getLatestVersion();
+        val newVersion = appInfo.latestVersion
 
         // Assume update is cancelled or abandoned, so set "new version" back to current version.
-        appInfo.setLatestVersion(BuildConfig.VERSION_NAME);
+        appInfo.latestVersion = BuildConfig.VERSION_NAME
 
         // Make sure we have permission to install apps
-        String packageName = "package:" + context.getPackageName();
-        if (!getPackageManager().canRequestPackageInstalls()) {
-            startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse(packageName)));
+        val packageName = "package:" + context.packageName
+        if (!packageManager.canRequestPackageInstalls()) {
+            startActivity(
+                Intent(
+                    Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                    Uri.parse(packageName)
+                )
+            )
         }
 
-        setContentView(R.layout.activity_update);
-        ProgressBar progressBar = findViewById(R.id.progressBar);
-        progressBar.setMax(progressIntervals);
-        progressBar.setVisibility(View.GONE);
+        setContentView(R.layout.activity_update)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        progressBar.max = PROGRESS_INTERVAL
+        progressBar.visibility = View.GONE
 
-        WebView mWebView = findViewById(R.id.changelog_webview);
-        Misc.checkDarkMode(context, mWebView);
-        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-            WebSettingsCompat.setForceDark(mWebView.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
+        val mWebView = findViewById<WebView>(R.id.changelog_webview)
+        checkDarkMode(context, mWebView)
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && WebViewFeature.isFeatureSupported(
+                WebViewFeature.FORCE_DARK
+            )
+        ) {
+            WebSettingsCompat.setForceDark(mWebView.settings, WebSettingsCompat.FORCE_DARK_ON)
         }
-        String encodedHtml = Base64.encodeToString(getString(R.string.activity_update_downloading_html).getBytes(), Base64.NO_PADDING);
+        val encodedHtml = Base64.encodeToString(
+            getString(R.string.activity_update_downloading_html).toByteArray(),
+            Base64.NO_PADDING
+        )
 
-        mWebView.loadData(encodedHtml, "text/html", "base64");
+        mWebView.loadData(encodedHtml, "text/html", "base64")
 
-        new DownloadChangelog(context, mWebView).execute(CHANGELOG_URL);
+        downloadChangelog(context, mWebView)
 
-        Button cancelButton = findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(view -> {
+        val cancelButton = findViewById<Button>(R.id.cancel_button)
+        cancelButton.setOnClickListener { _: View? ->
             // If update is cancelled, then skip this version
-            new AlertDialog.Builder(//
-                    new ContextThemeWrapper(this,R.style.AlertDialogCustom))
+            AlertDialog.Builder( //
+                ContextThemeWrapper(this, R.style.AlertDialogCustom)
+            )
+                .setTitle(R.string.activity_update_ignore_dialog_title)
+                .setMessage(R.string.activity_update_ignore_dialog_message)
+                .setPositiveButton(
+                    android.R.string.yes
+                ) { _: DialogInterface?, _: Int ->
+                    appInfo.latestVersion = newVersion
+                    finish()
+                }
+                .setNegativeButton(
+                    android.R.string.cancel
+                ) { _: DialogInterface?, _: Int -> }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
+        }
 
-                    .setTitle(R.string.activity_update_ignore_dialog_title)
-                    .setMessage(R.string.activity_update_ignore_dialog_message)
-                    .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
-                                appInfo.setLatestVersion(newVersion);
-                                finish();
-                            }
-                    )
-                    .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {
-                            }
-                    )
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        });
-
-        Button applyButton = findViewById(R.id.apply_button);
-        applyButton.setOnClickListener(view -> {
-            if (!context.getPackageManager().canRequestPackageInstalls()) {
-                Toast.makeText(context, R.string.activity_update_app_permissions, Toast.LENGTH_LONG).show();
+        val applyButton = findViewById<Button>(R.id.apply_button)
+        applyButton.setOnClickListener { _: View? ->
+            if (!context.packageManager.canRequestPackageInstalls()) {
+                Toast.makeText(context, R.string.activity_update_app_permissions, Toast.LENGTH_LONG)
+                    .show()
             } else {
-                new AlertDialog.Builder(//
-                        new ContextThemeWrapper(this,R.style.AlertDialogCustom))
-                        .setTitle(R.string.activity_update_updating_dialog_title)
-                        .setMessage(R.string.activity_update_updating_dialog_message)
-                        .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
-                            progressBar.setVisibility(View.VISIBLE);
-                            new DownloadApp(context, progressBar).execute(appUrl);
-                        }
-                        )
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                AlertDialog.Builder( //
+                    ContextThemeWrapper(this, R.style.AlertDialogCustom)
+                )
+                    .setTitle(R.string.activity_update_updating_dialog_title)
+                    .setMessage(R.string.activity_update_updating_dialog_message)
+                    .setPositiveButton(
+                        android.R.string.yes
+                    ) { _: DialogInterface?, _: Int ->
+                        progressBar.visibility = View.VISIBLE
+                        downloadApp(context, progressBar)
+                    }
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show()
             }
-        });
-    }
-
-    private static class DownloadChangelog extends AsyncTask<String, String, String> {
-
-        private final WeakReference<Context> mContext;
-        private final WeakReference<WebView> mWebView;
-
-        public DownloadChangelog(Context context, WebView webView) {
-            mContext = new WeakReference<>(context);
-            mWebView = new WeakReference<>(webView);
-        }
-
-        @Override
-        protected String doInBackground(String... urls) {
-            Context context = mContext.get();
-
-            StringBuilder current = new StringBuilder();
-            HttpURLConnection urlConnection = null;
-            try {
-                URL url = new URL(urls[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.connect();
-                InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                byte[] data = new byte[8192];
-                int count;
-                while ((count = input.read(data)) != -1) {
-                    current.append(new String(data, 0, count, StandardCharsets.UTF_8));
-                }
-                input.close();
-            } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.DownloadChangelog()" + e);
-                current = new StringBuilder(context.getString(R.string.activity_update_download_error_html));
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-            return current.toString();
-        }
-
-        protected void onPostExecute(String result) {
-            Context context = mContext.get();
-
-            // Attempt to isolate only the inform between the current version and he new version.
-            String newVersion = "## " + new StoredData(context).getLatestVersion();
-            String currentVersion = "## " + BuildConfig.VERSION_NAME;
-            int startIndex = result.indexOf(newVersion);
-            int endIndex = result.indexOf(currentVersion, startIndex);
-            if (startIndex >= 0 && endIndex > startIndex) {
-                result = result.substring(startIndex, endIndex);
-            }
-
-            Parser parser = Parser.builder().build();
-            Node document = parser.parse(result);
-            HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
-            String encodedHtml = Base64.encodeToString(htmlRenderer.render(document).getBytes(), Base64.NO_PADDING);
-            mWebView.get().loadData(encodedHtml, "text/html", "base64");
         }
     }
 
-    private static class DownloadApp extends AsyncTask<String, Integer, File> {
+    private fun downloadChangelog(context: Context, webView: WebView) {
+        CoroutineScope(Dispatchers.IO).launch {
 
-        private final WeakReference<Context> mContext;
-        private final WeakReference<ProgressBar> mProgressBar;
+            // Try to read the change log
+            val client = OkHttpClient.Builder().build()
+            val request: Request = Request.Builder().url(CHANGELOG_URL).build()
+            val response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                val responseBody = response.body
+                var result = responseBody?.bytes()?.decodeToString() as String
 
-        public DownloadApp(Context context, ProgressBar mProgress) {
-            mContext = new WeakReference<>(context);
-            mProgressBar = new WeakReference<>(mProgress);
-        }
+                // Attempt to isolate only the info between the current version and he new version.
+                val newVersion = "## " + StoredData(context).latestVersion
+                val currentVersion = "## " + BuildConfig.VERSION_NAME
+                val startIndex = result.indexOf(newVersion)
+                val endIndex = result.indexOf(currentVersion, startIndex)
+                if (startIndex in 0 until endIndex) {
+                    result = result.substring(startIndex, endIndex)
+                }
 
-        @Override
-        protected File doInBackground(String... urls) {
-            Context context = mContext.get();
-            File apkFile;
-            HttpURLConnection urlConnection = null;
-            try {
-                apkFile = Misc.removeAPK(context);
-                apkFile.createNewFile();
-                URL url = new URL(urls[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.connect();
-                int fileLength = urlConnection.getContentLength();
-                InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                FileOutputStream output = new FileOutputStream(apkFile);
-                byte[] data = new byte[8192];
-                int c;
-                int currentSize = 0;
-                int lastSize = 0;
-                while ((c = input.read(data)) != -1) {
-                    output.write(data, 0, c);
-                    currentSize += c;
-                    if((currentSize - lastSize)*progressIntervals/fileLength > 0 ) {
-                        publishProgress((currentSize*progressIntervals)/fileLength);
-                        lastSize = currentSize;
+                // Convert remaining data into HTML
+                val parser = Parser.builder().build()
+                val document = parser.parse(result)
+                val htmlRenderer = HtmlRenderer.builder().build()
+                val encodedHtml = Base64.encodeToString(
+                    htmlRenderer.render(document).toByteArray(),
+                    Base64.NO_PADDING
+                )
+
+                // Use post() to display, since a webview can only be update in main thread.
+                webView.post {
+                    run {
+                        webView.loadData(encodedHtml, "text/html", "base64")
                     }
                 }
-                input.close();
-                output.close();
-            } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateActivity.DownloadApp()" + e);
-                apkFile = null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
+            }
+        }
+    }
+
+    private fun downloadApp(context: Context, progressBar: ProgressBar) {
+        CoroutineScope(Dispatchers.IO).launch {
+            var apkFile: File? = null
+
+            // Pull APK file from GitHub
+            val client = OkHttpClient.Builder().build()
+            val request: Request = Request.Builder().url(APP_URL).build()
+            val response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                // Remove the last APK, if it exists, and create a new file
+                apkFile = removeAPK(context)
+                apkFile.createNewFile()
+
+                //  Process the body of the response, and figure out how large it is
+                val responseBody = response.body as ResponseBody
+                val fileLength = responseBody.contentLength()
+
+                // Create streams
+                val input = responseBody.byteStream()
+                val output = FileOutputStream(apkFile)
+
+                // Read the data 32K at a time
+                val data = ByteArray(32768)
+                var c: Int
+                var currentSize = 0
+                var lastSize = 0
+                while ((input.read(data).also { c = it }) != -1) {
+                    output.write(data, 0, c)
+                    currentSize += c
+                    if ((currentSize - lastSize) * PROGRESS_INTERVAL / fileLength > 0) {
+                        progressBar.progress =
+                            ((currentSize * PROGRESS_INTERVAL) / fileLength).toInt()
+                        lastSize = currentSize
+                    }
                 }
-            }
-            return apkFile;
-        }
 
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            mProgressBar.get().setProgress(values[0]);
-        }
+                // Close files
+                input.close()
+                output.close()
+            }
 
-        protected void onPostExecute(File apkFile) {
-            Context context = mContext.get();
-            mProgressBar.get().setVisibility(View.GONE);
-             if (apkFile != null) {
-                Uri apkURI = FileProvider.getUriForFile(context.getApplicationContext(), context.getPackageName() + ".provider", apkFile);
-                Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
-                context.startActivity(intent);
+            // When finished, hide progress bar.  This needs to be done in same thread where the
+            // widget was created, so use withContext() to throw back to Main thread
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.GONE
+            }
+
+            // If we read the file, prepare to install it
+            if (apkFile != null) {
+                val apkURI = FileProvider.getUriForFile(
+                    context.applicationContext,
+                    context.packageName + ".provider",
+                    apkFile
+                )
+                val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.setDataAndType(apkURI, "application/vnd.android.package-archive")
+                context.startActivity(intent)
             }
         }
+    }
+
+    companion object {
+        private const val CHANGELOG_URL =
+            "https://raw.githubusercontent.com/khpylon/MachEWidget/master/CHANGELOG.md"
+        private const val APP_URL =
+            "https://github.com/khpylon/MachEWidget/blob/master/app/github/release/app-release.apk?raw=true"
+        private const val PROGRESS_INTERVAL = 50
     }
 }

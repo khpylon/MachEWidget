@@ -266,5 +266,7 @@
   <string name="activity_update_ignore_dialog_message">Das Ignorieren dieses Updates kann nicht rückgängig gemacht werden. Fortfahren?</string>
   <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Versuch, die CHANGELOG.md-Datei herunterzuladen...</h2></body></html>]]</string>
   <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Fehler beim Herunterladen von CHANGELOG.md</h2></body></html>]]</string>
+  <string name="update_receiver_notification_title">App-Update</string>
+  <string name="update_receiver_notification_message">Eine neue App-Version ist verfügbar. Klicken Sie zum Installieren.</string>
 
 </resources>

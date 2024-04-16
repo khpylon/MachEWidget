@@ -306,5 +306,7 @@
     <string name="activity_update_ignore_dialog_message">Ignoring this update cannot be undone. Proceed?</string>
     <string name="activity_update_downloading_html"><![CDATA[<html><body><h2>Attempting to download CHANGELOG.md file...</h2></body></html>]]></string>
     <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Error occurred downloading CHANGELOG.md</h2></body></html>]]></string>
+    <string name="update_receiver_notification_title">App update</string>
+    <string name="update_receiver_notification_message">A new app version is available.  Click to install.</string>
 
 </resources>

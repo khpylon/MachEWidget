@@ -1,155 +1,164 @@
-package com.example.khughes.machewidget;
+package com.example.khughes.machewidget
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import android.text.format.DateUtils;
+import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.text.format.DateUtils
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import com.example.khughes.machewidget.LogFile.e
+import com.example.khughes.machewidget.LogFile.i
+import com.example.khughes.machewidget.Notifications.Companion.NORMAL_NOTIFICATIONS
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
+class UpdateReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        nextAlarm(context)
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+        CoroutineScope(Dispatchers.IO).launch {
 
-public class UpdateReceiver extends BroadcastReceiver {
+            // Try to read version info for current release
+            val apiUrl =
+                "https://raw.githubusercontent.com/khpylon/MachEWidget/master/app/VERSION.txt"
+            val client = OkHttpClient.Builder().build()
+            val request: Request = Request.Builder().url(apiUrl).build()
+            val response = client.newCall(request).execute()
+            if (response.isSuccessful) {
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        nextAlarm(context);
-        final String apiUrl = "https://raw.githubusercontent.com/khpylon/MachEWidget/master/app/VERSION.txt";
-        new Download(context).execute(apiUrl);
-    }
+                // Get last version that was seen
+                val appInfo = StoredData(context)
+                val latestVersion = appInfo.latestVersion as String
 
-    private static class Download extends AsyncTask<String, String, String> {
+                // Convert body to a string
+                val responseBody = response.body
+                val result = responseBody?.bytes()?.decodeToString() as String
 
-        private final WeakReference<Context> mContext;
+                // Look for the line containing version info
+                val version = "Version: "
+                for (item in result.split("\n".toRegex()).dropLastWhile { it.isEmpty() }
+                    .toTypedArray()) {
+                    if (item.contains(version)) {
+                        val newVersion = item.replace(version, "")
+                        e(
+                            context,
+                            MainActivity.CHANNEL_ID,
+                            "UpdateReceiver.onPostExecute(): newest version is $newVersion"
+                        )
 
-        public Download(Context context) {
-            mContext = new WeakReference<>(context);
-        }
+                        // If version is newer than this version and last seen version, we
+                        // have a new version
+                        if (newVersion > BuildConfig.VERSION_NAME &&
+                            newVersion > latestVersion
+                        ) {
+                            e(
+                                context,
+                                MainActivity.CHANNEL_ID,
+                                "UpdateReceiver.onPostExecute(): launching notification"
+                            )
 
-        @Override
-        protected String doInBackground(String... urls) {
-            Context context = mContext.get();
-            StringBuilder current = new StringBuilder();
-            try {
-                HttpURLConnection urlConnection = null;
-                URL url = new URL(urls[0]);
-                try {
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.connect();
-                    InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                    byte[] data = new byte[2048];
-                    int count;
-                    while ((count = input.read(data)) != -1) {
-                        current.append(new String(data, 0, count, StandardCharsets.UTF_8));
-                    }
-                    input.close();
-                } catch (Exception e) {
-                    LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.doInBackground()" + e);
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                }
-            } catch (Exception e) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "exception in UpdateReceiver.doInBackground()" + e);
-            }
-            return current.toString();
-        }
+                            // Save new version for UpdateActivity
+                            appInfo.latestVersion = newVersion
 
-        protected void onPostExecute(String result) {
-            Context context = mContext.get();
-            final String Version = "Version: ";
-            StoredData appInfo = new StoredData(context);
-            final String latestVersion = appInfo.getLatestVersion();
-            for (String item : result.split("\n")) {
-                if (item.contains(Version) || true) {
-                    String newVersion = item.replace(Version, "");
-                    newVersion = "2024.04.14-13";
-                    LogFile.e(context, MainActivity.CHANNEL_ID, "UpdateReceiver.onPostExecute(): newest version is " + newVersion);
-                    if (newVersion.compareTo(BuildConfig.VERSION_NAME) > 0 &&
-                            newVersion.compareTo(latestVersion) > 0) {
-
-                        // Save new version for UpdateActivity
-                        appInfo.setLatestVersion(newVersion);
-                        newApp(context);
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "UpdateReceiver.onPostExecute(): launching notification");
-                        return;
+                            // Display a notification
+                            newApp(context)
+                        }
                     }
                 }
             }
         }
     }
 
-    private static final int APP_NOTIFICATION = 938;
+    companion object {
+        private const val APP_NOTIFICATION = 938
 
-    private static void newApp(Context context) {
-        Intent intent = new Intent(context, UpdateActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Notifications.Companion.getNORMAL_NOTIFICATIONS())
+        // Display notification for new update, and use it to
+        private fun newApp(context: Context?) {
+            val intent = Intent(context, UpdateActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            val pendingIntent =
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            val builder = NotificationCompat.Builder(
+                context!!, NORMAL_NOTIFICATIONS
+            )
                 .setSmallIcon(R.drawable.notification_icon)
                 .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                .setContentTitle("App update")
-                .setContentText("A new app version was found.")
+                .setContentTitle(context.getString(R.string.update_receiver_notification_title))
+                .setContentText(context.getString(R.string.update_receiver_notification_message))
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            notificationManager.notify(APP_NOTIFICATION, builder.build());
+                .setAutoCancel(true)
+            val notificationManager = NotificationManagerCompat.from(context)
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationManager.notify(APP_NOTIFICATION, builder.build())
+            }
         }
-    }
 
-
-
-    private static Intent getIntent(Context context) {
-        return new Intent(context, UpdateReceiver.class).setAction("UpdateReceiver");
-    }
-
-    public static void nextAlarm(Context context) {
-        LocalDateTime time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(1);
-        String timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US));
-        LogFile.i(context, MainActivity.CHANNEL_ID, "UpdateReceiver: next update alarm at " + timeText);
-        long nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
-                getIntent(context), PendingIntent.FLAG_IMMUTABLE);
-        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent);
-        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, nextTime, DateUtils.MINUTE_IN_MILLIS, pendingIntent);
-    }
-
-    // If no alarm is pending, start one
-    public static void initiateAlarm(Context context) {
-        if (PendingIntent.getBroadcast(context, 0,
-                getIntent(context), PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
-            nextAlarm(context);
+        private fun getIntent(context: Context): Intent {
+            return Intent(context, UpdateReceiver::class.java).setAction("UpdateReceiver")
         }
-    }
 
-    // Check for a new version of the app sometime soon
-    public static void createIntent(Context context) {
-        Intent intent = new Intent(context, UpdateReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.HOUR_IN_MILLIS, pendingIntent);
-        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.MINUTE_IN_MILLIS,
-                DateUtils.MINUTE_IN_MILLIS, pendingIntent);
+        // Set an alarm in one hour.
+        fun nextAlarm(context: Context) {
+            val time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(1)
+            val timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US))
+            i(context, MainActivity.CHANNEL_ID, "UpdateReceiver: next update alarm at $timeText")
+            val nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+            val pendingIntent = PendingIntent.getBroadcast(
+                context, 0,
+                getIntent(context), PendingIntent.FLAG_IMMUTABLE
+            )
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager[AlarmManager.RTC_WAKEUP, nextTime] = pendingIntent
+            alarmManager.setWindow(
+                AlarmManager.RTC_WAKEUP,
+                nextTime,
+                DateUtils.MINUTE_IN_MILLIS,
+                pendingIntent
+            )
+        }
+
+        // If no alarm is pending, start one
+        fun initiateAlarm(context: Context) {
+            if (PendingIntent.getBroadcast(
+                    context, 0,
+                    getIntent(context), PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+                ) == null
+            ) {
+                nextAlarm(context)
+            }
+        }
+
+        // Check for a new version of the app sometime soon
+        fun createIntent(context: Context) {
+            val intent = Intent(context, UpdateReceiver::class.java)
+            val pendingIntent =
+                PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager[AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.HOUR_IN_MILLIS] =
+                pendingIntent
+            alarmManager.setWindow(
+                AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.MINUTE_IN_MILLIS, pendingIntent
+            )
+        }
     }
 }

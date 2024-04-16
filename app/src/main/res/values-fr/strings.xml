@@ -266,5 +266,7 @@
   <string name="activity_update_ignore_dialog_message">Ignorer cette mise à jour ne peut pas être annulé. Procéder?</string>
   <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Tentative de téléchargement du fichier CHANGELOG.md...</h2></body></html>]]</string>
   <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Une erreur s\'est produite lors du téléchargement de CHANGELOG.md</h2></body></html>]]</string>
+  <string name="update_receiver_notification_title">Mise à jour de l\'application</string>
+  <string name="update_receiver_notification_message">Une nouvelle version de l\'application est disponible. Cliquer pour installer.</string>
 
 </resources>
