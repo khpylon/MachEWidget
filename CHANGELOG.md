@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.04.16-18
+### Added
+- GitHub version only: changes to Update Activity to support localization info within change logs, and
+  handle issues when the update process was cancelled or interrupted.
+
 ## 2024.04.13-15
 ### Changed
 - Minor localization fixes and changes.
