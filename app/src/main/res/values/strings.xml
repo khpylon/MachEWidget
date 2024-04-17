@@ -177,7 +177,7 @@
     <string name="settings_copied_to_download_description">Settings file %1$s copied to Download folder.</string>
     <string name="settings_restored_description">Settings restored.</string>
     <string name="logcat_crashfile_formatstring">Logcat crash file \"{0}.txt\" copied to Download folder.</string>
-    
+
     <string name="minutes_abbreviation">" min"</string>
     <string name="hours_abbr">" hrs"</string>
     <string name="one_day_abbr">1 day</string>
