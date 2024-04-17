@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -17,6 +18,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.os.ConfigurationCompat
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.example.khughes.machewidget.Misc.Companion.checkDarkMode
@@ -78,7 +80,7 @@ class UpdateActivity : AppCompatActivity() {
 
         mWebView.loadData(encodedHtml, "text/html", "base64")
 
-        downloadChangelog(context, mWebView)
+        downloadChangelog(mWebView, newVersion!!)
 
         val cancelButton = findViewById<Button>(R.id.cancel_button)
         cancelButton.setOnClickListener { _: View? ->
@@ -124,7 +126,7 @@ class UpdateActivity : AppCompatActivity() {
         }
     }
 
-    private fun downloadChangelog(context: Context, webView: WebView) {
+    private fun downloadChangelog(webView: WebView, newVersion: String) {
         CoroutineScope(Dispatchers.IO).launch {
 
             // Try to read the change log
@@ -133,20 +135,31 @@ class UpdateActivity : AppCompatActivity() {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body
-                var result = responseBody?.bytes()?.decodeToString() as String
+                val result = responseBody?.bytes()?.decodeToString() as String
+                val log: String
 
-                // Attempt to isolate only the info between the current version and he new version.
-                val newVersion = "## " + StoredData(context).latestVersion
-                val currentVersion = "## " + BuildConfig.VERSION_NAME
-                val startIndex = result.indexOf(newVersion)
-                val endIndex = result.indexOf(currentVersion, startIndex)
-                if (startIndex in 0 until endIndex) {
-                    result = result.substring(startIndex, endIndex)
+                // If there isn't locale info in the changelog, then it's the old format
+                if (!result.contains("<en-US>")) {
+                    // Attempt to isolate only the info between the current version and he new version.
+                    val currentVersion = BuildConfig.VERSION_NAME
+                    val startIndex = result.indexOf("## $newVersion")
+                    val endIndex = result.indexOf("## $currentVersion", startIndex)
+                    log = if (startIndex in 0 until endIndex) {
+                        result.substring(startIndex, endIndex)
+                    } else {
+                        result
+                    }
+                }
+                // If there IS locale info, use the system language to pull out the changelog info
+                else {
+                    val locales = ConfigurationCompat.getLocales(Resources.getSystem().configuration)
+                    val systemLanguage = locales[0]!!.toLanguageTag()
+                    log = processLocaleChangelog(result, newVersion, systemLanguage)
                 }
 
                 // Convert remaining data into HTML
                 val parser = Parser.builder().build()
-                val document = parser.parse(result)
+                val document = parser.parse(log)
                 val htmlRenderer = HtmlRenderer.builder().build()
                 val encodedHtml = Base64.encodeToString(
                     htmlRenderer.render(document).toByteArray(),
@@ -161,6 +174,55 @@ class UpdateActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // States used when hand parsing XML
+    private enum class STATES {
+        FIND_VERSION, FIND_LOCALE_START, FIND_LOCALE_END
+    }
+
+    // Look for Locale-based info in each log
+    private fun processLocaleChangelog(log: String, newVersion: String, locale: String): String {
+        // Find the log entry for the new version
+
+
+        val startIndex = log.indexOf("## $newVersion")
+        if (startIndex == -1) {
+            return "<h2>No log info found</h2>"
+        }
+        var result = ""
+        val currentVersion = BuildConfig.VERSION_NAME
+        var state = STATES.FIND_VERSION
+        for (item in log.substring(startIndex).split("\n".toRegex()).dropLastWhile { it.isEmpty() }
+            .toTypedArray()) {
+            when (state) {
+                STATES.FIND_VERSION -> {
+                    if (item.startsWith("## ")) {
+                        if (item <= "## $currentVersion") {
+                            break
+                        }
+                        result += "$item\n"
+                        state = STATES.FIND_LOCALE_START
+                    }
+                }
+
+                STATES.FIND_LOCALE_START -> {
+                    if (item == "<$locale>") {
+                        state = STATES.FIND_LOCALE_END
+                    }
+                }
+
+                else -> {
+                    if (item == "</$locale>") {
+                        result += "\n"
+                        state = STATES.FIND_VERSION
+                    } else {
+                        result += "$item\n"
+                    }
+                }
+            }
+        }
+        return result
     }
 
     private fun downloadApp(context: Context, progressBar: ProgressBar) {
