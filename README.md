@@ -94,9 +94,9 @@ Thanks to [tonesto7](https://github.com/tonesto7/fordpass-scriptable) for his wo
 Thanks to [@DevSecOps](https://www.macheforum.com/site/members/devsecops.7076/) on the [Mach-E Forums](https://www.macheforum.com/site/) 
 for his valuable input and help with updating the appearance of the widget and permitting the use of the assets from his app.
 Additional thanks to [marco79cgn](https://github.com/marco79cgn) and [Tobias Battenberg](https://github.com/mountbatt) for your widgets.  
-Thanks to [@Papapoil](https://www.macheforum.com/site/members/papapoil.10902/),
-[@su-ch-mache](https://www.macheforum.com/site/members/su-ch-mache.13995/),
-and [@aulander](https://www.macheforum.com/site/members/aulander.10944/) for their input in porting the app to other
+Thanks to [@Papapoil](https://www.macheforum.com/site/members/papapoil.10902/), [@su-ch-mache](https://www.macheforum.com/site/members/su-ch-mache.13995/),
+[@aulander](https://www.macheforum.com/site/members/aulander.10944/),
+and [@miken] (https://www.macheforum.com/site/members/miken.14630/) for their input in porting the app to other
 languages.  Also, thanks to those
 who have funded the project via PayPal so that I have funds to purchase additional resources to further enhance the app.
 
