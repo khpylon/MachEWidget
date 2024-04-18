@@ -1,0 +1,155 @@
+<html>
+<head>
+<link rel="stylesheet" href="/assets/stylesheet.css">
+</head>
+<body>
+<!-- Corrections welcome -->
+<h3>Oikaisut tervetulleita</h3>
+<!--
+The translations from English were done with Google Translate. If you see something
+incorrect, please create an
+<a href="https://github.com/khpylon/MachEWidget/blob/master/issues">issue on GitHub</a>
+with corrections.
+-->
+<p>
+Käännökset englannista tehtiin Google Translatella. Jos näet jotain väärin, luo
+<a href="https://github.com/khpylon/MachEWidget/blob/master/issues">ongelma GitHubiin</a>
+korjauksilla.
+
+</p>
+<h2>Johdanto</h2>
+Widget tarjoaa nopean näkymän Ford-ajoneuvosi moniin puoliin. Kun kirjaudut sisään FordPass-tilillesi sovelluksen kautta, annat ajoneuvosi tiedot ja asetat widgetin jonnekin puhelimen näytölle, se päivittyy ajoittain näyttämään autosi tilan.
+<p>
+
+Widget näkyy alla. Muista: <b>Sinun on asetettava widget puhelimesi näytölle</b>
+<ol>
+    <li>paina pitkään tyhjää kohtaa näytölläsi</li>
+    <li>valitse "widgetit"</li>
+    <li>vieritä alaspäin, kunnes löydät tämän sovelluksen</li>
+    <li>paina ja vedä widget näytölle</li>
+</ol>
+
+<img src="/assets/preview_5x5-en.png" width="100%"><hr>
+<p><div style="text-align: center;">Täysikokoinen widget</div></p>
+<img src="/assets/preview_2x5-en.png" width="100%"><hr>
+<p><div style="text-align: center;">Keskikokoinen widget</div></p>
+<img src="/assets/widget_1x5_preview.png" width="100%"><hr>
+<p><div style="text-align: center;">Miniatyyri widget</div></p>
+
+<h2>Sovelluksen käyttäminen</h2>
+<p>Kaikki säätimet sijaitsevat kolmen pisteen valikossa.
+    <ul>
+        <li>Aloita valitsemalla "Ford Kirjaudu sisään". Käyttäjätunnustasi ja salasanaasi <b>ei</b> tallenneta.</li>
+        <li>Valitse "Hallinnoi ajoneuvoja" syöttääksesi ajoneuvosi VIN-numero ja lempinimi.</li>
+        <li>Valitse "Päivitä" pakottaaksesi Fordin palvelimien kyselyn.</li>
+        <li>Valitse "Valitse linkitetyt sovellukset" valitaksesi, mitkä sovellukset voidaan käynnistää widgetistä (sijaitsee
+            Asetukset ("ratas") -kuvakkeen oikealla puolella</li>
+        <li>Valitse "Aseta ajoneuvon väri", jos haluat muokata widgetissä näkyvän ajoneuvon väriä. Sinun on myös asetettava "Salli
+            ajoneuvojen värinäyttö" kohdassa "Asetukset".</li>
+        <li>Varmuuskopioi tai palauta henkilökohtaiset tietosi valitsemalla "Tallenna asetukset" tai "Palauta asetukset"
+            (hyödyllinen, kun sovellus on poistettava ennen uutta asennusta).</li>
+        <li>Valitse "Asetukset" muuttaaksesi eri sovellusasetuksia. Voit hallita muun muassa:
+        <ul>
+            <li>aseta taajuus, jolla widget päivittyy</li>
+            <li>ota käyttöön komennot lukitusta/avaa ja kaukokäynnistystä varten, kun painat kuvakkeita (tuleva ominaisuus)</li>
+            <li>ota sijainti käyttöön (jos mahdollista) widgetissä</li>
+            <li>näytä latausistunnon tiedot (katso alla)</li>
+        </ul>
+    </ul>
+</p>
+
+<h2>Kuvakkeen tiedot</h2>
+<p>
+Punaista käytetään yleensä ilmaisemaan jotain epätavallista, kun et käytä autoa. Konepelti/takki, tavaratila/luukku/takaluukku 
+ja ovet korostetaan punaisella osoittaen, että ne eivät ole kiinni. Vastaavasti, jos ikkuna ei ole täysin suljettu, joko 
+punainen kuvake ilmestyy vastaavan oven lähelle (täysikokoinen widget) tai varsinainen ikkuna näkyy punaisena
+(keskikokoiset ja pienoisvekottimet).
+</p>
+<p>
+Kellokuvake <img src="/assets/alarm_green.png" width="18"> osoittaa hälytyksen tilan; vihreä on viritetty, punainen on pois 
+päältä ja punainen "Z":llä tarkoittaa, että ajoneuvo on syvässä unessa.
+</p>
+<p>
+Sytytyssytytyskuvake <img src="/assets/ignition_green.png" width="18"> 
+on vihreä, kun ajoneuvo on päällä, harmaa, kun se on sammutettu, ja keltainen, kun kaukokäynnistys on aktiivinen.
+</p>
+<p>
+12 V (pienjännite- tai LV) akulle näytettävät tiedot voivat näyttää jännitteen, lataustilan (SoC) tai molemmat. Tämä on 
+valittavissa kohdassa "Asetukset". Kun vihreä näkyy edistymispalkissa, SOC on yli 80 %, keltainen yli 50 % ja punainen alle 50 %.
+</p>
+
+<h2>Muiden ominaisuuksien käyttöFeatures</h2>
+<p>
+Widgetin eri osien napauttaminen antaa pääsyn muihin ominaisuuksiin.
+<ul>
+    <li>Yhdellä napauttamalla hälytyskuvaketta <img src="/assets/alarm_green.png" width="18"> 
+      saat näkyviin ajoneuvon sisälämpötilan. Tämä arvo näyttää olevan voimassa vain sytytysvirran ollessa kytkettynä.</li>
+
+    <li>Kolmoisnapautus "Viimeinen päivitys" -tekstiä (tai widgetissä ilman "Viimeinen päivitys" kolmoisnapautus ajoneuvon 
+        kuvaa oikealla) näyttää tiedot viimeisestä sovelluksen päivityksestä widgetillä ja viimeisestä tietojen lumisesta. 
+        palvelimilta.</li>
+
+    <li>Sytytyskuvake ohjaa kaukokäynnistystä/pysäytystoimintoa ja lukkokuvake ohjaa lukitusta/lukituksen avaamista 
+        (kaukosäätimen komennot voidaan ottaa käyttöön asetuksista). Kaksoisnapauta kuvaketta lähettääksesi komennon 
+        ajoneuvoon; voi kestää jopa 30 sekuntia, ennen kuin ajoneuvo vastaa. Keltainen sytytyskuvake osoittaa, että 
+        kaukokäynnistys on aktiivinen.</li>
+    <li>Ajoneuvon kuvan vasemmassa alakulmassa oleva päivityskuvake lähettää ajoneuvolle komennon, joka pakottaa sen 
+        päivittämään tilan (tämä voidaan ottaa käyttöön Asetukset-kohdassa). <b>Varoitus :</b>
+        Koska tämä voi tyhjentää 12 V:n akun, sovellus rajoittaa sitä, kuinka usein voit suorittaa päivityksen 24 tunnin aikana.</li>
+
+    <li>Vain pistokehybridit: yksi napautus prosenttiosuuden edistymispalkissa vaihtaa kaasu- ja sähkötietojen välillä.</li>
+    <li>Vain diesel: yhdellä napautuksella pienjänniteakun näyttöä vaihdetaan 12 V:n akun, dieselpakokaasun tason ja
+        dieselpakonesteen välillä.</li>
+
+    <li>Vain sähkö ja pistoke: yksi pistokekuvakkeen napauttaminen <img src="/assets/plug_green.png" height="18">
+        näyttää korkeajänniteakussa jäljellä olevat kilowattitunnit.</li>
+    <li>Yhdellä napautuksella kaikkia muita paikkoja pääset tälle sivulle.</li>
+</ul>
+
+</p>
+
+<h2>Useita ajoneuvoja</h2>
+<p>Jos omistat useamman kuin yhden FordPassin kanssa yhteensopivan ajoneuvon, kunkin ajoneuvon tilaan pääsee käsiksi widgetistä. Nähdäksesi seuraavan ajoneuvon:
+<ul>
+    <li><b>Pienemmät widgetit</b>: kaksoisnapauta ajoneuvon kuvaa kaksoisnapauta ajoneuvon kuvaa.</li> 
+    <li><b>Suuri widget</b>: napauta ajoneuvosi kuvaa vasemmassa yläkulmassa.
+</ul>
+Voit valita kolmen pisteen valikon "Hallinnoi ajoneuvoja" -toiminnolla, mitkä ajoneuvot sovellus näyttää.
+</p>
+
+<h2>Lataustiedot (ladattavalle ajoneuvolle)</h2>
+<p>Lataustila ilmaistaan ​​latauspistokkeen
+<img src="/assets/plug_green.png" width="15">
+ja suurjänniteakun (HVB) kuvakkeilla
+<img src="/assets/battery_charging.png" width="15">.
+Punainen latauspistoke ja harmaa akkukuvake osoittavat, että auto on irrotettu; vihreä latauspistoke osoittaa, että auto on kytketty pistorasiaan. Kun se on kytketty, akkukuvake osoittaa, mitä tapahtuu:
+<ul>
+    <li>Ei lataa -- <img src="/assets/battery_red.png" width="15"></li>
+    <li>Maksu ajoitettu -- <img src="/assets/battery_blue.png" width="25"></li>
+    <li>Lataus keskeytetty -- <img src="/assets/battery_yellow.png" width="15"></li>
+    <li>Lataus -- <img src="/assets/battery_charging.png" width="15"></li>
+    <li>Lataus valmis -- <img src="/assets/battery_full.png" width="15"></li>
+</ul>
+</p>
+<p>
+Tietoja AC-latausistunnoista voidaan näyttää widgetissä ottamalla käyttöön "Näytä latausistunnon tiedot" "Asetuksissa". Latauksen aikana nykyinen teho ja toimitettu kokonaisenergia näkyvät latauksen edistymispalkissa. Tietoja DC-pikalatauksesta voidaan näyttää ottamalla käyttöön myös "Näytä latausistunnon tiedot". Kun sovellus havaitsee tasavirtapikalatauksen, se pyytää automaattisesti päivityksiä palvelimilta 30 sekunnin välein (huomaa, että haluat ehkä päivittää manuaalisesti, kun aloitat latauksen, jotta päivitykset alkavat nopeammin).
+</p>
+<p>
+Jos otat "Tallenna DCFC-lokit" käyttöön yllä olevien asetusten lisäksi, voit tarkastella viimeisimpiä DC-pikalatausistuntoja kolmen pisteen valikon "View Fast Charge Logs" -kohdassa. Jos lataat parhaillaan, tiedot päivittyvät reaaliajassa, kun tietoja luetaan palvelimilta. Lokit näyttävät tehon, energian ja lataustila jokaisen latausistunnon aikana. Kunkin istunnon tiedot säilytetään 180 päivää, minkä jälkeen ne poistetaan. Kaikki istuntotiedot poistetaan, jos tämä asetus on poistettu käytöstä.
+</p>
+
+<h2>Sovelluskohtaiset kieliasetukset</h2>
+<p>
+Asetukset-kohdassa voit nyt valita sovelluksessa käytettävän kielen. Tällä hetkellä tuetaan vain ranskaa, saksaa, italiaa, puolaa, norjaa, espanjaa, portugalia, ja suomea. Jos haluat tukea toiselle kielelle, lue ohjeet kohdasta
+<a href="https://github.com/khpylon/MachEWidget/blob/master/TRANSLATIONS.md">Käännökset 
+muille kielille (https://github.com/khpylon/MachEWidget/blob/master/TRANSLATIONS.md).</a>
+</p>
+
+<h2>Usein kysytyt kysymykset ja muuta tietoa</h2>
+<p>Katso GitHubin <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">
+usein kysytyt kysymykse (https://github.com/khpylon/MachEWidget/blob/master/FAQ.md)</a> 
+muita kysymyksiä varten (lähetä ehdotuksia muihin kysymyksiin).
+
+</p>
+</body>
+</html>

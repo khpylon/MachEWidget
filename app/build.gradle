@@ -26,7 +26,7 @@ android {
             useSupportLibrary true
         }
         defaultConfig {
-            resConfigs "en", "fr", "de", "it", "pl", "es", "pt", "nb"
+            resConfigs "en", "fr", "de", "it", "pl", "es", "pt", "nb", "fi"
         }
     }
 

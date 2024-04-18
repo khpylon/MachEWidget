@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Fordin tila-widget</string>
+
+    <string name="action_fordpass">FordPass-hälytys</string>
+    <string name="action_login">FordPass Kirjaudu sisään</string>
+    <string name="action_profile">Hallitse profiileja</string>
+    <string name="action_OTA">OTA-päivityksen tiedot</string>
+    <string name="action_chooseapp">Valitse Linkitetyt sovellukset</string>
+    <string name="action_refresh">virkistää</string>
+    <string name="action_backup">Tallenna asetukset</string>
+    <string name="action_restore">Palauta asetukset</string>
+    <string name="action_copylog">Tallenna lokitiedosto</string>
+    <string name="action_view_dcfc_logs">Tarkastele pikalatauslokeja</string>
+    <string name="action_update">Tarkista päivitykset</string>
+    <string name="action_vehicle">Hallitse ajoneuvoja</string>
+    <string name="action_color">Aseta ajoneuvon väri</string>
+    <string name="action_reminder">Aseta latausmuistutus</string>
+    <string name="update_info">Päivitä tieto</string>
+    <string name="action_settings">asetukset</string>
+
+    <!-- Widget things -->
+    <string name="app_widget_description">Näytä Ford-ajoneuvojen tilatiedot</string>
+
+    <string name="reminder_instructions">Aseta muistutusaika virran kytkemiselle, jos ajoneuvon lataus on alle tietyn kynnyksen.</string>
+    <string name="profile_instructions">Napsauta profiilia kirjautuaksesi sisään sillä VIN-koodilla. Napsauta käyttämätöntä merkintää luodaksesi kirjautumistunnuksen uudelle ajoneuvolle. Napsauta "X" poistaaksesi profiilin.</string>
+    <string name="vehicle_instructions">Valitse, mitkä ajoneuvot näkyvät widgetissä. Lisää uusi ajoneuvo napsauttamalla \"+\" -kuvaketta. Poista se pyyhkäisemällä oikealle ajoneuvossa. Ajoneuvoja, joiden VIN-numero on merkitty läpi, ei tällä hetkellä tueta. Jos haluat pyytää tukea, ota kirjaus käyttöön tietojen keräämiseksi ja luo ongelma GitHubissa (https://github.com/khpylon/MachEWidget).</string>
+
+    <!-- Preference Titles and Summaries-->
+    <string name="VIN">"Autosi VIN"</string>
+    <string name="widget_update_frequency">Widget-päivitysten välinen aika</string>
+    <string name="units">Näytettävät yksiköt</string>
+    <string name="enable_commands">Ota käyttöön lukitus- ja käynnistyskomennot widgetissä kaksoisnapauta</string>
+    <string name="enable_app_launchers">Ota sovellusten käynnistyspainikkeet käyttöön</string>
+    <string name="choose_apps_title">Salli minkä tahansa sovelluksen linkittäminen \"laturi\"-widgetiin</string>
+    <string name="transparent_back">Käytä läpinäkyvää taustaa</string>
+    <string name="last_refresh_time">Näytä viimeisimmän päivityksen aika kuluneen ajan sijaan</string>
+    <string name="show_location">Näytä sijainti widgetissä</string>
+    <string name="save_credentials">Tallenna kirjautumistiedot</string>
+    <string name="use_credentials">Käytä tallennettuja tunnistetietoja</string>
+    <string name="logging">Ota kirjaus käyttöön</string>
+    <string name="logging_summary">Tallenna lokitiedot paikalliseen tiedostoon erillään järjestelmälokeista</string>
+    <string name="github_title">GitHub repo</string>
+    <string name="github_summary">Linkki koodivarastoon</string>
+    <string name="battery_opt">Akun optimointi</string>
+    <string name="battery_notification_title">Ota käyttöön akun optimointiilmoitus</string>
+    <string name="force_updates">Automaattiset pakotetut päivitykset</string>
+    <string name="force_updates_summary">Jos ajoneuvon tiedot ovat yli 6 tuntia vanhoja, pakota päivitys automaattisesti. VAROITUS: Tämä voi aiheuttaa 12 V:n akun tyhjenemisen.</string>
+    <string name="user_force_updates">Ota pakotettu päivitys käyttöön</string>
+    <string name="user_force_updates_summary">Salli käyttäjän pakotetut päivitykset widgetistä. VAROITUS: Tämä voi aiheuttaa 12 V:n akun tyhjenemisen.</string>
+    <string name="use_colors">Ota käyttöön ajoneuvon värinäyttö</string>
+    <string name="use_image">Näytä ajoneuvon valokuva logon sijaan täysikokoisessa widgetissä</string>
+    <string name="zenmode">Älä päivitä, kun Älä häiritse -tila on aktiivinen</string>
+    <string name="hibernate_api">Hibernate-sovellus</string>
+    <string name="hibernate_api_summary">Älä nouta tietoja, ennen kuin julkinen API on julkaistu</string>
+    <string name="check_charging">Näytä latausistunnon tiedot</string>
+    <string name="check_charging_summary">Latauksen aikana näytä latausnopeus ja lisätty energia</string>
+    <string name="check_dcfastcharging_title">Näytä DCFC-tiedot</string>
+    <string name="check_dcfastcharging_summary">Kun DC-pikalataus, pyydä päivityksiä 30 sekunnin välein</string>
+    <string name="dcfclog">Tallenna DCFC-lokit</string>
+    <string name="dcfclog_summary">Tallenna pikalataustiedot, jotta ne voidaan tarkastella sovelluksessa (Näytä myös DCFC-tiedot).</string>
+    <string name="activity_settings_language_title">Kieli</string>
+    <string name="activity_settings_language_summary">Sovelluksen käyttämä kieli</string>
+
+
+    <!-- Shared preference keys -->
+
+    <!-- Values for setting units (see arrays.xml anr Miscellaneous.kt) -->
+
+    <!-- survey values -->
+    <string name="fordpass_description">Tarkista nämä tiedot FordPass-kirjautumistunnuksesi jakamisesta.</string>
+
+    <string name="clear_alert">Tyhjennä hälytys</string>
+    <string name="install_update">Asenna päivitys</string>
+
+    <string name="disclaimer">Kirjautumistunnuksiasi käytetään vain FordPass-tilillesi pääsyyn. Niitä ei tallenneta sovellukseen.</string>
+
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="next">Seuraava</string>
+    <string name="previous">Edellinen</string>
+
+    <string name="correct_VIN_length">VIN-koodin tulee olla 17 merkkiä pitkä.</string>
+    <string name="username_or_e_mail">Käyttäjätunnus tai sähköpostiosoite</string>
+    <string name="password">Salasana</string>
+    <string name="login">Kirjaudu sisään</string>
+    <string name="vehicles_vin">Ajoneuvon VIN</string>
+    <string name="vehicle_s_nickname">Ajoneuvon lempinimi</string>
+
+    <string name="charging_information_title">Lataustiedot</string>
+    <string name="charging_infomation_summary">Koskee vain sähköautoja</string>
+    <string name="enable_commands_summary">HUOMAUTUS: ei saatavilla ennen kuin Fordin julkinen API on julkaistu.</string>
+    <string name="lvb_display_description">Näytetään 12 V akun tiedot</string>
+
+    <!-- Strings used within the app in various activities-->
+    <string name="kw_rate_kwh_added">\n{0}kW, {1}kWh lisätty</string>
+    <string name="charging_target_reached">- Tavoite saavutettu</string>
+    <string name="charging_completed">- Valmis</string>
+    <string name="charging_preconditioning">- Esikäsittely</string>
+    <string name="charging_just_charging">- Lataus</string>
+    <string name="good">Hyvä</string>
+    <string name="warning">Varoitus</string>
+    <string name="just_now_description">juuri nyt</string>
+    <string name="app_no_longer_installed">Sovellusta ei ole enää asennettu</string>
+    <string name="last_update_label">"Viimeisin päivitys klo"</string>
+    <string name="last_alarm_label">"Viimeinen hälytys klo"</string>
+    <string name="battery_energy_remaining_label">"Akun jäljellä oleva energia on"</string>
+    <string name="unavailable_label">ei ole saatavilla.</string>
+    <string name="ambient_temperature_label">"Ympäristön lämpötila on"</string>
+    <string name="token_is_being_refreshed_description">Tunnusta päivitetään. tämä voi kestää hetken.</string>
+    <string name="forcing_a_refresh_description">Päivityksen pakottaminen; tämä voi kestää 30 sekuntia.</string>
+    <string name="force_update_delay_description">"Ei voi pakottaa päivitystä toiselle"</string>
+    <string name="too_many_forced_updates_description">"Liian monta pakotettua päivitystä; ominaisuus poistettu käytöstä"</string>
+    <string name="lvb_status_bad_description">LVB-tila ei ole hyvä.</string>
+    <string name="error_title">Virhe</string>
+    <string name="no_apps_found">Muita sovelluksia ei löytynyt.</string>
+    <string name="remove_app_selection">Poista tämä sovellus</string>
+    <string name="activity_choose_app_link_app_to">Linkitä sovellus kohteeseen</string>
+    <string name="activity_color_wireframe_color">Lankakehyksen väri</string>
+    <string name="activity_color_white">Valkoinen</string>
+    <string name="activity_color_black">Musta</string>
+    <string name="activity_color_auto">Auto</string>
+    <string name="activity_color_save">Tallentaa</string>
+    <string name="activity_color_reset">Nollaa</string>
+    <string name="activity_color_auto_button">Auto</string>
+    <string name="activity_color_autoImage_hint">Käytä tallennettua kuvaa värilähteenä.</string>
+    <string name="activity_color_rgb_value">RGB-arvo: #</string>
+    <string name="close_button">kiinni</string>
+    <string name="ignore_button">Jättää huomiotta</string>
+    <string name="remote_commands_disabled_title">Etäkomennot on poistettu käytöstä.</string>
+    <string name="remote_commands_disabled_description">Ford on muuttanut API:ta ja kauko-komennot (lukitus ja käynnistys) eivät enää toimi. Jos ne tulevat esille tulevassa julkisessa sovellusliittymässä, ne otetaan automaattisesti uudelleen käyttöön sovelluksessa.</string>
+    <string name="permission_granted">Lupa myönnetty!</string>
+    <string name="permission_denied">Lupa kielletty!</string>
+    <string name="refresh_in_5_seconds_description">Päivitys ajoitettu 5 sekunnin kuluttua.</string>
+    <string name="update_check_description">Tarkistetaan päivitystä; Jos sellainen löytyy, näkyviin tulee ilmoitus.</string>
+    <string name="settings_copied_to_download_description">Asetustiedosto %1$s kopioitiin latauskansioon.</string>
+    <string name="settings_restored_description">Asetukset palautettu.</string>
+    <string name="logcat_crashfile_formatstring">Logcat-kaatumistiedosto \"{0}.txt\" kopioitiin latauskansioon.</string>
+
+    <string name="minutes_abbreviation">" min"</string>
+    <string name="hours_abbr">" tuntia"</string>
+    <string name="one_day_abbr">1 päivä</string>
+    <string name="days_abbr">" päiviä"</string>
+    <string name="seconds_abbreviation">" sek"</string>
+
+    <string name="elapsed_minutes_pattern">{0} min sitten</string>
+    <string name="elapsed_one_hour">1 h sitten</string>
+    <string name="elapsed_hours_pattern">{0} tuntia sitten</string>
+    <string name="elapsed_one_hour_and_minutes_pattern">1 tunti, {0} min sitten</string>
+    <string name="elapsed_hours_and_minutes_pattern">{0} tuntia, {1} min sitten</string>
+    <string name="elapsed_one_day">1 päivä sitten</string>
+    <string name="elapsed_days_pattern">{0} päivää sitten</string>
+
+    <string name="five_minutes_abbreviation">5 min</string>
+    <string name="ten_minutes_abbreviation">10 min</string>
+    <string name="fifteen_minutes_abbreviation">15 min</string>
+    <string name="twenty_minutes_abbreviation">20 min</string>
+    <string name="thirty_minutes_abbreviation">30 min</string>
+    <string name="single_hour_abbr">1 tunti</string>
+    <string name="two_hour_abbr">2 tuntia</string>
+    <string name="manual_updates_description">Manuaaliset päivitykset</string>
+
+    <string name="settings_lvd_display_voltage">Jännite</string>
+    <string name="settings_lvd_display_soc">Maksutila</string>
+    <string name="settings_lvd_display_both">Jännite ja SOC</string>
+    <string name="settings_lvd_display_progress">SOC edistymispalkkina</string>
+
+    <string name="lvb_status_notification_title">LVB:n tila</string>
+    <string name="lbv_status_notification_description">LVB:n tila on \"matala\".</string>
+    <string name="tpms_status_notification_title">TPMS-tila</string>
+    <string name="tpms_status_notification_format">TPMS-tila kohdassa {0} epänormaali.</string>
+    <string name="tpms_left_front_tire">vasen eturengas on</string>
+    <string name="tpms_right_front_tire">oikea eturengas on</string>
+    <string name="tpms_left_rear_tire">vasen takarengas on</string>
+    <string name="tpms_right_rear_tire">oikea takarengas on</string>
+    <string name="tpms_multiple_tires">renkaita on useita</string>
+    <string name="charge_status_notification_title">Latauksen tila</string>
+    <string name="charge_status_notification_message">Lataus on valmis.</string>
+    <string name="battery_optimization_notification_title">Akun optimointi on päällä</string>
+    <string name="battery_optimization_notification_description">Tämä voi häiritä sovelluksen suorituskykyä. harkitse niiden poistamista käytöstä.</string>
+    <string name="charge_reminder_notification_title">Maksumuistutus</string>
+    <string name="charge_reminder_notification_description">HVB-taso on alle kynnyksen eikä laturia havaita.</string>
+    <string name="login_issue_notification_title">Sisäänkirjautuminen vaaditaan</string>
+    <string name="login_issue_notification_description">Tunnuksia ei voi päivittää: sinun on kirjauduttava sisään uudelleen.</string>
+    <string name="survey_notification_title">Uusi kysely saatavilla</string>
+    <string name="survey_notification_description">Vastaa kyselyyn antaaksesi palautetta kehittäjälle.</string>
+    <string name="account_disabled_notification_title">FordPass-tili poistettu käytöstä!</string>
+    <string name="account_disabled_notification_description">Sovellus ei pääse käsiksi tietoihisi. Ota yhteyttä Fordiin aktivoidaksesi tilisi uudelleen.</string>
+    <string name="no_vehicles_notification_title">Ajoneuvoja ei löytynyt</string>
+    <string name="no_vehicles_notification_description">Sovellukseen ei ole liitetty ajoneuvoja.</string>
+    <string name="misc_error_message">Virhe</string>
+    <string name="activity_reminder_noEVs_description">Yhtään PHEV:tä tai BEV:tä ei löytynyt.</string>
+    <string name="settings_battery_opts_off_description">Pois (suositus)</string>
+    <string name="settings_battery_opts_on_description">Päällä (voi aiheuttaa ongelmia)</string>
+    <string name="activity_vehicle_status_success_description">Ajoneuvon tila haettu onnistuneesti.</string>
+    <string name="activity_vehicle_status_failure_description">Ajoneuvon tilaa ei voi hakea.</string>
+    <string name="activity_vehicle_enter_new_vehicle_information">Anna uuden ajoneuvon tiedot:</string>
+
+    <string name="activity_vehicle_vin_exists">Tämä VIN on jo olemassa.</string>
+    <string name="activity_vehicle_nickname_exists">Tämä nimimerkki on jo käytössä.</string>
+    <string name="activity_vehicle_remove_vehicle_title">Poista ajoneuvo</string>
+    <string name="activity_vehicle_remove_vehicle_description">Vahvista, että haluat poistaa tämän ajoneuvon sovelluksesta.</string>
+    <string name="activity_vehicle_userId_missing">Ajoneuvoja ei voi lisätä ilman kelvollista käyttäjää; Kirjaudu sisään ensin.</string>
+
+    <!-- strings used in the Reminder activity -->
+    <string name="activity_reminder_notification_enabled">Ilmoitus käytössä:</string>
+    <string name="activity_reminder_notification_time">Ilmoitusaika:</string>
+    <string name="activity_reminder_threshold_battery_level">Akun varaustason kynnys:</string>
+
+    <!-- Used in NetworkCalls.kt -->>
+    <string name="networkcalls_command_transmitted">Komento lähetetty.</string>
+
+    <!-- strings used in the actual widgets -->
+    <string name="widgets_location_label">Sijainti:</string>
+    <string name="def_level_label">"DEF-taso: "</string>
+    <string name="def_range_label">"DEF-alue: "</string>
+    <string name="widget_last_refresh_label">"Viimeinen päivitys:"</string>
+    <string name="odometer_label">"Odo:"</string>
+    <string name="vehicle_label">"Ajoneuvo:"</string>
+    <string name="max_power_label">"Maksimi voima: "</string>
+    <string name="average_power_label">"Keskimääräinen teho:"</string>
+    <string name="energy_added_label">"Lisätty energia:"</string>
+    <string name="range_label">"Alue:"</string>
+    <string name="widgets_profile_label">"Profiili:"</string>
+    <string name="widgets_odometer_label">Odo: N/A</string>
+    <string name="widgets_def_level_label">DEF-taso: N/A</string>
+    <string name="widgets_def_range_label">DEF-alue: N/A</string>
+    <string name="widget_dte_label">200 mailia</string>
+    <string name="widgets_gom_label">200 mailia\nLataus valmis</string>
+    <string name="widgets_nickname_label">Nimimerkki</string>
+    <string name="widgets_lv_bat_label">"LV Bat:"</string>
+    <string name="widgets_na_label">Ei käytössä</string>
+
+    <string name="activity_choose_left_button_text">Vasen nappi</string>
+    <string name="activity_choose_right_button_text">Oikea painike</string>
+
+    <string name="activity_charging_three_missing_settings_error">Kaikki vaaditut asetukset on poistettu käytöstä.</string>
+    <string name="activity_charging_two_missing_settings_error">Kaksi vaadituista asetuksista on poistettu käytöstä.</string>
+    <string name="activity_charging_one_missing_setting_error">Yksi vaadituista asetuksista on poistettu käytöstä.</string>
+    <string name="activity_charging_unexpected_issue_error">On odottamaton ongelma.</string>
+    <string name="activity_charging_unexpected_issue_description">Tee virheraportti GitHubissa.</string>
+    <string name="activity_charging_three_missing_settings_pattern">Ota Asetuksissa käyttöön \"{0}", \"{1}\" ja \"{2}\".\n\nHaluatko ottaa nämä asetukset käyttöön?</string>
+    <string name="activity_charging_two_missing_settings_pattern">Ota Asetukset-kohdassa käyttöön sekä \"{0}\" että \"{1}\".\n\nHaluatko ottaa nämä asetukset käyttöön?</string>
+    <string name="activity_charging_one_missing_setting_pattern">Ota Asetuksissa käyttöön \"{0}\".\n\nHaluatko ottaa tämän asetuksen käyttöön?</string>
+    <string name="activity_charging_logfile_error">Lokitiedosto on tyhjä.</string>
+    <string name="activity_charging_logfile_message">Kun aloitat pikalatauksen, päivitä sovellus manuaalisesti aloittaaksesi tietojen tallentamisen.</string>
+    <string name="activity_charging_seconds_label">Sekuntia</string>
+    <string name="activity_charging_energy_button">Energiaa</string>
+    <string name="activity_charging_power_button">Tehoa</string>
+    <string name="activity_charging_soc_button">Veloitus %</string>
+
+    <string name="activity_settings_system_default_label">Järjestelmän oletusarvo</string>
+
+    <string name="activity_login_enter_username_toast">Anna käyttäjätunnuksesi.</string>
+    <string name="activity_login_enter_password_toast">Anna salasanasi.</string>
+    <string name="activity_login_login_successful_toast">Kirjautuminen onnistui; päivittyy 5 sekunnissa.</string>
+    <string name="activity_login_check_username__password_toast">Palvelimelle kirjautuminen ei onnistu: tarkista käyttäjätunnuksesi ja/tai salasanasi?</string>
+    <string name="activity_login_attempting_to_log_in_toast">Yritetään kirjautua sisään…</string>
+    <string name="activity_login_account_disabled_error_toast">Tilisi on poistettu käytöstä (virhe {0}): ota yhteyttä Fordiin FordPass-sovelluksen kautta aktivoidaksesi uudelleen.</string>
+
+    <string name="activity_update_app_permissions">Sovellus tarvitsee luvan tuntemattomien sovellusten asentamiseen. Lisätietoja on GitHubin usein kysytyissä kysymyksissä.</string>
+    <string name="activity_update_updating_dialog_title">Ilmoitus</string>
+    <string name="activity_update_updating_dialog_message">Kun sovellus on päivitetty, se sulkeutuu.</string>
+    <string name="activity_update_ignore_dialog_title">Varoitus</string>
+    <string name="activity_update_ignore_dialog_message">Tämän päivityksen huomioimatta jättämistä ei voi kumota. Edetä?</string>
+    <string name="activity_update_downloading_html"><![CDATA[<html><body><h2>Yritetään ladata CHANGELOG.md-tiedostoa…</h2></body></html>]]></string>
+    <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>CHANGELOG.md:n lataamisessa tapahtui virhe</h2></body></html>]]></string>
+    <string name="update_receiver_notification_title">Sovelluksen päivitys</string>
+    <string name="update_receiver_notification_message">Uusi sovellusversio on saatavilla. Napsauta asentaaksesi.</string>
+
+</resources>
