@@ -207,13 +207,13 @@ class UpdateActivity : AppCompatActivity() {
                 }
 
                 STATES.FIND_LOCALE_START -> {
-                    if (item == "<$locale>") {
+                    if (item.contains("<<$locale>")) {
                         state = STATES.FIND_LOCALE_END
                     }
                 }
 
                 else -> {
-                    if (item == "</$locale>") {
+                    if (item.contains("</$locale>")) {
                         result += "\n"
                         state = STATES.FIND_VERSION
                     } else {
