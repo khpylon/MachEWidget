@@ -264,8 +264,8 @@
   <string name="activity_update_updating_dialog_message">Una vez actualizada la aplicación, se cerrará.</string>
   <string name="activity_update_ignore_dialog_title">Advertencia</string>
   <string name="activity_update_ignore_dialog_message">Ignorar esta actualización no se puede deshacer. ¿Proceder?</string>
-  <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Intentando descargar el archivo CHANGELOG.md...</h2></body></html>]]</string>
-  <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Se produjo un error al descargar CHANGELOG.md</h2></body></html>]]</string>
+  <string name="activity_update_downloading_html"><![CDATA[<html><body><h2>Intentando descargar el archivo CHANGELOG.md...</h2></body></html>]]></string>
+  <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Se produjo un error al descargar CHANGELOG.md</h2></body></html>]]></string>
   <string name="update_receiver_notification_title">Actualización de la aplicación</string>
   <string name="update_receiver_notification_message">Hay una nueva versión de la aplicación disponible. Haga clic para instalar.</string>
 

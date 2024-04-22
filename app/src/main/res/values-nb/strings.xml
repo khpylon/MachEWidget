@@ -264,8 +264,8 @@
     <string name="activity_update_updating_dialog_message">Etter at appen er oppdatert, lukkes den.</string>
     <string name="activity_update_ignore_dialog_title">Advarsel</string>
     <string name="activity_update_ignore_dialog_message">Ignorering av denne oppdateringen kan ikke angres. Fortsette?</string>
-    <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Forsøker å laste ned filen CHANGELOG.md...</h2></body></html>]]</string>
-    <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Det oppsto en feil ved nedlasting av CHANGELOG.md</h2></body></html>]]</string>
+    <string name="activity_update_downloading_html"><![CDATA[<html><body><h2>Forsøker å laste ned filen CHANGELOG.md...</h2></body></html>]]></string>
+    <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Det oppsto en feil ved nedlasting av CHANGELOG.md</h2></body></html>]]></string>
     <string name="update_receiver_notification_title">Appoppdatering</string>
     <string name="update_receiver_notification_message">En ny appversjon er tilgjengelig. Klikk for å installere.</string>
 

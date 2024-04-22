@@ -259,11 +259,11 @@
 	<string name="activity_login_attempting_to_log_in_toast">Logowanie…</string>
 	<string name="activity_login_account_disabled_error_toast">Twoje konto zostało zablokowane (Błąd {0}): skontaktuj się z Fordem przez aplikację FordPass w celu odblokowania.</string>
 
-	<string name="activity_update_app_permissions">Aplikacja wymaga pozwolenia na instalowanie nieznanych aplikacji. Aby uzyskać więcej informacji, przeczytaj często zadawane pytania w serwisie GitHub.</string>
-	<string name="activity_update_updating_dialog_title">Ogłoszenie</string>
+	<string name="activity_update_app_permissions">Aplikacja wymaga pozwolenia na instalowanie z nieznanych źródeł. Aby uzyskać więcej informacji, przeczytaj FAQ w serwisie GitHub.</string>
+	<string name="activity_update_updating_dialog_title">Uwaga</string>
 	<string name="activity_update_updating_dialog_message">Po zaktualizowaniu aplikacja zostanie zamknięta.</string>
-	<string name="activity_update_ignore_dialog_title">Ostrzeżenie</string>
-	<string name="activity_update_ignore_dialog_message">v</string>
+	<string name="activity_update_ignore_dialog_title">Uwaga</string>
+	<string name="activity_update_ignore_dialog_message">Zignorowanie tej aktualizacji nie może być cofnięte. Kontynuować? </string>
 	<string name="activity_update_downloading_html">![CDATA[<html><body><h2>Próba pobrania pliku CHANGELOG.md...</h2></body></html>]]</string>
 	<string name="activity_update_download_error_html">![CDATA[<html><body><h2>Wystąpił błąd podczas pobierania CHANGELOG.md</h2></body></html>]]</string>
 	<string name="update_receiver_notification_title">Aktualizacja aplikacji</string>

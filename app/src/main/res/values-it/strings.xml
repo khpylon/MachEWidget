@@ -264,8 +264,8 @@
     <string name="activity_update_updating_dialog_message">Una volta aggiornata, l\'app verrà chiusa.</string>
     <string name="activity_update_ignore_dialog_title">Avvertimento</string>
     <string name="activity_update_ignore_dialog_message">Ignorare questo aggiornamento non può essere annullato. Procedere?</string>
-    <string name="activity_update_downloading_html">![CDATA[<html><body><h2>Tentativo di scaricare il file CHANGELOG.md...</h2></body></html>]]</string>
-    <string name="activity_update_download_error_html">![CDATA[<html><body><h2>Si è verificato un errore durante il download di CHANGELOG.md</h2></body></html>]]</string>
+    <string name="activity_update_downloading_html"><![CDATA[<html><body><h2>Tentativo di scaricare il file CHANGELOG.md...</h2></body></html>]]></string>
+    <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Si è verificato un errore durante il download di CHANGELOG.md</h2></body></html>]]></string>
     <string name="update_receiver_notification_title">Aggiornamento dell\'app</string>
     <string name="update_receiver_notification_message">È disponibile una nuova versione dell\'app. Fare clic per installare.</string>
 
