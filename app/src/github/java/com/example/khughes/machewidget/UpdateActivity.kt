@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -18,7 +17,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import androidx.core.os.ConfigurationCompat
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.example.khughes.machewidget.Misc.Companion.checkDarkMode
@@ -34,8 +32,17 @@ import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Locale
 
 class UpdateActivity : AppCompatActivity() {
+
+    // Create Locales we can use for other languages
+    private val NORWAY_BOKMAL = Locale("nb")
+    private val SPANISH = Locale("es")
+    private val PORTUGUESE = Locale("pt")
+    private val POLISH = Locale("pl")
+    private val FINNISH = Locale("fi")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = applicationContext
@@ -128,33 +135,36 @@ class UpdateActivity : AppCompatActivity() {
 
     private fun downloadChangelog(webView: WebView, newVersion: String) {
         CoroutineScope(Dispatchers.IO).launch {
+            val changelogPage =
+                when (val language = Locale.getDefault().language) {
+                    Locale.FRENCH.language,
+                    Locale.GERMAN.language,
+                    Locale.ITALIAN.language,
+                    POLISH.language,
+                    NORWAY_BOKMAL.language,
+                    FINNISH.language,
+                    SPANISH.language,
+                    PORTUGUESE.language -> "https://raw.githubusercontent.com/khpylon/MachEWidget/master/changelogs/CHANGELOG_$language.md"
+                    else -> "https://raw.githubusercontent.com/khpylon/MachEWidget/master/CHANGELOG.md"
+                }
 
             // Try to read the change log
             val client = OkHttpClient.Builder().build()
-            val request: Request = Request.Builder().url(CHANGELOG_URL).build()
+            val request: Request = Request.Builder().url(changelogPage).build()
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body
                 val result = responseBody?.bytes()?.decodeToString() as String
                 val log: String
 
-                // If there isn't locale info in the changelog, then it's the old format
-                if (!result.contains("<en-US>")) {
-                    // Attempt to isolate only the info between the current version and he new version.
-                    val currentVersion = BuildConfig.VERSION_NAME
-                    val startIndex = result.indexOf("## $newVersion")
-                    val endIndex = result.indexOf("## $currentVersion", startIndex)
-                    log = if (startIndex in 0 until endIndex) {
-                        result.substring(startIndex, endIndex)
-                    } else {
-                        result
-                    }
-                }
-                // If there IS locale info, use the system language to pull out the changelog info
-                else {
-                    val locales = ConfigurationCompat.getLocales(Resources.getSystem().configuration)
-                    val systemLanguage = locales[0]!!.toLanguageTag()
-                    log = processLocaleChangelog(result, newVersion, systemLanguage)
+                // Attempt to isolate only the info between the current version and he new version.
+                val currentVersion = BuildConfig.VERSION_NAME
+                val startIndex = result.indexOf("## $newVersion")
+                val endIndex = result.indexOf("## $currentVersion", startIndex)
+                log = if (startIndex in 0 until endIndex) {
+                    result.substring(startIndex, endIndex)
+                } else {
+                    result
                 }
 
                 // Convert remaining data into HTML
@@ -174,55 +184,6 @@ class UpdateActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    // States used when hand parsing XML
-    private enum class STATES {
-        FIND_VERSION, FIND_LOCALE_START, FIND_LOCALE_END
-    }
-
-    // Look for Locale-based info in each log
-    private fun processLocaleChangelog(log: String, newVersion: String, locale: String): String {
-        // Find the log entry for the new version
-
-
-        val startIndex = log.indexOf("## $newVersion")
-        if (startIndex == -1) {
-            return "<h2>No log info found</h2>"
-        }
-        var result = ""
-        val currentVersion = BuildConfig.VERSION_NAME
-        var state = STATES.FIND_VERSION
-        for (item in log.substring(startIndex).split("\n".toRegex()).dropLastWhile { it.isEmpty() }
-            .toTypedArray()) {
-            when (state) {
-                STATES.FIND_VERSION -> {
-                    if (item.startsWith("## ")) {
-                        if (item <= "## $currentVersion") {
-                            break
-                        }
-                        result += "$item\n"
-                        state = STATES.FIND_LOCALE_START
-                    }
-                }
-
-                STATES.FIND_LOCALE_START -> {
-                    if (item.contains("<<$locale>")) {
-                        state = STATES.FIND_LOCALE_END
-                    }
-                }
-
-                else -> {
-                    if (item.contains("</$locale>")) {
-                        result += "\n"
-                        state = STATES.FIND_VERSION
-                    } else {
-                        result += "$item\n"
-                    }
-                }
-            }
-        }
-        return result
     }
 
     private fun downloadApp(context: Context, progressBar: ProgressBar) {
@@ -288,8 +249,6 @@ class UpdateActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val CHANGELOG_URL =
-            "https://raw.githubusercontent.com/khpylon/MachEWidget/master/CHANGELOG.md"
         private const val APP_URL =
             "https://github.com/khpylon/MachEWidget/blob/master/app/github/release/app-release.apk?raw=true"
         private const val PROGRESS_INTERVAL = 50
