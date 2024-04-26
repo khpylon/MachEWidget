@@ -7,6 +7,7 @@
     android:theme="@style/Theme.MacheWidget"
     tools:context=".OTAViewActivity">
 
+    <!--
     <LinearLayout
         android:id="@+id/widget_layout"
         android:layout_width="match_parent"
@@ -36,4 +37,5 @@
             android:text="@string/clear_alert" />
 
     </LinearLayout>
+    -->
 </androidx.constraintlayout.widget.ConstraintLayout>

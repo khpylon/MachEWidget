@@ -5,10 +5,10 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.khughes.machewidget.CarStatus.CarStatus
-import com.example.khughes.machewidget.OTAStatus.FuseResponse
+//import com.example.khughes.machewidget.OTAStatus.FuseResponse
 import com.example.khughes.machewidget.OTAStatus.FuseResponseList
 import com.example.khughes.machewidget.OTAStatus.LanguageText
-import com.example.khughes.machewidget.OTAStatus.OTAStatus
+//import com.example.khughes.machewidget.OTAStatus.OTAStatus
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -80,27 +80,27 @@ class VehicleInfo {
         chargeThresholdLevel = 7
     }
 
-    fun fromOTAStatus(status: OTAStatus) {
-        responseList = status.fuseResponse.fuseResponseList[0]
-        error = status.error
-        otaAlertStatus = status.otaAlertStatus
-        updatePendingState = status.updatePendingState
-        languageText = status.fuseResponse.languageText
-    }
-
-    fun toOTAStatus(): OTAStatus {
-        val status = OTAStatus()
-        val list = ArrayList<FuseResponseList?>()
-        list.add(responseList)
-        val tmp = FuseResponse()
-        tmp.fuseResponseList = list
-        status.fuseResponse = tmp
-        status.error = error
-        status.otaAlertStatus = otaAlertStatus
-        status.updatePendingState = updatePendingState
-        status.fuseResponse.languageText = languageText
-        return status
-    }
+//    fun fromOTAStatus(status: OTAStatus) {
+//        responseList = status.fuseResponse.fuseResponseList[0]
+//        error = status.error
+//        otaAlertStatus = status.otaAlertStatus
+//        updatePendingState = status.updatePendingState
+//        languageText = status.fuseResponse.languageText
+//    }
+//
+//    fun toOTAStatus(): OTAStatus {
+//        val status = OTAStatus()
+//        val list = ArrayList<FuseResponseList?>()
+//        list.add(responseList)
+//        val tmp = FuseResponse()
+//        tmp.fuseResponseList = list
+//        status.fuseResponse = tmp
+//        status.error = error
+//        status.otaAlertStatus = otaAlertStatus
+//        status.updatePendingState = updatePendingState
+//        status.fuseResponse.languageText = languageText
+//        return status
+//    }
 
     fun setLastUpdateTime() {
         lastUpdateTime =

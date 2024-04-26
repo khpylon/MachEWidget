@@ -28,8 +28,11 @@ import kotlinx.coroutines.*
 import java.io.*
 import java.lang.Integer.min
 import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.function.Predicate
@@ -723,6 +726,12 @@ class Misc {
                 )
             }
 
+        }
+
+        @JvmStatic
+        fun convertMillisToDate(millis: Long, format: String?): String {
+            val time = ZonedDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault())
+            return time.format(DateTimeFormatter.ofPattern(format, Locale.ENGLISH))
         }
 
 //        @JvmStatic

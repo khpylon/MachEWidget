@@ -1130,7 +1130,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val timeFormat =
                                 if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
                             val lastUpdate =
-                                OTAViewActivity.convertMillisToDate(lastUpdateInMillis, timeFormat)
+                                Misc.convertMillisToDate(lastUpdateInMillis, timeFormat)
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.last_update_label) + lastUpdate,
@@ -1139,7 +1139,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                 .show()
                             val lastAlarmInMillis = StoredData(context).lastAlarmTime
                             val lastAlarm =
-                                OTAViewActivity.convertMillisToDate(lastAlarmInMillis, timeFormat)
+                                Misc.convertMillisToDate(lastAlarmInMillis, timeFormat)
                             Toast.makeText(context,
                                 context.getString(R.string.last_alarm_label) + lastAlarm, Toast.LENGTH_SHORT)
                                 .show()

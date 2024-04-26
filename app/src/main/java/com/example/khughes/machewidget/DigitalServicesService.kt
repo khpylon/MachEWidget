@@ -1,7 +1,7 @@
 package com.example.khughes.machewidget
 
 import retrofit2.http.GET
-import com.example.khughes.machewidget.OTAStatus.OTAStatus
+//import com.example.khughes.machewidget.OTAStatus.OTAStatus
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Header
@@ -9,22 +9,22 @@ import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface DigitalServicesService {
-    @Headers(
-        "Accept: application/json",
-        "Accept-Encoding: gzip, deflate, br",
-        "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
-        "Referer: https://ford.com",
-        "Origin: https://ford.com",
-        "Consumer-Key: Z28tbmEtZm9yZA=="
-    )
-    @GET("owner/api/v2/ota/status")
-    fun getOTAStatus(
-        @Header("auth-token") token: String?,
-        @Header("Accept-Language") language: String?,
-        @Header("Application-Id") APID: String?,
-        @Query("country") country: String?,
-        @Query("vin") VIN: String?
-    ): Call<OTAStatus?>?
+//    @Headers(
+//        "Accept: application/json",
+//        "Accept-Encoding: gzip, deflate, br",
+//        "User-Agent: FordPass/5 CFNetwork/1327.0.4 Chrome/96.0.4664.110",
+//        "Referer: https://ford.com",
+//        "Origin: https://ford.com",
+//        "Consumer-Key: Z28tbmEtZm9yZA=="
+//    )
+//    @GET("owner/api/v2/ota/status")
+//    fun getOTAStatus(
+//        @Header("auth-token") token: String?,
+//        @Header("Accept-Language") language: String?,
+//        @Header("Application-Id") APID: String?,
+//        @Query("country") country: String?,
+//        @Query("vin") VIN: String?
+//    ): Call<OTAStatus?>?
 
     @Headers(
         "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
