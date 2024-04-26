@@ -105,6 +105,8 @@
 	<string name="last_update_label">"Ostatnia aktualizacja "</string>
 	<string name="last_alarm_label">"Ostatni alarm "</string>
 	<string name="battery_energy_remaining_label">"Stan naładowania baterii "</string>
+        <string name="battery_temperature_label">"Temperatura baterii wynosi "</string>
+	<string name="battery_voltage_label">"Napięcie baterii wynosi "</string>
 	<string name="unavailable_label">niedostępne.</string>
 	<string name="ambient_temperature_label">"Temperatura otoczenia "</string>
 	<string name="token_is_being_refreshed_description">Token jest odświeżany; może to potrwać chwilę.</string>
@@ -136,7 +138,7 @@
 	<string name="settings_copied_to_download_description">Plik ustawień %1$s został skopiowany do folderu Pobrane.</string>
 	<string name="settings_restored_description">Ustawienia przywrócone.</string>
 	<string name="logcat_crashfile_formatstring">Plik Logcat \"{0}.txt\" został skopiowany do folderu Pobrane.</string>
-    
+
 	<string name="minutes_abbreviation">" min"</string>
 	<string name="hours_abbr">" godz."</string>
 	<string name="one_day_abbr">1 dzień</string>
@@ -240,7 +242,6 @@
 	<string name="activity_charging_unexpected_issue_error">Wystąpił nieoczekiwany problem.</string>
 	<string name="activity_charging_unexpected_issue_description">Proszę zgłosić błąd na githubie.</string>
 	<string name="activity_charging_three_missing_settings_pattern">W ustawieniach włącz \"{0}\", \"{1}\", and \"{2}\".\n\nCzy chcesz włączyć te ustawienia?</string>
-
 	<string name="activity_charging_two_missing_settings_pattern">W ustawieniach włącz jednocześnie \"{0}\" and \"{1}\".\n\nCzy chcesz włączyć te ustawienia?</string>
 	<string name="activity_charging_one_missing_setting_pattern">W ustawieniach włącz \"{0}\".\n\nCzy chcesz włączyć to ustawienie?</string>
 	<string name="activity_charging_logfile_error">Plik dziennika jest pusty.</string>

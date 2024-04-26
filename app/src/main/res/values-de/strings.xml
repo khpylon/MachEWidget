@@ -104,9 +104,11 @@
   <string name="app_no_longer_installed">App ist nicht mehr installiert</string>
   <string name="last_update_label">"Letztes Update um "</string>
   <string name="last_alarm_label">"Letzter Alarm um "</string>
-  <string name="battery_energy_remaining_label">Verbleibende Batterieenergie beträgt</string>
+  <string name="battery_energy_remaining_label">"Verbleibende Batterieenergie beträgt "</string>
+  <string name="battery_temperature_label">"Batterietemperatur ist "</string>
+  <string name="battery_voltage_label">"Batteriespannung ist "</string>
   <string name="unavailable_label">nicht verfügbar.</string>
-  <string name="ambient_temperature_label">Umgebungstemperatur ist</string>
+  <string name="ambient_temperature_label">"Umgebungstemperatur ist "</string>
   <string name="token_is_being_refreshed_description">Der Token wird aktualisiert; Dies kann eine Minute dauern.</string>
   <string name="forcing_a_refresh_description">Aktualisierung erzwingen; Dies kann 30 Sekunden dauern.</string>
   <string name="force_update_delay_description">Das Update für ein anderes kann nicht erzwungen werden</string>
@@ -136,7 +138,7 @@
   <string name="settings_copied_to_download_description">Die Einstellungsdatei %1$s wurde in den Download-Ordner kopiert.</string>
   <string name="settings_restored_description">Einstellungen wiederhergestellt.</string>
   <string name="logcat_crashfile_formatstring">Die Logcat-Absturzdatei „{0}.txt“ wurde in den Download-Ordner kopiert.</string>
-    
+
   <string name="minutes_abbreviation">" Min"</string>
   <string name="hours_abbr">" Std"</string>
   <string name="one_day_abbr">1 Tag</string>
@@ -240,7 +242,6 @@
   <string name="activity_charging_unexpected_issue_error">Ein unerwarteter Fehler ist aufgetreten</string>
   <string name="activity_charging_unexpected_issue_description">Bitte reichen Sie einen Fehlerbericht auf github ein.</string>
   <string name="activity_charging_three_missing_settings_pattern">Aktivieren Sie unter Einstellungen \"{0}\"-\"{1}\"-\"{2}\" Möchten Sie diese Einstellungen aktivieren?</string>
-
   <string name="activity_charging_two_missing_settings_pattern">Aktivieren Sie unter Einstellungen sowohl \"{0}\"-\"{1}\" Möchten Sie diese Einstellungen aktivieren?</string>
   <string name="activity_charging_one_missing_setting_pattern">Aktivieren Sie unter Einstellungen \"{0}\" Möchten Sie diese Einstellungen aktivieren?</string>
   <string name="activity_charging_logfile_error">Die Protokolldatei ist leer.</string>

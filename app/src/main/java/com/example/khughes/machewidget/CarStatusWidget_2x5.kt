@@ -129,6 +129,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.propulsion)
         val isPHEV = carStatus.isPropulsionPHEV(carStatus.propulsion)
         val isDiesel = carStatus.isPropulsionDiesel(carStatus.propulsion)
+        val isElectric = carStatus.isPropulsionElectric(carStatus.propulsion)
         views.setViewVisibility(R.id.lock_gasoline, if (isICEOrHybrid) View.VISIBLE else View.GONE)
         views.setViewVisibility(
             R.id.bottom_gasoline,
@@ -142,6 +143,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         views.setViewVisibility(R.id.plug, if (isICEOrHybrid) View.GONE else View.VISIBLE)
         setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline")
         setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
+        setElectricCallbacks(context, views, isElectric, appWidgetId)
 
         // Show last refresh, odometer, OTA status
         val timeFormat =

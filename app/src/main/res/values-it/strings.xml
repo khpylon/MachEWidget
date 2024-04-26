@@ -105,7 +105,9 @@
     <string name="last_update_label">"Ultimo aggiornamento alle "</string>
     <string name="last_alarm_label">"Ultimo avviso alle "</string>
     <string name="battery_energy_remaining_label">"L\'energia rimanente è "</string>
-    <string name="unavailable_label">Non disponibile.</string>
+    <string name="battery_temperature_label">"La temperatura della batteria è "</string>
+    <string name="battery_voltage_label">"La tensione della batteria è "</string>
+    <string name="unavailable_label">non disponibile.</string>
     <string name="ambient_temperature_label">"La temperatura ambiente è "</string>
     <string name="token_is_being_refreshed_description">Token in aggiornamento; può impiegare un minuto.</string>
     <string name="forcing_a_refresh_description">Aggiornamento in corso; può impiegare 30 secondi.</string>
@@ -136,7 +138,7 @@
     <string name="settings_copied_to_download_description">File impostazioni %1$s copiato nella cartella Download.</string>
     <string name="settings_restored_description">Impostazioni ripristinate.</string>
     <string name="logcat_crashfile_formatstring">Il file degli errori\"{0}.txt\" copiato nella cartella Download.</string>
-    
+
     <string name="minutes_abbreviation">" min"</string>
     <string name="hours_abbr">" ore"</string>
     <string name="one_day_abbr">1 giorno</string>
@@ -240,7 +242,6 @@
     <string name="activity_charging_unexpected_issue_error">Si è verificato un problema imprevisto.</string>
     <string name="activity_charging_unexpected_issue_description">Per favore invia un report degli errori su github.</string>
     <string name="activity_charging_three_missing_settings_pattern">In Impostazioni, abilita \"{0}\", \"{1}\", e \"{2}\".\n\nVuoi abilitare queste impostazioni?</string>
-
     <string name="activity_charging_two_missing_settings_pattern">In Impostazioni, abilita entrambi \"{0}\" e \"{1}\".\n\nVuoi abilitare queste impostazioni?</string>
     <string name="activity_charging_one_missing_setting_pattern">In Impostazioni, abilita \"{0}\".\n\nVuoi abilitare questa impostazione?</string>
     <string name="activity_charging_logfile_error">Il file di log è vuoto.</string>

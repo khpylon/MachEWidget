@@ -105,6 +105,8 @@
   <string name="last_update_label">"Última actualización en "</string>
   <string name="last_alarm_label">"Última alarma a las "</string>
   <string name="battery_energy_remaining_label">"La energía restante de la batería es "</string>
+    <string name="battery_temperature_label">"La temperatura de la batería es "</string>
+  <string name="battery_voltage_label">"El voltaje de la batería es "</string>
   <string name="unavailable_label">"indisponible."</string>
   <string name="ambient_temperature_label">"La temperatura ambiente es "</string>
   <string name="token_is_being_refreshed_description">"El token se está actualizando; esto puede tardar un minuto"</string>
@@ -136,7 +138,7 @@
   <string name="settings_copied_to_download_description">"El archivo de configuración %1$s se copió en la carpeta de descargas"</string>
   <string name="settings_restored_description">"Configuración restaurada"</string>
   <string name="logcat_crashfile_formatstring">"Archivo de bloqueo de Logcat \"<xliff:g>{0}.txt</xliff:g>\" copiado a la carpeta de descargas"</string>
-    
+
   <string name="minutes_abbreviation">" mínimo"</string>
   <string name="hours_abbr">" horas"</string>
   <string name="one_day_abbr">"1 día"</string>
@@ -240,7 +242,6 @@
   <string name="activity_charging_unexpected_issue_error">"Hay un problema inesperado"</string>
   <string name="activity_charging_unexpected_issue_description">"Presente un informe de error en GitHub"</string>
   <string name="activity_charging_three_missing_settings_pattern">"Em Configurações, ative \"{0}\", \"{1}\" e \"{2}\".\n\nDeseja ativar essas configurações?"</string>
-
   <string name="activity_charging_two_missing_settings_pattern">"Em Configurações, ative \"{0}\" e \"{1}\".\n\nDeseja ativar essas configurações?"</string>
   <string name="activity_charging_one_missing_setting_pattern">"Em Configurações, ative \"{0}\".\n\nDeseja ativar esta configuração?"</string>
   <string name="activity_charging_logfile_error">"O arquivo de log está vazio."</string>

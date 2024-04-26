@@ -142,7 +142,10 @@ open class CarStatusWidget : AppWidgetProvider() {
         longitude: String?
     ) {
         if (latitude != null && longitude != null) {
-            views.setTextViewText(R.id.location_line1, context?.getString(R.string.widgets_location_label))
+            views.setTextViewText(
+                R.id.location_line1,
+                context?.getString(R.string.widgets_location_label)
+            )
 
             val mGeocoder = Geocoder(context!!, Locale.getDefault())
             val lat = latitude.toDouble()
@@ -383,6 +386,20 @@ open class CarStatusWidget : AppWidgetProvider() {
                     intent,
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
+            )
+        }
+    }
+
+    protected fun setElectricCallbacks(
+        context: Context?,
+        views: RemoteViews,
+        isElectric: Boolean,
+        id: Int
+    ) {
+        if (isElectric) {
+            views.setOnClickPendingIntent(
+                R.id.HBVChargeProgress,
+                getPendingSelfIntent(context, id, HVB_CLICK)
             )
         }
     }
@@ -685,8 +702,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                 val message: String
                 when (displayLVB) {
                     "Graph" -> {
-                        val id: Int
-                        id = if (LVBPercent >= 80.0) {
+                        val id = if (LVBPercent >= 80.0) {
                             R.id.LVBLevelGreen
                         } else if (LVBPercent >= 50.0) {
                             R.id.LVBLevelYellow
@@ -696,14 +712,18 @@ open class CarStatusWidget : AppWidgetProvider() {
                         views.setViewVisibility(id, View.VISIBLE)
                         message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
                     }
+
                     "Volts" -> {
                         message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
                     }
+
                     "SOC" -> {
                         message = MessageFormat.format("{0}%", LVBPercent)
                     }
+
                     else -> {
-                        message = MessageFormat.format("{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent)
+                        message =
+                            MessageFormat.format("{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent)
                     }
                 }
                 views.setTextViewText(R.id.LVBVoltage, message)
@@ -719,7 +739,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             views.setTextViewText(
                 R.id.LVBVoltage,
                 context.getString(R.string.widgets_lv_bat_label) +
-                    context.getString(R.string.widgets_na_label)
+                        context.getString(R.string.widgets_na_label)
             )
         }
 
@@ -767,7 +787,10 @@ open class CarStatusWidget : AppWidgetProvider() {
         carStatus: CarStatus,
         timeFormat: String?
     ) {
-        views.setTextViewText(R.id.lastRefresh, context.getString(R.string.widget_last_refresh_label))
+        views.setTextViewText(
+            R.id.lastRefresh,
+            context.getString(R.string.widget_last_refresh_label)
+        )
 
         // Fill in the last update time
         val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
@@ -788,7 +811,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             .getBoolean(context.resources.getString(R.string.last_refresh_time_key), false)
         var refresh = if (displayTime) {
             val zoneId = ZoneId.systemDefault()
-            val time = ZonedDateTime.ofInstant(lastUpdateTime.toInstant(),zoneId)
+            val time = ZonedDateTime.ofInstant(lastUpdateTime.toInstant(), zoneId)
             val timeText = time.format(DateTimeFormatter.ofPattern(timeFormat))
             timeText
         } else {
@@ -811,13 +834,13 @@ open class CarStatusWidget : AppWidgetProvider() {
     ) {
         views.setTextViewText(R.id.odometer,
             context.getString(R.string.odometer_label) +
-            carStatus.vehiclestatus.odometer?.value?.let {
-                MessageFormat.format(
-                    "{0} {1}",
-                    java.lang.Double.valueOf(it * distanceConversion).toInt(),
-                    distanceUnits
-                )
-            }
+                    carStatus.vehiclestatus.odometer?.value?.let {
+                        MessageFormat.format(
+                            "{0} {1}",
+                            java.lang.Double.valueOf(it * distanceConversion).toInt(),
+                            distanceUnits
+                        )
+                    }
         )
     }
 
@@ -1076,8 +1099,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                     } else {
                         appInfo.leftAppPackage = null
                         updateWidget(context)
-                        Toast.makeText(context,
-                            context.getString(R.string.app_no_longer_installed), Toast.LENGTH_LONG)
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.app_no_longer_installed), Toast.LENGTH_LONG
+                        )
                             .show()
                     }
                 }
@@ -1095,8 +1120,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                     } else {
                         appInfo.rightAppPackage = null
                         updateWidget(context)
-                        Toast.makeText(context,
-                            context.getString(R.string.app_no_longer_installed), Toast.LENGTH_LONG)
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.app_no_longer_installed), Toast.LENGTH_LONG
+                        )
                             .show()
                     }
                 }
@@ -1140,8 +1167,11 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val lastAlarmInMillis = StoredData(context).lastAlarmTime
                             val lastAlarm =
                                 Misc.convertMillisToDate(lastAlarmInMillis, timeFormat)
-                            Toast.makeText(context,
-                                context.getString(R.string.last_alarm_label) + lastAlarm, Toast.LENGTH_SHORT)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.last_alarm_label) + lastAlarm,
+                                Toast.LENGTH_SHORT
+                            )
                                 .show()
                         } else if (clickCount > 1) {
                             changeProfile(context, widget_VIN)
@@ -1178,17 +1208,50 @@ open class CarStatusWidget : AppWidgetProvider() {
                     ).getString(widget_VIN, "")
                     val vehInfo = info.getVehicleByVIN(VIN)
                     val kWh = vehInfo.carStatus.vehiclestatus.xevBatteryEnergyRemaining
-                    val message: String
-                    message = if (kWh > 0.0) {
+                    val message = if (kWh > 0.0) {
                         MessageFormat.format(
-                            "{0,number,#.00}kWh.",
-                            vehInfo.carStatus.vehiclestatus.xevBatteryEnergyRemaining
+                            "{0,number,#.00}kWh.", kWh
                         )
                     } else {
-                        "unavailable."
+                        context.getString(R.string.unavailable_label)
                     }
                     Toast.makeText(
-                        context, context.getString(R.string.battery_energy_remaining_label) + message,
+                        context,
+                        context.getString(R.string.battery_energy_remaining_label) + message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return
+            }
+
+            HVB_CLICK -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val info = getInfo(context)
+                    val VIN = context.getSharedPreferences(
+                        Constants.WIDGET_FILE,
+                        Context.MODE_PRIVATE
+                    ).getString(widget_VIN, "")
+                    val vehInfo = info.getVehicleByVIN(VIN)
+                    val voltage = vehInfo.carStatus.vehiclestatus.xevBatteryVoltage
+                    val message = if (voltage > 0.0) {
+                        MessageFormat.format(
+                            "{0,number,#.0}V.",
+                            vehInfo.carStatus.vehiclestatus.xevBatteryVoltage
+                        )
+                    } else {
+                        context.getString(R.string.unavailable_label)
+                    }
+                    Toast.makeText(
+                        context, context.getString(R.string.battery_voltage_label) + message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    Toast.makeText(
+                        context, context.getString(R.string.battery_temperature_label) +
+                                convertTemperature(
+                                    context,
+                                    vehInfo.carStatus.vehiclestatus.xevBatteryTemperature
+                                ),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -1203,34 +1266,15 @@ open class CarStatusWidget : AppWidgetProvider() {
                         Context.MODE_PRIVATE
                     ).getString(widget_VIN, null)
                     val vehInfo = info.getVehicleByVIN(VIN)
-                    val temp = vehInfo.carStatus.vehiclestatus.ambientTemp
-
-                    val message: String
-                    if (temp > 0.0) {
-                        val units = PreferenceManager.getDefaultSharedPreferences(context)
-                            .getString(
-                                context.resources.getString(R.string.units_key),
-                                context.resources.getString(R.string.units_mphpsi)
-                            )!!.toInt()
-                        val degrees: Int
-                        val temperatureUnits: String
-                        if (units == Constants.UNITS_MPHPSI) {
-                            degrees = (temp * 9.0 / 5.0 + 32.0).roundToInt()
-                            temperatureUnits = "\u2109"
-                        } else {
-                            degrees = temp.toInt()
-                            temperatureUnits = "\u2103"
-                        }
-                        message = MessageFormat.format(
-                            "{0}{1}.", degrees, temperatureUnits
-                        )
-                    } else {
-                        message = context.getString(R.string.unavailable_label)
-                    }
                     Toast.makeText(
-                        context, context.getString(R.string.ambient_temperature_label) + message,
+                        context, context.getString(R.string.ambient_temperature_label) +
+                                convertTemperature(
+                                    context,
+                                    vehInfo.carStatus.vehiclestatus.ambientTemp
+                                ),
                         Toast.LENGTH_SHORT
                     ).show()
+
                 }
                 return
             }
@@ -1326,7 +1370,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                                             } else if (count < FIRST_LIMIT) {
                                                 Toast.makeText(
                                                     context,
-                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(context,
+                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
+                                                        context,
                                                         2 * 60 - seconds
                                                     ) + ".",
                                                     Toast.LENGTH_SHORT
@@ -1334,7 +1379,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                                             } else if (count < SECOND_LIMIT) {
                                                 Toast.makeText(
                                                     context,
-                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(context,
+                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
+                                                        context,
                                                         10 * 60 - seconds
                                                     ) + "",
                                                     Toast.LENGTH_SHORT
@@ -1380,6 +1426,31 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
     }
 
+    private fun convertTemperature(context: Context, temp: Double): String {
+        if (temp > 0.0) {
+            val units = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(
+                    context.resources.getString(R.string.units_key),
+                    context.resources.getString(R.string.units_mphpsi)
+                )!!.toInt()
+            val degrees: Int
+            val temperatureUnits: String
+            if (units == Constants.UNITS_MPHPSI) {
+                degrees = (temp * 9.0 / 5.0 + 32.0).roundToInt()
+                temperatureUnits = "\u2109"
+            } else {
+                degrees = temp.toInt()
+                temperatureUnits = "\u2103"
+            }
+            return MessageFormat.format(
+                "{0}{1}.", degrees, temperatureUnits
+            )
+        } else {
+            return context.getString(R.string.unavailable_label)
+        }
+    }
+
+
     suspend fun getInfo(context: Context): InfoRepository =
         coroutineScope {
             withContext(Dispatchers.IO) {
@@ -1403,7 +1474,7 @@ open class CarStatusWidget : AppWidgetProvider() {
         const val APPWIDGETID = "appWidgetId"
         const val AMBIENTTEMP_CLICK = "Temperature"
         const val KWH_CLICK = "KiloWahtHout"
-        const val PADDING = "   "
+        const val HVB_CLICK = "HVBInfo"
 
         // Mapping from long state/territory names to abbreviations
         private var states = mutableMapOf(

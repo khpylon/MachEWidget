@@ -104,9 +104,11 @@
     <string name="app_no_longer_installed">Sovellusta ei ole enää asennettu</string>
     <string name="last_update_label">"Viimeisin päivitys klo"</string>
     <string name="last_alarm_label">"Viimeinen hälytys klo"</string>
-    <string name="battery_energy_remaining_label">"Akun jäljellä oleva energia on"</string>
+    <string name="battery_energy_remaining_label">"Akun jäljellä oleva energia on "</string>
+    <string name="battery_temperature_label">"Akun lämpötila on "</string>
+    <string name="battery_voltage_label">"Akun jännite on "</string>
     <string name="unavailable_label">ei ole saatavilla.</string>
-    <string name="ambient_temperature_label">"Ympäristön lämpötila on"</string>
+    <string name="ambient_temperature_label">"Ympäristön lämpötila on "</string>
     <string name="token_is_being_refreshed_description">Tunnusta päivitetään. tämä voi kestää hetken.</string>
     <string name="forcing_a_refresh_description">Päivityksen pakottaminen; tämä voi kestää 30 sekuntia.</string>
     <string name="force_update_delay_description">"Ei voi pakottaa päivitystä toiselle"</string>

@@ -105,8 +105,10 @@
   <string name="last_update_label">"Dernière mise à jour à "</string>
   <string name="last_alarm_label">"Dernière alarme à "</string>
   <string name="battery_energy_remaining_label">"L’énergie restante de la batterie est "</string>
+  <string name="battery_temperature_label">"La température de la batterie est "</string>
+  <string name="battery_voltage_label">"La tension de la batterie est "</string>
   <string name="unavailable_label">indisponible.</string>
-  <string name="ambient_temperature_label">La température ambiante est</string>
+  <string name="ambient_temperature_label">"La température ambiante est "</string>
   <string name="token_is_being_refreshed_description">Le jeton est en cours d\'actualisation; cela peut prendre une minute.</string>
   <string name="forcing_a_refresh_description">Forcer l\'actualisation; cela peut prendre 30 secondes.</string>
   <string name="force_update_delay_description">Impossible de forcer la mise à jour pour un autre</string>
@@ -136,7 +138,7 @@
   <string name="settings_copied_to_download_description">Fichier de paramètres %1$s copié dans le dossier de téléchargement.</string>
   <string name="settings_restored_description">Paramètres restaurés.</string>
   <string name="logcat_crashfile_formatstring">Fichier de crash Logcat \"{0}.txt\" copié dans le dossier de téléchargement.</string>
-    
+
   <string name="minutes_abbreviation">" min."</string>
   <string name="hours_abbr">" h"</string>
   <string name="one_day_abbr">1 jour</string>
@@ -240,7 +242,6 @@
   <string name="activity_charging_unexpected_issue_error">Il y a un problème inattendu.</string>
   <string name="activity_charging_unexpected_issue_description">Veuillez déposer un rapport de bogue sur github.</string>
   <string name="activity_charging_three_missing_settings_pattern">Sous Paramètres, activez \"{0}\", \"{1}\" et \"{2}\".\n\nVoulez-vous activer ces paramètres ?</string>
-
   <string name="activity_charging_two_missing_settings_pattern">Sous Paramètres, activez \"{0}\" et \"{1}\".\n\nVoulez-vous activer ces paramètres ?</string>
   <string name="activity_charging_one_missing_setting_pattern">Sous Paramètres, activez \"{0}\".\n\nVoulez-vous activer ce paramètre ?</string>
   <string name="activity_charging_logfile_error">Le fichier journal est vide.</string>

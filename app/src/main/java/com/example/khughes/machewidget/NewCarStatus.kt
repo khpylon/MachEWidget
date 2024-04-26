@@ -103,6 +103,8 @@ class NewCarStatus(
                 }
                 vehicleStatus.chargingStatus = chargingStatus
                 vehicleStatus.xevBatteryEnergyRemaining = metrics.xevBatteryEnergyRemaining?.value ?: 0.0
+                vehicleStatus.xevBatteryTemperature = metrics.xevBatteryTemperature?.value ?: 0.0
+                vehicleStatus.xevBatteryVoltage = metrics.xevBatteryVoltage?.value ?: 0.0
                 vehicleStatus.pluginTime = ""
             }
 

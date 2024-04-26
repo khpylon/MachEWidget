@@ -104,9 +104,11 @@
     <string name="app_no_longer_installed">"Appen er ikke lenger installert"</string>
     <string name="last_update_label">"Siste oppdatering kl."</string>
     <string name="last_alarm_label">"Siste alarm kl."</string>
-    <string name="battery_energy_remaining_label">"Gjenstående batterienergi er"</string>
-    <string name="unavailable_label">"utilgjengelig."</string>
-    <string name="ambient_temperature_label">"Omgivelsestemperatur er"</string>
+    <string name="battery_energy_remaining_label">"Gjenstående batterienergi er "</string>
+    <string name="battery_temperature_label">"Batteritemperaturen er "</string>
+    <string name="battery_voltage_label">"Batterispenningen er "</string>
+    <string name="unavailable_label">utilgjengelig.</string>
+    <string name="ambient_temperature_label">"Omgivelsestemperatur er "</string>
     <string name="token_is_being_refreshed_description">"Tokenet blir oppdatert; dette kan ta et minutt."</string>
     <string name="forcing_a_refresh_description">"Tvinger en oppdatering; dette kan ta 30 sekunder."</string>
     <string name="force_update_delay_description">"Kan ikke tvinge oppdatering for en annen"</string>
@@ -136,7 +138,7 @@
     <string name="settings_copied_to_download_description">"Innstillingsfil %1$s kopiert til nedlastingsmappe."</string>
     <string name="settings_restored_description">"Innstillinger gjenopprettet."</string>
     <string name="logcat_crashfile_formatstring">"Logcat-krasjfilen \"{0}.txt\" kopiert til nedlastingsmappen."</string>
-    
+
     <string name="minutes_abbreviation">" min"</string>
     <string name="hours_abbr">" timer"</string>
     <string name="one_day_abbr">"1 dag"</string>
@@ -240,7 +242,6 @@
     <string name="activity_charging_unexpected_issue_error">"Det er et uventet problem."</string>
     <string name="activity_charging_unexpected_issue_description">"Vennligst send inn en feilrapport på GitHub."</string>
     <string name="activity_charging_three_missing_settings_pattern">"Under Innstillinger, aktiver \"{0}\", \"{1}\", og \"{2}\".\n\nVil du aktivere disse innstillingene?"</string>
-
     <string name="activity_charging_two_missing_settings_pattern">"Under Innstillinger, aktiver både \"{0}\" og \"{1}\".\n\nVil du aktivere disse innstillingene?"</string>
     <string name="activity_charging_one_missing_setting_pattern">"Under Innstillinger, aktiver \"{0}\".\n\nVil du aktivere denne innstillingen?"</string>
     <string name="activity_charging_logfile_error">"Loggfilen er tom."</string>

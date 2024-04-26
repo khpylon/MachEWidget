@@ -146,6 +146,8 @@
     <string name="last_update_label">"Last update at "</string>
     <string name="last_alarm_label">"Last alarm at "</string>
     <string name="battery_energy_remaining_label">"Battery energy remaining is "</string>
+    <string name="battery_temperature_label">"Battery temperature is "</string>
+    <string name="battery_voltage_label">"Battery voltage is "</string>
     <string name="unavailable_label">unavailable.</string>
     <string name="ambient_temperature_label">"Ambient temperature is "</string>
     <string name="token_is_being_refreshed_description">The token is being refreshed; this may take a minute.</string>
