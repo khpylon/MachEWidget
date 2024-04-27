@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.04.27-12
+### Added
+- Mach-E and F-150 Lightning owners: A single tap on the high-voltage battery's progress bar will
+  now display its voltage and temperature.
+
 ## 2024.04.24-09
 ### Changed
 - Modified processing of localization in change logs; GitHub version only.
