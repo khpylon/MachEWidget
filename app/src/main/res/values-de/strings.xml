@@ -105,8 +105,8 @@
   <string name="last_update_label">"Letztes Update um "</string>
   <string name="last_alarm_label">"Letzter Alarm um "</string>
   <string name="battery_energy_remaining_label">"Verbleibende Batterieenergie beträgt "</string>
-  <string name="battery_temperature_label">"Batterietemperatur ist "</string>
-  <string name="battery_voltage_label">"Batteriespannung ist "</string>
+  <string name="battery_temperature_label">"Die HVB Temperatur beträgt "</string>
+  <string name="battery_voltage_label">"Die HVB Spannung beträgt "</string>
   <string name="unavailable_label">nicht verfügbar.</string>
   <string name="ambient_temperature_label">"Umgebungstemperatur ist "</string>
   <string name="token_is_being_refreshed_description">Der Token wird aktualisiert; Dies kann eine Minute dauern.</string>

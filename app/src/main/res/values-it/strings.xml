@@ -106,7 +106,7 @@
     <string name="last_alarm_label">"Ultimo avviso alle "</string>
     <string name="battery_energy_remaining_label">"L\'energia rimanente è "</string>
     <string name="battery_temperature_label">"La temperatura della batteria è "</string>
-    <string name="battery_voltage_label">"La tensione della batteria è "</string>
+    <string name="battery_voltage_label">"Il voltaggio della batteria è "</string>
     <string name="unavailable_label">non disponibile.</string>
     <string name="ambient_temperature_label">"La temperatura ambiente è "</string>
     <string name="token_is_being_refreshed_description">Token in aggiornamento; può impiegare un minuto.</string>

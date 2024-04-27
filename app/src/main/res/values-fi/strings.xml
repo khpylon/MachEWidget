@@ -105,8 +105,8 @@
     <string name="last_update_label">"Viimeisin päivitys klo"</string>
     <string name="last_alarm_label">"Viimeinen hälytys klo"</string>
     <string name="battery_energy_remaining_label">"Akun jäljellä oleva energia on "</string>
-    <string name="battery_temperature_label">"Akun lämpötila on "</string>
-    <string name="battery_voltage_label">"Akun jännite on "</string>
+    <string name="battery_temperature_label">"La température de la batterie est "</string>
+    <string name="battery_voltage_label">"Le voltage de la batterie est "</string>
     <string name="unavailable_label">ei ole saatavilla.</string>
     <string name="ambient_temperature_label">"Ympäristön lämpötila on "</string>
     <string name="token_is_being_refreshed_description">Tunnusta päivitetään. tämä voi kestää hetken.</string>
