@@ -800,22 +800,6 @@ class NetworkCalls {
             return 0
         }
 
-        fun getStatus(
-            handler: Handler,
-            context: Context?,
-            userInfo: UserInfo?,
-            VIN: String?,
-            nickname: String?
-        ) {
-            val t = Thread {
-                val intent = getStatus(context!!, userInfo!!, VIN!!, nickname!!)
-                val m = Message.obtain()
-                m.data = intent.extras
-                handler.sendMessage(m)
-            }
-            t.start()
-        }
-
         suspend fun getStatus(
             context: Context?,
             userInfo: UserInfo?,
