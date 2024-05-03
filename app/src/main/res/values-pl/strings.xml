@@ -105,8 +105,8 @@
 	<string name="last_update_label">"Ostatnia aktualizacja "</string>
 	<string name="last_alarm_label">"Ostatni alarm "</string>
 	<string name="battery_energy_remaining_label">"Stan naładowania baterii "</string>
-        <string name="battery_temperature_label">"Temperatura baterii wynosi "</string>
-	<string name="battery_voltage_label">"Napięcie baterii wynosi "</string>
+    <string name="battery_temperature_label">"Temperatura baterii "</string>
+	<string name="battery_voltage_label">"Napięcie baterii "</string>
 	<string name="unavailable_label">niedostępne.</string>
 	<string name="ambient_temperature_label">"Temperatura otoczenia "</string>
 	<string name="token_is_being_refreshed_description">Token jest odświeżany; może to potrwać chwilę.</string>
