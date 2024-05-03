@@ -50,24 +50,25 @@ class VehicleActivity : AppCompatActivity() {
     private lateinit var newVINWidget: TextInputLayout
 
     private fun getStatus(context: Context, VIN: String, nickname: String) {
-        val statusHandler: Handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message) {
-                val bundle = msg.data
-                val action = bundle.getString("action")
-                if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    Toast.makeText(context,
-                        getString(R.string.activity_vehicle_status_success_description), Toast.LENGTH_LONG)
-                        .show()
-                    NetworkCalls.getVehicleImage(context, VIN, userInfo.country!!)
-                } else {
-                    Toast.makeText(context,
-                        getString(R.string.activity_vehicle_status_failure_description), Toast.LENGTH_LONG)
-                        .show()
-                }
+        CoroutineScope(Dispatchers.Main).launch {
+            val msg = NetworkCalls.getStatus(context, userInfo, VIN, nickname)
+            val bundle = msg.data
+            val action = bundle.getString("action")
+            if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.activity_vehicle_status_success_description),
+                    Toast.LENGTH_LONG
+                ).show()
+                NetworkCalls.getVehicleImage(context, VIN, userInfo.country!!)
+            } else {
+                Toast.makeText(
+                    context,
+                    getString(R.string.activity_vehicle_status_failure_description),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
-
-        NetworkCalls.getStatus(statusHandler, context, userInfo, VIN, nickname)
     }
 
     private var defaultLanguage: Locale? = null
@@ -75,7 +76,7 @@ class VehicleActivity : AppCompatActivity() {
     private fun getContextForLanguage(context: Context): Context {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
 
-        if( defaultLanguage == null) {
+        if (defaultLanguage == null) {
             defaultLanguage = Resources.getSystem().configuration.locales[0]
         }
 
@@ -135,13 +136,18 @@ class VehicleActivity : AppCompatActivity() {
                 mVehicleViewModel.allVehicles.value?.let {
                     for (tmp in it) {
                         if (tmp.vin == VIN) {
-                            Toast.makeText(context,
-                                getString(R.string.activity_vehicle_vin_exists), Toast.LENGTH_LONG)
+                            Toast.makeText(
+                                context,
+                                getString(R.string.activity_vehicle_vin_exists), Toast.LENGTH_LONG
+                            )
                                 .show()
                             return@OnClickListener
                         } else if (nickname != "" && tmp.nickname == nickname) {
-                            Toast.makeText(context,
-                                getString(R.string.activity_vehicle_nickname_exists), Toast.LENGTH_LONG)
+                            Toast.makeText(
+                                context,
+                                getString(R.string.activity_vehicle_nickname_exists),
+                                Toast.LENGTH_LONG
+                            )
                                 .show()
                             return@OnClickListener
                         }
@@ -166,22 +172,36 @@ class VehicleActivity : AppCompatActivity() {
                         message = Vehicle.getVehicle(VIN).name
                         if (message != "") {
                             message = "VIN appears to be for " +
-                                    (if ("AEIOU".contains(message.subSequence(0,1))) "an " else "a ") + message
+                                    (if ("AEIOU".contains(
+                                            message.subSequence(
+                                                0,
+                                                1
+                                            )
+                                        )
+                                    ) "an " else "a ") + message
                         }
-                        newVINWidget.hintTextColor = ContextCompat.getColorStateList(context,R.color.light_blue_200)
+                        newVINWidget.hintTextColor =
+                            ContextCompat.getColorStateList(context, R.color.light_blue_200)
                     } else {
                         message = context.resources.getString(R.string.vehicles_vin)
-                        newVINWidget.hintTextColor = ContextCompat.getColorStateList(context,R.color.light_blue_600)
+                        newVINWidget.hintTextColor =
+                            ContextCompat.getColorStateList(context, R.color.light_blue_600)
                     }
                     newVINWidget.hint = message
 
                     // Display helper text if VIN string is too short; otherwise, enable the OK button
                     val size = s.toString().length
-                    newVINWidget.helperText = if (size == 17) "" else context.resources.getString(R.string.correct_VIN_length)
+                    newVINWidget.helperText =
+                        if (size == 17) "" else context.resources.getString(R.string.correct_VIN_length)
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = size == 17
                 }
 
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -250,7 +270,8 @@ class VehicleActivity : AppCompatActivity() {
     private suspend fun getUserInfo(context: Context, userId: String): UserInfo =
         coroutineScope {
             withContext(Dispatchers.IO) {
-                UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId) ?: UserInfo()
+                UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId)
+                    ?: UserInfo()
 //                if (user == null) {
 //                    val tmp = UserInfo()
 //                    tmp.userId = ""

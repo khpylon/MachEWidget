@@ -77,6 +77,17 @@ class NetworkCalls {
             t.start()
         }
 
+        suspend fun getAccessToken(
+            context: Context?,
+            username: String?,
+            password: String?
+        ) : Message = withContext(Dispatchers.IO){
+            val intent = getAccessToken(context!!, username, password!!)
+            val m = Message.obtain()
+            m.data = intent.extras
+            m
+        }
+
         private fun getAccessToken(context: Context, username: String?, password: String): Intent {
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN
@@ -428,15 +439,15 @@ class NetworkCalls {
             return data
         }
 
-        fun getStatus(handler: Handler, context: Context?, userId: String?) {
-            val t = Thread {
+        suspend fun getStatus(
+            context: Context?,
+            userId: String?
+        ): Message = withContext(Dispatchers.IO) {
                 val intent = getStatus(context!!, userId!!)
                 val m = Message.obtain()
                 m.data = intent.extras
-                handler.sendMessage(m)
+                m
             }
-            t.start()
-        }
 
         private fun getStatus(context: Context, userId: String): Intent {
             val userDao = UserInfoDatabase.getInstance(context)
@@ -803,6 +814,18 @@ class NetworkCalls {
                 handler.sendMessage(m)
             }
             t.start()
+        }
+
+        suspend fun getStatus(
+            context: Context?,
+            userInfo: UserInfo?,
+            VIN: String?,
+            nickname: String?
+        ): Message = withContext(Dispatchers.IO ) {
+            val intent = getStatus(context!!, userInfo!!, VIN!!, nickname!!)
+            val m = Message.obtain()
+            m.data = intent.extras
+            m
         }
 
         private fun getStatus(
@@ -1523,18 +1546,30 @@ class NetworkCalls {
             return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 @Suppress("DEPRECATION")
                 val networkInfo = connManager.activeNetworkInfo
-                networkInfo?.let {
+                val netStatus = networkInfo?.let {
                     @Suppress("DEPRECATION")
                     networkInfo.isConnected && networkInfo.isAvailable
                 } ?: false
+                LogFile.d(context,MainActivity.CHANNEL_ID, "NetworkCalls.checkInternetConnection() returns $netStatus")
+                netStatus
             } else {
-                val networkInfo = connManager.activeNetwork ?: return false
-                val networkCapabilities = connManager.getNetworkCapabilities(networkInfo)
-                networkCapabilities?.let {
-                    (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                            || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                            || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
-                } ?: false
+                val netStatus = if (connManager.activeNetwork == null) {
+                        false
+                    } else {
+                        val networkInfo = connManager.activeNetwork ?: return false
+                        val networkCapabilities = connManager.getNetworkCapabilities(networkInfo)
+                        if (networkCapabilities == null) {
+                            false
+                        } else {
+                            networkCapabilities?.let {
+                                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                                    || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                                    || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+                            } ?: false
+                        }
+                    }
+                LogFile.d(context,MainActivity.CHANNEL_ID, "NetworkCalls.checkInternetConnection() returns $netStatus")
+                netStatus
             }
         }
     }

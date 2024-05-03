@@ -215,38 +215,36 @@ class StatusReceiver : BroadcastReceiver() {
     }
 
     private fun getStatus(context: Context, userId: String) {
-        val statusHandler: Handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message) {
-                val bundle = msg.data
-                val action = bundle.getString("action")
+        CoroutineScope(Dispatchers.Main).launch {
+            val msg = NetworkCalls.getStatus(context, userId)
+            val bundle = msg.data
+            val action = bundle.getString("action")
+            LogFile.i(
+                context, MainActivity.CHANNEL_ID,
+                "Status: $action"
+            )
+
+            // If vehicle is DC fast charging, update status in 30 seconds
+            if (bundle.getBoolean(context.getString(R.string.dcfc_active))) {
                 LogFile.i(
                     context, MainActivity.CHANNEL_ID,
-                    "Status: $action"
+                    "Vehicle is DC fast charging; setting alarm for 30 seconds"
                 )
-
-                // If vehicle is DC fast charging, update status in 30 seconds
-                if (bundle.getBoolean(context.getString(R.string.dcfc_active))) {
-                    LogFile.i(
+                cancelAlarm(context)
+                if (::alarmTime.isInitialized) {
+                    nextAlarm(context, alarmTime.plusSeconds(30))
+                } else {
+                    LogFile.e(
                         context, MainActivity.CHANNEL_ID,
-                        "Vehicle is DC fast charging; setting alarm for 30 seconds"
+                        "lateinit alarmTime is not initialized"
                     )
-                    cancelAlarm(context)
-                    if (::alarmTime.isInitialized) {
-                        nextAlarm(context, alarmTime.plusSeconds(30))
-                    } else {
-                        LogFile.e(
-                            context, MainActivity.CHANNEL_ID,
-                            "lateinit alarmTime is not initialized"
-                        )
-                        nextAlarm(context, 30)
-                    }
+                    nextAlarm(context, 30)
                 }
-
-                // Update the widgets, no matter what.
-                CarStatusWidget.updateWidget(context)
             }
+
+            // Update the widgets, no matter what.
+            CarStatusWidget.updateWidget(context)
         }
-        NetworkCalls.getStatus(statusHandler, context, userId)
     }
 
     companion object {
