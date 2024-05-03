@@ -658,7 +658,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
 
 @Preview(showBackground = true)
 @Composable
-fun LightPreview() {
+private fun LightPreview() {
     MacheWidgetTheme {
         val updates: MutableList<DCFCUpdate> = mutableListOf()
         val update1 = DCFCUpdate()
@@ -697,7 +697,7 @@ fun LightPreview() {
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun DarkPreview() {
+private fun DarkPreview() {
     MacheWidgetTheme {
         val updates: MutableList<DCFCUpdate> = mutableListOf()
         val update1 = DCFCUpdate()
