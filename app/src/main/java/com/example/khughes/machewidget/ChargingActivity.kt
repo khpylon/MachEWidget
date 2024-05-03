@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.toMutableStateList
@@ -50,14 +51,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.ConfigurationCompat
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
 import java.io.File
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
 import java.util.Locale
 import kotlin.math.log10
 import kotlin.math.pow
@@ -251,18 +254,11 @@ class ChargingActivity : ComponentActivity() {
 }
 
 private
-fun getEpochMillis(time: String): Long {
-//    val cal = Calendar.getInstance()
-//    val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-//    sdf.timeZone = TimeZone.getTimeZone("UTC")
-//    cal.time = sdf.parse(time) as Date
-//    return cal.toInstant().toEpochMilli()
-
+fun getEpochMillis(timeStr: String): Long {
     val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
-    val time = LocalDateTime.parse(time, formatter).atZone(ZoneOffset.UTC)
+    val time = LocalDateTime.parse(timeStr, formatter).atZone(ZoneOffset.UTC)
             .withZoneSameInstant(ZoneId.systemDefault())
     return time.toInstant().toEpochMilli()
-
 }
 
 @Composable
@@ -495,9 +491,9 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
 @Composable
 fun MainScreen(sessions: MutableList<DCFCSession>) {
     // index identifies which session to display
-    var index by rememberSaveable { mutableStateOf(sessions.lastIndex) }
+    var index by rememberSaveable { mutableIntStateOf(sessions.lastIndex) }
     // count is the total number of sessions
-    var count by rememberSaveable { mutableStateOf(sessions.lastIndex) }
+    var count by rememberSaveable { mutableIntStateOf(sessions.lastIndex) }
     // If the number of sessions increases, always display the most recent (last)
     if (count != sessions.size) {
         index = sessions.lastIndex
@@ -523,14 +519,21 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        val sessionDay = Calendar.getInstance()
-        sessionDay.timeInMillis = pluginTime
+        val locale = ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0]
+        val zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(pluginTime), ZoneId.systemDefault())
+        val format = if (locale?.country == "US") {
+            Constants.LOCALTIMEFORMATUS
+        } else {
+            Constants.LOCALTIMEFORMAT
+        }
+        val time = zdt.format(DateTimeFormatter.ofPattern(format,locale!!))
 
-//        Text(
-//            text = "Session start time: " + sdfDay.format(sessionDay.time),
-//            color = MaterialTheme.colorScheme.secondary,
-//            modifier = Modifier.fillMaxWidth()
-//        )
+        Text(
+            text = "Session start time: $time",
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.fillMaxWidth()
+        )
+
 //        Text(
 //            text = "Charging network: " + session.network,
 //            color = MaterialTheme.colorScheme.secondary,
@@ -549,7 +552,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
 //            modifier = Modifier.fillMaxWidth()
 //        )
 
-        val maxPowerStr = String.format(
+        val maxPowerStr = String.format(locale,
             "%.2f",
             (session.updates.maxBy { it.power!! }.power as Double) / 1000
         )
@@ -559,7 +562,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        val avgPowerStr = String.format(
+        val avgPowerStr = String.format(locale,
             "%.2f",
             session.updates.sumOf { it.power!! } / 1000 / session.updates.size
         )
@@ -569,7 +572,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        val energyStr = String.format(
+        val energyStr = String.format(locale,
             "%.2f",
             (session.updates.maxBy { it.energy!! }.energy as Double) / 1000
         )
@@ -580,8 +583,8 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
         )
 
         val distanceConversion = Constants.KMTOMILES
-        val initialDTE = String.format("%.1f", session.initialDte!! * distanceConversion)
-        val finalDTE = String.format(
+        val initialDTE = String.format(locale, "%.1f", session.initialDte!! * distanceConversion)
+        val finalDTE = String.format(locale,
             "%.1f", session.updates[session.updates.lastIndex].dte!!
                     * distanceConversion
         )
