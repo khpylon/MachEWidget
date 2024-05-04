@@ -29,3 +29,5 @@ output-metadata.json
 /app/github/release/baselineProfiles/0/app-release.dm
 /app/github/release/baselineProfiles/1/app-release.dm
 /.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
+/.idea/other.xml
