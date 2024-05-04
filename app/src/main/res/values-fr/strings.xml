@@ -222,7 +222,7 @@
     <string name="max_power_label">"Puissance maximale : "</string>
     <string name="average_power_label">"Puissance moyenne : "</string>
     <string name="energy_added_label">"Énergie ajoutée : "</string>
-    <string name="range_label">Autonomie</string>
+    <string name="range_label">"Autonomie : "</string>
     <string name="widgets_profile_label">Profil :</string>
     <string name="widgets_odometer_label">Odom. : S.O.</string>
     <string name="widgets_def_level_label">Niveau FED: S.O.</string>
