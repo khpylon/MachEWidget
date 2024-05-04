@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.toMutableStateList
@@ -494,9 +493,9 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
 @Composable
 fun MainScreen(sessions: MutableList<DCFCSession>) {
     // index identifies which session to display
-    var index by rememberSaveable { mutableIntStateOf(sessions.lastIndex) }
+    var index by rememberSaveable { mutableStateOf(sessions.lastIndex) }
     // count is the total number of sessions
-    var count by rememberSaveable { mutableIntStateOf(sessions.lastIndex) }
+    var count by rememberSaveable { mutableStateOf(sessions.lastIndex) }
     // If the number of sessions increases, always display the most recent (last)
     if (count != sessions.size) {
         index = sessions.lastIndex
