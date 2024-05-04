@@ -205,8 +205,8 @@
 
     <string name="settings_lvd_display_voltage">Voltage</string>
     <string name="settings_lvd_display_soc">State of Charge</string>
-    <string name="settings_lvd_display_both">Voltage and SOC</string>
-    <string name="settings_lvd_display_progress">SOC as Progress Bar</string>
+    <string name="settings_lvd_display_both">Voltage and SoC</string>
+    <string name="settings_lvd_display_progress">SoC as Progress Bar</string>
 
     <string name="lvb_status_notification_title">LVB Status</string>
     <string name="lbv_status_notification_description">The LVB\'s status is reporting \"low\".</string>
@@ -291,6 +291,9 @@
     <string name="activity_charging_energy_button">Energy</string>
     <string name="activity_charging_power_button">Power</string>
     <string name="activity_charging_soc_button">Charge %</string>
+    <string name="activity_charging_session_start_label">Start time:</string>
+    <string name="activity_charging_soc_label">SoC:</string>
+    <string name="activity_charging_of_label">of</string>
 
     <string name="activity_settings_system_default_label">System default</string>
 
@@ -306,7 +309,7 @@
     <string name="activity_update_updating_dialog_message">After the app is updated, it will close.</string>
     <string name="activity_update_ignore_dialog_title">Warning</string>
     <string name="activity_update_ignore_dialog_message">Ignoring this update cannot be undone. Proceed?</string>
-    <string name="activity_update_downloading_html"><![CDATA[<html><body><h2>Attempting to download CHANGELOG.md file...</h2></body></html>]]></string>
+    <string name="activity_update_downloading_html"><![CDATA[<html><body><h2>Attempting to download CHANGELOG.md file…</h2></body></html>]]></string>
     <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Error occurred downloading CHANGELOG.md</h2></body></html>]]></string>
     <string name="update_receiver_notification_title">App update</string>
     <string name="update_receiver_notification_message">A new app version is available.  Click to install.</string>

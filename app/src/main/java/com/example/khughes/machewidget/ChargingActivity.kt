@@ -45,6 +45,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -224,7 +225,7 @@ class ChargingActivity : ComponentActivity() {
             }
 
             setContent {
-                MacheWidgetTheme {
+                MacheWidgetTheme(dynamicColor = false) {
                     // A surface container using the 'background' color from the theme
                     Surface(
                         modifier = Modifier.fillMaxSize(),
@@ -340,31 +341,33 @@ private fun Graph(info: MutableList<DCFCUpdate>, textColor: Color, modifier: Mod
                 Button(
                     onClick = { whatInfo = buttonText[0] },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5F)
-                    ),
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White),
+                    shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.align(Alignment.CenterStart),
-                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text(text = "<< " + buttonText[0], color = MaterialTheme.colorScheme.secondary)
+                    Text(text = "<< " + buttonText[0])
                 }
                 Button(
                     onClick = { /* Do something */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.0F)),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black.copy(alpha = 0.0F),
+                        contentColor = MaterialTheme.colorScheme.secondary
+                    ),
+                    shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.align(Alignment.Center)
-                ) {
-                    Text(
-                        text = whatInfo, color = MaterialTheme.colorScheme.secondary
-                    )
+                    ) {
+                        Text(text = whatInfo, fontSize = 20.sp)
                 }
                 Button(
                     onClick = { whatInfo = buttonText[1] },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5F)
-                    ),
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White),
+                    shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text(text = buttonText[1] + " >>", color = MaterialTheme.colorScheme.secondary)
+                    Text(text = buttonText[1] + " >>")
                 }
 
             }
@@ -513,11 +516,14 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             session.updates, MaterialTheme.colorScheme.secondary,
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = stringResource(R.string.vehicle_label) + session.VIN,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.fillMaxWidth()
-        )
+
+        if (session.VIN != null) {
+            Text(
+                text = stringResource(R.string.vehicle_label) + session.VIN,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         val locale = ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0]
         val zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(pluginTime), ZoneId.systemDefault())
@@ -529,7 +535,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
         val time = zdt.format(DateTimeFormatter.ofPattern(format,locale!!))
 
         Text(
-            text = "Session start time: $time",
+            text = stringResource(R.string.activity_charging_session_start_label) + " $time",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
@@ -582,14 +588,24 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        val distanceConversion = Constants.KMTOMILES
+
+        // Get conversion factors and descriptions for measurement units
+        val distanceConversion: Double
+        val distanceUnits: String
+        if(locale == Locale.US) {
+            distanceConversion = Constants.KMTOMILES
+            distanceUnits = "miles"
+        } else {
+            distanceConversion = 1.0
+            distanceUnits = "km"
+        }
+
         val initialDTE = String.format(locale, "%.1f", session.initialDte!! * distanceConversion)
         val finalDTE = String.format(locale,
             "%.1f", session.updates[session.updates.lastIndex].dte!!
                     * distanceConversion
         )
 
-        val distanceUnits = "miles"
         Text(
             text = stringResource(R.string.range_label) + "$initialDTE $distanceUnits -> $finalDTE $distanceUnits",
             color = MaterialTheme.colorScheme.secondary,
@@ -600,7 +616,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
         val finalSOC = session.updates[session.updates.lastIndex].batteryFillLevel!!
 
         Text(
-            text = "SOC: $initialSOC% -> $finalSOC%",
+            text = stringResource(R.string.activity_charging_soc_label) + " $initialSOC% -> $finalSOC%",
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth()
         )
@@ -635,8 +651,9 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
                         .align(Alignment.Center)
                         .padding(10.dp)
                 ) {
+                    val of = LocalContext.current.resources.getString(R.string.activity_charging_of_label)
                     Text(
-                        text = "${index + 1} of $count",
+                        text = "${index + 1} $of $count",
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
@@ -662,7 +679,7 @@ fun MainScreen(sessions: MutableList<DCFCSession>) {
 @Preview(showBackground = true)
 @Composable
 private fun LightPreview() {
-    MacheWidgetTheme {
+    MacheWidgetTheme(dynamicColor = false) {
         val updates: MutableList<DCFCUpdate> = mutableListOf()
         val update1 = DCFCUpdate()
 
@@ -701,7 +718,7 @@ private fun LightPreview() {
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun DarkPreview() {
-    MacheWidgetTheme {
+    MacheWidgetTheme(dynamicColor = false) {
         val updates: MutableList<DCFCUpdate> = mutableListOf()
         val update1 = DCFCUpdate()
 

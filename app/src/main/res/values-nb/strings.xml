@@ -250,6 +250,8 @@
     <string name="activity_charging_energy_button">"Energi"</string>
     <string name="activity_charging_power_button">"Makt"</string>
     <string name="activity_charging_soc_button">"Lade %"</string>
+    <string name="activity_charging_session_start_label">Starttid:</string>
+    <string name="activity_charging_soc_label">SoC:</string>
 
     <string name="activity_settings_system_default_label">"System standard"</string>
 
@@ -269,5 +271,6 @@
     <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Det oppsto en feil ved nedlasting av CHANGELOG.md</h2></body></html>]]></string>
     <string name="update_receiver_notification_title">Appoppdatering</string>
     <string name="update_receiver_notification_message">En ny appversjon er tilgjengelig. Klikk for å installere.</string>
+    <string name="activity_charging_of_label">av</string>
 
 </resources>

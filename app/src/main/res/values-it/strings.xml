@@ -249,7 +249,9 @@
     <string name="activity_charging_seconds_label">Secondi</string>
     <string name="activity_charging_energy_button">Energia</string>
     <string name="activity_charging_power_button">Potenza</string>
-    <string name="activity_charging_soc_button">SoC</string>
+    <string name="activity_charging_soc_button">SoC %</string>
+    <string name="activity_charging_session_start_label">Ora di inizio:</string>
+    <string name="activity_charging_soc_label">SoC:</string>
 
     <string name="activity_settings_system_default_label">Lingua di sistema</string>
 
@@ -269,5 +271,6 @@
     <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Si è verificato un errore durante il download di CHANGELOG.md</h2></body></html>]]></string>
     <string name="update_receiver_notification_title">Aggiornamento dell\'app</string>
     <string name="update_receiver_notification_message">È disponibile una nuova versione dell\'app. Fare clic per installare.</string>
+    <string name="activity_charging_of_label">di</string>
 
 </resources>

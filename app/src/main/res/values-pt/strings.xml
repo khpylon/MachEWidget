@@ -250,6 +250,8 @@
     <string name="activity_charging_energy_button">"Energia"</string>
     <string name="activity_charging_power_button">"Poder"</string>
     <string name="activity_charging_soc_button">"Cobrar %"</string>
+    <string name="activity_charging_session_start_label">Hora de início:</string>
+    <string name="activity_charging_soc_label">EDC:</string>
 
     <string name="activity_settings_system_default_label">"Sistema padrão"</string>
 
@@ -269,5 +271,6 @@
     <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Ocorreu um erro ao baixar CHANGELOG.md</h2></body></html>]]></string>
     <string name="update_receiver_notification_title">Atualização do aplicativo</string>
     <string name="update_receiver_notification_message">Uma nova versão do aplicativo está disponível. Clique para instalar.</string>
+    <string name="activity_charging_of_label">de</string>
 
 </resources>

@@ -250,6 +250,8 @@
     <string name="activity_charging_energy_button">Energiaa</string>
     <string name="activity_charging_power_button">Tehoa</string>
     <string name="activity_charging_soc_button">Veloitus %</string>
+    <string name="activity_charging_session_start_label">Aloitusaika:</string>
+    <string name="activity_charging_soc_label">SoC:</string>
 
     <string name="activity_settings_system_default_label">Järjestelmän oletusarvo</string>
 
@@ -269,5 +271,6 @@
     <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>CHANGELOG.md:n lataamisessa tapahtui virhe</h2></body></html>]]></string>
     <string name="update_receiver_notification_title">Sovelluksen päivitys</string>
     <string name="update_receiver_notification_message">Uusi sovellusversio on saatavilla. Napsauta asentaaksesi.</string>
+    <string name="activity_charging_of_label">/</string>
 
 </resources>
