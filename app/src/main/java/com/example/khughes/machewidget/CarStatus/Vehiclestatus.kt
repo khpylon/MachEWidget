@@ -53,7 +53,7 @@ class Vehiclestatus {
     @ColumnInfo(defaultValue = "0", )
     var xevBatteryEnergyRemaining: Double = 0.0
 
-    @SerializedName("xevBatteryVoltage")
+    @SerializedName("xevBatteryTemperature")
     @Expose
     @ColumnInfo(defaultValue = "0", )
     var xevBatteryTemperature: Double = 0.0
