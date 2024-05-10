@@ -364,7 +364,10 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         updateLinkedApps(context, views)
 
         // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views)
+        try {
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+        } catch (_: NullPointerException) {
+        }
     }
 
     override fun onUpdate(

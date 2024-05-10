@@ -180,8 +180,11 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         drawVehicleImage(context, views, carStatus, vehicleInfo.colorValue, null, vehicleImages)
 
         // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views)
-    }
+        try {
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+        } catch (_: NullPointerException) {
+        }
+}
 
     override fun onUpdate(
         context: Context,
