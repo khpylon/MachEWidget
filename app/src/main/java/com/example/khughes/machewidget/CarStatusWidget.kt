@@ -37,6 +37,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.*
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -794,7 +795,20 @@ open class CarStatusWidget : AppWidgetProvider() {
 
         // Fill in the last update time
         val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
-        val lastUpdateTime = LocalDateTime.parse(carStatus.lastRefresh, formatter).atZone(UTC)
+        val lastRefresh = carStatus.lastRefresh
+        val lastUpdateTime :ZonedDateTime
+        try {
+            lastUpdateTime = LocalDateTime.parse(lastRefresh, formatter).atZone(UTC)
+        }
+        catch (e : DateTimeParseException) {
+            LogFile.e(
+                context,
+                MainActivity.CHANNEL_ID,
+                "DateTimeParseException exception in CarStatusWidget.drawLastRefresh(): date = \"$lastRefresh\""
+            )
+            views.setTextViewText(R.id.lastRefreshInfo, context.resources.getString(R.string.widgets_na_label))
+            return
+        }
 
         val currentTime = Calendar.getInstance()
 
