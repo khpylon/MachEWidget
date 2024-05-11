@@ -4,6 +4,10 @@ Wszystkie istotne zmiany w tym projekcie zostaną udokumentowane w tym pliku.
 
 Format opiera się na [Prowadź dziennik zmian] (https://keepachangelog.com/en/1.0.0/), ale w tej chwili projekt nie jest zgodny z [wersją semantyczną] (https://semver.org/spec/v2.0.0.html).
 
+## 2024.05.11-11
+### Naprawił
+- Kilka drobnych poprawek błędów.
+
 ## 2024.05.04-16
 ### Dodany
 - Drobne ulepszenia działania szybkiego ładowania
