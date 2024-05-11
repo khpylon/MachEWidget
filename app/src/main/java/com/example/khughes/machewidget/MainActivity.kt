@@ -2,31 +2,56 @@ package com.example.khughes.machewidget
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
-import android.content.res.Resources
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.ContextThemeWrapper
-import android.view.Menu
-import android.view.MenuItem
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.webkit.WebViewAssetLoader
@@ -37,6 +62,7 @@ import com.example.khughes.machewidget.AppUpdates.performUpdates
 import com.example.khughes.machewidget.CarStatusWidget.Companion.updateWidget
 import com.example.khughes.machewidget.DCFC.Companion.purgeChargingData
 import com.example.khughes.machewidget.LogFile.copyLogFile
+import com.example.khughes.machewidget.MainActivity.Companion.CHANNEL_ID
 import com.example.khughes.machewidget.Misc.Companion.checkDarkMode
 import com.example.khughes.machewidget.Misc.Companion.checkLogcat
 import com.example.khughes.machewidget.Misc.Companion.doSurvey
@@ -44,53 +70,23 @@ import com.example.khughes.machewidget.Notifications.Companion.batteryOptimizati
 import com.example.khughes.machewidget.Notifications.Companion.createNotificationChannels
 import com.example.khughes.machewidget.StatusReceiver.Companion.initateAlarm
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
+import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
 
-class MainActivity : AppCompatActivity() {
 
-    // Create Locales we can use for other languages
-    private val NORWAY_BOKMAL = Locale("nb")
-    private val SPANISH = Locale("es")
-    private val PORTUGUESE = Locale("pt")
-    private val POLISH = Locale("pl")
-    private val FINNISH = Locale("fi")
+class MainActivity : ComponentActivity() {
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun fordPassInfo(context: Context?) {
-        val surveyWebview = WebView(this)
-        surveyWebview.settings.javaScriptEnabled = true
-        checkDarkMode(context!!, surveyWebview)
-        val assetLoader = WebViewAssetLoader.Builder()
-            .addPathHandler("/assets/", AssetsPathHandler(this))
-            .addPathHandler("/res/", ResourcesPathHandler(this))
-            .build()
-        surveyWebview.webViewClient = LocalContentWebViewClient(assetLoader)
-        val language = Locale.getDefault().language
-
-        val indexPage =
-            when (language) {
-                Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/fordpass_fr.html"
-                Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/fordpass_de.html"
-                Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/fordpass_it.html"
-                POLISH.language -> "https://appassets.androidplatform.net/assets/fordpass_pl.html"
-                NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/fordpass_nb.html"
-                FINNISH.language -> "https://appassets.androidplatform.net/assets/fordpass_fi.html"
-                SPANISH.language -> "https://appassets.androidplatform.net/assets/fordpass_es.html"
-                PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/fordpass_pt.html"
-                else -> "https://appassets.androidplatform.net/assets/fordpass.html"
-            }
-        surveyWebview.loadUrl(indexPage)
-        AlertDialog.Builder(this)
-            .setTitle(R.string.fordpass_description)
-            .setNegativeButton(getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-            .setView(surveyWebview).show()
+    companion object {
+        const val CHANNEL_ID = "934TXS"
     }
 
-    private fun checkCommandsEnabled(activity: Activity, context: Context) {
+    @SuppressLint("SetJavaScriptEnabled")
+    fun checkCommandsEnabled(context: Context) {
+
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
         // Check status of remote commands and forced updates
@@ -101,11 +97,11 @@ class MainActivity : AppCompatActivity() {
 
         // if either is set, let the user know why they're disabled
         if (commands || forced) {
-            AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
-                .setTitle(getString(R.string.remote_commands_disabled_title))
-                .setNegativeButton(getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+            AlertDialog.Builder(ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                .setTitle(context.getString(R.string.remote_commands_disabled_title))
+                .setNegativeButton(context.getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 .setMessage(
-                    getString(R.string.remote_commands_disabled_description)
+                    context.getString(R.string.remote_commands_disabled_description)
                 )
                 .show()
 
@@ -124,83 +120,49 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private var defaultLanguage: Locale? = null
-
-    private fun getContextForLanguage(context: Context): Context {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
-
-        if( defaultLanguage == null) {
-            defaultLanguage = Resources.getSystem().configuration.locales[0]
-        }
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val languageTag =
-            sharedPref.getString(context.resources.getString(R.string.language_key), "")
-        val locale = if (languageTag!!.isEmpty()) {
-            defaultLanguage as Locale
-        } else {
-            Locale.forLanguageTag(languageTag)
-        }
-        Locale.setDefault(locale)
-        val resources: Resources = context.resources
-        val configuration: Configuration = resources.configuration
-        configuration.setLocale(locale)
-        return context.createConfigurationContext(configuration)
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(getContextForLanguage(newBase))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-        setTheme(R.style.Theme_AppCompat)
-        setContentView(R.layout.activity_main)
-
-        // If we haven't bugged about the survey before, do it once and get it over with
-        if (doSurvey(applicationContext)) {
-            fordPassInfo(applicationContext)
-        }
+        val context = applicationContext
 
         // First thing, check logcat for a crash and save if so
-        val crashMessage = checkLogcat(applicationContext)
+        val crashMessage = checkLogcat(context)
         if (crashMessage != null) {
-            Toast.makeText(applicationContext, crashMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, crashMessage, Toast.LENGTH_SHORT).show()
         }
 
-        checkCommandsEnabled(this, applicationContext)
+        // If commands enabled, disable and show message to user to explain why
+        checkCommandsEnabled(context)
 
         // Initialize preferences
         PreferenceManager.setDefaultValues(this, R.xml.settings_preferences, false)
 
         // Handle any changes to the app.
-        performUpdates(applicationContext)
+        performUpdates(context)
 
         // Initiate check for a new app version
-        UpdateReceiver.initiateAlarm(applicationContext)
+        UpdateReceiver.initiateAlarm(context)
 
         // See if we need to notify user about battery optimizations
-        batteryOptimization(applicationContext)
+        batteryOptimization(context)
 
         // Initiate update of the widget
         val updateIntent = Intent()
         updateIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-        applicationContext.sendBroadcast(updateIntent)
+        context.sendBroadcast(updateIntent)
+
+        // Older versions require permission to write log files
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(
                     this, Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                if (shouldShowRequestPermissionRationale(
                         this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 ) {
-                    ActivityCompat.requestPermissions(
-                        this@MainActivity,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        1
+                    registerForActivityResult(RequestPermission()) { }.launch(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 }
             }
@@ -209,89 +171,59 @@ class MainActivity : AppCompatActivity() {
         // Android 13 and later require user to allow posting of notifications
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
-                    applicationContext, Manifest.permission.POST_NOTIFICATIONS
-                ) !=
-                PackageManager.PERMISSION_GRANTED
+                    this, Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
-                registerForActivityResult(ActivityResultContracts.RequestPermission()) { }.launch(
-                    Manifest.permission.POST_NOTIFICATIONS
-                )
+                if (shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                ) {
+                    registerForActivityResult(RequestPermission()) { }.launch(
+                        Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
         }
 
         // If app has been running OK, try to initiate status updates and count number of vehicles in the database
-        val userId = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val userId = PreferenceManager.getDefaultSharedPreferences(context)
             .getString(applicationContext.resources.getString(R.string.userId_key), null)
         if (userId != null) {
             Thread {
-                val info = InfoRepository(applicationContext)
+                val info = InfoRepository(context)
                 val userInfo = info.user
                 if (userInfo.programState == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    initateAlarm(applicationContext)
+                    initateAlarm(context)
                 }
             }.start()
         }
 
         // Do bookkeeping on old charging logs
-        purgeChargingData(applicationContext)
-
-        // Create the webview containing instruction for use.
-        val mWebView = findViewById<WebView>(R.id.main_description)
-        checkDarkMode(applicationContext, mWebView)
-        val assetLoader = WebViewAssetLoader.Builder()
-            .addPathHandler("/assets/", AssetsPathHandler(this))
-            .addPathHandler("/res/", ResourcesPathHandler(this))
-            .build()
-        mWebView.webViewClient = LocalContentWebViewClient(assetLoader)
-
-        // Use the system language to choose which webpage to display
-        val language = Locale.getDefault().language
-        val indexPage =
-            when (language) {
-                Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/index_page_fr.html"
-                Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/index_page_de.html"
-                Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/index_page_it.html"
-                POLISH.language -> "https://appassets.androidplatform.net/assets/index_page_pl.html"
-                NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/index_page_nb.html"
-                FINNISH.language ->  "https://appassets.androidplatform.net/assets/index_page_fi.html"
-                SPANISH.language -> "https://appassets.androidplatform.net/assets/index_page_es.html"
-                PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/index_page_pt.html"
-                else -> "https://appassets.androidplatform.net/assets/index_page.html"
-            }
-        mWebView.loadUrl(indexPage)
+        purgeChargingData(context)
 
         // Update the widget
-        updateWidget(applicationContext)
+        updateWidget(context)
 
         // Allow the app to display notifications
-        createNotificationChannels(applicationContext)
+        createNotificationChannels(context)
 
         // If we get into a weird state where the user appears to have logged in but there are no
         // vehicles, send them to Manage Vehicles
         CoroutineScope(Dispatchers.IO).launch {
-            val info = InfoRepository(applicationContext)
+            val info = InfoRepository(context)
             if (info.user.programState == Constants.STATE_HAVE_TOKEN && info.vehicles.isEmpty()) {
-                val intent = Intent(applicationContext, VehicleActivity::class.java)
+                val intent = Intent(context, VehicleActivity::class.java)
                 startActivity(intent)
             }
         }
-    }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            1 -> if (grantResults.isNotEmpty()
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(this@MainActivity,
-                    getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this@MainActivity,
-                    getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+        setContent {
+            MacheWidgetTheme {
+                Surface (color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    DisplayWebview()
+                }
             }
         }
     }
@@ -300,195 +232,321 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         invalidateOptionsMenu()
     }
+}
 
-    private class LocalContentWebViewClient(private val mAssetLoader: WebViewAssetLoader) :
-        WebViewClientCompat() {
-        override fun shouldInterceptRequest(
-            view: WebView,
-            request: WebResourceRequest
-        ): WebResourceResponse? {
-            return mAssetLoader.shouldInterceptRequest(request.url)
-        }
+@SuppressLint("SetJavaScriptEnabled")
+private fun fordPassInfo(context: Context) {
+    val surveyWebview = WebView(context)
 
-        // to support API < 21
-        @Deprecated("Deprecated in Java")
-        override fun shouldInterceptRequest(
-            view: WebView,
-            url: String
-        ): WebResourceResponse? {
-            return mAssetLoader.shouldInterceptRequest(Uri.parse(url))
+    surveyWebview.settings.javaScriptEnabled = true
+    checkDarkMode(context, surveyWebview)
+    val assetLoader = WebViewAssetLoader.Builder()
+        .addPathHandler("/assets/", AssetsPathHandler(context))
+        .addPathHandler("/res/", ResourcesPathHandler(context))
+        .build()
+    surveyWebview.webViewClient = LocalContentWebViewClient(assetLoader)
+    val language = Locale.getDefault().language
+
+    val indexPage =
+        when (language) {
+            Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/fordpass_fr.html"
+            Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/fordpass_de.html"
+            Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/fordpass_it.html"
+            POLISH.language -> "https://appassets.androidplatform.net/assets/fordpass_pl.html"
+            NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/fordpass_nb.html"
+            FINNISH.language -> "https://appassets.androidplatform.net/assets/fordpass_fi.html"
+            SPANISH.language -> "https://appassets.androidplatform.net/assets/fordpass_es.html"
+            PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/fordpass_pt.html"
+            else -> "https://appassets.androidplatform.net/assets/fordpass.html"
         }
+    surveyWebview.loadUrl(indexPage)
+    AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+        .setTitle(R.string.fordpass_description)
+        .setNegativeButton(context.getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+        .setView(surveyWebview).show()
+}
+
+// Create Locales we can use for other languages
+private val NORWAY_BOKMAL = Locale("nb")
+private val SPANISH = Locale("es")
+private val PORTUGUESE = Locale("pt")
+private val POLISH = Locale("pl")
+private val FINNISH = Locale("fi")
+
+private class LocalContentWebViewClient(private val mAssetLoader: WebViewAssetLoader) :
+    WebViewClientCompat() {
+    override fun shouldInterceptRequest(
+        view: WebView,
+        request: WebResourceRequest
+    ): WebResourceResponse? {
+        return mAssetLoader.shouldInterceptRequest(request.url)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-
-        // Only enable "Choose Linked Apps" if app buttons are enabled
-        val showAppLinks = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(applicationContext.resources.getString(R.string.show_app_links_key), true)
-        menu.findItem(R.id.action_chooseapp).isEnabled = showAppLinks
-
-        // Only enable "Save Logfile" if logging is enabled,
-        val loggingEnabled = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(applicationContext.resources.getString(R.string.logging_key), true)
-        menu.findItem(R.id.action_copylog).isEnabled = loggingEnabled
-
-        // Only enable "Set Vehicle Color" if colors are enabled,
-        val colorsEnabled = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(applicationContext.resources.getString(R.string.use_colors_key), true)
-        menu.findItem(R.id.action_color).isVisible = colorsEnabled
-
-        // The PlayStore version doesn't do all the update stuff
-        @Suppress("KotlinConstantConditions")
-        if (BuildConfig.FLAVOR == "playstore") {
-            menu.findItem(R.id.action_update).isVisible = false
-        }
-
-        // Only show the DCFC log option if there are electric vehicles
-        val appInfo = StoredData(applicationContext)
-        menu.findItem(R.id.action_charge).isVisible = appInfo.electricVehicles
-
-        return true
+    // to support API < 21
+    @Deprecated("Deprecated in Java")
+    override fun shouldInterceptRequest(
+        view: WebView,
+        url: String
+    ): WebResourceResponse? {
+        return mAssetLoader.shouldInterceptRequest(Uri.parse(url))
     }
+}
+
+@SuppressLint("SetJavaScriptEnabled")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DisplayWebview() {
+
+    // fetching local context
+    val context = LocalContext.current
+
+    // If we haven't bugged about the survey before, do it once and get it over with
+    if (doSurvey(context)) {
+        fordPassInfo(context)
+    }
+
+    // Create a boolean variable
+    // to store the display menu state
+    var mDisplayMenu by remember { mutableStateOf(false) }
 
     // Callback for choosing setting file to restore
-    private var restoreSettingsLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult(),
-        object : ActivityResultCallback<ActivityResult?> {
-            override fun onActivityResult(result: ActivityResult?) {
-                if (result?.resultCode == RESULT_OK) {
-                    val data = result.data
-                    if (data != null) {
-                        val uri = data.data
-                        if (uri != null) {
-                            val type = applicationContext.contentResolver.getType(uri)
-                            try {
-                                if (type == Constants.APPLICATION_JSON || type == Constants.APPLICATION_OCTETSTREAM && uri.path!!.endsWith(
-                                        ".json"
-                                    )
-                                ) {
-//                                        Utils.restorePrefs(context, uri);
-                                    PrefManagement().restorePrefs(applicationContext, uri)
-                                } else {
-                                    return
-                                }
-                                val intent = Intent(applicationContext, MainActivity::class.java)
-                                intent.flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(intent)
-                            } catch (e2: IOException) {
-                                Log.e(
-                                    CHANNEL_ID,
-                                    "exception in MainActivity.restoreSettingsLauncher: ",
-                                    e2
-                                )
-                            }
-                        }
-                    }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let  {
+            val type = context.contentResolver.getType(uri)
+            try {
+                if (type == Constants.APPLICATION_JSON ||
+                    (type == Constants.APPLICATION_OCTETSTREAM && uri.path!!.endsWith(
+                        ".json"
+                    ) )
+                ) {
+                    PrefManagement().restorePrefs(context, uri)
+                    val intent = Intent(context, MainActivity::class.java)
+                    intent.flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    context.startActivity(intent)
                 }
+            } catch (e: IOException) {
+                Log.e(
+                    CHANNEL_ID,
+                    "exception in MainActivity.DisplayWebview(): ",
+                    e
+                )
             }
         }
-    )
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_login -> {
-                // Depending on whether profiles are being used, either start the profile manager or go straight to login screen
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-
-            R.id.action_refresh -> {
-                nextAlarm(applicationContext, 5)
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.refresh_in_5_seconds_description),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return true
-            }
-
-            R.id.action_chooseapp -> {
-                val intent = Intent(this, ChooseAppActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-
-            R.id.action_vehicle -> {
-                val intent = Intent(this, VehicleActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-
-            R.id.action_color -> {
-                val intent = Intent(this, ColorActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-
-            R.id.action_reminder -> {
-                val intent = Intent(this, ReminderActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-
-            R.id.action_copylog -> {
-                val result = copyLogFile(applicationContext)
-                Toast.makeText(applicationContext, result, Toast.LENGTH_SHORT).show()
-                return true
-            }
-
-            R.id.action_backup -> {
-                PrefManagement().savePrefs(applicationContext)
-                return true
-            }
-
-            R.id.action_restore -> {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
-                intent.addCategory(Intent.CATEGORY_OPENABLE)
-                intent.type = "application/*"
-                val mimeTypes =
-                    arrayOf(Constants.APPLICATION_JSON, Constants.APPLICATION_OCTETSTREAM)
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-                restoreSettingsLauncher.launch(intent)
-                return true
-            }
-
-            R.id.action_update -> {
-                val intent = Intent(this, UpdateReceiver::class.java)
-                intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                applicationContext.sendBroadcast(intent)
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.update_check_description),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return true
-            }
-
-            R.id.action_charge -> {
-                val intent = Intent(this, ChargingActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-
-            R.id.action_settings -> {
-                val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-
-            R.id.action_fordpass -> {
-                fordPassInfo(applicationContext)
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
-    companion object {
-        const val CHANNEL_ID = "934TXS"
+    Scaffold (
+        topBar = {
+            // Creating a Top bar
+            TopAppBar(
+                title = { Text(context.getString(R.string.app_name), color = Color.White) },
+                actions = {
+
+                    // Creating Icon button for dropdown menu
+                    IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
+                        Icon(Icons.Default.MoreVert, "")
+                    }
+
+                    // Creating a dropdown menu
+                    DropdownMenu(
+                        expanded = mDisplayMenu,
+                        onDismissRequest = { mDisplayMenu = false },
+                    ) {
+                        // Add in each menu item
+                        DropdownMenuItem(
+                            onClick = {
+                                fordPassInfo(context)
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_fordpass)) }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                val intent = Intent(context, LoginActivity::class.java)
+                                context.startActivity(intent)
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_login)) }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                val intent = Intent(context, VehicleActivity::class.java)
+                                context.startActivity(intent)
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_vehicle)) }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                nextAlarm(context, 5)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.refresh_in_5_seconds_description),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_refresh)) }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                val intent = Intent(context, VehicleActivity::class.java)
+                                context.startActivity(intent)
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_vehicle)) }
+                        )
+                        // Only enable "Choose Linked Apps" if app buttons are enabled
+                        val showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
+                            .getBoolean(context.resources.getString(R.string.show_app_links_key), true)
+                        if (showAppLinks) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    val intent = Intent(context, ChooseAppActivity::class.java)
+                                    context.startActivity(intent)
+                                    mDisplayMenu = false
+                                },
+                                text = { Text(text = context.getString(R.string.action_chooseapp)) }
+                            )
+                        }
+                        // Only enable "Set Vehicle Color" if colors are enabled,
+                        val colorsEnabled = PreferenceManager.getDefaultSharedPreferences(context)
+                            .getBoolean(context.resources.getString(R.string.use_colors_key), true)
+                        if (colorsEnabled) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    val intent = Intent(context, ColorActivity::class.java)
+                                    context.startActivity(intent)
+                                    mDisplayMenu = false
+                                },
+                                text = { Text(text = context.getString(R.string.action_color)) }
+                            )
+                        }
+                        DropdownMenuItem(
+                            onClick = {
+                                val intent = Intent(context, ReminderActivity::class.java)
+                                context.startActivity(intent)
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_reminder)) }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                PrefManagement().savePrefs(context)
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_backup)) }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                launcher.launch(arrayOf(Constants.APPLICATION_JSON, Constants.APPLICATION_OCTETSTREAM))
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_restore)) }
+                        )
+                        // Only enable "Set Vehicle Color" if colors are enabled,
+                        val loggingEnabled = PreferenceManager.getDefaultSharedPreferences(context)
+                            .getBoolean(context.resources.getString(R.string.logging_key), true)
+                        if (loggingEnabled) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    val result = copyLogFile(context)
+                                    Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
+                                    mDisplayMenu = false
+                                },
+                                text = { Text(text = context.getString(R.string.action_copylog)) }
+                            )
+                        }
+                        DropdownMenuItem(
+                            onClick = {
+                                val intent = Intent(context, ChargingActivity::class.java)
+                                context.startActivity(intent)
+                            },
+                            text = { Text(text = context.getString(R.string.action_view_dcfc_logs)) }
+                        )
+                        // The GitHub version does all the update stuff
+                        @Suppress("KotlinConstantConditions")
+                        if (BuildConfig.FLAVOR == "github") {
+                            DropdownMenuItem(
+                                onClick = {
+                                    val intent = Intent(context, UpdateActivity::class.java)
+                                    intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                                    context.sendBroadcast(intent)
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.update_check_description),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                text = { Text(text = context.getString(R.string.action_update)) }
+                            )
+                        }
+                        DropdownMenuItem(
+                            onClick = {
+                                val intent = Intent(context, SettingsActivity::class.java)
+                                context.startActivity(intent)
+                                mDisplayMenu = false
+                            },
+                            text = { Text(text = context.getString(R.string.action_settings)) }
+                        )
+                    }
+                }
+            )
+        },
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 8.dp, vertical = 12.dp),
+
+    ) { innerPadding ->
+        Column (modifier = Modifier.padding(innerPadding)) {
+            AndroidView(
+                factory = { context ->
+                    WebView(context).apply {
+                        settings.javaScriptEnabled = true
+                        webViewClient = WebViewClient()
+                    }
+                },
+                update = { webView ->
+                    val assetLoader = WebViewAssetLoader.Builder()
+                        .addPathHandler("/assets/", AssetsPathHandler(context))
+                        .addPathHandler("/res/", ResourcesPathHandler(context))
+                        .build()
+                    webView.webViewClient = LocalContentWebViewClient(assetLoader)
+                    checkDarkMode(context, webView)
+
+                    // Use the system language to choose which webpage to display
+                    val language = Locale.getDefault().language
+                    val indexPage =
+                        when (language) {
+                            Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/index_page_fr.html"
+                            Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/index_page_de.html"
+                            Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/index_page_it.html"
+                            POLISH.language -> "https://appassets.androidplatform.net/assets/index_page_pl.html"
+                            NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/index_page_nb.html"
+                            FINNISH.language ->  "https://appassets.androidplatform.net/assets/index_page_fi.html"
+                            SPANISH.language -> "https://appassets.androidplatform.net/assets/index_page_es.html"
+                            PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/index_page_pt.html"
+                            else -> "https://appassets.androidplatform.net/assets/index_page.html"
+                        }
+                    webView.loadUrl(indexPage)
+                }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LightPreview() {
+    MacheWidgetTheme(dynamicColor = false) {
+        DisplayWebview()
+    }
+}
+
+@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun DarkPreview() {
+    MacheWidgetTheme(dynamicColor = false) {
+        DisplayWebview()
     }
 }
