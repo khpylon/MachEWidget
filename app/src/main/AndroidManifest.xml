@@ -9,11 +9,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MacheWidget">
         <activity
-            android:name=".MainActivity3"
-            android:exported="false"
-            android:label="@string/fordpass_description"
-            android:theme="@style/Theme.MacheWidget" />
-        <activity
             android:name=".ChargingActivity"
             android:exported="false"
             android:label="@string/title_activity_charging"

@@ -166,7 +166,7 @@ dependencies {
     implementation 'com.jjoe64:graphview:4.2.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-   // implementation 'androidx.compose.material:material-icons-extended:1.6.6'
+    implementation 'androidx.webkit:webkit:1.9.0'
 
     // Fix duplicate class errors
     // https://www.youtube.com/watch?v=RplK16_-6mU
