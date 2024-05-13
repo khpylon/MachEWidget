@@ -339,7 +339,7 @@ fun DisplayWebview() {
         topBar = {
             // Creating a Top bar
             TopAppBar(
-                title = { Text(context.getString(R.string.app_name), color = Color.White) },
+                title = { Text(context.getString(R.string.app_name)) },
                 actions = {
 
                     // Creating Icon button for dropdown menu
