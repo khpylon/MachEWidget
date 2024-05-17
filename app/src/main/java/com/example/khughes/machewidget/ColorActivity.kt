@@ -9,8 +9,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,7 +40,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -68,7 +73,7 @@ class ColorActivity : ComponentActivity() {
 
             setContent {
                 MacheWidgetTheme {
-                    Greeting()
+                    ChooseColor()
                 }
             }
 
@@ -90,15 +95,20 @@ private suspend fun getInfo(context: Context): InfoRepository =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting() {
+fun ChooseColor() {
     val context = LocalContext.current
     var vehicleIndex by remember { mutableIntStateOf(0) }
     var vehicleInfo = vehicles[vehicleIndex]
     var vehicleImages = Vehicle.getVehicle(vehicleInfo.vin).horizontalDrawables
-    var vehicleColor by remember{ mutableIntStateOf( vehicleInfo.colorValue and VehicleColor.ARGB_MASK ) }
-    var wireframe by remember {  mutableIntStateOf(vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK) }
-    var hexColor by remember { mutableStateOf(Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt()).uppercase().substring(2)) }
-    var initialColor by remember { mutableStateOf(vehicleInfo.colorValue and VehicleColor.ARGB_MASK) }
+    var vehicleColor by remember { mutableIntStateOf(vehicleInfo.colorValue and VehicleColor.ARGB_MASK) }
+    var wireframe by remember { mutableIntStateOf(vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK) }
+    var hexColor by remember {
+        mutableStateOf(
+            Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt()).uppercase()
+                .substring(2)
+        )
+    }
+    var initialColor by remember { mutableIntStateOf(vehicleInfo.colorValue and VehicleColor.ARGB_MASK) }
 
     // This seems like a kludge; it forces HexColorPicker and BrightnessSlider to reposition the wheet
     var recomposeColorpicker by remember { mutableStateOf(false) }
@@ -135,7 +145,7 @@ fun Greeting() {
                             initialColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
                             vehicleImages = Vehicle.getVehicle(vehicleInfo.vin).horizontalDrawables
                             recomposeColorpicker = !recomposeColorpicker
-                        } ),
+                        }),
                 )
             }
 
@@ -221,54 +231,72 @@ fun Greeting() {
                 )
             }
 
-            key(wireframe) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.Center
-                )
-                {
-                    Text(
-                        text = context.getString(R.string.activity_color_wireframe_color),
-                        modifier = Modifier
-                            .height(24.dp)
-                            .align(Alignment.CenterVertically)
-                    )
-                    // Set up everything for the radio buttons
-                    val whiteString =
-                        context.resources.getString(R.string.activity_color_white)
-                    val blackString =
-                        context.resources.getString(R.string.activity_color_black)
-                    val autoString =
-                        context.resources.getString(R.string.activity_color_auto)
-                    val radioOptions = listOf(whiteString, blackString, autoString)
-                    val wireframeModes = listOf(VehicleColor.WIREFRAME_WHITE,VehicleColor.WIREFRAME_BLACK,  VehicleColor.WIREFRAME_AUTO)
-                    var selectedOption by remember { mutableStateOf(
-                        radioOptions[when (wireframe) {
-                            VehicleColor.WIREFRAME_WHITE -> 0
-                            VehicleColor.WIREFRAME_BLACK -> 1
-                            else -> 2
-                        }]
-                    ) }
 
-                    radioOptions.forEach { buttonName ->
-                        RadioButton(
-                            selected = (buttonName == selectedOption),
-                            onClick = { selectedOption = buttonName
-                                val index = radioOptions.indexOf(selectedOption)
-                                wireframe = wireframeModes[index]
-                            },
-                            modifier = Modifier
-                                .size(30.dp)
-                                .padding(start = 8.dp)
+            Column(
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25F),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            )
+            {
+                Text(
+                    text = context.getString(R.string.activity_color_wireframe_color),
+                    modifier = Modifier
+                        .height(24.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                key(wireframe) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.Center
+                    )
+                    {
+                        // Set up everything for the radio buttons
+                        val whiteString =
+                            context.resources.getString(R.string.activity_color_white)
+                        val blackString =
+                            context.resources.getString(R.string.activity_color_black)
+                        val autoString =
+                            context.resources.getString(R.string.activity_color_auto)
+                        val radioOptions = listOf(whiteString, blackString, autoString)
+                        val wireframeModes = listOf(
+                            VehicleColor.WIREFRAME_WHITE,
+                            VehicleColor.WIREFRAME_BLACK,
+                            VehicleColor.WIREFRAME_AUTO
                         )
-                        Text(
-                            text = buttonName,
-                            modifier = Modifier
-                                .padding(start = 2.dp)
-                                .align(Alignment.CenterVertically)
-                        )
+                        var selectedOption by remember {
+                            mutableStateOf(
+                                radioOptions[when (wireframe) {
+                                    VehicleColor.WIREFRAME_WHITE -> 0
+                                    VehicleColor.WIREFRAME_BLACK -> 1
+                                    else -> 2
+                                }]
+                            )
+                        }
+
+                        radioOptions.forEach { buttonName ->
+                            RadioButton(
+                                selected = (buttonName == selectedOption),
+                                onClick = {
+                                    selectedOption = buttonName
+                                    val index = radioOptions.indexOf(selectedOption)
+                                    wireframe = wireframeModes[index]
+                                },
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .padding(start = 8.dp)
+                            )
+                            Text(
+                                text = buttonName,
+                                modifier = Modifier
+                                    .padding(start = 2.dp)
+                                    .align(Alignment.CenterVertically)
+                            )
+                        }
                     }
                 }
             }
@@ -279,6 +307,11 @@ fun Greeting() {
                 horizontalArrangement = Arrangement.Center
             ) {
 
+                val buttonColors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                )
+
                 // "Save" button
                 Button(
                     onClick = {
@@ -286,10 +319,7 @@ fun Greeting() {
                         vehicleInfo.colorValue = vehicleColor or wireframe
                         info.setVehicle(vehicleInfo)
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    ),
+                    colors = buttonColors,
                     shape = RoundedCornerShape(10.dp),
                 ) {
                     Text(
@@ -303,13 +333,11 @@ fun Greeting() {
                         // Reload the initial values
                         vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
                         wireframe = vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
-                        hexColor = Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt()).uppercase().substring(2)
+                        hexColor = Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt())
+                            .uppercase().substring(2)
                         recomposeColorpicker = !recomposeColorpicker
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    ),
+                    colors = buttonColors,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
@@ -318,7 +346,7 @@ fun Greeting() {
                 }
 
                 // "Auto" button: only applies if there is an image of the vehicle to read
-                if (VehicleImages.getImage(context, vehicleInfo.vin!!, 4) != null ) {
+                if (VehicleImages.getImage(context, vehicleInfo.vin!!, 4) != null) {
                     Button(
                         onClick = {
                             // Save current color, so we cab locate a color to read in the image
@@ -329,7 +357,9 @@ fun Greeting() {
                             if (VehicleColor.scanImageForColor(context, vehicleInfo)) {
                                 vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
                                 wireframe = vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
-                                hexColor = Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt()).uppercase().substring(2)
+                                hexColor =
+                                    Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt())
+                                        .uppercase().substring(2)
                                 initialColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
                                 recomposeColorpicker = !recomposeColorpicker
                             }
@@ -337,10 +367,7 @@ fun Greeting() {
                             // reset to the original color
                             vehicleInfo.colorValue = oldColor
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = Color.White
-                        ),
+                        colors = buttonColors,
                         shape = RoundedCornerShape(10.dp),
                     ) {
                         Text(text = context.getString(R.string.activity_color_auto_button))
@@ -402,7 +429,7 @@ fun Greeting() {
 @Composable
 private fun LightPreview() {
     MacheWidgetTheme {
-        Greeting()
+        ChooseColor()
     }
 }
 
@@ -410,6 +437,6 @@ private fun LightPreview() {
 @Composable
 private fun DarkPreview() {
     MacheWidgetTheme {
-        Greeting()
+        ChooseColor()
     }
 }
