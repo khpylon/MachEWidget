@@ -167,7 +167,6 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.5.0'
 
     implementation 'com.github.jozefchmelar:persistentcookiejar:1.0.1'
-    implementation 'com.github.skydoves:colorpickerview:2.2.4'
     implementation 'com.github.skydoves:colorpicker-compose:1.0.7'  // 1.0.6'
     implementation 'com.jjoe64:graphview:4.2.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
