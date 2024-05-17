@@ -95,7 +95,7 @@ private suspend fun getInfo(context: Context): InfoRepository =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChooseColor() {
+private fun ChooseColor() {
     val context = LocalContext.current
     var vehicleIndex by remember { mutableIntStateOf(0) }
     var vehicleInfo = vehicles[vehicleIndex]
