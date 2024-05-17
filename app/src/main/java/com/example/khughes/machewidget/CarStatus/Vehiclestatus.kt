@@ -73,7 +73,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "alarm_value")
-        internal var value: String? = null
+        var value: String? = null
     }
 
     @SerializedName("alarm")
@@ -86,7 +86,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "lockstatus_value")
-        internal var value: String? = null
+        var value: String? = null
     }
 
     @SerializedName("lockStatus")
@@ -99,7 +99,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "odometer_value")
-        internal var value: Double? = null
+        var value: Double? = null
     }
 
     @SerializedName("odometer")
@@ -111,11 +111,11 @@ class Vehiclestatus {
     class Fuel {
         @SerializedName("fuelLevel")
         @Expose
-        internal var fuelLevel: Double? = null
+        var fuelLevel: Double? = null
 
         @SerializedName("distanceToEmpty")
         @Expose
-        internal var distanceToEmpty: Double? = null
+        var distanceToEmpty: Double? = null
     }
 
     @SerializedName("fuel")
@@ -127,15 +127,15 @@ class Vehiclestatus {
     class Gps {
         @SerializedName("latitude")
         @Expose
-        internal var latitude: String? = null
+        var latitude: String? = null
 
         @SerializedName("longitude")
         @Expose
-        internal var longitude: String? = null
+        var longitude: String? = null
 
         @SerializedName("gpsState")
         @Expose
-        internal var gpsState: String? = null
+        var gpsState: String? = null
     }
 
     @SerializedName("gps")
@@ -147,11 +147,11 @@ class Vehiclestatus {
     class RemoteStart {
         @SerializedName("remoteStartDuration")
         @Expose
-        internal var remoteStartDuration: Int? = null
+        var remoteStartDuration: Int? = null
 
         @SerializedName("remoteStartTime")
         @Expose
-        internal var remoteStartTime: Int? = null
+        var remoteStartTime: Int? = null
     }
 
     @SerializedName("remoteStart")
@@ -164,7 +164,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "remotestartstatus_value")
-        internal var value: Int? = null
+        var value: Int? = null
     }
 
     @SerializedName("remoteStartStatus")
@@ -190,7 +190,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "batteryfilllevel_value")
-        internal var value: Double? = null
+        var value: Double? = null
     }
 
     @SerializedName("batteryFillLevel")
@@ -203,7 +203,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "elvehdte_value")
-        internal var value: Double? = null
+        var value: Double? = null
     }
 
     @SerializedName("elVehDTE")
@@ -216,7 +216,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "chargingstatus_value")
-        internal var value: String? = null
+        var value: String? = null
     }
 
     @SerializedName("chargingStatus")
@@ -229,7 +229,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "plugstatus_value")
-        internal var value: Int? = null
+        var value: Int? = null
     }
 
     @SerializedName("plugStatus")
@@ -242,7 +242,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "chargeendtime_value")
-        internal var value: String? = null
+        var value: String? = null
     }
 
     @SerializedName("chargeEndTime")
@@ -255,7 +255,7 @@ class Vehiclestatus {
         @SerializedName("value")
         @Expose
         @ColumnInfo(name = "ignitionstatus_value")
-        internal var value: String? = null
+        var value: String? = null
     }
 
     @SerializedName("ignitionStatus")
