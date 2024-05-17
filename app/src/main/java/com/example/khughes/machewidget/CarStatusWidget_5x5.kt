@@ -432,7 +432,6 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
         val widget_VIN = Constants.VIN_KEY + appWidgetId
         when (action) {
-            PROFILE_CLICK -> changeProfile(context, widget_VIN)
             PHEVTOGGLE_CLICK -> {
                 val mode = intent.getStringExtra("nextMode")
                 val appWidgetManager = AppWidgetManager.getInstance(context)

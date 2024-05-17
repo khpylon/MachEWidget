@@ -1095,6 +1095,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                 return
             }
 
+            PROFILE_CLICK -> changeProfile(context, widget_VIN)
+
             WIDGET_CLICK -> {
                 val newIntent = Intent(context, MainActivity::class.java)
                 newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
