@@ -198,7 +198,7 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_FUSION_TITANIUM_AWD = "P0D"
         private const val NA_LINE_SERIES_FUSION_S_HYBRID = "P0U"
         private const val NA_LINE_SERIES_FUSION_SE_HYBRID = "P0L"
-        private const val NA_LINE_SERIES_FUSION_UNKNOWN_HYBRID = "P0M"
+        private const val NA_LINE_SERIES_FUSION_SEL_HYBRID = "P0M"
         private const val NA_LINE_SERIES_FUSION_SE_AWD = "P0T"
         private const val NA_LINE_SERIES_FUSION_SE_PHEV = "P0P"
         private const val NA_LINE_SERIES_FUSION_TITANIUM_HEV = "P0R"
@@ -562,7 +562,7 @@ open class Vehicle(val VIN: String) {
                 NA_LINE_SERIES_FUSION_TITANIUM_HEV,
                 NA_LINE_SERIES_FUSION_TITANIUM_PHEV,
                 NA_LINE_SERIES_FUSION_SPORT,
-                NA_LINE_SERIES_FUSION_UNKNOWN_HYBRID)
+                NA_LINE_SERIES_FUSION_SEL_HYBRID)
             val lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             return wmi ==  WORLD_MANUFACTURING_IDENTIFIER_MEXICO_CAR
                     && fusionLineSeries.contains(lineSeries)
