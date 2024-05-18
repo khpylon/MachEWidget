@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.05.18-10
+### Changed
+- Temporarily disabled log-ins due to Ford API changes.  If you are already logged in, you should not notice any changes.
+
 ## 2024.05.11-11
 ### Fixed
 - A few minor bug fixes.

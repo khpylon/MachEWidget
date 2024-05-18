@@ -4,6 +4,18 @@ Tous les changements notables apportés à ce projet seront documentés dans ce 
 
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), mais pour le moment, le projet n'adhère pas au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2024.05.18-10
+### Modifié
+Connexions temporairement désactivées en raison de modifications de l'API Ford. Si vous êtes déjà connecté, vous ne devriez remarquer aucun changement.
+
+## 2024.05.18-10
+### Modifié
+Connexions temporairement désactivées en raison de modifications de l'API Ford. Si vous êtes déjà connecté, vous ne devriez remarquer aucun changement.
+
+## 2024.05.18-10
+### Modifié
+Connexions temporairement désactivées en raison de modifications de l'API Ford. Si vous êtes déjà connecté, vous ne devriez remarquer aucun changement.
+
 ## 2024.05.11-11
 ### Fixé
 - Quelques corrections de bugs mineurs.
