@@ -477,7 +477,7 @@ fun DisplayWebview() {
                         if (BuildConfig.FLAVOR == "github") {
                             DropdownMenuItem(
                                 onClick = {
-                                    val intent = Intent(context, UpdateActivity::class.java)
+                                    val intent = Intent(context, UpdateReceiver::class.java)
                                     intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
                                     context.sendBroadcast(intent)
                                     Toast.makeText(
