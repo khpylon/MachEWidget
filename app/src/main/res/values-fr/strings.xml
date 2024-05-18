@@ -272,5 +272,6 @@
     <string name="update_receiver_notification_title">Mise à jour de l\'application</string>
     <string name="update_receiver_notification_message">Une nouvelle version de l\'application est disponible. Cliquer pour installer.</string>
     <string name="activity_charging_of_label">sur</string>
+    <string name="login_temp_disable_message">Temporairement désactivé en raison de modifications de l\'API Ford.</string>
 
 </resources>

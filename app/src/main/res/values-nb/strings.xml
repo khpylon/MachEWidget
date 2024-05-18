@@ -272,5 +272,6 @@
     <string name="update_receiver_notification_title">Appoppdatering</string>
     <string name="update_receiver_notification_message">En ny appversjon er tilgjengelig. Klikk for å installere.</string>
     <string name="activity_charging_of_label">av</string>
+    <string name="login_temp_disable_message">Midlertidig deaktivert på grunn av Ford API-endringer.</string>
 
 </resources>

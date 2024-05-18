@@ -313,5 +313,7 @@
     <string name="activity_update_download_error_html"><![CDATA[<html><body><h2>Error occurred downloading CHANGELOG.md</h2></body></html>]]></string>
     <string name="update_receiver_notification_title">App update</string>
     <string name="update_receiver_notification_message">A new app version is available.  Click to install.</string>
+    <string name="title_activity_reminder2">ReminderActivity2</string>
+    <string name="login_temp_disable_message">Temporarily disabled due to Ford API changes.</string>
 
 </resources>

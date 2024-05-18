@@ -272,5 +272,6 @@
     <string name="update_receiver_notification_title">Sovelluksen päivitys</string>
     <string name="update_receiver_notification_message">Uusi sovellusversio on saatavilla. Napsauta asentaaksesi.</string>
     <string name="activity_charging_of_label">/</string>
+    <string name="login_temp_disable_message">Tilapäisesti poistettu käytöstä Fordin API-muutosten vuoksi.</string>
 
 </resources>
