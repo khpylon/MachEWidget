@@ -37,7 +37,7 @@ import java.util.Locale
 class UpdateActivity : AppCompatActivity() {
 
     // Create Locales we can use for other languages
-    private val NORWAY_BOKMAL = Locale("nb")
+    private val NORWAY_BOKMAL = Locale("no")
     private val SPANISH = Locale("es")
     private val PORTUGUESE = Locale("pt")
     private val POLISH = Locale("pl")
