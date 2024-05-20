@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -45,8 +47,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
@@ -116,6 +120,8 @@ private fun ChooseColor() {
     val controller = rememberColorPickerController()
     val bitmap = Bitmap.createBitmap(225, 100, Bitmap.Config.ARGB_8888)
 
+    var isVINListVisible by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(stringResource(R.string.action_color)) })
@@ -127,26 +133,63 @@ private fun ChooseColor() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             // IF there is more than one vehicle, show the VIN and set up a onclick callback to change
             if (vehicles.size > 1) {
-                Text(
-                    text = vehicleInfo.vin!!,
+
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .align(alignment = Alignment.CenterHorizontally)
-                        .padding(10.dp)
-                        .clickable(onClick = {
-                            vehicleIndex = (vehicleIndex + 1) % vehicles.size
-                            vehicleInfo = vehicles[vehicleIndex]
-                            vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
-                            wireframe = vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
-                            hexColor = Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt()).uppercase().substring(2)
-                            initialColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
-                            vehicleImages = Vehicle.getVehicle(vehicleInfo.vin).horizontalDrawables
-                            recomposeColorpicker = !recomposeColorpicker
-                        }),
-                )
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                ) {
+
+                    Text(
+                        text = vehicleInfo.vin!!,
+                        color = Color.White,
+                        modifier = Modifier
+                            .padding(all = 4.dp)
+                            .clickable {
+                                isVINListVisible = true
+                            }
+                    )
+
+                    DropdownMenu(
+                        expanded = isVINListVisible,
+                        onDismissRequest = { isVINListVisible = false }) {
+                        vehicles.forEach { item ->
+                            DropdownMenuItem(
+                                text = { Text(text = item.vin!!) },
+                                onClick = {
+                                    vehicleInfo = item
+                                    vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
+                                    wireframe = vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
+                                    hexColor =
+                                        Integer
+                                            .toHexString(vehicleInfo.colorValue or 0xff000000.toInt())
+                                            .uppercase()
+                                            .substring(2)
+                                    initialColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
+                                    vehicleImages = Vehicle.getVehicle(vehicleInfo.vin).horizontalDrawables
+                                    recomposeColorpicker = !recomposeColorpicker
+                                    isVINListVisible = false
+                                }
+                            )
+                        }
+                    }
+
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.arrow_drop_down),
+                        contentDescription = "",
+                    )
+                }
             }
 
 //            AndroidView(
