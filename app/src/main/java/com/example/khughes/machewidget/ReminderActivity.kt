@@ -10,20 +10,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -37,10 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
@@ -202,8 +193,6 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
     var hour = getHour(currentVehicle.chargeHour)
     var level = getLevel(currentVehicle.chargeThresholdLevel)
 
-    var vinListVisible by remember { mutableStateOf(false) }
-
     var vin by remember { mutableStateOf(vehicleVINs[0]) }
 
     val hours = mutableListOf("12 am")
@@ -214,13 +203,11 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
     for (i in 1..11) {
         hours.add("$i pm")
     }
-    var timeListVisible by remember { mutableStateOf(false) }
 
     val levels = mutableListOf<String>()
     for (i in 15..80 step 5) {
         levels.add("$i %")
     }
-    var levelListVisible by remember { mutableStateOf(false) }
 
     fun updateVehicle() {
         val chargeHour = hour or (if (notificationEnabled) ReminderActivity.NOTIFICATION_BIT else 0)
@@ -264,58 +251,20 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
                     .align(Alignment.CenterHorizontally)
             )
 
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            )
-            {
-                Text(
-                    text = vin,
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(all = 4.dp)
-                        .clickable {
-                            if (vehicleVINs.size > 1) {
-                                vinListVisible = true
-                            }
-                        },
-                )
-
-                DropdownMenu(
-                    expanded = vinListVisible,
-                    onDismissRequest = { vinListVisible = false }) {
-                    vehicleVINs.forEach { item ->
-                        DropdownMenuItem(
-                            text = { Text(text = item) },
-                            onClick = {
-                                updateVehicle()
-                                vin = item
-                                currentVehicle = info.getVehicleByVIN(vin)
-                                notificationEnabled =
-                                    isNotificationEnabled(currentVehicle.chargeHour)
-                                hour = getHour(currentVehicle.chargeHour)
-                                level = getLevel(currentVehicle.chargeThresholdLevel)
-                                vinListVisible = false
-                            }
-                        )
-                    }
-                }
-
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.arrow_drop_down),
-                    contentDescription = "",
-//                            colorFilter = ColorFilter.tint(colorResource(id = R.color.dark_gray))
-                )
+            // Vehicle VIN
+            CustomSpinner(initialLabel = vin,
+                items = vehicleVINs)
+            { item ->
+                updateVehicle()
+                vin = item
+                currentVehicle = info.getVehicleByVIN(vin)
+                notificationEnabled =
+                    isNotificationEnabled(currentVehicle.chargeHour)
+                hour = getHour(currentVehicle.chargeHour)
+                level = getLevel(currentVehicle.chargeThresholdLevel)
             }
 
-
-            // switch
-
+            // Notification enabled switch
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
@@ -340,10 +289,7 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
                 )
             }
 
-            // row
-            // textview with notification time
-            // spinner
-
+            // Notification time
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
@@ -355,54 +301,18 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
                     modifier = Modifier
                         .padding(all = 4.dp)
                 )
-                Row(
-                    modifier = Modifier
-                        .background(
-                            color = if (notificationEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(8.dp)
-                        )
+
+                CustomSpinner(
+                    initialLabel = hours[hour],
+                    items = hours
                 )
-                {
-                    Text(
-                        text = hours[hour],
-                        color = if (notificationEnabled) Color.White else MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier
-                            .padding(all = 4.dp)
-                            .clickable {
-                                if (notificationEnabled) {
-                                    timeListVisible = true
-                                }
-                            },
-                    )
-
-                    DropdownMenu(
-                        expanded = timeListVisible,
-                        onDismissRequest = { timeListVisible = false }) {
-                        hours.forEach { item ->
-                            DropdownMenuItem(
-                                text = { Text(text = item) },
-                                onClick = {
-                                    hour = hours.indexOf(item)
-                                    updateVehicle()
-                                    timeListVisible = false
-                                }
-                            )
-                        }
-                    }
-
-                    Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.arrow_drop_down),
-                        contentDescription = "",
-//                        colorFilter = ColorFilter.tint(colorResource(id =
-//                        if(notificationEnabled) R.color.white else  R.color.black))
-                    )
+                { item ->
+                    hour = hours.indexOf(item)
+                    updateVehicle()
                 }
             }
 
-            // row
-            // textview with threshold level
-            // spinner
-
+            // Threshold charge level
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
@@ -416,52 +326,19 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
                         .padding(all = 4.dp)
                 )
 
-                Row(
-                    modifier = Modifier
-                        .background(
-                            color = if (notificationEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                ) {
-                    val index = levelToPosition(level)
+                val index = levelToPosition(level)
 
-                    Text(
-                        text = levels[index],
-                        color = if (notificationEnabled) Color.White else MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier
-                            .padding(all = 4.dp)
-                            .clickable {
-                                if (notificationEnabled) {
-                                    levelListVisible = true
-                                }
-                            },
-                    )
-
-                    DropdownMenu(
-                        expanded = levelListVisible,
-                        onDismissRequest = { levelListVisible = false }) {
-                        levels.forEach { item ->
-                            DropdownMenuItem(
-                                text = { Text(text = item) },
-                                onClick = {
-                                    level = positionToLevel(levels.indexOf(item))
-                                    updateVehicle()
-                                    levelListVisible = false
-                                },
-                            )
-                        }
-                    }
-
-                    Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.arrow_drop_down),
-                        contentDescription = ""
-                    )
+                CustomSpinner(
+                    initialLabel = levels[index],
+                    items = levels)
+                { item ->
+                    level = positionToLevel(levels.indexOf(item))
+                    updateVehicle()
                 }
             }
         }
     }
 }
-
 
 @Preview(showBackground = true, showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
