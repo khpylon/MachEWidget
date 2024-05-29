@@ -4,6 +4,10 @@ Todas as alterações notáveis ​​neste projeto serão documentadas neste ar
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), mas neste momento o projeto não adere ao [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
 
+## 2024.05.29-17
+### Fixo
+- Adicionar uma variante VIN da versão Mach-E Select ausente
+
 ## 2024.05.18-10
 ### Mudado
 Logins desativados temporariamente devido a alterações na API da Ford. Se você já estiver logado, não deverá notar nenhuma alteração.
