@@ -237,7 +237,7 @@ open class Vehicle(val VIN: String) {
                 AU_LINE_SERIES_MACHE_GT_RWD,
             )
             val lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
-            return (wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY || wmi == WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)
+            return (wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY) || (wmi == WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)
                     && macheLineSeries.contains(lineSeries)
         }
 
