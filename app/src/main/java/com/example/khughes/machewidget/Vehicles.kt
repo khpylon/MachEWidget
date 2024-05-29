@@ -33,6 +33,9 @@ open class Vehicle(val VIN: String) {
         private const val NA_LINE_SERIES_MACHE_PREMIUM_RWD = "K3R" // Premium RWD
         private const val NA_LINE_SERIES_MACHE_PREMIUM_AWD = "K3S" // Premium AWD
         private const val NA_LINE_SERIES_MACHE_GT_RWD = "K4S" // GT AWD
+
+        private const val EURO_LINE_SERIES_MACHE_SELECT_RWD = "K1E" // select RWD
+
         private const val AU_LINE_SERIES_MACHE_SELECT_RWD = "R1R" // select RWD
         private const val AU_LINE_SERIES_MACHE_SELECT_AWD = "R1S" // select AWD
         private const val AU_LINE_SERIES_MACHE_CAROUTE1_RWD = "R2R" // Route 1 RWD
@@ -227,6 +230,7 @@ open class Vehicle(val VIN: String) {
                 NA_LINE_SERIES_MACHE_PREMIUM_RWD,
                 NA_LINE_SERIES_MACHE_PREMIUM_AWD,
                 NA_LINE_SERIES_MACHE_GT_RWD,
+                EURO_LINE_SERIES_MACHE_SELECT_RWD,
                 AU_LINE_SERIES_MACHE_SELECT_RWD,
                 AU_LINE_SERIES_MACHE_SELECT_RWD,
                 AU_LINE_SERIES_MACHE_SELECT_AWD,
@@ -237,7 +241,8 @@ open class Vehicle(val VIN: String) {
                 AU_LINE_SERIES_MACHE_GT_RWD,
             )
             val lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
-            return (wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY) || (wmi == WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)
+            // All Mach-E's (North America, Europe, and Australia) have line series in the smme location
+            return (wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY || wmi == WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)
                     && macheLineSeries.contains(lineSeries)
         }
 
