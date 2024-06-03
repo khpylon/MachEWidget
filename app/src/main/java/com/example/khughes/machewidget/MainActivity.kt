@@ -396,14 +396,6 @@ fun DisplayWebview() {
                             },
                             text = { Text(text = context.getString(R.string.action_refresh)) }
                         )
-                        DropdownMenuItem(
-                            onClick = {
-                                val intent = Intent(context, VehicleActivity::class.java)
-                                context.startActivity(intent)
-                                mDisplayMenu = false
-                            },
-                            text = { Text(text = context.getString(R.string.action_vehicle)) }
-                        )
                         // Only enable "Choose Linked Apps" if app buttons are enabled
                         val showAppLinks = PreferenceManager.getDefaultSharedPreferences(context)
                             .getBoolean(context.resources.getString(R.string.show_app_links_key), true)
