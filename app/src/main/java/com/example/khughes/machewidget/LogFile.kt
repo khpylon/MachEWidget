@@ -7,6 +7,7 @@ import com.example.khughes.machewidget.Misc.Companion.copyStreams
 import com.example.khughes.machewidget.Misc.Companion.writeExternalFile
 import java.io.*
 import java.lang.Exception
+import java.lang.ref.WeakReference
 import java.text.MessageFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -17,6 +18,13 @@ object LogFile {
     private const val LOGFILENAME = "fsw_logfile"
     private const val BACKUPLOGFILENAME = LOGFILENAME + ".0"
     private const val LOGFILE_SIZE = 2500000
+
+    private lateinit var mContext: WeakReference<Context>
+
+    fun defineContext(context: Context) {
+        mContext = WeakReference(context)
+    }
+
     fun clearLogFile(context: Context, moveBackup: Boolean) {
         try {
             val backupLogFile = File(context.dataDir, BACKUPLOGFILENAME)
@@ -58,32 +66,66 @@ object LogFile {
         }
     }
 
-    @JvmStatic
-    fun d(context: Context, tag: String, message: String?) {
-        appendToLogFile(context, "D $tag", message)
-    }
-
-    @JvmStatic
-    fun e(context: Context, tag: String, message: String?) {
-        appendToLogFile(context, "E $tag", message)
-    }
-
-    @JvmStatic
-    fun e(context: Context, tag: String, message: String, e: Exception) {
-        val sw = StringWriter()
-        val pw = PrintWriter(sw)
-        e.printStackTrace(pw)
-        appendToLogFile(
-            context, "E $tag", """
-     $message
-     $sw
-     """.trimIndent()
-        )
-    }
+//    @JvmStatic
+//    fun d(context: Context, tag: String, message: String?) {
+//        appendToLogFile(context, "D $tag", message)
+//    }
+//
+//    @JvmStatic
+//    fun e(context: Context, tag: String, message: String?) {
+//        appendToLogFile(context, "E $tag", message)
+//    }
+//
+//    @JvmStatic
+//    fun e(context: Context, tag: String, message: String, e: Exception) {
+//        val sw = StringWriter()
+//        val pw = PrintWriter(sw)
+//        e.printStackTrace(pw)
+//        appendToLogFile(
+//            context, "E $tag", """
+//     $message
+//     $sw
+//     """.trimIndent()
+//        )
+//    }
 
     @JvmStatic
     fun i(context: Context, tag: String, message: String?) {
         appendToLogFile(context, "I $tag", message)
+    }
+
+    @JvmStatic
+    fun d(tag: String, message: String?) {
+        val context = mContext.get()
+        context?.let{ appendToLogFile(context, "D $tag", message) }
+    }
+
+    @JvmStatic
+    fun e(tag: String, message: String?) {
+        val context = mContext.get()
+        context?.let{ appendToLogFile(context, "E $tag", message) }
+    }
+
+    @JvmStatic
+    fun e(tag: String, message: String, e: Exception) {
+        val context = mContext.get()
+        context?.let {
+            val sw = StringWriter()
+            val pw = PrintWriter(sw)
+            e.printStackTrace(pw)
+            appendToLogFile(
+                context, "E $tag", """
+     $message
+     $sw
+     """.trimIndent()
+            )
+        }
+    }
+
+    @JvmStatic
+    fun i(tag: String, message: String?) {
+        val context = mContext.get()
+        context?.let{ appendToLogFile(context, "I $tag", message) }
     }
 
     @JvmStatic

@@ -74,7 +74,6 @@ open class CarStatusWidget : AppWidgetProvider() {
                     }
                 } catch (e: NumberFormatException) {
                     LogFile.e(
-                        context,
                         MainActivity.CHANNEL_ID,
                         "java.lang.NumberFormatException in CarStatusWidget.updateTire(): pressure = $pressure"
                     )
@@ -578,7 +577,6 @@ open class CarStatusWidget : AppWidgetProvider() {
 //                        }
 //                    } catch (e: ParseException) {
 //                        LogFile.e(
-//                            context,
 //                            MainActivity.CHANNEL_ID,
 //                            "exception in CarStatusWidget.updateAppWidget: ",
 //                            e
@@ -802,7 +800,6 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
         catch (e : DateTimeParseException) {
             LogFile.e(
-                context,
                 MainActivity.CHANNEL_ID,
                 "DateTimeParseException exception in CarStatusWidget.drawLastRefresh(): date = \"$lastRefresh\""
             )
@@ -817,7 +814,6 @@ open class CarStatusWidget : AppWidgetProvider() {
             currentTime.toInstant()
         ).seconds + 30) / 60
         LogFile.i(
-            context,
             MainActivity.CHANNEL_ID,
             "updateAppWidget(): last vehicle update was $minutes minutes ago."
         )

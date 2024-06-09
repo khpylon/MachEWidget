@@ -180,7 +180,6 @@ class DCFC {
                 } catch (_: FileNotFoundException) {
                 } catch (e: Exception) {
                     LogFile.e(
-                        context,
                         MainActivity.CHANNEL_ID,
                         "exception in DCFC.mergeChargingSessions()",
                         e
@@ -266,7 +265,7 @@ class DCFC {
                         oldLogFile.delete()
                     } catch (_: FileNotFoundException) {
                     } catch (e: Exception) {
-                        LogFile.e(context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "exception in DCFC.updateChargingSession()",
                             e
@@ -303,7 +302,7 @@ class DCFC {
                     inputStream.close()
                 } catch (_: FileNotFoundException) {
                 } catch (e: Exception) {
-                    LogFile.e(context,
+                    LogFile.e(
                         MainActivity.CHANNEL_ID,
                         "exception in DCFC.getChargingSessions()",
                         e
@@ -365,7 +364,7 @@ class DCFC {
                 newLogFile.renameTo(oldLogFile)
             } catch (_: FileNotFoundException) {
             } catch (e: Exception) {
-                LogFile.e(context,MainActivity.CHANNEL_ID, "exception in DCFC.purgeChargingData()", e)
+                LogFile.e(MainActivity.CHANNEL_ID, "exception in DCFC.purgeChargingData()", e)
             }
         }
 

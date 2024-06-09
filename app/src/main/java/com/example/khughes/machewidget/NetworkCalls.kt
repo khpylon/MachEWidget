@@ -14,8 +14,6 @@ import androidx.core.os.ConfigurationCompat
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.CarStatus.CarStatus
 import com.example.khughes.machewidget.CarStatusWidget.Companion.updateWidget
-import com.example.khughes.machewidget.LogFile.e
-import com.example.khughes.machewidget.LogFile.i
 import com.example.khughes.machewidget.NetworkServiceGenerators.createAcctAutonomicService
 import com.example.khughes.machewidget.NetworkServiceGenerators.createAPIMPSService
 import com.example.khughes.machewidget.NetworkServiceGenerators.createApiAutonomicService
@@ -100,8 +98,7 @@ class NetworkCalls {
             var token: String? = null
 
             if (username == null) {
-                e(
-                    context,
+                LogFile.e(
                     MainActivity.CHANNEL_ID,
                     "NetworkCalls.getAccessToken() called with null username?"
                 )
@@ -231,13 +228,11 @@ class NetworkCalls {
                             break
                         }
                     } catch (ee: SocketTimeoutException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "java.net.SocketTimeoutException in NetworkCalls.getAccessToken"
                         )
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             MessageFormat.format("    {0} retries remaining", retry)
                         )
@@ -246,20 +241,17 @@ class NetworkCalls {
                         } catch (_: InterruptedException) {
                         }
                     } catch (e3: UnknownHostException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "java.net.UnknownHostException in NetworkCalls.getAccessToken"
                         )
                         break
                     } catch (e1: java.lang.IllegalStateException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "IllegalStateException in NetworkCalls.getAccessToken: ", e1
                         )
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             MessageFormat.format("    {0} retries remaining", retry)
                         )
@@ -268,8 +260,7 @@ class NetworkCalls {
                         } catch (_: InterruptedException) {
                         }
                     } catch (e: java.lang.Exception) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "exception in NetworkCalls.getAccessToken: ",
                             e
@@ -303,7 +294,7 @@ class NetworkCalls {
                         val call = OAuth2Client.refreshAccessToken(body)
                         val response = call!!.execute()
                         if (response.isSuccessful) {
-                            i(context, MainActivity.CHANNEL_ID, "refresh successful")
+                            LogFile.i(MainActivity.CHANNEL_ID, "refresh successful")
                             var accessToken = response.body()
                             val userInfo = dao.findUserInfo(userId)
                             val token = accessToken!!.accessToken
@@ -365,9 +356,8 @@ class NetworkCalls {
                             data.putExtra("userId", userId)
                             nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
                         } else if (response.code() == Constants.HTTP_INTERNAL_SERVER_ERROR) {
-                            i(context, MainActivity.CHANNEL_ID, response.raw().toString())
-                            i(
-                                context,
+                            LogFile.i(MainActivity.CHANNEL_ID, response.raw().toString())
+                            LogFile.i(
                                 MainActivity.CHANNEL_ID,
                                 "refresh unsuccessful, will attempt again"
                             )
@@ -377,9 +367,8 @@ class NetworkCalls {
                             }
                             continue
                         } else {
-                            i(context, MainActivity.CHANNEL_ID, response.raw().toString())
-                            i(
-                                context,
+                            LogFile.i(MainActivity.CHANNEL_ID, response.raw().toString())
+                            LogFile.i(
                                 MainActivity.CHANNEL_ID,
                                 "refresh unsuccessful, will retry later"
                             )
@@ -387,13 +376,11 @@ class NetworkCalls {
                         }
                         break
                     } catch (ee: SocketTimeoutException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "java.net.SocketTimeoutException in NetworkCalls.refreshAccessToken"
                         )
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             MessageFormat.format("    {0} retries remaining", retry)
                         )
@@ -402,20 +389,17 @@ class NetworkCalls {
                         } catch (_: InterruptedException) {
                         }
                     } catch (e3: UnknownHostException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "java.net.UnknownHostException in NetworkCalls.refreshAccessToken"
                         )
                         break
                     } catch (e1: java.lang.IllegalStateException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "IllegalStateException in NetworkCalls.refreshAccessToken(): ", e1
                         )
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             MessageFormat.format("    {0} retries remaining", retry)
                         )
@@ -424,8 +408,7 @@ class NetworkCalls {
                         } catch (_: InterruptedException) {
                         }
                     } catch (e: Exception) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "exception in NetworkCalls.refreshAccessToken: ",
                             e
@@ -457,23 +440,22 @@ class NetworkCalls {
             var userInfo = userDao.findUserInfo(userId)
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
-            LogFile.d(context, MainActivity.CHANNEL_ID, "userId = $userId")
+            LogFile.d(MainActivity.CHANNEL_ID, "userId = $userId")
             LogFile.d(
-                context,
                 MainActivity.CHANNEL_ID,
                 "getting status for " + infoDao.findVehicleInfoByUserId(userId).size + " vehicles"
             )
             for (info in infoDao.findVehicleInfoByUserId(userId)) {
                 val VIN = info.vin
                 if (!info.isEnabled) {
-                    i(
-                        context, MainActivity.CHANNEL_ID,
+                    LogFile.i(
+                        MainActivity.CHANNEL_ID,
                         "$VIN is disabled: skipping"
                     )
                     continue
                 } else {
-                    i(
-                        context, MainActivity.CHANNEL_ID,
+                    LogFile.i(
+                        MainActivity.CHANNEL_ID,
                         "getting status for VIN $VIN"
                     )
                 }
@@ -485,11 +467,11 @@ class NetworkCalls {
                     val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                     val lasttime = info.lastRefreshTime
                     LogFile.d(
-                        context, MainActivity.CHANNEL_ID,
+                        MainActivity.CHANNEL_ID,
                         "last refresh was " + (nowtime - lasttime) / (1000 * 60) + " min ago"
                     )
                     LogFile.d(
-                        context, MainActivity.CHANNEL_ID,
+                        MainActivity.CHANNEL_ID,
                         "last refresh was " + (nowtime - lasttime) / (1000 * 60) + " min ago"
                     )
                     if ((nowtime - lasttime) / (1000 * 60) > 6 * 60 &&
@@ -524,7 +506,7 @@ class NetworkCalls {
                             val responseStatus = callStatus!!.execute()
 
                             if (responseStatus.isSuccessful) {
-                                i(context, MainActivity.CHANNEL_ID, "status successful.")
+                                LogFile.i(MainActivity.CHANNEL_ID, "status successful.")
                                 val newCar = responseStatus.body() as NewCarStatus
                                 val car = NewCarStatus.getCarStatus(newCar)
 
@@ -552,15 +534,14 @@ class NetworkCalls {
 
                                 checkLVBStatus(context, car, info)
                                 checkTPMSStatus(context, car, info)
-                                i(context, MainActivity.CHANNEL_ID, "got status")
+                                LogFile.i(MainActivity.CHANNEL_ID, "got status")
                                 nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
                             } else {
-                                i(
-                                    context,
+                                LogFile.i(
                                     MainActivity.CHANNEL_ID,
                                     responseStatus.raw().toString()
                                 )
-                                i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.")
+                                LogFile.i(MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.")
                                 // For either of these client errors, we probably need to refresh the access token
                                 if (responseStatus.code() == Constants.HTTP_BAD_REQUEST) {
                                     nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
@@ -638,7 +619,7 @@ class NetworkCalls {
 //                        } else {
 //                            LogFile.i(context, MainActivity.CHANNEL_ID, "OTA not supported: skipping check");
 //                        }
-                            i(context, MainActivity.CHANNEL_ID, "OTA currently bypassed")
+                            LogFile.i(MainActivity.CHANNEL_ID, "OTA currently bypassed")
 
                             // If the vehicle info changed, commit
                             if (statusUpdated) {
@@ -650,14 +631,12 @@ class NetworkCalls {
 //                        Response<VehicleInfo> othething = thing.execute();
                             break
                         } catch (e2: SocketTimeoutException) {
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 "exception in NetworkCalls.getStatus",
                                 e2
                             )
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 MessageFormat.format("    {0} retries remaining", retry)
                             )
@@ -666,14 +645,12 @@ class NetworkCalls {
                             } catch (_: InterruptedException) {
                             }
                         } catch (e2: IllegalStateException) {
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 "exception in NetworkCalls.getStatus",
                                 e2
                             )
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 MessageFormat.format("    {0} retries remaining", retry)
                             )
@@ -682,8 +659,7 @@ class NetworkCalls {
                             } catch (_: InterruptedException) {
                             }
                         } catch (e3: UnknownHostException) {
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 "java.net.UnknownHostException in NetworkCalls.getStatus"
                             )
@@ -693,8 +669,7 @@ class NetworkCalls {
                             }
                             break
                         } catch (e: java.lang.Exception) {
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 "exception in NetworkCalls.getStatus: ",
                                 e
@@ -783,8 +758,7 @@ class NetworkCalls {
                             chargeInfo
                         )
                     }
-                    i(
-                        context,
+                    LogFile.i(
                         MainActivity.CHANNEL_ID,
                         "received charge status response: power = "
                                 + car.vehiclestatus.chargePower +
@@ -826,9 +800,8 @@ class NetworkCalls {
             val language = tmpUserInfo.language
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
-            LogFile.d(context, MainActivity.CHANNEL_ID, "userId = $userId")
+            LogFile.d(MainActivity.CHANNEL_ID, "userId = $userId")
             LogFile.d(
-                context,
                 MainActivity.CHANNEL_ID,
                 "getting status for " + infoDao.findVehicleInfoByUserId(
                     userId!!
@@ -836,8 +809,8 @@ class NetworkCalls {
             )
 
 //        VehicleInfo info = infoDao.findVehicleInfoByVIN(VIN);
-            i(
-                context, MainActivity.CHANNEL_ID,
+            LogFile.i(
+                MainActivity.CHANNEL_ID,
                 "getting status for VIN $VIN"
             )
             if (checkInternetConnection(context) && checkForRefresh(context, tmpUserInfo)) {
@@ -859,7 +832,7 @@ class NetworkCalls {
                         val responseStatus = callStatus!!.execute()
 
                         if (responseStatus.isSuccessful) {
-                            i(context, MainActivity.CHANNEL_ID, "status successful.")
+                            LogFile.i(MainActivity.CHANNEL_ID, "status successful.")
                             val newCar = responseStatus.body() as NewCarStatus
                             val car = NewCarStatus.getCarStatus(newCar)
 
@@ -908,27 +881,24 @@ class NetworkCalls {
                                 val appInfo = StoredData(context)
                                 appInfo.electricVehicles = true
                             }
-                            i(context, MainActivity.CHANNEL_ID, "got status")
+                            LogFile.i(MainActivity.CHANNEL_ID, "got status")
                             nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
                         } else {
-                            i(
-                                context,
+                            LogFile.i(
                                 MainActivity.CHANNEL_ID,
                                 responseStatus.raw().toString()
                             )
-                            i(context, MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.")
+                            LogFile.i(MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.")
                             nextState = Constants.STATE_ACCOUNT_DISABLED
                         }
                         break
                     } catch (e2: SocketTimeoutException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "exception in NetworkCalls.getStatus",
                             e2
                         )
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             MessageFormat.format("    {0} retries remaining", retry)
                         )
@@ -937,14 +907,12 @@ class NetworkCalls {
                         } catch (_: InterruptedException) {
                         }
                     } catch (e2: java.lang.IllegalStateException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "exception in NetworkCalls.getStatus",
                             e2
                         )
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             MessageFormat.format("    {0} retries remaining", retry)
                         )
@@ -953,16 +921,14 @@ class NetworkCalls {
                         } catch (_: InterruptedException) {
                         }
                     } catch (e3: UnknownHostException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "java.net.UnknownHostException in NetworkCalls.getStatus"
                         )
                         // If the vehicle info changed, commit
                         break
                     } catch (e: java.lang.Exception) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "exception in NetworkCalls.getStatus: ",
                             e
@@ -1011,21 +977,18 @@ class NetworkCalls {
                                             response.body()!!.byteStream(),
                                             image.toPath()
                                         )
-                                        i(
-                                            context,
+                                        LogFile.i(
                                             MainActivity.CHANNEL_ID,
                                             "vehicle image $angle successful."
                                         )
                                         updateWidget(context)
                                     } else {
-                                        i(
-                                            context,
+                                        LogFile.i(
                                             MainActivity.CHANNEL_ID,
                                             response.raw().toString()
                                         )
                                         if (response.code() == Constants.HTTP_BAD_REQUEST) {
-                                            i(
-                                                context,
+                                            LogFile.i(
                                                 MainActivity.CHANNEL_ID,
                                                 "vehicle image $angle UNSUCCESSFUL."
                                             )
@@ -1033,13 +996,11 @@ class NetworkCalls {
                                     }
                                     break
                                 } catch (ee: SocketTimeoutException) {
-                                    e(
-                                        context,
+                                    LogFile.e(
                                         MainActivity.CHANNEL_ID,
                                         "java.net.SocketTimeoutException in NetworkCalls.getVehicleImage"
                                     )
-                                    e(
-                                        context,
+                                    LogFile.e(
                                         MainActivity.CHANNEL_ID,
                                         MessageFormat.format("    {0} retries remaining", retry)
                                     )
@@ -1048,21 +1009,18 @@ class NetworkCalls {
                                     } catch (_: InterruptedException) {
                                     }
                                 } catch (e3: UnknownHostException) {
-                                    e(
-                                        context,
+                                    LogFile.e(
                                         MainActivity.CHANNEL_ID,
                                         "java.net.UnknownHostException in NetworkCalls.getVehicleImage"
                                     )
                                     break
                                 } catch (e2: java.lang.IllegalStateException) {
-                                    e(
-                                        context,
+                                    LogFile.e(
                                         MainActivity.CHANNEL_ID,
                                         "exception in NetworkCalls.getVehicleImage",
                                         e2
                                     )
-                                    e(
-                                        context,
+                                    LogFile.e(
                                         MainActivity.CHANNEL_ID,
                                         MessageFormat.format("    {0} retries remaining", retry)
                                     )
@@ -1071,8 +1029,7 @@ class NetworkCalls {
                                     } catch (_: InterruptedException) {
                                     }
                                 } catch (e: java.lang.Exception) {
-                                    e(
-                                        context,
+                                    LogFile.e(
                                         MainActivity.CHANNEL_ID,
                                         "exception in NetworkCalls.getVehicleImage: ",
                                         e
@@ -1195,7 +1152,7 @@ class NetworkCalls {
                         if (response.isSuccessful) {
                             val status = response.body()
                             if (status!!.status == CMD_STATUS_SUCCESS) {
-                                i(context, MainActivity.CHANNEL_ID, "CMD send successful.")
+                                LogFile.i(MainActivity.CHANNEL_ID, "CMD send successful.")
                                 if (Looper.myLooper() == null) {
                                     Looper.prepare()
                                 }
@@ -1214,7 +1171,7 @@ class NetworkCalls {
                                     )
                                 )
                             } else if (status.status == CMD_REMOTE_START_LIMIT) {
-                                i(
+                                LogFile.i(
                                     context,
                                     MainActivity.CHANNEL_ID,
                                     "CMD send UNSUCCESSFUL."
@@ -1222,12 +1179,12 @@ class NetworkCalls {
                                 data.putExtra("action", COMMAND_REMOTE_START_LIMIT)
                             } else {
                                 data.putExtra("action", COMMAND_EXCEPTION)
-                                i(
+                                LogFile.i(
                                     context,
                                     MainActivity.CHANNEL_ID,
                                     "CMD send unknown response."
                                 )
-                                i(
+                                LogFile.i(
                                     context,
                                     MainActivity.CHANNEL_ID,
                                     response.raw().toString()
@@ -1235,20 +1192,18 @@ class NetworkCalls {
                             }
                         } else {
                             data.putExtra("action", COMMAND_FAILED)
-                            i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.")
-                            i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.")
+                            LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
                         }
                     } catch (e2: java.lang.IllegalStateException) {
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "exception in NetworkCalls.execCommand",
                             e2
                         )
                     } catch (e: java.lang.Exception) {
                         data.putExtra("action", COMMAND_EXCEPTION)
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "exception in NetworkCalls.execCommand: ",
                             e
@@ -1271,8 +1226,7 @@ class NetworkCalls {
             try {
                 Thread.sleep((5 * 1000).toLong())
             } catch (e: InterruptedException) {
-                e(
-                    context,
+                LogFile.e(
                     MainActivity.CHANNEL_ID,
                     "exception in NetworkCalls.execResponse: ",
                     e
@@ -1292,7 +1246,7 @@ class NetworkCalls {
                         val status = response.body()
                         when (status!!.status) {
                             CMD_STATUS_SUCCESS -> {
-                                i(
+                                LogFile.i(
                                     context,
                                     MainActivity.CHANNEL_ID,
                                     "CMD response successful."
@@ -1301,19 +1255,18 @@ class NetworkCalls {
                             }
 
                             CMD_STATUS_FAILED -> {
-                                i(context, MainActivity.CHANNEL_ID, "CMD response failed.")
+                                LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response failed.")
                                 return COMMAND_FAILED
                             }
 
-                            CMD_STATUS_INPROGRESS -> i(
+                            CMD_STATUS_INPROGRESS -> LogFile.i(
                                 context,
                                 MainActivity.CHANNEL_ID,
                                 "CMD response waiting."
                             )
 
                             else -> {
-                                i(
-                                    context,
+                                LogFile.i(
                                     MainActivity.CHANNEL_ID,
                                     "CMD response unknown: status = " + status.status
                                 )
@@ -1321,17 +1274,16 @@ class NetworkCalls {
                             }
                         }
                     } else {
-                        i(context, MainActivity.CHANNEL_ID, response.raw().toString())
-                        i(context, MainActivity.CHANNEL_ID, "CMD response UNSUCCESSFUL.")
+                        LogFile.i(MainActivity.CHANNEL_ID, response.raw().toString())
+                        LogFile.i(MainActivity.CHANNEL_ID, "CMD response UNSUCCESSFUL.")
                         return COMMAND_FAILED
                     }
                     Thread.sleep((2 * 1000).toLong())
                 }
-                i(context, MainActivity.CHANNEL_ID, "CMD timeout?")
+                LogFile.i(context, MainActivity.CHANNEL_ID, "CMD timeout?")
                 COMMAND_FAILED
             } catch (e: java.lang.Exception) {
-                e(
-                    context,
+                LogFile.e(
                     MainActivity.CHANNEL_ID,
                     "exception in NetworkCalls.execResponse: ",
                     e
@@ -1383,8 +1335,7 @@ class NetworkCalls {
                             if (response.isSuccessful) {
                                 val status = response.body()
                                 if (status!!.status == CMD_STATUS_SUCCESS) {
-                                    i(
-                                        context,
+                                    LogFile.i(
                                         MainActivity.CHANNEL_ID,
                                         "statusrefresh send successful."
                                     )
@@ -1402,42 +1353,37 @@ class NetworkCalls {
                                         pollStatus(context, token, vehInfo, status.commandId)
                                     )
                                 } else if (status.status == CMD_REMOTE_START_LIMIT) {
-                                    i(
-                                        context,
+                                    LogFile.i(
                                         MainActivity.CHANNEL_ID,
                                         "statusrefresh send UNSUCCESSFUL."
                                     )
                                     data.putExtra("action", COMMAND_REMOTE_START_LIMIT)
                                 } else {
                                     data.putExtra("action", COMMAND_EXCEPTION)
-                                    i(
-                                        context,
+                                    LogFile.i(
                                         MainActivity.CHANNEL_ID,
                                         "statusrefresh send unknown response."
                                     )
-                                    i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
                                 }
                             } else {
                                 data.putExtra("action", COMMAND_FAILED)
-                                i(
-                                    context,
+                                LogFile.i(
                                     MainActivity.CHANNEL_ID,
                                     "statusrefresh send UNSUCCESSFUL."
                                 )
-                                i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                                LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
                             }
                             break
                         } catch (e1: java.lang.IllegalStateException) {
                             data.putExtra("action", COMMAND_EXCEPTION)
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 "IllegalStateException in NetworkCalls.updateStatus(): ", e1
                             )
                         } catch (e: java.lang.Exception) {
                             data.putExtra("action", COMMAND_EXCEPTION)
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 "exception in NetworkCalls.updateStatus(): ",
                                 e
@@ -1460,7 +1406,7 @@ class NetworkCalls {
             try {
                 Thread.sleep((10 * 1000).toLong())
             } catch (e: InterruptedException) {
-                e(context!!, MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e)
+                LogFile.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e)
             }
             val VIN = vehInfo.vin
             val commandServiceClient = createUSAPICVService(
@@ -1474,7 +1420,7 @@ class NetworkCalls {
                         val status = response.body()
                         when (status!!.status) {
                             CMD_STATUS_SUCCESS -> {
-                                i(context!!, MainActivity.CHANNEL_ID, "poll response successful.")
+                                LogFile.i(context!!, MainActivity.CHANNEL_ID, "poll response successful.")
                                 val now = Instant.now().toEpochMilli()
                                 vehInfo.lastForcedRefreshTime = now
                                 var count = vehInfo.forcedRefreshCount
@@ -1488,17 +1434,16 @@ class NetworkCalls {
                             }
 
                             CMD_STATUS_FAILED -> {
-                                i(context!!, MainActivity.CHANNEL_ID, "poll response failed.")
+                                LogFile.i(context!!, MainActivity.CHANNEL_ID, "poll response failed.")
                                 return COMMAND_FAILED
                             }
 
-                            CMD_STATUS_INPROGRESS -> i(
+                            CMD_STATUS_INPROGRESS -> LogFile.i(
                                 context!!, MainActivity.CHANNEL_ID, "poll response waiting."
                             )
 
                             else -> {
-                                i(
-                                    context!!,
+                                LogFile.i(
                                     MainActivity.CHANNEL_ID,
                                     "poll response unknown: status = " + status.status
                                 )
@@ -1506,16 +1451,16 @@ class NetworkCalls {
                             }
                         }
                     } else {
-                        i(context!!, MainActivity.CHANNEL_ID, response.raw().toString())
-                        i(context, MainActivity.CHANNEL_ID, "poll response UNSUCCESSFUL.")
+                        LogFile.i(MainActivity.CHANNEL_ID, response.raw().toString())
+                        LogFile.i(MainActivity.CHANNEL_ID, "poll response UNSUCCESSFUL.")
                         return COMMAND_FAILED
                     }
                     Thread.sleep((3 * 1000).toLong())
                 }
-                i(context!!, MainActivity.CHANNEL_ID, "poll timeout?")
+                LogFile.i(MainActivity.CHANNEL_ID, "poll timeout?")
                 COMMAND_FAILED
             } catch (e: java.lang.Exception) {
-                e(context!!, MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus(): ", e)
+                LogFile.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus(): ", e)
                 COMMAND_EXCEPTION
             }
         }
@@ -1534,7 +1479,7 @@ class NetworkCalls {
                     @Suppress("DEPRECATION")
                     networkInfo.isConnected && networkInfo.isAvailable
                 } ?: false
-                LogFile.d(context,MainActivity.CHANNEL_ID, "NetworkCalls.checkInternetConnection() returns $netStatus")
+                LogFile.d(MainActivity.CHANNEL_ID, "NetworkCalls.checkInternetConnection() returns $netStatus")
                 netStatus
             } else {
                 val netStatus = if (connManager.activeNetwork == null) {
@@ -1552,7 +1497,7 @@ class NetworkCalls {
                             } ?: false
                         }
                     }
-                LogFile.d(context,MainActivity.CHANNEL_ID, "NetworkCalls.checkInternetConnection() returns $netStatus")
+                LogFile.d(MainActivity.CHANNEL_ID, "NetworkCalls.checkInternetConnection() returns $netStatus")
                 netStatus
             }
         }

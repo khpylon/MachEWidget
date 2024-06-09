@@ -36,7 +36,6 @@ class StatusReceiver : BroadcastReceiver() {
             nextAlarm(context)
         } else {
             LogFile.d(
-                context,
                 MainActivity.CHANNEL_ID,
                 "StatusReceiver: hibernating so no next alarm"
             )
@@ -128,7 +127,7 @@ class StatusReceiver : BroadcastReceiver() {
             val state = userInfo.programState
 
             LogFile.d(
-                context, MainActivity.CHANNEL_ID,
+                MainActivity.CHANNEL_ID,
                 MessageFormat.format(
                     "StatusReceiver: time({0}), state({1}), battery optimization({2})",
                     (timeout - nowtime) / MILLIS,
@@ -140,7 +139,6 @@ class StatusReceiver : BroadcastReceiver() {
             when (state) {
                 Constants.STATE_ACCOUNT_DISABLED -> {
                     LogFile.d(
-                        context,
                         MainActivity.CHANNEL_ID,
                         "Account disabled"
                     )
@@ -151,7 +149,6 @@ class StatusReceiver : BroadcastReceiver() {
 
                 Constants.STATE_INITIAL_STATE -> {
                     LogFile.d(
-                        context,
                         MainActivity.CHANNEL_ID,
                         "Initial state: how'd did the alarm go off (manual refresh)?"
                     )
@@ -161,7 +158,7 @@ class StatusReceiver : BroadcastReceiver() {
                 }
 
                 Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN -> {
-                    LogFile.d(context, MainActivity.CHANNEL_ID, "STILL need to refresh token")
+                    LogFile.d(MainActivity.CHANNEL_ID, "STILL need to refresh token")
 //                        getRefresh(context, userId, userInfo.refreshToken)
                     getStatus(context, userInfo.userId!!)
                     appInfo.incCounter(StoredData.STATUS_UPDATED)
@@ -169,23 +166,22 @@ class StatusReceiver : BroadcastReceiver() {
 
                 Constants.STATE_HAVE_TOKEN -> {
                     if (info.vehicles.size == 0) {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "Login looks OK, but no vehicles found")
+                        LogFile.e(MainActivity.CHANNEL_ID, "Login looks OK, but no vehicles found")
                         Notifications.missingVehicles(context)
                     } else {
-                        LogFile.e(context, MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
+                        LogFile.e(MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
                     }
                     appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
                 }
 
                 Constants.STATE_HAVE_TOKEN_AND_VIN -> {
-                    LogFile.d(context, MainActivity.CHANNEL_ID, "Grab status info")
+                    LogFile.d(MainActivity.CHANNEL_ID, "Grab status info")
                     getStatus(context, userInfo.userId!!)
                     appInfo.incCounter(StoredData.STATUS_UPDATED)
                 }
 
                 else -> {
                     LogFile.d(
-                        context,
                         MainActivity.CHANNEL_ID,
                         "Hmmm... How did I get here. Wish I could login"
                     )
@@ -194,7 +190,7 @@ class StatusReceiver : BroadcastReceiver() {
             }
 
             LogFile.d(
-                context, MainActivity.CHANNEL_ID,
+                MainActivity.CHANNEL_ID,
                 MessageFormat.format(
                     "StatusReceiver status history: {0}({1}) {2}({3}) {4}({5}) {6}({7}) {8}({9}) {10}({11})",
                     StoredData.STATUS_NOT_LOGGED_IN,
@@ -220,14 +216,14 @@ class StatusReceiver : BroadcastReceiver() {
             val bundle = msg.data
             val action = bundle.getString("action")
             LogFile.i(
-                context, MainActivity.CHANNEL_ID,
+                MainActivity.CHANNEL_ID,
                 "Status: $action"
             )
 
             // If vehicle is DC fast charging, update status in 30 seconds
             if (bundle.getBoolean(context.getString(R.string.dcfc_active))) {
                 LogFile.i(
-                    context, MainActivity.CHANNEL_ID,
+                    MainActivity.CHANNEL_ID,
                     "Vehicle is DC fast charging; setting alarm for 30 seconds"
                 )
                 cancelAlarm(context)
@@ -235,7 +231,7 @@ class StatusReceiver : BroadcastReceiver() {
                     nextAlarm(context, alarmTime.plusSeconds(30))
                 } else {
                     LogFile.e(
-                        context, MainActivity.CHANNEL_ID,
+                        MainActivity.CHANNEL_ID,
                         "lateinit alarmTime is not initialized"
                     )
                     nextAlarm(context, 30)
@@ -271,7 +267,7 @@ class StatusReceiver : BroadcastReceiver() {
             val time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(delay.toLong())
             val timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US))
             LogFile.i(
-                context, MainActivity.CHANNEL_ID,
+                MainActivity.CHANNEL_ID,
                 "StatusReceiver: next status alarm at $timeText"
             )
             val nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -293,7 +289,7 @@ class StatusReceiver : BroadcastReceiver() {
         fun nextAlarm(context: Context, time: LocalDateTime) {
             val timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US))
             LogFile.i(
-                context, MainActivity.CHANNEL_ID,
+                MainActivity.CHANNEL_ID,
                 "StatusReceiver: next status alarm at $timeText"
             )
             val nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()

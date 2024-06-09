@@ -2,7 +2,6 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.example.khughes.machewidget.LogFile.e
 import com.example.khughes.machewidget.db.VehicleInfoDao
 import com.example.khughes.machewidget.db.UserInfoDao
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
@@ -28,16 +27,14 @@ class InfoRepository internal constructor(mContext: Context) {
         if (userId != null) {
             user = mUserInfoDao.findUserInfo(userId) ?: UserInfo()
         } else {
-            e(
-                mContext,
+            LogFile.e(
                 MainActivity.CHANNEL_ID,
                 "InfoRepository(): default settings userId is null"
             )
             val users = mUserInfoDao.findUserInfo()
             if (users.size > 0) {
                 user = users[0]
-                e(
-                    mContext,
+                LogFile.e(
                     MainActivity.CHANNEL_ID,
                     "InfoRepository(): fallback to userId " + user.userId
                 )

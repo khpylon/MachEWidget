@@ -52,7 +52,7 @@ public class Authenticate {
                     if (message.contains("\"userId\"")) {
                         message = message.replaceAll("\"userId\":.[^\"]*.", "\"userId\":**redacted**");
                     }
-                    LogFile.d(mContext, "OkHttp3", message);
+                    LogFile.d("OkHttp3", message);
                 }
             })
                     .setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -132,7 +132,7 @@ public class Authenticate {
             okhttp3.Response response = client.newCall(request).execute();
 
             if (response.code() != 200) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: first GET request didn't return 200 response");
+                LogFile.e(MainActivity.CHANNEL_ID, "Authorization failed: first GET request didn't return 200 response");
                 return null;
             }
 
@@ -175,7 +175,7 @@ public class Authenticate {
             response = client.newCall(request).execute();
 
             if (response.code() != 200) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: second POST request didn't return 200 response");
+                LogFile.e(MainActivity.CHANNEL_ID, "Authorization failed: second POST request didn't return 200 response");
                 return null;
             }
 
@@ -195,7 +195,7 @@ public class Authenticate {
             response = client.newCall(request).execute();
 
             if (response.code() != 302) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: third GET request didn't return 302 response");
+                LogFile.e(MainActivity.CHANNEL_ID, "Authorization failed: third GET request didn't return 302 response");
                 return null;
             }
 
@@ -223,15 +223,15 @@ public class Authenticate {
             response = client.newCall(request).execute();
 
             if (response.code() != 200) {
-                LogFile.e(context, MainActivity.CHANNEL_ID, "Authorization failed: final POST request didn't return 200 response");
+                LogFile.e(MainActivity.CHANNEL_ID, "Authorization failed: final POST request didn't return 200 response");
                 return null;
             }
-            LogFile.d(context, MainActivity.CHANNEL_ID, "Authorization successful");
+            LogFile.d(MainActivity.CHANNEL_ID, "Authorization successful");
             Gson gson = new GsonBuilder().create();
             AccessToken accessToken = gson.fromJson(response.body().string(), AccessToken.class);
             return accessToken.getAccessToken();
         } catch (IOException e) {
-            LogFile.e(context, MainActivity.CHANNEL_ID, "exception in Authenticate.newAuthenticate: ", e);
+            LogFile.e(MainActivity.CHANNEL_ID, "exception in Authenticate.newAuthenticate: ", e);
         }
         return null;
     }

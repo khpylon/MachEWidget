@@ -55,7 +55,6 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 }
             } catch (e: NumberFormatException) {
                 LogFile.e(
-                    context,
                     MainActivity.CHANNEL_ID,
                     "java.lang.NumberFormatException in CarStatusWidget_5x5.updateTire(): pressure = $pressure"
                 )
@@ -384,7 +383,6 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 }
             } else {
                 LogFile.d(
-                    context,
                     MainActivity.CHANNEL_ID,
                     "CarStatusWidget_5x5.onUpdate(): no userinfo found"
                 )

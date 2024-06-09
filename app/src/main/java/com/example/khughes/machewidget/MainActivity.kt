@@ -123,6 +123,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = applicationContext
+        LogFile.defineContext(context)
 
         // First thing, check logcat for a crash and save if so
         val crashMessage = checkLogcat(context)

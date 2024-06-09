@@ -27,7 +27,7 @@ class ReminderReceiver : BroadcastReceiver() {
                 val actualLevel = vehicle.carStatus.vehiclestatus.batteryFillLevel?.value?.toInt() ?: threshold
                 val pluggedIn = (vehicle.carStatus.vehiclestatus.plugStatus?.value ?: 0) == 1
 
-                LogFile.d(context = context, MainActivity.CHANNEL_ID,
+                LogFile.d(MainActivity.CHANNEL_ID,
                     "ReminderReceiver: threshold = "+threshold +
                     ", actualLevel = " + actualLevel +
                     ", pluggedIn = " + pluggedIn )
@@ -36,7 +36,7 @@ class ReminderReceiver : BroadcastReceiver() {
                         Constants.CHARGING_STATUS_NOT_READY
                     )) && actualLevel <= threshold
                 ) {
-                    LogFile.d(context = context, MainActivity.CHANNEL_ID, "ReminderReceiver: firing notification")
+                    LogFile.d(MainActivity.CHANNEL_ID, "ReminderReceiver: firing notification")
                     Notifications.chargeReminder(context)
                 }
                 setAlarm(context, VIN, vehicle.chargeHour and 0x1f)

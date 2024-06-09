@@ -38,8 +38,7 @@ object NetworkServiceGenerators {
             result =
                 message.replace("\"userId\":.[^\"]*.".toRegex(), "\"userId\":**redacted**")
         }
-//        mContext.get()?.let { d(it, "OkHttp3", result.substring(0,min(result.length, 2048))) }
-        mContext.get()?.let { d(it, "OkHttp3", result) }
+        mContext.get()?.let { d("OkHttp3", result) }
     }
         .setLevel(HttpLoggingInterceptor.Level.BODY)
 

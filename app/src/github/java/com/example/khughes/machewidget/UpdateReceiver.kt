@@ -12,8 +12,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.example.khughes.machewidget.LogFile.e
-import com.example.khughes.machewidget.LogFile.i
 import com.example.khughes.machewidget.Notifications.Companion.NORMAL_NOTIFICATIONS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,8 +51,7 @@ class UpdateReceiver : BroadcastReceiver() {
                     .toTypedArray()) {
                     if (item.contains(version)) {
                         val newVersion = item.replace(version, "")
-                        e(
-                            context,
+                        LogFile.e(
                             MainActivity.CHANNEL_ID,
                             "UpdateReceiver.onPostExecute(): newest version is $newVersion"
                         )
@@ -64,8 +61,7 @@ class UpdateReceiver : BroadcastReceiver() {
                         if (newVersion > BuildConfig.VERSION_NAME &&
                             newVersion > latestVersion
                         ) {
-                            e(
-                                context,
+                            LogFile.e(
                                 MainActivity.CHANNEL_ID,
                                 "UpdateReceiver.onPostExecute(): launching notification"
                             )
@@ -119,7 +115,7 @@ class UpdateReceiver : BroadcastReceiver() {
         fun nextAlarm(context: Context) {
             val time = LocalDateTime.now(ZoneId.systemDefault()).plusHours(1)
             val timeText = time.format(DateTimeFormatter.ofPattern("MM/dd HH:mm:ss", Locale.US))
-            i(context, MainActivity.CHANNEL_ID, "UpdateReceiver: next update alarm at $timeText")
+            LogFile.i(MainActivity.CHANNEL_ID, "UpdateReceiver: next update alarm at $timeText")
             val nextTime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
             val pendingIntent = PendingIntent.getBroadcast(

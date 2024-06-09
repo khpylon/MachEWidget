@@ -46,7 +46,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.preference.PreferenceManager
-import com.example.khughes.machewidget.LogFile.i
 import com.example.khughes.machewidget.NetworkCalls.Companion.getAccessToken
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
@@ -80,7 +79,7 @@ fun getAccess(context: Context, username: String, password: String) {
         val msg = getAccessToken(context, username, password)
         val bundle = msg.data
         val action = bundle.getString("action")
-        i(context, MainActivity.CHANNEL_ID, "Access: $action")
+        LogFile.i(MainActivity.CHANNEL_ID, "Access: $action")
 
         when (action) {
             Constants.STATE_HAVE_TOKEN_AND_VIN -> {
