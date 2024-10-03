@@ -191,7 +191,7 @@
     <string name="no_vehicles_notification_title">"Ingen kjøretøy funnet"</string>
     <string name="no_vehicles_notification_description">"Ingen kjøretøy er knyttet til appen."</string>
     <string name="misc_error_message">"Feil"</string>
-    <string name="activity_reminder_noEVs_description">"Ingen PHEV-er eller BEV-er ble funnet."</string>
+    <string name="activity_misc_novehicles_description">Ingen samsvarende kjøretøy ble funnet.</string>
     <string name="settings_battery_opts_off_description">"Av (anbefalt)"</string>
     <string name="settings_battery_opts_on_description">"På (kan forårsake problemer)"</string>
     <string name="activity_vehicle_status_success_description">"Kjøretøystatus ble hentet."</string>

@@ -191,7 +191,7 @@
     <string name="no_vehicles_notification_title">"Nenhum veículo encontrado"</string>
     <string name="no_vehicles_notification_description">"Nenhum veículo está associado ao aplicativo."</string>
     <string name="misc_error_message">"Erro"</string>
-    <string name="activity_reminder_noEVs_description">"Nenhum PHEV ou BEV foi encontrado."</string>
+    <string name="activity_misc_novehicles_description">Nenhum veículo correspondente foi encontrado.</string>
     <string name="settings_battery_opts_off_description">"Desligado (recomendado)"</string>
     <string name="settings_battery_opts_on_description">"Ativado (pode causar problemas)"</string>
     <string name="activity_vehicle_status_success_description">"Status do veículo recuperado com sucesso."</string>

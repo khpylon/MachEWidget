@@ -191,7 +191,7 @@
     <string name="no_vehicles_notification_title">Aucun véhicule trouvé</string>
     <string name="no_vehicles_notification_description">Aucun véhicule n\'est associé à l\'application.</string>
     <string name="misc_error_message">Erreur</string>
-    <string name="activity_reminder_noEVs_description">Aucun VEHR ou VEB n’a été trouvé.</string>
+    <string name="activity_misc_novehicles_description">Aucun véhicule correspondant n\'a été trouvé.</string>
     <string name="settings_battery_opts_off_description">Désactivé (recommandé)</string>
     <string name="settings_battery_opts_on_description">Activé (peut causer des problèmes)</string>
     <string name="activity_vehicle_status_success_description">État du véhicule récupéré avec succès.</string>

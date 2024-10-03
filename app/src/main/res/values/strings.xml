@@ -232,7 +232,7 @@
     <string name="no_vehicles_notification_title">No vehicles found</string>
     <string name="no_vehicles_notification_description">No vehicles are associated with te app.</string>
     <string name="misc_error_message">Error</string>
-    <string name="activity_reminder_noEVs_description">No PHEVs or BEVs were found.</string>
+    <string name="activity_misc_novehicles_description">No matching vehicles were found.</string>
     <string name="settings_battery_opts_off_description">Off (recommended)</string>
     <string name="settings_battery_opts_on_description">On (may cause issues)</string>
     <string name="activity_vehicle_status_success_description">Vehicle status successfully retrieved.</string>

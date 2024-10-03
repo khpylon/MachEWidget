@@ -191,7 +191,7 @@
     <string name="no_vehicles_notification_title">Ajoneuvoja ei löytynyt</string>
     <string name="no_vehicles_notification_description">Sovellukseen ei ole liitetty ajoneuvoja.</string>
     <string name="misc_error_message">Virhe</string>
-    <string name="activity_reminder_noEVs_description">Yhtään PHEV:tä tai BEV:tä ei löytynyt.</string>
+    <string name="activity_misc_novehicles_description">Vastaavia ajoneuvoja ei löytynyt.</string>
     <string name="settings_battery_opts_off_description">Pois (suositus)</string>
     <string name="settings_battery_opts_on_description">Päällä (voi aiheuttaa ongelmia)</string>
     <string name="activity_vehicle_status_success_description">Ajoneuvon tila haettu onnistuneesti.</string>
