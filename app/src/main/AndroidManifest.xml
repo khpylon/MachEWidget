@@ -9,11 +9,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MacheWidget">
         <activity
-            android:name=".VA2"
-            android:exported="false"
-            android:label="@string/action_vehicle"
-            android:theme="@style/Theme.MacheWidget" />
-        <activity
             android:name=".ChargingActivity"
             android:exported="false"
             android:label="@string/title_activity_charging"
