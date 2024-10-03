@@ -16,7 +16,7 @@ import java.util.*
 
 object LogFile {
     private const val LOGFILENAME = "fsw_logfile"
-    private const val BACKUPLOGFILENAME = LOGFILENAME + ".0"
+    private const val BACKUPLOGFILENAME = "$LOGFILENAME.0"
     private const val LOGFILE_SIZE = 2500000
 
     private lateinit var mContext: WeakReference<Context>
@@ -96,36 +96,44 @@ object LogFile {
 
     @JvmStatic
     fun d(tag: String, message: String?) {
-        val context = mContext.get()
-        context?.let{ appendToLogFile(context, "D $tag", message) }
+        if(::mContext.isInitialized) {
+            val context = mContext.get()
+            context?.let { appendToLogFile(context, "D $tag", message) }
+        }
     }
 
     @JvmStatic
     fun e(tag: String, message: String?) {
-        val context = mContext.get()
-        context?.let{ appendToLogFile(context, "E $tag", message) }
+        if(::mContext.isInitialized) {
+            val context = mContext.get()
+            context?.let { appendToLogFile(context, "E $tag", message) }
+        }
     }
 
     @JvmStatic
     fun e(tag: String, message: String, e: Exception) {
-        val context = mContext.get()
-        context?.let {
-            val sw = StringWriter()
-            val pw = PrintWriter(sw)
-            e.printStackTrace(pw)
-            appendToLogFile(
-                context, "E $tag", """
-     $message
-     $sw
-     """.trimIndent()
-            )
+        if(::mContext.isInitialized) {
+            val context = mContext.get()
+            context?.let {
+                val sw = StringWriter()
+                val pw = PrintWriter(sw)
+                e.printStackTrace(pw)
+                appendToLogFile(
+                    context, "E $tag", """
+         $message
+         $sw
+         """.trimIndent()
+                )
+            }
         }
     }
 
     @JvmStatic
     fun i(tag: String, message: String?) {
-        val context = mContext.get()
-        context?.let{ appendToLogFile(context, "I $tag", message) }
+        if(::mContext.isInitialized) {
+            val context = mContext.get()
+            context?.let { appendToLogFile(context, "I $tag", message) }
+        }
     }
 
     @JvmStatic
@@ -150,7 +158,7 @@ object LogFile {
             val outputFilename = writeExternalFile(
                 context,
                 FileInputStream(tmpLogfile),
-                LOGFILENAME + "-",
+                "$LOGFILENAME-",
                 Constants.TEXT_PLAINTEXT
             )
             tmpLogfile.delete()

@@ -244,6 +244,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
+        LogFile.defineContext(context)
         CoroutineScope(Dispatchers.Main).launch {
             val info = getInfo(context)
             // There may be multiple widgets active, so update all of them

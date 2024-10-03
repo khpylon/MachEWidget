@@ -1,13 +1,16 @@
 package com.example.khughes.machewidget
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -62,16 +65,28 @@ class ColorActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val activity = this
+
         lifecycleScope.launch {
             info = getInfo(applicationContext)
             vehicles = info.vehicles
 
-            setContent {
-                MacheWidgetTheme {
-                    ChooseColor()
+            if (vehicles.size == 0) {
+                AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
+                    .setTitle(getString(R.string.misc_error_message))
+                    .setMessage(getString(R.string.activity_misc_novehicles_description))
+                    .setPositiveButton(
+                        android.R.string.ok
+                    ) { _: DialogInterface?, _: Int -> finish() }
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show()
+            } else {
+                setContent {
+                    MacheWidgetTheme {
+                        ChooseColor()
+                    }
                 }
             }
-
         }
     }
 

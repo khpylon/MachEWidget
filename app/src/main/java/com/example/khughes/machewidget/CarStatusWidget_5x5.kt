@@ -374,6 +374,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
+        LogFile.defineContext(context)
         CoroutineScope(Dispatchers.Main).launch {
             val info = getInfo(context)
             if (info.user.userId != "") {

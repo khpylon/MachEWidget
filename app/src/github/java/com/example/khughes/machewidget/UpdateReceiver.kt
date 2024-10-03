@@ -25,6 +25,7 @@ import java.util.Locale
 
 class UpdateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        LogFile.defineContext(context)
         nextAlarm(context)
 
         CoroutineScope(Dispatchers.IO).launch {

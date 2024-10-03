@@ -29,6 +29,7 @@ private lateinit var alarmTime: LocalDateTime
 class StatusReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
+        LogFile.defineContext(context)
 
         // Set the next alarm
         alarmTime = LocalDateTime.now(ZoneId.systemDefault())

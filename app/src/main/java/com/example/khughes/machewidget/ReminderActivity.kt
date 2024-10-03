@@ -72,7 +72,7 @@ class ReminderActivity : ComponentActivity() {
             if (vinList.size == 0) {
                 AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
                     .setTitle(getString(R.string.misc_error_message))
-                    .setMessage(getString(R.string.activity_reminder_noEVs_description))
+                    .setMessage(getString(R.string.activity_misc_novehicles_description))
                     .setPositiveButton(
                         android.R.string.ok
                     ) { _: DialogInterface?, _: Int -> finish() }
