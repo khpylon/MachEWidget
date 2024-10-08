@@ -12,6 +12,7 @@ import java.lang.ref.WeakReference
 object NetworkServiceGenerators {
     private lateinit var mContext: WeakReference<Context>
 
+    private const val B2LOGIN_BASE_URL = "https://dah2vb2cprod.b2clogin.com/"
     private const val APIMPS_BASE_URL = "https://api.mps.ford.com/api/"
     private const val USAPICV_BASE_URL = "https://usapi.cv.ford.com/api/"
     private const val DIGITALSERVICES_BASE_URL = "https://www.digitalservices.ford.com/"
@@ -41,6 +42,24 @@ object NetworkServiceGenerators {
         mContext.get()?.let { d("OkHttp3", result) }
     }
         .setLevel(HttpLoggingInterceptor.Level.BODY)
+
+    private val OAUTH2 = Retrofit.Builder()
+        .baseUrl(B2LOGIN_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+    private var OAUTH2Retrofit = OAUTH2.build()
+    private val OAUTH2HttpClient: OkHttpClient.Builder = OkHttpClient.Builder()
+    @JvmStatic
+    fun <S> createOAUTH2Service(
+        serviceClass: Class<S>?, context: Context?
+    ): S {
+        mContext = WeakReference(context)
+        if (!OAUTH2HttpClient.interceptors().contains(logging)) {
+            OAUTH2HttpClient.addInterceptor(logging)
+            OAUTH2.client(OAUTH2HttpClient.build())
+            OAUTH2Retrofit = OAUTH2.build()
+        }
+        return OAUTH2Retrofit.create(serviceClass as Class<S>)
+    }
 
     private val APIMPS = Retrofit.Builder()
         .baseUrl(APIMPS_BASE_URL)
