@@ -363,17 +363,17 @@ fun DisplayWebview() {
                         )
                         DropdownMenuItem(
                             onClick = {
-//                                val intent = Intent(context, LoginActivity::class.java)
-//                                context.startActivity(intent)
-//                                mDisplayMenu = false
-                                AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-                                    .setTitle(context.resources.getString(R.string.warning))
-                                    .setMessage(context.getString(R.string.login_temp_disable_message))
-                                    .setPositiveButton(
-                                        android.R.string.ok
-                                    ) {  _: DialogInterface?, _: Int -> }
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show()
+                                val intent = Intent(context, LoginActivity::class.java)
+                                context.startActivity(intent)
+                                mDisplayMenu = false
+//                                AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+//                                    .setTitle(context.resources.getString(R.string.warning))
+//                                    .setMessage(context.getString(R.string.login_temp_disable_message))
+//                                    .setPositiveButton(
+//                                        android.R.string.ok
+//                                    ) {  _: DialogInterface?, _: Int -> }
+//                                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                                    .show()
                             },
                             text = { Text(text = context.getString(R.string.action_login)) }
                         )
