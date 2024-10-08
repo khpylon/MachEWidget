@@ -14,7 +14,7 @@ interface ApiAutonomicService {
         "User-Agent: okhttp/4.9.0",
         "Accept-Encoding: gzip, deflate, br",
         "Content-Type: application/json",
-        "Application-Id: " + Constants.APID,
+        "Application-Id: " + FordConnectConstants.APID,
     )
     @GET("v1/telemetry/sources/fordpass/vehicles/{VIN}")
     fun getStatus(
@@ -25,7 +25,7 @@ interface ApiAutonomicService {
 
     @Headers(
         "Accept-Encoding: gzip",
-        "Application-Id: " + Constants.APID,
+        "Application-Id: " + FordConnectConstants.APID,
         "Content-Type: application/json",
         "Host: api.mps.ford.com",
         "User-Agent: okhttp/4.9.0",
@@ -47,7 +47,7 @@ interface ApiAutonomicService {
 //    @Headers(
 //        "Content-Type: application/json",
 //        "Accept-Language: en-US",
-//        "Application-Id: " + Constants.APID,
+//        "Application-Id: " + FordConnectConstants.APID,
 //        "Authorization: Basic ZWFpLWNsaWVudDo="
 //    )
 //    @GET("users")

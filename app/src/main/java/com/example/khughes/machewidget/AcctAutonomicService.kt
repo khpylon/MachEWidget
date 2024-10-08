@@ -24,7 +24,7 @@ interface AcctAutonomicService {
     @Headers(
         "Content-Type: application/json",
         "Accept-Language: en-US",
-        "Application-Id: " + Constants.APID,
+        "Application-Id: " + FordConnectConstants.APID,
         "Authorization: Basic ZWFpLWNsaWVudDo="
     )
     @POST("token/v2/cat-with-refresh-token")
@@ -34,7 +34,7 @@ interface AcctAutonomicService {
 
     @Headers(
         "Accept-Encoding: gzip",
-        "Application-Id: " + Constants.APID,
+        "Application-Id: " + FordConnectConstants.APID,
         "Content-Type: application/json",
         "Host: api.mps.ford.com",
         "User-Agent: okhttp/4.9.0"
@@ -47,7 +47,7 @@ interface AcctAutonomicService {
 
     @Headers(
         "Accept-Encoding: gzip",
-        "Application-Id: " + Constants.APID,
+        "Application-Id: " + FordConnectConstants.APID,
         "Content-Type: application/json",
         "Host: api.mps.ford.com",
         "User-Agent: okhttp/4.9.0",
