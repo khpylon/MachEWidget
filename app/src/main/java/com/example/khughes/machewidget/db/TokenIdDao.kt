@@ -14,8 +14,8 @@ interface TokenIdDao {
     @Delete
     fun deleteTokenId(info: TokenId)
 
-    @Query("DELETE FROM tokenid_info")
-    fun deleteAllTokenIds()
+//    @Query("DELETE FROM tokenid_info")
+//    fun deleteAllTokenIds()
 
     @Query("DELETE FROM tokenid_info WHERE users = 0")
     fun deleteUnusedTokenIds()

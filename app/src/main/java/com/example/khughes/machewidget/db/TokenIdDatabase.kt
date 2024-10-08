@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
-import com.example.khughes.machewidget.UserInfo
+import com.example.khughes.machewidget.TokenId
 
-@Database(entities = [UserInfo::class], version = 4)
+@Database(entities = [TokenId::class], version = 4)
 abstract class TokenIdDatabase : RoomDatabase() {
-    abstract fun userInfoDao(): UserInfoDao
+    abstract fun tokenIdDao(): TokenIdDao
 
     companion object {
         private var instance: TokenIdDatabase? = null
