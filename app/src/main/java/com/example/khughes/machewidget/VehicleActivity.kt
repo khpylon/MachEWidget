@@ -51,23 +51,23 @@ class VehicleActivity : AppCompatActivity() {
 
     private fun getStatus(context: Context, VIN: String, nickname: String) {
         CoroutineScope(Dispatchers.Main).launch {
-            val msg = NetworkCalls.getStatus(context, userInfo, VIN, nickname)
-            val bundle = msg.data
-            val action = bundle.getString("action")
-            if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.activity_vehicle_status_success_description),
-                    Toast.LENGTH_LONG
-                ).show()
-                NetworkCalls.getVehicleImage(context, VIN, userInfo.country!!)
-            } else {
-                Toast.makeText(
-                    context,
-                    getString(R.string.activity_vehicle_status_failure_description),
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+//            val msg = NetworkCalls.getStatus(context, userInfo, VIN, nickname)
+//            val bundle = msg.data
+//            val action = bundle.getString("action")
+//            if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
+//                Toast.makeText(
+//                    context,
+//                    getString(R.string.activity_vehicle_status_success_description),
+//                    Toast.LENGTH_LONG
+//                ).show()
+//                NetworkCalls.getVehicleImage(context, VIN, userInfo.country!!)
+//            } else {
+//                Toast.makeText(
+//                    context,
+//                    getString(R.string.activity_vehicle_status_failure_description),
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            }
         }
     }
 

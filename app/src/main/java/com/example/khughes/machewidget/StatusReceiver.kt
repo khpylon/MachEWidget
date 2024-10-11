@@ -121,74 +121,74 @@ class StatusReceiver : BroadcastReceiver() {
         CoroutineScope(Dispatchers.Main).launch {
             info = getInfo(context)
 
-            val userInfo = info.user
-            val timeout = userInfo.expiresIn
-            val time = LocalDateTime.now(ZoneId.systemDefault())
-            val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-            val state = userInfo.programState
+//            val userInfo = info.user
+//            val timeout = userInfo.expiresIn
+//            val time = LocalDateTime.now(ZoneId.systemDefault())
+//            val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+//            val state = userInfo.programState
 
-            LogFile.d(
-                MainActivity.CHANNEL_ID,
-                MessageFormat.format(
-                    "StatusReceiver: time({0}), state({1}), battery optimization({2})",
-                    (timeout - nowtime) / MILLIS,
-                    state,
-                    Misc.ignoringBatteryOptimizations(context)
-                )
-            )
+//            LogFile.d(
+//                MainActivity.CHANNEL_ID,
+//                MessageFormat.format(
+//                    "StatusReceiver: time({0}), state({1}), battery optimization({2})",
+//                    (timeout - nowtime) / MILLIS,
+//                    state,
+//                    Misc.ignoringBatteryOptimizations(context)
+//                )
+//            )
 
-            when (state) {
-                Constants.STATE_ACCOUNT_DISABLED -> {
-                    LogFile.d(
-                        MainActivity.CHANNEL_ID,
-                        "Account disabled"
-                    )
-                    cancelAlarm(context)
-                    Notifications.accountError(context, state)
-                    appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
-                }
-
-                Constants.STATE_INITIAL_STATE -> {
-                    LogFile.d(
-                        MainActivity.CHANNEL_ID,
-                        "Initial state: how'd did the alarm go off (manual refresh)?"
-                    )
-                    cancelAlarm(context)
-                    Notifications.loginRequired(context)
-                    appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
-                }
-
-                Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN -> {
-                    LogFile.d(MainActivity.CHANNEL_ID, "STILL need to refresh token")
-//                        getRefresh(context, userId, userInfo.refreshToken)
-                    getStatus(context, userInfo.userId!!)
-                    appInfo.incCounter(StoredData.STATUS_UPDATED)
-                }
-
-                Constants.STATE_HAVE_TOKEN -> {
-                    if (info.vehicles.size == 0) {
-                        LogFile.e(MainActivity.CHANNEL_ID, "Login looks OK, but no vehicles found")
-                        Notifications.missingVehicles(context)
-                    } else {
-                        LogFile.e(MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
-                    }
-                    appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
-                }
-
-                Constants.STATE_HAVE_TOKEN_AND_VIN -> {
+//            when (state) {
+//                Constants.STATE_ACCOUNT_DISABLED -> {
+//                    LogFile.d(
+//                        MainActivity.CHANNEL_ID,
+//                        "Account disabled"
+//                    )
+//                    cancelAlarm(context)
+//                    Notifications.accountError(context, state)
+//                    appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
+//                }
+//
+//                Constants.STATE_INITIAL_STATE -> {
+//                    LogFile.d(
+//                        MainActivity.CHANNEL_ID,
+//                        "Initial state: how'd did the alarm go off (manual refresh)?"
+//                    )
+//                    cancelAlarm(context)
+//                    Notifications.loginRequired(context)
+//                    appInfo.incCounter(StoredData.STATUS_NOT_LOGGED_IN)
+//                }
+//
+//                Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN -> {
+//                    LogFile.d(MainActivity.CHANNEL_ID, "STILL need to refresh token")
+////                        getRefresh(context, userId, userInfo.refreshToken)
+//                    getStatus(context)
+//                    appInfo.incCounter(StoredData.STATUS_UPDATED)
+//                }
+//
+//                Constants.STATE_HAVE_TOKEN -> {
+//                    if (info.vehicles.size == 0) {
+//                        LogFile.e(MainActivity.CHANNEL_ID, "Login looks OK, but no vehicles found")
+//                        Notifications.missingVehicles(context)
+//                    } else {
+//                        LogFile.e(MainActivity.CHANNEL_ID, "SHOULD NOT GET TO THIS CASE")
+//                    }
+//                    appInfo.incCounter(StoredData.STATUS_VEHICLE_INFO)
+//                }
+//
+//                Constants.STATE_HAVE_TOKEN_AND_VIN -> {
                     LogFile.d(MainActivity.CHANNEL_ID, "Grab status info")
-                    getStatus(context, userInfo.userId!!)
-                    appInfo.incCounter(StoredData.STATUS_UPDATED)
-                }
-
-                else -> {
-                    LogFile.d(
-                        MainActivity.CHANNEL_ID,
-                        "Hmmm... How did I get here. Wish I could login"
-                    )
-                    appInfo.incCounter(StoredData.STATUS_UNKNOWN)
-                }
-            }
+                    getStatus(context)
+//                    appInfo.incCounter(StoredData.STATUS_UPDATED)
+//                }
+//
+//                else -> {
+//                    LogFile.d(
+//                        MainActivity.CHANNEL_ID,
+//                        "Hmmm... How did I get here. Wish I could login"
+//                    )
+//                    appInfo.incCounter(StoredData.STATUS_UNKNOWN)
+//                }
+//            }
 
             LogFile.d(
                 MainActivity.CHANNEL_ID,
@@ -211,9 +211,9 @@ class StatusReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun getStatus(context: Context, userId: String) {
+    private fun getStatus(context: Context) {
         CoroutineScope(Dispatchers.Main).launch {
-            val msg = NetworkCalls.getStatus(context, userId)
+            val msg = NetworkCalls.getStatus(context)
             val bundle = msg.data
             val action = bundle.getString("action")
             LogFile.i(
@@ -222,22 +222,22 @@ class StatusReceiver : BroadcastReceiver() {
             )
 
             // If vehicle is DC fast charging, update status in 30 seconds
-            if (bundle.getBoolean(context.getString(R.string.dcfc_active))) {
-                LogFile.i(
-                    MainActivity.CHANNEL_ID,
-                    "Vehicle is DC fast charging; setting alarm for 30 seconds"
-                )
-                cancelAlarm(context)
-                if (::alarmTime.isInitialized) {
-                    nextAlarm(context, alarmTime.plusSeconds(30))
-                } else {
-                    LogFile.e(
-                        MainActivity.CHANNEL_ID,
-                        "lateinit alarmTime is not initialized"
-                    )
-                    nextAlarm(context, 30)
-                }
-            }
+//            if (bundle.getBoolean(context.getString(R.string.dcfc_active))) {
+//                LogFile.i(
+//                    MainActivity.CHANNEL_ID,
+//                    "Vehicle is DC fast charging; setting alarm for 30 seconds"
+//                )
+//                cancelAlarm(context)
+//                if (::alarmTime.isInitialized) {
+//                    nextAlarm(context, alarmTime.plusSeconds(30))
+//                } else {
+//                    LogFile.e(
+//                        MainActivity.CHANNEL_ID,
+//                        "lateinit alarmTime is not initialized"
+//                    )
+//                    nextAlarm(context, 30)
+//                }
+//            }
 
             // Update the widgets, no matter what.
             CarStatusWidget.updateWidget(context)

@@ -37,8 +37,8 @@ object Constants {
     const val CHARGING_SCHEDULED = "SCHEDULED"
     const val CHARGING_STATUS_COMPLETE = "COMPLETED"
 
-    const val CHARGING_STATUS_NOT_READY = "NotReady"
-    const val CHARGING_STATUS_CHARGING_AC = "ChargingAC"
+    const val CHARGING_STATUS_NOT_READY = "NotReady"        // not plugged in
+    const val CHARGING_STATUS_CHARGING_AC = "ChargingAC"    // plugged in, is that it?
     const val CHARGING_STATUS_CHARGING_DC = "ChargingDC"
     const val CHARGING_STATUS_TARGET_REACHED = "ChargeTargetReached"
     const val CHARGING_STATUS_PRECONDITION = "CabinPreconditioning"

@@ -1,7 +1,5 @@
 package com.example.khughes.machewidget
 
-import com.example.khughes.machewidget.CarStatus.CarStatus
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call

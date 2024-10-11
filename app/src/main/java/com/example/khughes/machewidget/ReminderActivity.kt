@@ -46,9 +46,9 @@ private lateinit var info: InfoRepository
 class ReminderActivity : ComponentActivity() {
 
     private fun isPHEVorBEV(vehicle: VehicleInfo): Boolean {
-        val status = vehicle.carStatus
-        val propulsionType = status.propulsion
-        return !status.isPropulsionICEOrHybrid(propulsionType)
+        val isPHEV = vehicle.carStatus.isPropulsionPHEV()
+        val isElectric = vehicle.carStatus.isPropulsionElectric()
+        return isPHEV || isElectric
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

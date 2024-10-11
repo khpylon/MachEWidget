@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.khughes.machewidget.DoorConverters
 import com.example.khughes.machewidget.VehicleInfo
 import java.util.concurrent.Executors
 
 @Database(entities = [VehicleInfo::class], version = 13)
+@TypeConverters(DoorConverters::class)
 abstract class VehicleInfoDatabase : RoomDatabase() {
     abstract fun vehicleInfoDao(): VehicleInfoDao
 
@@ -32,6 +35,7 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                         MIGRATION_10_11,
                         MIGRATION_11_12,
                         MIGRATION_12_13,
+                        MIGRATION_13_14,
                     )
                     .fallbackToDestructiveMigration()
                     .setJournalMode(JournalMode.TRUNCATE)
@@ -200,6 +204,14 @@ abstract class VehicleInfoDatabase : RoomDatabase() {
                 )
                 database.execSQL(
                     "ALTER TABLE vehicle_info ADD COLUMN car_xevBatteryVoltage REAL DEFAULT 0 NOT NULL"
+                )
+            }
+        }
+
+        private val MIGRATION_13_14: Migration = object : Migration(13,14) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE vehicle_info ADD COLUMN tokenId TEXT DEFAULT '' NOT NULL"
                 )
             }
         }

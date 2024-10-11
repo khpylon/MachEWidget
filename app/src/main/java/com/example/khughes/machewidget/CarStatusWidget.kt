@@ -22,7 +22,6 @@ import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.PreferenceManager
-import com.example.khughes.machewidget.CarStatus.CarStatus
 import com.example.khughes.machewidget.Misc.Companion.elapsedMinutesToDescription
 import com.example.khughes.machewidget.Misc.Companion.elapsedSecondsToDescription
 import com.example.khughes.machewidget.Notifications.Companion.chargeComplete
@@ -51,43 +50,43 @@ open class CarStatusWidget : AppWidgetProvider() {
         // Set the textview background color based on the status
         var tmpPressure: String
         val drawable: Int
-        if (status != null && status != "Normal" && status != "Unknown") {
-            drawable = R.drawable.pressure_oval_red_solid
-            // Get the tire pressure and do any conversion necessary.
-            if (pressure != null) {
-                try {
-                    val value = pressure.toDouble()
-                    // Only display value if it's not ridiculous; after some OTA updates the
-                    // raw value is "65533"
-                    if (value < 2000) {
-                        // If conversion is really small, show value in tenths
-                        val pattern = if (conversion >= 0.1) "#" else "#.0"
-                        tmpPressure = MessageFormat.format(
-                            "{0}{1}", DecimalFormat(
-                                pattern,  // "#.0",
-                                DecimalFormatSymbols.getInstance(Locale.US)
-                            ).format(value * conversion), units
-                        )
-                        views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval)
-                    } else {
-                        tmpPressure = "N/A"
-                    }
-                } catch (e: NumberFormatException) {
-                    LogFile.e(
-                        MainActivity.CHANNEL_ID,
-                        "java.lang.NumberFormatException in CarStatusWidget.updateTire(): pressure = $pressure"
-                    )
-                    tmpPressure = "N/A"
-                }
-            } else {
-                tmpPressure = "N/A"
-            }
-            views.setTextViewText(id, tmpPressure)
+//        if (status != null && status != "Normal" && status != "Unknown") {
+//            drawable = R.drawable.pressure_oval_red_solid
+//            // Get the tire pressure and do any conversion necessary.
+//            if (pressure != null) {
+//                try {
+//                    val value = pressure.toDouble()
+//                    // Only display value if it's not ridiculous; after some OTA updates the
+//                    // raw value is "65533"
+//                    if (value < 2000) {
+//                        // If conversion is really small, show value in tenths
+//                        val pattern = if (conversion >= 0.1) "#" else "#.0"
+//                        tmpPressure = MessageFormat.format(
+//                            "{0}{1}", DecimalFormat(
+//                                pattern,  // "#.0",
+//                                DecimalFormatSymbols.getInstance(Locale.US)
+//                            ).format(value * conversion), units
+//                        )
+//                        views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval)
+//                    } else {
+//                        tmpPressure = "N/A"
+//                    }
+//                } catch (e: NumberFormatException) {
+//                    LogFile.e(
+//                        MainActivity.CHANNEL_ID,
+//                        "java.lang.NumberFormatException in CarStatusWidget.updateTire(): pressure = $pressure"
+//                    )
+//                    tmpPressure = "N/A"
+//                }
+//            } else {
+//                tmpPressure = "N/A"
+//            }
+//            views.setTextViewText(id, tmpPressure)
 //            views.setTextViewTextSize(id,TypedValue.COMPLEX_UNIT_DIP, 12.0)
-        } else {
+//        } else {
             drawable = R.drawable.filler
             views.setTextViewText(id, "")
-        }
+//        }
         views.setInt(id, "setBackgroundResource", drawable)
     }
 
@@ -406,7 +405,7 @@ open class CarStatusWidget : AppWidgetProvider() {
 
     protected open fun drawIcons(views: RemoteViews, carStatus: CarStatus) {
         // Door locks
-        carStatus.vehiclestatus.lockStatus?.value?.let { lockStatus ->
+        carStatus.vehicle.vehicleStatus.lockStatus.value.let { lockStatus ->
             views.setImageViewResource(
                 R.id.lock_electric,
                 if (lockStatus == "LOCKED") R.drawable.locked_icon_green else R.drawable.unlocked_icon_red
@@ -418,26 +417,24 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
 
         // Ignition and remote start
-        if (carStatus.vehiclestatus.remoteStartStatus?.value == 1) {
+        if (carStatus.vehicle.vehicleStatus.remoteStartStatus.status == "") {
             views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow)
-        } else carStatus.vehiclestatus.ignitionStatus?.value?.let { ignition ->
+        } else carStatus.vehicle.vehicleStatus.ignitionStatus.value.let { ignition ->
             views.setImageViewResource(
                 R.id.ignition,
-                if (ignition == "Off") R.drawable.ignition_icon_gray else R.drawable.ignition_icon_green
+                if (ignition.uppercase() == "OFF") R.drawable.ignition_icon_gray else R.drawable.ignition_icon_green
             )
         }
 
         // Motion alarm and deep sleep state
-        if (carStatus.vehiclestatus.deepSleepInProgress?.value == true) {
+        if (carStatus.vehicle.vehicleStatus.deepSleepInProgress == true) {
             views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_zzz_red)
         } else {
-            carStatus.vehiclestatus.alarm?.value?.let { alarm ->
+            carStatus.vehicle.vehicleStatus.alarmStatus.value.let { alarm ->
                 views.setImageViewResource(
                     R.id.alarm,
                     if (alarm == "NOTSET") R.drawable.bell_icon_red else R.drawable.bell_icon_green
                 )
-            } ?: run {
-                views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray)
             }
         }
     }
@@ -448,15 +445,15 @@ open class CarStatusWidget : AppWidgetProvider() {
         distanceConversion: Double, distanceUnits: String?,
         displayTime: Boolean
     ) {
-        val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.propulsion)
-        val isPHEV = carStatus.isPropulsionPHEV(carStatus.propulsion)
-        val isDiesel = carStatus.isPropulsionDiesel(carStatus.propulsion)
+        val isICEOrHybrid = carStatus.vehicle.engineType in mutableListOf("ICE", "PHEV")
+        val isPHEV = carStatus.vehicle.engineType == "PHEV"
+
         var rangeMessage = "N/A"
         var chargeMessage = ""
 
         if (!isICEOrHybrid) {
             // Estimated range
-            carStatus.vehiclestatus.elVehDTE?.value?.let {
+            carStatus.vehicle.vehicleDetails.batteryChargeLevel?.distanceToEmpty?.let {
                 rangeMessage = MessageFormat.format(
                     "{0} {1}",
                     (it * distanceConversion).roundToInt(),
@@ -468,13 +465,14 @@ open class CarStatusWidget : AppWidgetProvider() {
             // Charging port
             views.setImageViewResource(
                 R.id.plug,
-                if (carStatus.vehiclestatus.plugStatus?.value == 1) R.drawable.plug_icon_green else R.drawable.plug_icon_gray
+                if (carStatus.vehicle.vehicleStatus.plugStatus?.value == true
+                ) R.drawable.plug_icon_green else R.drawable.plug_icon_gray
             )
 
             var rangeMessageSize = 1.0F
             // High-voltage battery
-            if ((carStatus.vehiclestatus.plugStatus?.value ?: 0) == 1) {
-                val chargeStatus = carStatus.vehiclestatus.chargingStatus?.value ?: ""
+            if (carStatus.vehicle.vehicleStatus.plugStatus!!.value) {
+                val chargeStatus = carStatus.vehicle.vehicleStatus.chargingStatus?.value ?: ""
                 when (chargeStatus) {
                     Constants.CHARGING_STATUS_NOT_READY -> views.setImageViewResource(
                         R.id.HVBIcon,
@@ -511,29 +509,29 @@ open class CarStatusWidget : AppWidgetProvider() {
                 }
 
                 // Add charging information is available, display it
-                val queryCharging =
-                    PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(
-                            context.resources
-                                .getString(R.string.check_charging_key), false
-                        )
-                if (queryCharging && (vehicleInfo.carStatus.vehiclestatus.plugStatus?.value
-                        ?: 0) == 1
-                    && vehicleInfo.carStatus.vehiclestatus.chargeEnergy > 0
-                ) {
-                    rangeMessage += MessageFormat.format(
-                        context.getString(R.string.kw_rate_kwh_added),
-                        DecimalFormat(
-                            "#0.0",
-                            DecimalFormatSymbols.getInstance(Locale.US)
-                        ).format(vehicleInfo.carStatus.vehiclestatus.chargePower / 1000.0),
-                        DecimalFormat(
-                            "#0.0",
-                            DecimalFormatSymbols.getInstance(Locale.US)
-                        ).format(vehicleInfo.carStatus.vehiclestatus.chargeEnergy / 1000.0)
-                    )
-                    rangeMessageSize = 0.8F
-                }
+//                val queryCharging =
+//                    PreferenceManager.getDefaultSharedPreferences(context)
+//                        .getBoolean(
+//                            context.resources
+//                                .getString(R.string.check_charging_key), false
+//                        )
+//                if (queryCharging && (vehicleInfo.carStatus.vehicle.vehicleStatus.plugStatus?.value
+//                        ?: false) == true
+//                    && vehicleInfo.carStatus.vehiclestatus.chargeEnergy > 0
+//                ) {
+//                    rangeMessage += MessageFormat.format(
+//                        context.getString(R.string.kw_rate_kwh_added),
+//                        DecimalFormat(
+//                            "#0.0",
+//                            DecimalFormatSymbols.getInstance(Locale.US)
+//                        ).format(vehicleInfo.carStatus.vehiclestatus.chargePower / 1000.0),
+//                        DecimalFormat(
+//                            "#0.0",
+//                            DecimalFormatSymbols.getInstance(Locale.US)
+//                        ).format(vehicleInfo.carStatus.vehiclestatus.chargeEnergy / 1000.0)
+//                    )
+//                    rangeMessageSize = 0.8F
+//                }
 
                 // Normally there will be something from the GOM; if so, display this info with it
                 if (chargeStatus == Constants.CHARGING_STATUS_TARGET_REACHED) {
@@ -550,38 +548,6 @@ open class CarStatusWidget : AppWidgetProvider() {
                     chargeMessage = context.getString(R.string.charging_preconditioning)
                 } else {
                     chargeMessage = context.getString(R.string.charging_just_charging)
-//                    val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.US)
-//                    val endChargeTime = Calendar.getInstance()
-//                    try {
-//                        endChargeTime.time =
-//                            carStatus.vehiclestatus.chargeEndTime!!.value?.let { sdf.parse(it) } as Date
-//                        val nowTime = Calendar.getInstance()
-//                        var min = Duration.between(
-//                            nowTime.toInstant(),
-//                            endChargeTime.toInstant()
-//                        ).seconds / 60
-//                        if (min > 0) {
-//                            chargeMessage = "- "
-//                            val hours = min.toInt() / 60
-//                            min %= 60
-//                            if (hours > 0) {
-//                                chargeMessage += "$hours hr"
-//                                if (min > 0) {
-//                                    chargeMessage += ", "
-//                                }
-//                            }
-//                            if (min > 0) {
-//                                chargeMessage += "$min min"
-//                            }
-//                            chargeMessage += " left"
-//                        }
-//                    } catch (e: ParseException) {
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            "exception in CarStatusWidget.updateAppWidget: ",
-//                            e
-//                        )
-//                    }
                 }
 
                 // If status changed, save for future reference.
@@ -596,9 +562,8 @@ open class CarStatusWidget : AppWidgetProvider() {
             text.setSpan(RelativeSizeSpan(rangeMessageSize), messageLength, rangeMessage.length, 0)
             views.setTextViewText(R.id.GOM, text)
 
-
             // High-voltage battery charge levels
-            carStatus.vehiclestatus.batteryFillLevel?.value?.let {
+            carStatus.vehicle.vehicleDetails.batteryChargeLevel?.value?.let {
                 views.setProgressBar(
                     R.id.HBVChargeProgress,
                     100,
@@ -615,7 +580,8 @@ open class CarStatusWidget : AppWidgetProvider() {
 
         if (isICEOrHybrid || isPHEV) {
             // Estimated range
-            var range = carStatus.vehiclestatus.fuel?.distanceToEmpty ?: Double.MAX_VALUE
+            var range =
+                carStatus.vehicle.vehicleDetails.fuelLevel?.distanceToEmpty ?: Double.MAX_VALUE
             if (range != Double.MAX_VALUE) {
                 vehicleInfo.lastDTE = range
                 info.setVehicle(vehicleInfo)
@@ -630,7 +596,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.distanceToEmpty, rangeMessage)
 
             // Fuel tank level
-            var fuelLevel = carStatus.vehiclestatus.fuel?.fuelLevel ?: Double.MAX_VALUE
+            var fuelLevel = carStatus.vehicle.vehicleDetails.fuelLevel?.value ?: Double.MAX_VALUE
             if (fuelLevel != Double.MAX_VALUE) {
                 vehicleInfo.lastFuelLevel = fuelLevel
                 info.setVehicle(vehicleInfo)
@@ -654,21 +620,21 @@ open class CarStatusWidget : AppWidgetProvider() {
                 )
             )
 
-            if (carStatus.vehiclestatus.fuel == null) {
+            if (carStatus.vehicle.vehicleDetails.fuelLevel == null) {
                 Toast.makeText(
                     context,
                     "carStatus.getvehiclestatus().getFuel() is null",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                if (carStatus.vehiclestatus.fuel?.distanceToEmpty == null) {
+                if (carStatus.vehicle.vehicleDetails.fuelLevel?.distanceToEmpty == null) {
                     Toast.makeText(
                         context,
                         "carStatus.getvehiclestatus().getFuel().getDistanceToEmpty() is null",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                if (carStatus.vehiclestatus.fuel?.fuelLevel == null) {
+                if (carStatus.vehicle.vehicleDetails.fuelLevel?.value == null) {
                     Toast.makeText(
                         context,
                         "carStatus.getvehiclestatus().getFuel().getFuelLevel() is null",
@@ -684,100 +650,104 @@ open class CarStatusWidget : AppWidgetProvider() {
         views.setViewVisibility(R.id.LVBLevelRed, View.GONE)
 
         // Redraw LVB label, to guarantee it's displayed in the correct locale
-        views.setTextViewText(R.id.LVBVoltageText, context.getString(R.string.widgets_lv_bat_label))
-
-        carStatus.vehiclestatus.battery?.batteryStatusActual?.value?.let { LVBLevel ->
-            val LVBStatus =
-                carStatus.vehiclestatus.battery?.batteryHealth?.value ?: "STATUS_GOOD"
-            val LVBPercent =
-                carStatus.vehiclestatus.battery?.batteryStatusActual?.percentage ?: 0.0
-//            views.setTextColor(
+        // TODO: FordConnect API doesn't supply 12VB info :(
+//        views.setTextViewText(R.id.LVBVoltageText, context.getString(R.string.widgets_lv_bat_label))
+//
+//        carStatus.vehiclestatus.battery?.batteryStatusActual?.value?.let { LVBLevel ->
+//            val LVBStatus =
+//                carStatus.vehiclestatus.battery?.batteryHealth?.value ?: "STATUS_GOOD"
+//            val LVBPercent =
+//                carStatus.vehiclestatus.battery?.batteryStatusActual?.percentage ?: 0.0
+////            views.setTextColor(
+////                R.id.LVBVoltage,
+////                context.getColor(if (LVBStatus == "STATUS_GOOD") R.color.white else R.color.red)
+////            )
+//            if (LVBLevel > 0) {
+//                val displayLVB = PreferenceManager.getDefaultSharedPreferences(context)
+//                    .getString(context.resources.getString(R.string.lvb_display_key), "")
+//                val message: String
+//                when (displayLVB) {
+//                    "Graph" -> {
+//                        val id = if (LVBPercent >= 80.0) {
+//                            R.id.LVBLevelGreen
+//                        } else if (LVBPercent >= 50.0) {
+//                            R.id.LVBLevelYellow
+//                        } else {
+//                            R.id.LVBLevelRed
+//                        }
+//                        views.setViewVisibility(id, View.VISIBLE)
+//                        message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
+//                    }
+//
+//                    "Volts" -> {
+//                        message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
+//                    }
+//
+//                    "SOC" -> {
+//                        message = MessageFormat.format("{0}%", LVBPercent)
+//                    }
+//
+//                    else -> {
+//                        message =
+//                            MessageFormat.format("{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent)
+//                    }
+//                }
+//                views.setTextViewText(R.id.LVBVoltage, message)
+//            } else {
+//                views.setTextViewText(
+//                    R.id.LVBVoltage,
+//                    context.getString(R.string.widgets_lv_bat_label) +
+//                            context.getString(if (LVBStatus == "STATUS_GOOD") R.string.good else R.string.warning)
+//                )
+//            }
+//        } ?: run {
+//            views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
+//            views.setTextViewText(
 //                R.id.LVBVoltage,
-//                context.getColor(if (LVBStatus == "STATUS_GOOD") R.color.white else R.color.red)
+//                context.getString(R.string.widgets_lv_bat_label) +
+//                        context.getString(R.string.widgets_na_label)
 //            )
-            if (LVBLevel > 0) {
-                val displayLVB = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(context.resources.getString(R.string.lvb_display_key), "")
-                val message: String
-                when (displayLVB) {
-                    "Graph" -> {
-                        val id = if (LVBPercent >= 80.0) {
-                            R.id.LVBLevelGreen
-                        } else if (LVBPercent >= 50.0) {
-                            R.id.LVBLevelYellow
-                        } else {
-                            R.id.LVBLevelRed
-                        }
-                        views.setViewVisibility(id, View.VISIBLE)
-                        message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
-                    }
+//        }
+        views.setViewVisibility(R.id.LVBVoltageText, View.GONE)
+        views.setViewVisibility(R.id.LVBVoltage, View.GONE)
 
-                    "Volts" -> {
-                        message = MessageFormat.format("{0,number,#.0}V", LVBLevel)
-                    }
-
-                    "SOC" -> {
-                        message = MessageFormat.format("{0}%", LVBPercent)
-                    }
-
-                    else -> {
-                        message =
-                            MessageFormat.format("{0,number,#.0}V ({1}%)", LVBLevel, LVBPercent)
-                    }
-                }
-                views.setTextViewText(R.id.LVBVoltage, message)
-            } else {
-                views.setTextViewText(
-                    R.id.LVBVoltage,
-                    context.getString(R.string.widgets_lv_bat_label) +
-                            context.getString(if (LVBStatus == "STATUS_GOOD") R.string.good else R.string.warning)
-                )
-            }
-        } ?: run {
-            views.setTextColor(R.id.LVBVoltage, context.getColor(R.color.white))
-            views.setTextViewText(
-                R.id.LVBVoltage,
-                context.getString(R.string.widgets_lv_bat_label) +
-                        context.getString(R.string.widgets_na_label)
-            )
-        }
-
-        if (isDiesel) {
-            // It appears as if default DEF range is in miles, as opposed to all other distance values
-            @Suppress("NAME_SHADOWING") var distanceConversion = 1.0
-            if (distanceUnits == "km") {
-                distanceConversion = 1.0 / Constants.KMTOMILES
-            }
-            carStatus.vehiclestatus.diesel?.exhaustFluidLevel?.value?.let { fluidLevel ->
-                val level = fluidLevel.toDouble()
-                views.setTextViewText(
-                    R.id.DEFLevel,
-                    context.getString(R.string.def_level_label) +
-                            MessageFormat.format("{0}%", level)
-                )
-            } ?: run {
-                views.setTextViewText(
-                    R.id.DEFLevel,
-                    context.getString(R.string.widgets_def_level_label)
-                )
-            }
-            carStatus.vehiclestatus.diesel?.ureaRange?.value?.let { ureaRange ->
-                val range = ureaRange.toDouble()
-                views.setTextViewText(
-                    R.id.DEFRange,
-                    context.getString(R.string.def_range_label) +
-                            MessageFormat.format(
-                                "{0} {1}",
-                                (range * distanceConversion).roundToInt(), distanceUnits
-                            )
-                )
-            } ?: run {
-                views.setTextViewText(
-                    R.id.DEFRange,
-                    context.getString(R.string.widgets_def_range_label)
-                )
-            }
-        }
+        // TODO: FordConnect API doesn't provide diesel info
+//        if (isDiesel) {
+//            // It appears as if default DEF range is in miles, as opposed to all other distance values
+//            @Suppress("NAME_SHADOWING") var distanceConversion = 1.0
+//            if (distanceUnits == "km") {
+//                distanceConversion = 1.0 / Constants.KMTOMILES
+//            }
+//            carStatus.vehiclestatus.diesel?.exhaustFluidLevel?.value?.let { fluidLevel ->
+//                val level = fluidLevel.toDouble()
+//                views.setTextViewText(
+//                    R.id.DEFLevel,
+//                    context.getString(R.string.def_level_label) +
+//                            MessageFormat.format("{0}%", level)
+//                )
+//            } ?: run {
+//                views.setTextViewText(
+//                    R.id.DEFLevel,
+//                    context.getString(R.string.widgets_def_level_label)
+//                )
+//            }
+//            carStatus.vehiclestatus.diesel?.ureaRange?.value?.let { ureaRange ->
+//                val range = ureaRange.toDouble()
+//                views.setTextViewText(
+//                    R.id.DEFRange,
+//                    context.getString(R.string.def_range_label) +
+//                            MessageFormat.format(
+//                                "{0} {1}",
+//                                (range * distanceConversion).roundToInt(), distanceUnits
+//                            )
+//                )
+//            } ?: run {
+//                views.setTextViewText(
+//                    R.id.DEFRange,
+//                    context.getString(R.string.widgets_def_range_label)
+//                )
+//            }
+//        }
     }
 
     protected fun drawLastRefresh(
@@ -792,18 +762,20 @@ open class CarStatusWidget : AppWidgetProvider() {
         )
 
         // Fill in the last update time
-        val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
-        val lastRefresh = carStatus.lastRefresh
-        val lastUpdateTime :ZonedDateTime
+        val formatter = DateTimeFormatter.ofPattern(Constants.STATUSTIMEFORMAT, Locale.getDefault())
+        val lastRefresh = carStatus.vehicle.lastUpdated
+        val lastUpdateTime: ZonedDateTime
         try {
             lastUpdateTime = LocalDateTime.parse(lastRefresh, formatter).atZone(UTC)
-        }
-        catch (e : DateTimeParseException) {
+        } catch (e: DateTimeParseException) {
             LogFile.e(
                 MainActivity.CHANNEL_ID,
                 "DateTimeParseException exception in CarStatusWidget.drawLastRefresh(): date = \"$lastRefresh\""
             )
-            views.setTextViewText(R.id.lastRefreshInfo, context.resources.getString(R.string.widgets_na_label))
+            views.setTextViewText(
+                R.id.lastRefreshInfo,
+                context.resources.getString(R.string.widgets_na_label)
+            )
             return
         }
 
@@ -844,7 +816,7 @@ open class CarStatusWidget : AppWidgetProvider() {
     ) {
         views.setTextViewText(R.id.odometer,
             context.getString(R.string.odometer_label) +
-                    carStatus.vehiclestatus.odometer?.value?.let {
+                    carStatus.vehicle.vehicleDetails.odometer.let {
                         MessageFormat.format(
                             "{0} {1}",
                             java.lang.Double.valueOf(it * distanceConversion).toInt(),
@@ -853,79 +825,6 @@ open class CarStatusWidget : AppWidgetProvider() {
                     }
         )
     }
-
-// OTA status
-//    protected void drawOTAInfo(Context context, RemoteViews views, VehicleInfo vehicleInfo, String timeFormat) {
-//        views.setViewVisibility(R.id.ota_container, View.GONE);
-//        OTAStatus otaStatus = vehicleInfo.toOTAStatus();
-//        boolean displayOTA = PreferenceManager.getDefaultSharedPreferences(context)
-//                .getBoolean(context.getResources().getString(R.string.show_OTA_key), true) && vehicleInfo.isSupportsOTA();
-//
-//        if (displayOTA && otaStatus != null) {
-//            // If the report doesn't say the vehicle DOESN'T support OTA, then try to display something
-//            if (Misc.OTASupportCheck(vehicleInfo.getOtaAlertStatus())) {
-//                views.setTextViewText(R.id.ota_line1, "OTA Status:");
-//                String OTArefresh;
-//                if (otaStatus.getFuseResponse() == null) {
-//                    OTArefresh = "No OTA data";
-//                } else {
-//                    long lastOTATime = vehicleInfo.getLastOTATime();
-//                    String currentUTCOTATime = otaStatus.getOTADateTime();
-//                    if (currentUTCOTATime == null) {
-//                        OTArefresh = "No date specified";
-//                    } else {
-//                        long currentOTATime = OTAViewActivity.convertDateToMillis(currentUTCOTATime);
-//
-//                        // If there's new information, display that data/time in a different color
-//                        if (currentOTATime > lastOTATime) {
-//                            // if OTA failed, show it in red (that means something bad)
-//                            String OTAResult = otaStatus.getOTAAggregateStatus();
-//                            if (OTAResult != null && OTAResult.equals("failure")) {
-//                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.red));
-//                            } else {
-//                                views.setTextColor(R.id.ota_line2, context.getColor(R.color.green));
-//                            }
-//                            OTArefresh = OTAViewActivity.convertMillisToDate(currentOTATime, timeFormat);
-//                            String message;
-//                            switch(otaStatus.getOTAAggregateStatus()) {
-//                                case "request_delivery_queued":
-//                                    message = "An update is ready for download to your vehicle.";
-//                                    break;
-//                                case "artifact_retrieval_in_progress":
-//                                    message = "Your vehicle is downloading the update.";
-//                                    break;
-//                                case "installation_queued":
-//                                    if(otaStatus.getOtaAlertStatus().equals("UPDATE REMINDER")) {
-//                                        message = "Your vehicle has downloaded the update but requires your attention.";
-//                                    } else {
-//                                        message = "Your vehicle has downloaded the update; you should turn on the ignition.";
-//                                    }
-//                                    break;
-//                                case "deploying":
-//                                    message = "Your vehicle is installing the update.";
-//                                    break;
-//                                case "success":
-//                                    message = "The update was successful.";
-//                                    break;
-//                                case "failure":
-//                                    message = "The update was not successful.";
-//                                    break;
-//                                case "requested":
-//                                default:
-//                                    message = "New OTA information was found.";
-//                                    break;
-//                            }
-//                            Notifications.newOTA(context, message);
-//                        } else {
-//                            views.setTextColor(R.id.ota_line2, context.getColor(R.color.white));
-//                            OTArefresh = OTAViewActivity.convertMillisToDate(lastOTATime, timeFormat);
-//                        }
-//                    }
-//                }
-//                views.setTextViewText(R.id.ota_line2, PADDING + OTArefresh);
-//            }
-//        }
-//    }
 
     private fun setAppBitmap(
         context: Context,
@@ -962,25 +861,38 @@ open class CarStatusWidget : AppWidgetProvider() {
         // If we're not passed a list, create one
         val whatsOpen = whatzOpen ?: mutableListOf()
 
+        val drawables: MutableMap<String,String> = mutableMapOf(
+            "DRIVER,UNSPECIFIED_FRONT" to Vehicle.LEFT_FRONT_DOOR,
+            "PASSENGER,UNSPECIFIED_FRONT" to Vehicle.RIGHT_FRONT_DOOR,
+            "DRIVER,REAR_LEFT" to Vehicle.LEFT_REAR_DOOR,
+            "PASSENGER,REAR_RIGHT" to Vehicle.RIGHT_REAR_DOOR,
+            "NOT_APPLICABLE,HOOD_DOOR" to Vehicle.HOOD,
+            "PASSENGER,TAILGATE" to Vehicle.TAILGATE,
+        )
         // Find anything that's open
-        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.hoodDoor?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.HOOD]!!)
+        for (door in carStatus.vehicle.vehicleStatus.doorStatus) {
+            if(door.value == "AJAR") {
+                whatsOpen.add(vehicleImages[drawables[door.vehicleOccupantRole+","+door.vehicleDoor]]!!)
+            }
         }
-        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.tailgateDoor?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.TAILGATE]!!)
-        }
-        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.driverDoor?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.LEFT_FRONT_DOOR]!!)
-        }
-        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.passengerDoor?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.RIGHT_FRONT_DOOR]!!)
-        }
-        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.leftRearDoor?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.LEFT_REAR_DOOR]!!)
-        }
-        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.rightRearDoor?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.RIGHT_REAR_DOOR]!!)
-        }
+//        if (!isDoorClosed(carStatus.vehicle.vehicleStatus.doorStatus?.hoodDoor?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.HOOD]!!)
+//        }
+//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.tailgateDoor?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.TAILGATE]!!)
+//        }
+//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.driverDoor?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.LEFT_FRONT_DOOR]!!)
+//        }
+//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.passengerDoor?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.RIGHT_FRONT_DOOR]!!)
+//        }
+//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.leftRearDoor?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.LEFT_REAR_DOOR]!!)
+//        }
+//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.rightRearDoor?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.RIGHT_REAR_DOOR]!!)
+//        }
         whatsOpen.removeAll(setOf<Any?>(null))
 
         // Determine the orientation of the image
@@ -1211,85 +1123,85 @@ open class CarStatusWidget : AppWidgetProvider() {
                 return
             }
 
-            KWH_CLICK -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val info = getInfo(context)
-                    val VIN = context.getSharedPreferences(
-                        Constants.WIDGET_FILE,
-                        Context.MODE_PRIVATE
-                    ).getString(widget_VIN, "")
-                    val vehInfo = info.getVehicleByVIN(VIN)
-                    val kWh = vehInfo.carStatus.vehiclestatus.xevBatteryEnergyRemaining
-                    val message = if (kWh > 0.0) {
-                        MessageFormat.format(
-                            "{0,number,#.00}kWh.", kWh
-                        )
-                    } else {
-                        context.getString(R.string.unavailable_label)
-                    }
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.battery_energy_remaining_label) + message,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                return
-            }
+//            KWH_CLICK -> {
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    val info = getInfo(context)
+//                    val VIN = context.getSharedPreferences(
+//                        Constants.WIDGET_FILE,
+//                        Context.MODE_PRIVATE
+//                    ).getString(widget_VIN, "")
+//                    val vehInfo = info.getVehicleByVIN(VIN)
+//                    val kWh = vehInfo.carStatus.vehiclestatus.xevBatteryEnergyRemaining
+//                    val message = if (kWh > 0.0) {
+//                        MessageFormat.format(
+//                            "{0,number,#.00}kWh.", kWh
+//                        )
+//                    } else {
+//                        context.getString(R.string.unavailable_label)
+//                    }
+//                    Toast.makeText(
+//                        context,
+//                        context.getString(R.string.battery_energy_remaining_label) + message,
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//                return
+//            }
 
-            HVB_CLICK -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val info = getInfo(context)
-                    val VIN = context.getSharedPreferences(
-                        Constants.WIDGET_FILE,
-                        Context.MODE_PRIVATE
-                    ).getString(widget_VIN, "")
-                    val vehInfo = info.getVehicleByVIN(VIN)
-                    val voltage = vehInfo.carStatus.vehiclestatus.xevBatteryVoltage
-                    val message = if (voltage > 0.0) {
-                        MessageFormat.format(
-                            "{0,number,#.0}V.",
-                            vehInfo.carStatus.vehiclestatus.xevBatteryVoltage
-                        )
-                    } else {
-                        context.getString(R.string.unavailable_label)
-                    }
-                    Toast.makeText(
-                        context, context.getString(R.string.battery_voltage_label) + message,
-                        Toast.LENGTH_SHORT
-                    ).show()
+//            HVB_CLICK -> {
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    val info = getInfo(context)
+//                    val VIN = context.getSharedPreferences(
+//                        Constants.WIDGET_FILE,
+//                        Context.MODE_PRIVATE
+//                    ).getString(widget_VIN, "")
+//                    val vehInfo = info.getVehicleByVIN(VIN)
+//                    val voltage = vehInfo.carStatus.vehiclestatus.xevBatteryVoltage
+//                    val message = if (voltage > 0.0) {
+//                        MessageFormat.format(
+//                            "{0,number,#.0}V.",
+//                            vehInfo.carStatus.vehiclestatus.xevBatteryVoltage
+//                        )
+//                    } else {
+//                        context.getString(R.string.unavailable_label)
+//                    }
+//                    Toast.makeText(
+//                        context, context.getString(R.string.battery_voltage_label) + message,
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//
+//                    Toast.makeText(
+//                        context, context.getString(R.string.battery_temperature_label) +
+//                                convertTemperature(
+//                                    context,
+//                                    vehInfo.carStatus.vehiclestatus.xevBatteryTemperature
+//                                ),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//                return
+//            }
 
-                    Toast.makeText(
-                        context, context.getString(R.string.battery_temperature_label) +
-                                convertTemperature(
-                                    context,
-                                    vehInfo.carStatus.vehiclestatus.xevBatteryTemperature
-                                ),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                return
-            }
-
-            AMBIENTTEMP_CLICK -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val info = getInfo(context)
-                    val VIN = context.getSharedPreferences(
-                        Constants.WIDGET_FILE,
-                        Context.MODE_PRIVATE
-                    ).getString(widget_VIN, null)
-                    val vehInfo = info.getVehicleByVIN(VIN)
-                    Toast.makeText(
-                        context, context.getString(R.string.ambient_temperature_label) +
-                                convertTemperature(
-                                    context,
-                                    vehInfo.carStatus.vehiclestatus.ambientTemp
-                                ),
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                }
-                return
-            }
+//            AMBIENTTEMP_CLICK -> {
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    val info = getInfo(context)
+//                    val VIN = context.getSharedPreferences(
+//                        Constants.WIDGET_FILE,
+//                        Context.MODE_PRIVATE
+//                    ).getString(widget_VIN, null)
+//                    val vehInfo = info.getVehicleByVIN(VIN)
+//                    Toast.makeText(
+//                        context, context.getString(R.string.ambient_temperature_label) +
+//                                convertTemperature(
+//                                    context,
+//                                    vehInfo.carStatus.vehiclestatus.ambientTemp
+//                                ),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//
+//                }
+//                return
+//            }
 
             IGNITION_CLICK, LOCK_CLICK, UPDATE_CLICK -> {
                 var clickCount =
@@ -1315,9 +1227,9 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val vehInfo = info.getVehicleByVIN(VIN)
                             val carStatus = vehInfo.carStatus
                             when (action) {
-                                IGNITION_CLICK -> if (carStatus.vehiclestatus.ignitionStatus?.value == "Off") {
-                                    carStatus.vehiclestatus.remoteStartStatus?.value?.let { status ->
-                                        if (status == 0) {
+                                IGNITION_CLICK -> if (carStatus.vehicle.vehicleStatus.ignitionStatus?.value == "Off") {
+                                    carStatus.vehicle.vehicleStatus.remoteStartStatus?.status?.let { status ->
+                                        if (status == "ENGINE_STOPPED") {
                                             remoteStart(context, VIN!!)
                                         } else {
                                             remoteStop(context, VIN!!)
@@ -1325,7 +1237,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                     }
                                 }
 
-                                LOCK_CLICK -> carStatus.vehiclestatus.lockStatus?.value?.let {
+                                LOCK_CLICK -> carStatus.vehicle.vehicleStatus.lockStatus?.value?.let {
                                     if (it == "LOCKED") {
                                         unlock(context, VIN!!)
                                     } else {
@@ -1333,92 +1245,92 @@ open class CarStatusWidget : AppWidgetProvider() {
                                     }
                                 }
 
-                                UPDATE_CLICK -> {
-                                    // If user is undefined, don't do anything
-                                    val user = info.user
-                                    user.let {
-                                        if (carStatus.vehiclestatus.battery?.batteryHealth?.value == "STATUS_GOOD") {
-                                            val nowTime = Instant.now().toEpochMilli()
-                                            val firstTime = vehInfo.initialForcedRefreshTime
-                                            val lastTime = vehInfo.lastForcedRefreshTime
-                                            var seconds = (nowTime - firstTime) / MILLIS
-
-                                            // If it's been twelve hours since the initial refresh, reset the count
-                                            if (seconds > TIMEOUT_INTERVAL) {
-                                                vehInfo.forcedRefreshCount = 0
-                                                info.setVehicle(vehInfo)
-                                            }
-
-                                            // Calculate how long since the last refresh
-                                            seconds = (nowTime - lastTime) / MILLIS
-                                            val count = vehInfo.forcedRefreshCount
-
-                                            // The first three refreshes must have 2 minutes between them; the next
-                                            // two refreshes must have 10 minutes
-                                            if (count < FIRST_LIMIT && seconds > FIRST_INTERVAL || count < SECOND_LIMIT && seconds > SECOND_INTERVAL) {
-                                                val timeout = user.expiresIn
-                                                seconds = (timeout - nowTime) / MILLIS
-                                                // If the access token has expired, or is about to, do a refresh first
-                                                if (seconds < 30) {
-                                                    Toast.makeText(
-                                                        context,
-                                                        context.getString(R.string.token_is_being_refreshed_description),
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                    nextAlarm(context, 2)
-
-                                                    CoroutineScope(Dispatchers.Main).launch {
-                                                        delay(15 * MILLIS)
-                                                        forceUpdate(context, VIN!!)
-                                                    }
-                                                } else {
-                                                    Toast.makeText(
-                                                        context,
-                                                        context.getString(R.string.forcing_a_refresh_description),
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                    forceUpdate(context, VIN!!)
-                                                }
-                                            } else if (count < FIRST_LIMIT) {
-                                                Toast.makeText(
-                                                    context,
-                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
-                                                        context,
-                                                        2 * 60 - seconds
-                                                    ) + ".",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else if (count < SECOND_LIMIT) {
-                                                Toast.makeText(
-                                                    context,
-                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
-                                                        context,
-                                                        10 * 60 - seconds
-                                                    ) + "",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else {
-                                                val remainingMinutes =
-                                                    ((firstTime - nowTime) / MILLIS + TIMEOUT_INTERVAL) / SECONDS
-                                                Toast.makeText(
-                                                    context,
-                                                    context.getString(R.string.too_many_forced_updates_description) +
-                                                            elapsedMinutesToDescription(
-                                                                context,
-                                                                remainingMinutes
-                                                            ) + ".",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        } else {
-                                            Toast.makeText(
-                                                context,
-                                                context.getString(R.string.lvb_status_bad_description),
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    }
-                                }
+//                                UPDATE_CLICK -> {
+//                                    // If user is undefined, don't do anything
+//                                    val user = info.user
+//                                    user.let {
+//                                        if (carStatus.vehiclestatus.battery?.batteryHealth?.value == "STATUS_GOOD") {
+//                                            val nowTime = Instant.now().toEpochMilli()
+//                                            val firstTime = vehInfo.initialForcedRefreshTime
+//                                            val lastTime = vehInfo.lastForcedRefreshTime
+//                                            var seconds = (nowTime - firstTime) / MILLIS
+//
+//                                            // If it's been twelve hours since the initial refresh, reset the count
+//                                            if (seconds > TIMEOUT_INTERVAL) {
+//                                                vehInfo.forcedRefreshCount = 0
+//                                                info.setVehicle(vehInfo)
+//                                            }
+//
+//                                            // Calculate how long since the last refresh
+//                                            seconds = (nowTime - lastTime) / MILLIS
+//                                            val count = vehInfo.forcedRefreshCount
+//
+//                                            // The first three refreshes must have 2 minutes between them; the next
+//                                            // two refreshes must have 10 minutes
+//                                            if (count < FIRST_LIMIT && seconds > FIRST_INTERVAL || count < SECOND_LIMIT && seconds > SECOND_INTERVAL) {
+//                                                val timeout = user.expiresIn
+//                                                seconds = (timeout - nowTime) / MILLIS
+//                                                // If the access token has expired, or is about to, do a refresh first
+//                                                if (seconds < 30) {
+//                                                    Toast.makeText(
+//                                                        context,
+//                                                        context.getString(R.string.token_is_being_refreshed_description),
+//                                                        Toast.LENGTH_SHORT
+//                                                    ).show()
+//                                                    nextAlarm(context, 2)
+//
+//                                                    CoroutineScope(Dispatchers.Main).launch {
+//                                                        delay(15 * MILLIS)
+//                                                        forceUpdate(context, VIN!!)
+//                                                    }
+//                                                } else {
+//                                                    Toast.makeText(
+//                                                        context,
+//                                                        context.getString(R.string.forcing_a_refresh_description),
+//                                                        Toast.LENGTH_SHORT
+//                                                    ).show()
+//                                                    forceUpdate(context, VIN!!)
+//                                                }
+//                                            } else if (count < FIRST_LIMIT) {
+//                                                Toast.makeText(
+//                                                    context,
+//                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
+//                                                        context,
+//                                                        2 * 60 - seconds
+//                                                    ) + ".",
+//                                                    Toast.LENGTH_SHORT
+//                                                ).show()
+//                                            } else if (count < SECOND_LIMIT) {
+//                                                Toast.makeText(
+//                                                    context,
+//                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
+//                                                        context,
+//                                                        10 * 60 - seconds
+//                                                    ) + "",
+//                                                    Toast.LENGTH_SHORT
+//                                                ).show()
+//                                            } else {
+//                                                val remainingMinutes =
+//                                                    ((firstTime - nowTime) / MILLIS + TIMEOUT_INTERVAL) / SECONDS
+//                                                Toast.makeText(
+//                                                    context,
+//                                                    context.getString(R.string.too_many_forced_updates_description) +
+//                                                            elapsedMinutesToDescription(
+//                                                                context,
+//                                                                remainingMinutes
+//                                                            ) + ".",
+//                                                    Toast.LENGTH_SHORT
+//                                                ).show()
+//                                            }
+//                                        } else {
+//                                            Toast.makeText(
+//                                                context,
+//                                                context.getString(R.string.lvb_status_bad_description),
+//                                                Toast.LENGTH_SHORT
+//                                            ).show()
+//                                        }
+//                                    }
+//                                }
                             }
                         }
                         context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)

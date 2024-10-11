@@ -6,13 +6,13 @@ import javax.annotation.Generated
 
 @Generated("jsonschema2pojo")
 class CommandStatus {
-    @SerializedName("version")
-    @Expose
-    var version: String? = null
-
     @SerializedName("status")
     @Expose
-    var status: Int? = null
+    var status: String? = null
+
+    @SerializedName("commandStatus")
+    @Expose
+    var commandStatus: String? = null
 
     @SerializedName("commandId")
     @Expose

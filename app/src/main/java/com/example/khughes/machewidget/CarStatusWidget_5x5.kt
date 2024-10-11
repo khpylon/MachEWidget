@@ -6,7 +6,6 @@ import com.example.khughes.machewidget.VehicleColor.Companion.scanImageForColor
 import com.example.khughes.machewidget.VehicleColor.Companion.isFirstEdition
 import com.example.khughes.machewidget.ProfileManager.changeProfile
 import android.widget.RemoteViews
-import com.example.khughes.machewidget.CarStatus.CarStatus
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
@@ -25,45 +24,43 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         context: Context, views: RemoteViews, pressure: String?, status: String?,
         units: String?, conversion: Double, id: Int
     ) {
-        var result: String
-        // Set the textview background color based on the status
-        val drawable: Int = if (status != null && status != "Normal") {
-            R.drawable.pressure_oval_red
-        } else {
-            R.drawable.pressure_oval
-        }
-        views.setInt(id, "setBackgroundResource", drawable)
-
-        // Get the tire pressure and do any conversion necessary.
-        if (pressure != null) {
-            try {
-                val value = pressure.toDouble()
-                // Only display value if it's not ridiculous; after some OTA updates the
-                // raw value is "65533"
-                if (value < 2000) {
-                    // If conversion is really small, show value in tenths
-                    val pattern = if (conversion >= 0.1) "#" else "#.0"
-                    result = MessageFormat.format(
-                        "{0}{1}", DecimalFormat(
-                            pattern,  // "#.0",
-                            DecimalFormatSymbols.getInstance(Locale.US)
-                        ).format(value * conversion), units
-                    )
-                    views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval)
-                } else {
-                    result = "N/A"
-                }
-            } catch (e: NumberFormatException) {
-                LogFile.e(
-                    MainActivity.CHANNEL_ID,
-                    "java.lang.NumberFormatException in CarStatusWidget_5x5.updateTire(): pressure = $pressure"
-                )
-                result = "N/A"
-            }
-            views.setTextViewText(id, result)
+//        var result: String
+//        // Set the textview background color based on the status
+//        val drawable: Int = if (status != null && status != "Normal") {
+//            R.drawable.pressure_oval_red
 //        } else {
-//            result = "N/A"
-        }
+//            R.drawable.pressure_oval
+//        }
+//        views.setInt(id, "setBackgroundResource", drawable)
+//
+//        // Get the tire pressure and do any conversion necessary.
+//        if (pressure != null) {
+//            try {
+//                val value = pressure.toDouble()
+//                // Only display value if it's not ridiculous; after some OTA updates the
+//                // raw value is "65533"
+//                if (value < 2000) {
+//                    // If conversion is really small, show value in tenths
+//                    val pattern = if (conversion >= 0.1) "#" else "#.0"
+//                    result = MessageFormat.format(
+//                        "{0}{1}", DecimalFormat(
+//                            pattern,  // "#.0",
+//                            DecimalFormatSymbols.getInstance(Locale.US)
+//                        ).format(value * conversion), units
+//                    )
+//                    views.setInt(id, "setBackgroundResource", R.drawable.pressure_oval)
+//                } else {
+//                    result = "N/A"
+//                }
+//            } catch (e: NumberFormatException) {
+//                LogFile.e(
+//                    MainActivity.CHANNEL_ID,
+//                    "java.lang.NumberFormatException in CarStatusWidget_5x5.updateTire(): pressure = $pressure"
+//                )
+//                result = "N/A"
+//            }
+//            views.setTextViewText(id, result)
+//        }
         views.setViewVisibility(id, if (pressure != null) View.VISIBLE else View.GONE)
     }
 
@@ -100,7 +97,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 
     override fun drawIcons(views: RemoteViews, carStatus: CarStatus) {
         // Door locks
-        carStatus.vehiclestatus.lockStatus?.value?.let { lockStatus ->
+        carStatus.vehicle.vehicleStatus.lockStatus?.value?.let { lockStatus ->
             views.setImageViewResource(
                 R.id.lock_electric,
                 if (lockStatus == "LOCKED") R.drawable.locked_icon_green else R.drawable.unlocked_icon_red
@@ -112,20 +109,20 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         }
 
         // Ignition and remote start
-        if (carStatus.vehiclestatus.remoteStartStatus?.value == 1) {
+        if (carStatus.vehicle.vehicleStatus.remoteStartStatus?.status != "ENGINE_STOPPED") {
             views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow)
-        } else carStatus.vehiclestatus.ignitionStatus?.value?.let { ignition ->
+        } else carStatus.vehicle.vehicleStatus.ignitionStatus?.value?.let { ignition ->
             views.setImageViewResource(
                 R.id.ignition,
-                if (ignition == "Off") R.drawable.ignition_icon_gray else R.drawable.ignition_icon_green
+                if (ignition.uppercase() == "OFF") R.drawable.ignition_icon_gray else R.drawable.ignition_icon_green
             )
         }
 
         // Motion alarm and deep sleep state
-        if (carStatus.vehiclestatus.deepSleepInProgress?.value == true) {
+        if (carStatus.vehicle.vehicleStatus.deepSleepInProgress == true) {
             views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_zzz_red)
         } else {
-            carStatus.vehiclestatus.alarm?.value?.let { alarm ->
+            carStatus.vehicle.vehicleStatus.alarmStatus?.value?.let { alarm ->
                 views.setImageViewResource(
                     R.id.alarm,
                     if (alarm == "NOTSET") R.drawable.bell_icon_red else R.drawable.bell_icon_green
@@ -143,7 +140,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 
         // Find which user is active.
         val userInfo = info.user
-        if (userInfo.userId == "") return
+//        if (userInfo.userId == "") return
 
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return
@@ -180,15 +177,19 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 
         // If no status information, print something generic and return
         val carStatus = vehicleInfo.carStatus
-//        if (carStatus == null || carStatus.vehiclestatus == null) {
+        if(carStatus.vehicle.vehicleId == "") {
+            return
+        }
+
+//        if (carStatus == null || carStatus.vehicle.vehicleStatus == null) {
 //            views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.")
 //            appWidgetManager.updateAppWidget(appWidgetId, views)
 //            return
 //        }
-        val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.propulsion)
-        val isPHEV = carStatus.isPropulsionPHEV(carStatus.propulsion)
-        val isDiesel = carStatus.isPropulsionDiesel(carStatus.propulsion)
-        val isElectric = carStatus.isPropulsionElectric(carStatus.propulsion)
+        val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid()
+        val isPHEV = carStatus.isPropulsionPHEV()
+        val isElectric = carStatus.isPropulsionElectric()
+
         views.setViewVisibility(R.id.lock_gasoline, if (isICEOrHybrid) View.VISIBLE else View.GONE)
         views.setViewVisibility(
             R.id.bottom_gasoline,
@@ -201,7 +202,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         )
         views.setViewVisibility(R.id.plug, if (isICEOrHybrid) View.GONE else View.VISIBLE)
         setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline")
-        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
+//        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
         setElectricCallbacks(context, views, isElectric, appWidgetId)
 
         // Get conversion factors and descriptions for measurement units
@@ -270,7 +271,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 //        }
         views.setTextViewText(R.id.odometer,
             context.getString(R.string.odometer_label) +
-            carStatus.vehiclestatus.odometer?.value?.let {
+            carStatus.vehicle.vehicleDetails.odometer?.let {
                 MessageFormat.format(
                     "{0} {1}",
                     java.lang.Double.valueOf(it * distanceConversion).toInt(),
@@ -282,46 +283,46 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         // Tire pressures
         updateTire(
             context, views,
-            carStatus.vehiclestatus.tpms?.leftFrontTirePressure?.value,
-            carStatus.vehiclestatus.tpms?.leftFrontTireStatus?.value,
+            null, // carStatus.vehicle.vehicleStatus.tpms?.leftFrontTirePressure?.value,
+            null, // carStatus.vehicle.vehicleStatus.tpms?.leftFrontTireStatus?.value,
             pressureUnits, pressureConversion, R.id.lftire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus.tpms?.rightFrontTirePressure?.value,
-            carStatus.vehiclestatus.tpms?.rightFrontTireStatus?.value,
+            null, // carStatus.vehicle.vehicleStatus.tpms?.rightFrontTirePressure?.value,
+            null, // carStatus.vehicle.vehicleStatus.tpms?.rightFrontTireStatus?.value,
             pressureUnits, pressureConversion, R.id.rftire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus.tpms?.outerLeftRearTirePressure?.value,
-            carStatus.vehiclestatus.tpms?.outerLeftRearTireStatus?.value,
+            null, // carStatus.vehicle.vehicleStatus.tpms?.outerLeftRearTirePressure?.value,
+            null, // carStatus.vehicle.vehicleStatus.tpms?.outerLeftRearTireStatus?.value,
             pressureUnits, pressureConversion, R.id.lrtire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus.tpms?.outerRightRearTirePressure?.value,
-            carStatus.vehiclestatus.tpms?.outerRightRearTireStatus?.value,
+            null, // carStatus.vehicle.vehicleStatus.tpms?.outerRightRearTirePressure?.value,
+            null, // carStatus.vehicle.vehicleStatus.tpms?.outerRightRearTireStatus?.value,
             pressureUnits, pressureConversion, R.id.rrtire
         )
 
         // Window statuses
-        views.setImageViewResource(
-            R.id.lt_ft_window,
-            if (isWindowClosed(carStatus.vehiclestatus.windowPosition?.driverWindowPosition?.value)) R.drawable.filler else R.drawable.icons8_left_front_window_down_red
-        )
-        views.setImageViewResource(
-            R.id.rt_ft_window,
-            if (isWindowClosed(carStatus.vehiclestatus.windowPosition?.passWindowPosition?.value)) R.drawable.filler else R.drawable.icons8_right_front_window_down_red
-        )
-        views.setImageViewResource(
-            R.id.lt_rr_window,
-            if (isWindowClosed(carStatus.vehiclestatus.windowPosition?.rearDriverWindowPos?.value)) R.drawable.filler else R.drawable.icons8_left_rear_window_down_red
-        )
-        views.setImageViewResource(
-            R.id.rt_rr_window,
-            if (isWindowClosed(carStatus.vehiclestatus.windowPosition?.rearPassWindowPos?.value)) R.drawable.filler else R.drawable.icons8_right_rear_window_down_red
-        )
+//        views.setImageViewResource(
+//            R.id.lt_ft_window,
+//            if (isWindowClosed(carStatus.vehicle.vehicleStatus.windowPosition?.driverWindowPosition?.value)) R.drawable.filler else R.drawable.icons8_left_front_window_down_red
+//        )
+//        views.setImageViewResource(
+//            R.id.rt_ft_window,
+//            if (isWindowClosed(carStatus.vehicle.vehicleStatus.windowPosition?.passWindowPosition?.value)) R.drawable.filler else R.drawable.icons8_right_front_window_down_red
+//        )
+//        views.setImageViewResource(
+//            R.id.lt_rr_window,
+//            if (isWindowClosed(carStatus.vehicle.vehicleStatus.windowPosition?.rearDriverWindowPos?.value)) R.drawable.filler else R.drawable.icons8_left_rear_window_down_red
+//        )
+//        views.setImageViewResource(
+//            R.id.rt_rr_window,
+//            if (isWindowClosed(carStatus.vehicle.vehicleStatus.windowPosition?.rearPassWindowPos?.value)) R.drawable.filler else R.drawable.icons8_right_rear_window_down_red
+//        )
 
         // Get the right images to use for this vehicle
         val vehicleImages = getVehicle(vehicleInfo.vin).verticalDrawables
@@ -354,8 +355,8 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 appWidgetManager,
                 appWidgetId,
                 views,
-                carStatus.vehiclestatus.gps?.latitude,
-                carStatus.vehiclestatus.gps?.longitude
+                carStatus.vehicle.vehicleLocation?.latitude,
+                carStatus.vehicle.vehicleLocation?.longitude
             )
         } else {
             views.setViewVisibility(R.id.location_container, View.GONE)
@@ -377,16 +378,9 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         LogFile.defineContext(context)
         CoroutineScope(Dispatchers.Main).launch {
             val info = getInfo(context)
-            if (info.user.userId != "") {
-                // There may be multiple widgets active, so update all of them
-                for (appWidgetId in appWidgetIds) {
-                    updateAppWidget(context, appWidgetManager, appWidgetId, info)
-                }
-            } else {
-                LogFile.d(
-                    MainActivity.CHANNEL_ID,
-                    "CarStatusWidget_5x5.onUpdate(): no userinfo found"
-                )
+            // There may be multiple widgets active, so update all of them
+            for (appWidgetId in appWidgetIds) {
+                updateAppWidget(context, appWidgetManager, appWidgetId, info)
             }
         }
     }

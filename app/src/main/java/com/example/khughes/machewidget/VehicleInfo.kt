@@ -4,11 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.khughes.machewidget.CarStatus.CarStatus
-//import com.example.khughes.machewidget.OTAStatus.FuseResponse
 import com.example.khughes.machewidget.OTAStatus.FuseResponseList
 import com.example.khughes.machewidget.OTAStatus.LanguageText
-//import com.example.khughes.machewidget.OTAStatus.OTAStatus
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -19,7 +16,8 @@ class VehicleInfo {
 
     @ColumnInfo(name = "VIN")
     var vin: String? = ""
-    var userId: String? = ""
+    var userId: String? = ""        // TODO: deprecated
+    var tokenId: String? = ""
     var nickname: String? = ""
     var lastRefreshTime: Long = 0
     var lastUpdateTime: Long = 0

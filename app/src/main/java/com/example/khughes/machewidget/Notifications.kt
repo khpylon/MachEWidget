@@ -12,7 +12,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.preference.PreferenceManager
-import com.example.khughes.machewidget.CarStatus.CarStatus
 import com.example.khughes.machewidget.Misc.Companion.ignoringBatteryOptimizations
 import java.text.MessageFormat
 import java.time.LocalDateTime
@@ -99,104 +98,104 @@ class Notifications : BroadcastReceiver() {
         private const val LVB_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.LVB"
         private var LVBNotificationVisible = false
 
-        @JvmStatic
-        fun checkLVBStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
-            val lastLVBStatus = vehInfo.lastLVBStatus
-            val currentLVBStatus =
-                carStatus.vehiclestatus.battery?.batteryHealth?.value ?: lastLVBStatus
-            if (currentLVBStatus != lastLVBStatus) {
-                // Save the current status
-                vehInfo.lastLVBStatus = currentLVBStatus
-
-                // If the current status is bad and we haven't already posted the notification, then post it
-                if (currentLVBStatus != "STATUS_GOOD" && !LVBNotificationVisible) {
-                    val intent = Intent(context, Notifications::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    intent.action = LVB_NOTIFICATION
-                    val pendingIntent =
-                        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                    val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
-                        .setSmallIcon(R.drawable.notification_icon)
-                        .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                        .setContentTitle(context.getString(R.string.lvb_status_notification_title))
-                        .setContentText(context.getString(R.string.lbv_status_notification_description))
-                        .setContentIntent(pendingIntent)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setAutoCancel(true)
-                    val notificationManager = NotificationManagerCompat.from(context)
-                    // notificationId is a unique int for each notification that you must define
-                    notificationManager.notify(LVB_STATUS, builder.build())
-                    LVBNotificationVisible = true
-                } else {
-                    LVBNotificationVisible = false
-                }
-            }
-        }
+//        @JvmStatic
+//        fun checkLVBStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
+//            val lastLVBStatus = vehInfo.lastLVBStatus
+//            val currentLVBStatus =
+//                carStatus.vehiclestatus.battery?.batteryHealth?.value ?: lastLVBStatus
+//            if (currentLVBStatus != lastLVBStatus) {
+//                // Save the current status
+//                vehInfo.lastLVBStatus = currentLVBStatus
+//
+//                // If the current status is bad and we haven't already posted the notification, then post it
+//                if (currentLVBStatus != "STATUS_GOOD" && !LVBNotificationVisible) {
+//                    val intent = Intent(context, Notifications::class.java)
+//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                    intent.action = LVB_NOTIFICATION
+//                    val pendingIntent =
+//                        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+//                    val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
+//                        .setSmallIcon(R.drawable.notification_icon)
+//                        .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
+//                        .setContentTitle(context.getString(R.string.lvb_status_notification_title))
+//                        .setContentText(context.getString(R.string.lbv_status_notification_description))
+//                        .setContentIntent(pendingIntent)
+//                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+//                        .setAutoCancel(true)
+//                    val notificationManager = NotificationManagerCompat.from(context)
+//                    // notificationId is a unique int for each notification that you must define
+//                    notificationManager.notify(LVB_STATUS, builder.build())
+//                    LVBNotificationVisible = true
+//                } else {
+//                    LVBNotificationVisible = false
+//                }
+//            }
+//        }
 
         private const val TPMS_STATUS = 937
         private const val TPMS_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.TPMS"
         private var TPMSNotificationVisible = false
 
-        @JvmStatic
-        fun checkTPMSStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
-            val lastTPMSStatus = vehInfo.lastTPMSStatus
-            val currentTPMSStatus: MutableMap<String, String> = HashMap()
-            val leftFrontTire = context.getString(R.string.tpms_left_front_tire)
-            val rightFrontTire = context.getString(R.string.tpms_right_front_tire)
-            val leftRearTire = context.getString(R.string.tpms_left_rear_tire)
-            val rightRearTire = context.getString(R.string.tpms_right_rear_tire)
-            currentTPMSStatus[leftFrontTire] =
-                carStatus.vehiclestatus.tpms?.leftFrontTireStatus?.value ?: "Normal"
-            currentTPMSStatus[rightFrontTire] =
-                carStatus.vehiclestatus.tpms?.rightFrontTireStatus?.value ?: "Normal"
-            currentTPMSStatus[leftRearTire] =
-                carStatus.vehiclestatus.tpms?.outerLeftRearTireStatus?.value ?: "Normal"
-            currentTPMSStatus[rightRearTire] =
-                carStatus.vehiclestatus.tpms?.outerRightRearTireStatus?.value ?: "Normal"
-            var badTire = ""
-            for (key in arrayOf(
-                leftFrontTire,
-                rightFrontTire,
-                leftRearTire,
-                rightRearTire
-            )) {
-                val tire = currentTPMSStatus[key]
-                if (tire != "Normal") {
-                    badTire = if (badTire == "") {
-                        key
-                    } else {
-                        context.getString(R.string.tpms_multiple_tires)
-                    }
-                }
-            }
-            if (lastTPMSStatus != null && lastTPMSStatus != badTire) {
-                // Save the current status
-                vehInfo.lastTPMSStatus = badTire
-
-                // If the current status is bad and we haven't already posted the notification, then post it
-                if (badTire != "" && !TPMSNotificationVisible) {
-                    val intent = Intent(context, Notifications::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    intent.action = TPMS_NOTIFICATION
-                    val pendingIntent =
-                        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                    val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
-                        .setSmallIcon(R.drawable.notification_icon)
-                        .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                        .setContentTitle(context.getString(R.string.tpms_status_notification_title))
-                        .setContentText(MessageFormat.format(context.getString(R.string.tpms_status_notification_format), badTire))
-                        .setContentIntent(pendingIntent)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setAutoCancel(true)
-                    val notificationManager = NotificationManagerCompat.from(context)
-                    // notificationId is a unique int for each notification that you must define
-                    notificationManager.notify(TPMS_STATUS, builder.build())
-                    TPMSNotificationVisible = true
-                } else {
-                    TPMSNotificationVisible = false
-                }
-            }
-        }
+//        @JvmStatic
+//        fun checkTPMSStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
+//            val lastTPMSStatus = vehInfo.lastTPMSStatus
+//            val currentTPMSStatus: MutableMap<String, String> = HashMap()
+//            val leftFrontTire = context.getString(R.string.tpms_left_front_tire)
+//            val rightFrontTire = context.getString(R.string.tpms_right_front_tire)
+//            val leftRearTire = context.getString(R.string.tpms_left_rear_tire)
+//            val rightRearTire = context.getString(R.string.tpms_right_rear_tire)
+//            currentTPMSStatus[leftFrontTire] =
+//                carStatus.vehicle.vehicleStatus.tpms?.leftFrontTireStatus?.value ?: "Normal"
+//            currentTPMSStatus[rightFrontTire] =
+//                carStatus.vehicle.vehicleStatus.tpms?.rightFrontTireStatus?.value ?: "Normal"
+//            currentTPMSStatus[leftRearTire] =
+//                carStatus.vehicle.vehicleStatus.tpms?.outerLeftRearTireStatus?.value ?: "Normal"
+//            currentTPMSStatus[rightRearTire] =
+//                carStatus.vehicle.vehicleStatus.tpms?.outerRightRearTireStatus?.value ?: "Normal"
+//            var badTire = ""
+//            for (key in arrayOf(
+//                leftFrontTire,
+//                rightFrontTire,
+//                leftRearTire,
+//                rightRearTire
+//            )) {
+//                val tire = currentTPMSStatus[key]
+//                if (tire != "Normal") {
+//                    badTire = if (badTire == "") {
+//                        key
+//                    } else {
+//                        context.getString(R.string.tpms_multiple_tires)
+//                    }
+//                }
+//            }
+//            if (lastTPMSStatus != null && lastTPMSStatus != badTire) {
+//                // Save the current status
+//                vehInfo.lastTPMSStatus = badTire
+//
+//                // If the current status is bad and we haven't already posted the notification, then post it
+//                if (badTire != "" && !TPMSNotificationVisible) {
+//                    val intent = Intent(context, Notifications::class.java)
+//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                    intent.action = TPMS_NOTIFICATION
+//                    val pendingIntent =
+//                        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+//                    val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
+//                        .setSmallIcon(R.drawable.notification_icon)
+//                        .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
+//                        .setContentTitle(context.getString(R.string.tpms_status_notification_title))
+//                        .setContentText(MessageFormat.format(context.getString(R.string.tpms_status_notification_format), badTire))
+//                        .setContentIntent(pendingIntent)
+//                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+//                        .setAutoCancel(true)
+//                    val notificationManager = NotificationManagerCompat.from(context)
+//                    // notificationId is a unique int for each notification that you must define
+//                    notificationManager.notify(TPMS_STATUS, builder.build())
+//                    TPMSNotificationVisible = true
+//                } else {
+//                    TPMSNotificationVisible = false
+//                }
+//            }
+//        }
 
         private const val CHARGE_STATUS = 938
         private const val CHARGE_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.Charge"

@@ -59,22 +59,6 @@ object AppUpdates {
                 }
             }
 
-            // Adjust LVB voltages which were stored as Integers * 10
-            if (lastVersion < "2024.01.26") {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val info = InfoRepository(context)
-                    for (vehicle in info.vehicles) {
-                        vehicle.carStatus.vehiclestatus.battery?.batteryStatusActual?.value?.let {
-                            if (it > 50.0) {
-                                vehicle.carStatus.vehiclestatus.battery!!.batteryStatusActual!!.value =
-                                    it / 10.0
-                                info.setVehicle(vehicle)
-                            }
-                        }
-                    }
-                }
-            }
-
             // Try to find any missing vehicle images
             if (lastVersion < "2024.02.01-16") {
                 CoroutineScope(Dispatchers.IO).launch {

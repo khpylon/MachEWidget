@@ -4,7 +4,6 @@ import com.example.khughes.machewidget.Vehicle.Companion.getVehicle
 import com.example.khughes.machewidget.VehicleColor.Companion.scanImageForColor
 import com.example.khughes.machewidget.VehicleColor.Companion.isFirstEdition
 import android.widget.RemoteViews
-import com.example.khughes.machewidget.CarStatus.CarStatus
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
@@ -51,18 +50,18 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
     ) {
         val whatsOpen = whatzOpen ?: mutableListOf()
 
-        if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.driverWindowPosition?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.LEFT_FRONT_WINDOW]!!)
-        }
-        if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.passWindowPosition?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.RIGHT_FRONT_WINDOW]!!)
-        }
-        if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.rearDriverWindowPos?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.LEFT_REAR_WINDOW]!!)
-        }
-        if (!isWindowClosed(carStatus.vehiclestatus.windowPosition?.rearPassWindowPos?.value)) {
-            whatsOpen.add(vehicleImages[Vehicle.RIGHT_REAR_WINDOW]!!)
-        }
+//        if (!isWindowClosed(carStatus.vehicle.vehicleStatus.windowPosition?.driverWindowPosition?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.LEFT_FRONT_WINDOW]!!)
+//        }
+//        if (!isWindowClosed(carStatus.vehicle.vehicleStatus.windowPosition?.passWindowPosition?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.RIGHT_FRONT_WINDOW]!!)
+//        }
+//        if (!isWindowClosed(carStatus.vehicle.vehicleStatus.windowPosition?.rearDriverWindowPos?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.LEFT_REAR_WINDOW]!!)
+//        }
+//        if (!isWindowClosed(carStatus.vehicle.vehicleStatus.windowPosition?.rearPassWindowPos?.value)) {
+//            whatsOpen.add(vehicleImages[Vehicle.RIGHT_REAR_WINDOW]!!)
+//        }
         super.drawVehicleImage(context, views, carStatus, vehicleColor, whatsOpen, vehicleImages)
     }
 
@@ -121,15 +120,20 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         }
 
         val carStatus = vehicleInfo.carStatus
-//        if (carStatus == null || carStatus.vehiclestatus == null) {
+        if(carStatus.vehicle.vehicleId == "") {
+            return
+        }
+
+//        if (carStatus == null || carStatus.vehicle.vehicleStatus == null) {
 //            views.setTextViewText(R.id.lastRefresh, "Unable to retrieve status information.")
 //            appWidgetManager.updateAppWidget(appWidgetId, views)
 //            return
 //        }
-        val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid(carStatus.propulsion)
-        val isPHEV = carStatus.isPropulsionPHEV(carStatus.propulsion)
-        val isDiesel = carStatus.isPropulsionDiesel(carStatus.propulsion)
-        val isElectric = carStatus.isPropulsionElectric(carStatus.propulsion)
+        val isICEOrHybrid = carStatus.isPropulsionICEOrHybrid()
+        val isPHEV = carStatus.isPropulsionPHEV()
+        val isElectric = carStatus.isPropulsionElectric()
+//        val isDiesel = carStatus.isPropulsionDiesel(carStatus.propulsion)
+
         views.setViewVisibility(R.id.lock_gasoline, if (isICEOrHybrid) View.VISIBLE else View.GONE)
         views.setViewVisibility(
             R.id.bottom_gasoline,
@@ -142,7 +146,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         )
         views.setViewVisibility(R.id.plug, if (isICEOrHybrid) View.GONE else View.VISIBLE)
         setPHEVCallbacks(context, views, isPHEV, appWidgetId, "showGasoline")
-        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
+//        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
         setElectricCallbacks(context, views, isElectric, appWidgetId)
 
         // Show last refresh, odometer, OTA status
@@ -162,8 +166,8 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
                 appWidgetManager,
                 appWidgetId,
                 views,
-                carStatus.vehiclestatus.gps?.latitude,
-                carStatus.vehiclestatus.gps?.longitude
+                carStatus.vehicle.vehicleLocation.latitude,
+                carStatus.vehicle.vehicleLocation.longitude
             )
         } else {
             views.setViewVisibility(R.id.location_container, View.GONE)
@@ -180,28 +184,29 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         )
 
         // Tire pressures
+        // Tire pressures
         updateTire(
             context, views,
-            carStatus.vehiclestatus.tpms?.leftFrontTirePressure?.value,
-            carStatus.vehiclestatus.tpms?.leftFrontTireStatus?.value,
+            "", // carStatus.vehicle.vehicleStatus.tpms?.leftFrontTirePressure?.value,
+            "", // carStatus.vehicle.vehicleStatus.tpms?.leftFrontTireStatus?.value,
             pressureUnits, pressureConversion, R.id.lt_ft_tire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus.tpms?.rightFrontTirePressure?.value,
-            carStatus.vehiclestatus.tpms?.rightFrontTireStatus?.value,
+            "", // carStatus.vehicle.vehicleStatus.tpms?.rightFrontTirePressure?.value,
+            "", // carStatus.vehicle.vehicleStatus.tpms?.rightFrontTireStatus?.value,
             pressureUnits, pressureConversion, R.id.rt_ft_tire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus.tpms?.outerLeftRearTirePressure?.value,
-            carStatus.vehiclestatus.tpms?.outerLeftRearTireStatus?.value,
+            "", // carStatus.vehicle.vehicleStatus.tpms?.outerLeftRearTirePressure?.value,
+            "", // carStatus.vehicle.vehicleStatus.tpms?.outerLeftRearTireStatus?.value,
             pressureUnits, pressureConversion, R.id.lt_rr_tire
         )
         updateTire(
             context, views,
-            carStatus.vehiclestatus.tpms?.outerRightRearTirePressure?.value,
-            carStatus.vehiclestatus.tpms?.outerRightRearTireStatus?.value,
+            "", // carStatus.vehicle.vehicleStatus.tpms?.outerRightRearTirePressure?.value,
+            "", // carStatus.vehicle.vehicleStatus.tpms?.outerRightRearTireStatus?.value,
             pressureUnits, pressureConversion, R.id.rt_rr_tire
         )
 

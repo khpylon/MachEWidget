@@ -6,7 +6,7 @@ import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import com.example.khughes.machewidget.TokenId
 
-@Database(entities = [TokenId::class], version = 4)
+@Database(entities = [TokenId::class], version = 1)
 abstract class TokenIdDatabase : RoomDatabase() {
     abstract fun tokenIdDao(): TokenIdDao
 
@@ -20,7 +20,7 @@ abstract class TokenIdDatabase : RoomDatabase() {
                 instance = databaseBuilder(
                     context.applicationContext,
                     TokenIdDatabase::class.java,
-                    "tokenid_db"
+                    "tokenid_db_2"
                 )
                     .setJournalMode(JournalMode.TRUNCATE)
                     .build()

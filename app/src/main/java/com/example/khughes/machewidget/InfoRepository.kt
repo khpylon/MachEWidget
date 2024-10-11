@@ -46,7 +46,7 @@ class InfoRepository internal constructor(mContext: Context) {
         appInfo.electricVehicles = false
         for (vehicleInfo in vehicles) {
             val carStatus = vehicleInfo.carStatus
-            if (carStatus.isPropulsionElectric(carStatus.propulsion)) {
+            if (carStatus.vehicle.engineType == "BEV") {
                 appInfo.electricVehicles = true
                 break
             }

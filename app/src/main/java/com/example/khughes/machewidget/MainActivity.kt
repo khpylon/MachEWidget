@@ -293,7 +293,7 @@ private class LocalContentWebViewClient(private val mAssetLoader: WebViewAssetLo
     }
 }
 
-@SuppressLint("SetJavaScriptEnabled")
+@SuppressLint("SetJavaScriptEnabled", "CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayWebview() {
