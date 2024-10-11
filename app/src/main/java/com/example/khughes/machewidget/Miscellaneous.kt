@@ -338,16 +338,17 @@ class PrefManagement {
                             VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
                                 .updateVehicleInfo(info)
                         }
-                        val user =
-                            UserInfoDatabase.getInstance(context).userInfoDao()
-                                .findUserInfo(info.userId!!)
-                        if (user != null) {
-                            NetworkCalls.getVehicleImage(
-                                context,
-                                newVIN,
-                                user.country!!
-                            )
-                        }
+                        // TODO: refactor this
+//                        val user =
+//                            UserInfoDatabase.getInstance(context).userInfoDao()
+//                                .findUserInfo(info.userId!!)
+//                        if (user != null) {
+//                            NetworkCalls.getVehicleImage(
+//                                context,
+//                                newVIN,
+//                                user.country!!
+//                            )
+//                        }
                         newVINs.add(newVIN)
                         VINs.remove(newVIN)
                     }
@@ -833,10 +834,12 @@ class Misc {
                         "KPHKPA" to context.resources.getString(R.string.units_kphkpa),
                         "KPHBAR" to context.resources.getString(R.string.units_kphbar)
                     )
-                    val speed = info.user.uomSpeed
-                    val pressure = info.user.uomPressure
-                    val value = map.getOrDefault(speed + pressure, "2")
-                    prefs.edit().putString(unitsKey, value).apply()
+
+                    // TODO: these should be stored in preferences?
+//                    val speed = info.user.uomSpeed
+//                    val pressure = info.user.uomPressure
+//                    val value = map.getOrDefault(speed + pressure, "2")
+//                    prefs.edit().putString(unitsKey, value).apply()
                 }
             }
         }

@@ -2,6 +2,8 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import androidx.preference.PreferenceManager
+import com.example.khughes.machewidget.db.TokenIdDao
+import com.example.khughes.machewidget.db.TokenIdDatabase
 import com.example.khughes.machewidget.db.VehicleInfoDao
 import com.example.khughes.machewidget.db.UserInfoDao
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
@@ -9,44 +11,24 @@ import com.example.khughes.machewidget.db.UserInfoDatabase
 
 class InfoRepository internal constructor(mContext: Context) {
     private val mVehicleInfoDao: VehicleInfoDao
-    private val mUserInfoDao: UserInfoDao
+    private val mTokenInfoDao: TokenIdDao
     val vehicles: List<VehicleInfo>
     private var mVehicleInfo: VehicleInfo? = null
-    private val mUserList: List<UserInfo>
-    var user: UserInfo
+    private val mTokenIdList: List<TokenId>
+    private var mTokenIdInfo: TokenId? = null
 
     init {
         mVehicleInfoDao = VehicleInfoDatabase.getInstance(mContext).vehicleInfoDao()
-        mUserInfoDao = UserInfoDatabase.getInstance(mContext).userInfoDao()
+        mTokenInfoDao = TokenIdDatabase.getInstance(mContext).tokenIdDao()
         vehicles = mVehicleInfoDao.findVehicleInfo()
-        mUserList = mUserInfoDao.findUserInfo()
-        val userId = PreferenceManager.getDefaultSharedPreferences(
-            mContext
-        ).getString(mContext.resources.getString(R.string.userId_key), null)
-        user = UserInfo()
-        if (userId != null) {
-            user = mUserInfoDao.findUserInfo(userId) ?: UserInfo()
-        } else {
-            LogFile.e(
-                MainActivity.CHANNEL_ID,
-                "InfoRepository(): default settings userId is null"
-            )
-            val users = mUserInfoDao.findUserInfo()
-            if (users.size > 0) {
-                user = users[0]
-                LogFile.e(
-                    MainActivity.CHANNEL_ID,
-                    "InfoRepository(): fallback to userId " + user.userId
-                )
-            }
-        }
+        mTokenIdList = mTokenInfoDao.findTokenIds()
 
         // Check if any vehicles are electric
         val appInfo = StoredData(mContext)
         appInfo.electricVehicles = false
         for (vehicleInfo in vehicles) {
             val carStatus = vehicleInfo.carStatus
-            if (carStatus.vehicle.engineType == "BEV") {
+            if (carStatus.isPropulsionElectric()) {
                 appInfo.electricVehicles = true
                 break
             }
@@ -67,5 +49,10 @@ class InfoRepository internal constructor(mContext: Context) {
     fun setVehicle(info: VehicleInfo) {
         mVehicleInfo = info
         VehicleInfoDatabase.databaseWriteExecutor.execute { mVehicleInfoDao.updateVehicleInfo(info) }
+    }
+
+    fun setTokenId(info: TokenId) {
+        mTokenIdInfo = info
+        TokenIdDatabase.databaseWriteExecutor.execute { mTokenInfoDao.updateTokenId(info) }
     }
 }

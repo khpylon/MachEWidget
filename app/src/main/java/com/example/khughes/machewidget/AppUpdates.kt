@@ -47,32 +47,7 @@ object AppUpdates {
                     .putBoolean(context.resources.getString(R.string.forceUpdate_key), false)
                     .commit()
             }
-
-            // Reset the program state to require a login
-            if (lastVersion < "2024.01.24") {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val info = InfoRepository(context)
-                    val userInfo = info.user
-                    userInfo.programState = Constants.STATE_INITIAL_STATE
-                    val userInfoDao = UserInfoDatabase.getInstance(context).userInfoDao()
-                    userInfoDao.updateUserInfo(userInfo)
-                }
-            }
-
-            // Try to find any missing vehicle images
-            if (lastVersion < "2024.02.01-16") {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val info = InfoRepository(context)
-                    val userInfo = info.user
-                    for (vehicle in info.vehicles) {
-                        vehicle.vin?.let {vin ->
-                            NetworkCalls.getVehicleImage(context, vin, userInfo.country!!)
-                        }
-                    }
-                }
-            }
         }
-
 
         // Update internally
         prefs.edit().putString(context.resources.getString(R.string.last_version_key), BuildConfig.VERSION_NAME).commit()

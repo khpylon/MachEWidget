@@ -213,7 +213,7 @@ open class CarStatusWidget : AppWidgetProvider() {
             }
             //  Look for an enabled vehicle with this owner
             for (vehicleInfo in vehicles) {
-                if (vehicleInfo.isEnabled && vehicleInfo.userId == info.user.userId) {
+                if (vehicleInfo.isEnabled) {
                     VIN = vehicleInfo.vin
                     break
                 }
@@ -1076,8 +1076,10 @@ open class CarStatusWidget : AppWidgetProvider() {
                                 Context.MODE_PRIVATE
                             ).getString(widget_VIN, null)
                             val vehInfo = info.getVehicleByVIN(VIN)
-                            val userInfo = info.user
                             val lastUpdateInMillis = vehInfo.lastUpdateTime
+
+                            // TODO: fix localization
+                            val userInfo = UserInfo()
                             val timeFormat =
                                 if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
                             val lastUpdate =

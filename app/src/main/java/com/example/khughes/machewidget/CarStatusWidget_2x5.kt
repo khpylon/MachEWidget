@@ -80,10 +80,10 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         setBackground(context, views)
 
         // Find which user is active.
-        val userInfo = info!!.user
+        val userInfo = UserInfo()
 
         // Find the vehicle for this widget
-        val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return
+        val vehicleInfo = getVehicleInfo(context, info!!, appWidgetId) ?: return
         views.setTextViewText(R.id.profile, vehicleInfo.nickname)
         //        views.setTextViewText(R.id.profile, "My Mach-E");
 

@@ -139,8 +139,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
     ) {
 
         // Find which user is active.
-        val userInfo = info.user
-//        if (userInfo.userId == "") return
+        val userInfo = UserInfo()
 
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return

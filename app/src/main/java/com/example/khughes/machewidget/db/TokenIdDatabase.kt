@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import com.example.khughes.machewidget.TokenId
+import java.util.concurrent.Executors
 
 @Database(entities = [TokenId::class], version = 1)
 abstract class TokenIdDatabase : RoomDatabase() {
@@ -27,5 +28,9 @@ abstract class TokenIdDatabase : RoomDatabase() {
             }
             return instance as TokenIdDatabase
         }
+
+        private const val NUMBER_OF_THREADS = 4
+        val databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
+
     }
 }

@@ -187,17 +187,19 @@ class MainActivity : ComponentActivity() {
         }
 
         // If app has been running OK, try to initiate status updates and count number of vehicles in the database
-        val userId = PreferenceManager.getDefaultSharedPreferences(context)
-            .getString(applicationContext.resources.getString(R.string.userId_key), null)
-        if (userId != null) {
-            Thread {
-                val info = InfoRepository(context)
-                val userInfo = info.user
-                if (userInfo.programState == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-                    initateAlarm(context)
-                }
-            }.start()
-        }
+        initateAlarm(context)
+        // TODO:
+//        val userId = PreferenceManager.getDefaultSharedPreferences(context)
+//            .getString(applicationContext.resources.getString(R.string.userId_key), null)
+//        if (userId != null) {
+//            Thread {
+//                val info = InfoRepository(context)
+//                val userInfo = info.user
+//                if (userInfo.programState == Constants.STATE_HAVE_TOKEN_AND_VIN) {
+//                    initateAlarm(context)
+//                }
+//            }.start()
+//        }
 
         // Do bookkeeping on old charging logs
         purgeChargingData(context)
@@ -208,15 +210,16 @@ class MainActivity : ComponentActivity() {
         // Allow the app to display notifications
         createNotificationChannels(context)
 
-        // If we get into a weird state where the user appears to have logged in but there are no
-        // vehicles, send them to Manage Vehicles
-        CoroutineScope(Dispatchers.IO).launch {
-            val info = InfoRepository(context)
-            if (info.user.programState == Constants.STATE_HAVE_TOKEN && info.vehicles.isEmpty()) {
-                val intent = Intent(context, VehicleActivity::class.java)
-                startActivity(intent)
-            }
-        }
+        // TODO: probably not necessary anymore
+//        // If we get into a weird state where the user appears to have logged in but there are no
+//        // vehicles, send them to Manage Vehicles
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val info = InfoRepository(context)
+//            if (info.user.programState == Constants.STATE_HAVE_TOKEN && info.vehicles.isEmpty()) {
+//                val intent = Intent(context, VehicleActivity::class.java)
+//                startActivity(intent)
+//            }
+//        }
 
         setContent {
             MacheWidgetTheme {
