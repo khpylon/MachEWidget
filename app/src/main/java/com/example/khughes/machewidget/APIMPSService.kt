@@ -65,8 +65,8 @@ interface APIMPSService {
         @Path("vehicleID") vehicleId: String,
         @Header("Authorization") accessToken: String,
         @Query("make") make: String?,
-        @Query("modelName") model: String?,
-        @Query("modelYear") year: String?,
+        @Query("model") model: String?,
+        @Query("year") year: String?,
     ): Call<ResponseBody?>?
 
 
