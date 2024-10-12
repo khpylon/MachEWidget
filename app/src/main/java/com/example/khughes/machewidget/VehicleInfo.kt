@@ -16,14 +16,12 @@ class VehicleInfo {
 
     @ColumnInfo(name = "VIN")
     var vin: String? = ""
-    var userId: String? = ""        // TODO: deprecated
     var tokenId: String? = ""
     var nickname: String? = ""
     var lastRefreshTime: Long = 0
     var lastUpdateTime: Long = 0
 
     @ColumnInfo(defaultValue = "0")
-    var lastOTATime: Long = 0
     var lastLVBStatus: String? = "STATUS_GOOD"
     var lastTPMSStatus: String? = "Normal"
 
@@ -31,8 +29,6 @@ class VehicleInfo {
     var lastChargeStatus = "''"
     var lastDTE = 0.0
     var lastFuelLevel = 0.0
-    @ColumnInfo(name = "supportsOTA")
-    var isSupportsOTA = true
 
     @ColumnInfo(defaultValue = "0")
     var initialForcedRefreshTime: Long = 0
@@ -57,19 +53,6 @@ class VehicleInfo {
 
     @Embedded(prefix = "car_")
     var carStatus: CarStatus = CarStatus()
-
-    @Embedded(prefix = "ota_")
-    var responseList: FuseResponseList? = null
-
-    @Embedded(prefix = "ota_")
-    var error: Any? = null
-    var otaAlertStatus: String? = null
-
-    @Embedded(prefix = "ota_")
-    var updatePendingState: Any? = null
-
-    @Embedded(prefix = "ota_")
-    var languageText: LanguageText? = null
 
     init {
         // for new database entries, this will generate a new id

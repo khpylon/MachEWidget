@@ -80,7 +80,6 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         setBackground(context, views)
 
         // Find which user is active.
-        val userInfo = UserInfo()
 
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info!!, appWidgetId) ?: return
@@ -149,9 +148,10 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
 //        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
         setElectricCallbacks(context, views, isElectric, appWidgetId)
 
+        // TODO: fix localization
         // Show last refresh, odometer, OTA status
         val timeFormat =
-            if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+            if (false) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
         drawLastRefresh(context, views, carStatus, timeFormat)
         drawOdometer(context, views, carStatus, distanceConversion, distanceUnits)
         //        drawOTAInfo(context, views, vehicleInfo, timeFormat);

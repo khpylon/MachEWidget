@@ -31,7 +31,6 @@ import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.*
 import com.example.khughes.machewidget.databinding.ActivityVehicleBinding
-import com.example.khughes.machewidget.db.UserInfoDatabase
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
@@ -41,7 +40,6 @@ import java.util.*
 private lateinit var mVehicleViewModel: VehicleViewModel
 private lateinit var activity: AppCompatActivity
 private lateinit var userId: String
-private lateinit var userInfo: UserInfo
 
 class VehicleActivity : AppCompatActivity() {
 
@@ -249,38 +247,38 @@ class VehicleActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(swipeToDelete)
         itemTouchHelper.attachToRecyclerView(binding.recyclerview)
 
-        CoroutineScope(Dispatchers.Main).launch {
-            userInfo = getUserInfo(context, userId)
-            if (userInfo.userId == null) {
-                binding.addVehicle.hide()
-                AlertDialog.Builder(
-                    ContextThemeWrapper(activity, R.style.AlertDialogCustom)
-                )
-                    .setTitle(context.getString(R.string.misc_error_message))
-                    .setMessage(getString(R.string.activity_vehicle_userId_missing))
-                    .setPositiveButton(
-                        android.R.string.ok
-                    ) { _: DialogInterface?, _: Int -> finish() }
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show()
-            }
-        }
+//        CoroutineScope(Dispatchers.Main).launch {
+//            userInfo = getUserInfo(context, userId)
+//            if (userInfo.userId == null) {
+//                binding.addVehicle.hide()
+//                AlertDialog.Builder(
+//                    ContextThemeWrapper(activity, R.style.AlertDialogCustom)
+//                )
+//                    .setTitle(context.getString(R.string.misc_error_message))
+//                    .setMessage(getString(R.string.activity_vehicle_userId_missing))
+//                    .setPositiveButton(
+//                        android.R.string.ok
+//                    ) { _: DialogInterface?, _: Int -> finish() }
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .show()
+//            }
+//        }
     }
 
-    private suspend fun getUserInfo(context: Context, userId: String): UserInfo =
-        coroutineScope {
-            withContext(Dispatchers.IO) {
-                UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId)
-                    ?: UserInfo()
-//                if (user == null) {
-//                    val tmp = UserInfo()
-//                    tmp.userId = ""
-//                    tmp
-//                } else {
-//                    user
-//                }
-            }
-        }
+//    private suspend fun getUserInfo(context: Context, userId: String): UserInfo =
+//        coroutineScope {
+//            withContext(Dispatchers.IO) {
+//                UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId)
+//                    ?: UserInfo()
+////                if (user == null) {
+////                    val tmp = UserInfo()
+////                    tmp.userId = ""
+////                    tmp
+////                } else {
+////                    user
+////                }
+//            }
+//        }
 
     open class SwipeToDelete(context: Context) : ItemTouchHelper.Callback() {
         val mContext = context

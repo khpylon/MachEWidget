@@ -2,7 +2,6 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.example.khughes.machewidget.db.UserInfoDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

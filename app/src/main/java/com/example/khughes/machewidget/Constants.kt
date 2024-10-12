@@ -40,8 +40,9 @@ object Constants {
     const val CHARGING_STATUS_NOT_READY = "NotReady"        // not plugged in
     const val CHARGING_STATUS_CHARGING_AC = "ChargingAC"    // plugged in, is that it?
     const val CHARGING_STATUS_CHARGING_DC = "ChargingDC"
+    const val CHARGING_STATUS_PRECONDITION = "CabinPreconditioning"  // end of charging
+
     const val CHARGING_STATUS_TARGET_REACHED = "ChargeTargetReached"
-    const val CHARGING_STATUS_PRECONDITION = "CabinPreconditioning"
     const val CHARGING_STATUS_PAUSED = "EvsePaused"
 
     const val REPOURL = "https://github.com/khpylon/MachEWidget"

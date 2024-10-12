@@ -1,13 +1,10 @@
 package com.example.khughes.machewidget
 
 import android.content.Context
-import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.db.TokenIdDao
 import com.example.khughes.machewidget.db.TokenIdDatabase
 import com.example.khughes.machewidget.db.VehicleInfoDao
-import com.example.khughes.machewidget.db.UserInfoDao
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
-import com.example.khughes.machewidget.db.UserInfoDatabase
 
 class InfoRepository internal constructor(mContext: Context) {
     private val mVehicleInfoDao: VehicleInfoDao
@@ -33,6 +30,17 @@ class InfoRepository internal constructor(mContext: Context) {
                 break
             }
         }
+    }
+
+    fun getTokenId(tokenId: String?): TokenId? {
+        if (tokenId != null) {
+            for (tokenIdInfo in mTokenIdList) {
+                if (tokenId == tokenIdInfo.tokenId) {
+                    return tokenIdInfo
+                }
+            }
+        }
+        return null
     }
 
     fun getVehicleByVIN(VIN: String?): VehicleInfo {

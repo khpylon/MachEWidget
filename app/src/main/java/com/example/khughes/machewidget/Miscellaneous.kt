@@ -20,7 +20,6 @@ import androidx.core.os.LocaleListCompat
 import androidx.preference.PreferenceManager
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
-import com.example.khughes.machewidget.db.UserInfoDatabase
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
@@ -281,11 +280,12 @@ class PrefManagement {
                 val versionItem: JsonPrimitive = jsonObject.getAsJsonPrimitive("version")
                 val version = versionItem.asInt
 
+                // TODO: add TokenInfo
                 // Get the current set of user IDs and VINs
-                val userIds = ArrayList<String>()
-                for (info in UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
-                    userIds.add(info.userId!!)
-                }
+//                val userIds = ArrayList<String>()
+//                for (info in UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
+//                    userIds.add(info.userId!!)
+//                }
                 val VINs = ArrayList<String>()
                 for (info in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
                     .findVehicleInfo()) {
@@ -298,23 +298,24 @@ class PrefManagement {
                 // Update users in the database, and remove all IDs from the current list
                 // Don't try to restore for older user IDs
                 if (version > 3) {
-                    val users = jsonObject.getAsJsonArray("users")
-                    for (items in users) {
-                        val info = gson.fromJson<UserInfo>(
-                            items.toString(),
-                            object : TypeToken<UserInfo?>() {}.type
-                        )
-                        val current =
-                            UserInfoDatabase.getInstance(context).userInfoDao()
-                                .findUserInfo(info.userId!!)
-                        if (current == null) {
-                            info.id = 0
-                            UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info)
-                        } else {
-                            UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info)
-                        }
-                        userIds.remove(info.userId)
-                    }
+                    // TODO: add TokenInfo
+//                    val users = jsonObject.getAsJsonArray("users")
+//                    for (items in users) {
+//                        val info = gson.fromJson<UserInfo>(
+//                            items.toString(),
+//                            object : TypeToken<UserInfo?>() {}.type
+//                        )
+//                        val current =
+//                            UserInfoDatabase.getInstance(context).userInfoDao()
+//                                .findUserInfo(info.userId!!)
+//                        if (current == null) {
+//                            info.id = 0
+//                            UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info)
+//                        } else {
+//                            UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info)
+//                        }
+//                        userIds.remove(info.userId)
+//                    }
 
                     // Insert missing VINs into the database, and remove all VINs from the current list
                     val newVINs = mutableListOf<String>()
@@ -326,7 +327,6 @@ class PrefManagement {
                         )
                         // Save a valid VIN in case we need to change the current VIN
                         newVIN = info.vin!!
-                        newUserId = info.userId!!
 
                         val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
                             .findVehicleInfoByVIN(newVIN)
@@ -393,9 +393,11 @@ class PrefManagement {
                         .deleteVehicleInfoByVIN(VIN)
                     VehicleImages.deleteImages(context, VIN)
                 }
-                for (user in userIds) {
-                    UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user)
-                }
+                // TODO: add TokenInfo
+
+//                for (user in userIds) {
+//                    UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user)
+//                }
 
                 // Update all the default preferences
                 var edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
@@ -502,8 +504,9 @@ class PrefManagement {
                 prefData.clear()
 
                 // Save database entries
-                jsonData["users"] =
-                    UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()
+                // TODO: add TokenInfo
+//                jsonData["users"] =
+//                    UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()
                 jsonData["vehicles"] =
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()
                 GsonBuilder().create().toJson(jsonData)
@@ -528,7 +531,7 @@ class VehicleImages {
         @JvmStatic
         fun getImage(context: Context, VIN: String, angle: Int): Bitmap? {
             val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
-            val image = File(imageDir, "${VIN}_angle${angle}.png")
+            val image = File(imageDir, "${VIN}.png")
             return if (image.exists()) BitmapFactory.decodeFile(image.path) else null
         }
 

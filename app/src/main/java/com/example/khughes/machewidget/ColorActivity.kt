@@ -162,205 +162,206 @@ private fun ChooseColor() {
                     vehicleImages = Vehicle.getVehicle(vehicleInfo.vin).horizontalDrawables
                     recomposeColorPicker = !recomposeColorPicker
                 }
+            }
 
-                Image(
-                    bitmap = bitmap.asImageBitmap(),
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(10.dp),
+                contentDescription = "",
+            )
+
+            VehicleColor.drawColoredVehicle(
+                context,
+                bitmap,
+                vehicleColor or wireframe,
+                ArrayList(),
+                true,
+                vehicleImages
+            )
+
+            Text(
+                text = context.resources.getString(R.string.activity_color_rgb_value) + hexColor,
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .padding(10.dp)
+            )
+
+            key(recomposeColorPicker) {
+                HsvColorPicker(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(10.dp),
-                    contentDescription = "",
-                )
-
-                VehicleColor.drawColoredVehicle(
-                    context,
-                    bitmap,
-                    vehicleColor or wireframe,
-                    ArrayList(),
-                    true,
-                    vehicleImages
-                )
-
-                Text(
-                    text = context.resources.getString(R.string.activity_color_rgb_value) + hexColor,
-                    modifier = Modifier
+                        .size(if (vehicles.size == 1) 300.dp else 240.dp)
                         .align(alignment = Alignment.CenterHorizontally)
-                        .padding(10.dp)
-                )
-
-                key(recomposeColorPicker) {
-                    HsvColorPicker(
-                        modifier = Modifier
-                            .size(if (vehicles.size == 1) 300.dp else 240.dp)
-                            .align(alignment = Alignment.CenterHorizontally)
-                            .padding(10.dp),
-                        initialColor = Color(initialColor),
-                        controller = controller,
-                        onColorChanged = {
-                            if (it.fromUser) {
-                                vehicleColor = (it.color.toArgb() and VehicleColor.ARGB_MASK)
-                                hexColor = it.hexCode.substring(2)
-                            }
-                        },
-                    )
-
-                    BrightnessSlider(
-                        modifier = Modifier
-                            .width(if (vehicles.size == 1) 300.dp else 240.dp)
-                            .padding(10.dp)
-                            .height(30.dp)
-                            .align(alignment = Alignment.CenterHorizontally),
-                        initialColor = Color(vehicleInfo.colorValue and VehicleColor.ARGB_MASK),
-                        controller = controller,
-                    )
-                }
-
-
-                Column(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25F),
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                )
-                {
-                    Text(
-                        text = context.getString(R.string.activity_color_wireframe_color),
-                        modifier = Modifier
-                            .height(24.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-
-                    key(wireframe) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
-                            horizontalArrangement = Arrangement.Center
-                        )
-                        {
-                            // Set up everything for the radio buttons
-                            val whiteString =
-                                context.resources.getString(R.string.activity_color_white)
-                            val blackString =
-                                context.resources.getString(R.string.activity_color_black)
-                            val autoString =
-                                context.resources.getString(R.string.activity_color_auto)
-                            val radioOptions = listOf(whiteString, blackString, autoString)
-                            val wireframeModes = listOf(
-                                VehicleColor.WIREFRAME_WHITE,
-                                VehicleColor.WIREFRAME_BLACK,
-                                VehicleColor.WIREFRAME_AUTO
-                            )
-                            var selectedOption by remember {
-                                mutableStateOf(
-                                    radioOptions[when (wireframe) {
-                                        VehicleColor.WIREFRAME_WHITE -> 0
-                                        VehicleColor.WIREFRAME_BLACK -> 1
-                                        else -> 2
-                                    }]
-                                )
-                            }
-
-                            radioOptions.forEach { buttonName ->
-                                RadioButton(
-                                    selected = (buttonName == selectedOption),
-                                    onClick = {
-                                        selectedOption = buttonName
-                                        val index = radioOptions.indexOf(selectedOption)
-                                        wireframe = wireframeModes[index]
-                                    },
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .padding(start = 8.dp)
-                                )
-                                Text(
-                                    text = buttonName,
-                                    modifier = Modifier
-                                        .padding(start = 2.dp)
-                                        .align(Alignment.CenterVertically)
-                                )
-                            }
+                        .padding(10.dp),
+                    initialColor = Color(initialColor),
+                    controller = controller,
+                    onColorChanged = {
+                        if (it.fromUser) {
+                            vehicleColor = (it.color.toArgb() and VehicleColor.ARGB_MASK)
+                            hexColor = it.hexCode.substring(2)
                         }
-                    }
-                }
-                Row(
+                    },
+                )
+
+                BrightnessSlider(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
+                        .width(if (vehicles.size == 1) 300.dp else 240.dp)
+                        .padding(10.dp)
+                        .height(30.dp)
+                        .align(alignment = Alignment.CenterHorizontally),
+                    initialColor = Color(vehicleInfo.colorValue and VehicleColor.ARGB_MASK),
+                    controller = controller,
+                )
+            }
 
-                    val buttonColors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
+
+            Column(
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25F),
+                        shape = RoundedCornerShape(10.dp)
                     )
+            )
+            {
+                Text(
+                    text = context.getString(R.string.activity_color_wireframe_color),
+                    modifier = Modifier
+                        .height(24.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
 
-                    // "Save" button
-                    Button(
-                        onClick = {
-                            // Store the current color information
-                            vehicleInfo.colorValue = vehicleColor or wireframe
-                            info.setVehicle(vehicleInfo)
-                        },
-                        colors = buttonColors,
-                        shape = RoundedCornerShape(10.dp),
-                    ) {
-                        Text(
-                            text = context.getString(R.string.activity_color_save),
-                        )
-                    }
-
-                    // "Reset" button
-                    Button(
-                        onClick = {
-                            // Reload the initial values
-                            vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
-                            wireframe = vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
-                            hexColor =
-                                Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt())
-                                    .uppercase().substring(2)
-                            recomposeColorPicker = !recomposeColorPicker
-                        },
-                        colors = buttonColors,
-                        shape = RoundedCornerShape(10.dp),
+                key(wireframe) {
+                    Row(
                         modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                    ) {
-                        Text(text = context.getString(R.string.activity_color_reset))
-                    }
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.Center
+                    )
+                    {
+                        // Set up everything for the radio buttons
+                        val whiteString =
+                            context.resources.getString(R.string.activity_color_white)
+                        val blackString =
+                            context.resources.getString(R.string.activity_color_black)
+                        val autoString =
+                            context.resources.getString(R.string.activity_color_auto)
+                        val radioOptions = listOf(whiteString, blackString, autoString)
+                        val wireframeModes = listOf(
+                            VehicleColor.WIREFRAME_WHITE,
+                            VehicleColor.WIREFRAME_BLACK,
+                            VehicleColor.WIREFRAME_AUTO
+                        )
+                        var selectedOption by remember {
+                            mutableStateOf(
+                                radioOptions[when (wireframe) {
+                                    VehicleColor.WIREFRAME_WHITE -> 0
+                                    VehicleColor.WIREFRAME_BLACK -> 1
+                                    else -> 2
+                                }]
+                            )
+                        }
 
-                    // "Auto" button: only applies if there is an image of the vehicle to read
-                    if (VehicleImages.getImage(context, vehicleInfo.vin!!, 4) != null) {
-                        Button(
-                            onClick = {
-                                // Save current color, so we cab locate a color to read in the image
-                                val oldColor = vehicleInfo.colorValue
-                                vehicleInfo.colorValue = android.graphics.Color.WHITE
-
-                                // If this returns true, use the returned color information
-                                if (VehicleColor.scanImageForColor(context, vehicleInfo)) {
-                                    vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
-                                    wireframe =
-                                        vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
-                                    hexColor =
-                                        Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt())
-                                            .uppercase().substring(2)
-                                    initialColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
-                                    recomposeColorPicker = !recomposeColorPicker
-                                }
-
-                                // reset to the original color
-                                vehicleInfo.colorValue = oldColor
-                            },
-                            colors = buttonColors,
-                            shape = RoundedCornerShape(10.dp),
-                        ) {
-                            Text(text = context.getString(R.string.activity_color_auto_button))
+                        radioOptions.forEach { buttonName ->
+                            RadioButton(
+                                selected = (buttonName == selectedOption),
+                                onClick = {
+                                    selectedOption = buttonName
+                                    val index = radioOptions.indexOf(selectedOption)
+                                    wireframe = wireframeModes[index]
+                                },
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .padding(start = 8.dp)
+                            )
+                            Text(
+                                text = buttonName,
+                                modifier = Modifier
+                                    .padding(start = 2.dp)
+                                    .align(Alignment.CenterVertically)
+                            )
                         }
                     }
                 }
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+
+                val buttonColors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                )
+
+                // "Save" button
+                Button(
+                    onClick = {
+                        // Store the current color information
+                        vehicleInfo.colorValue = vehicleColor or wireframe
+                        info.setVehicle(vehicleInfo)
+                    },
+                    colors = buttonColors,
+                    shape = RoundedCornerShape(10.dp),
+                ) {
+                    Text(
+                        text = context.getString(R.string.activity_color_save),
+                    )
+                }
+
+                // "Reset" button
+                Button(
+                    onClick = {
+                        // Reload the initial values
+                        vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
+                        wireframe = vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
+                        hexColor =
+                            Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt())
+                                .uppercase().substring(2)
+                        recomposeColorPicker = !recomposeColorPicker
+                    },
+                    colors = buttonColors,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Text(text = context.getString(R.string.activity_color_reset))
+                }
+
+                // "Auto" button: only applies if there is an image of the vehicle to read
+                if (VehicleImages.getImage(context, vehicleInfo.vin!!, 4) != null) {
+                    Button(
+                        onClick = {
+                            // Save current color, so we cab locate a color to read in the image
+                            val oldColor = vehicleInfo.colorValue
+                            vehicleInfo.colorValue = android.graphics.Color.WHITE
+
+                            // If this returns true, use the returned color information
+                            if (VehicleColor.scanImageForColor(context, vehicleInfo)) {
+                                vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
+                                wireframe =
+                                    vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
+                                hexColor =
+                                    Integer.toHexString(vehicleInfo.colorValue or 0xff000000.toInt())
+                                        .uppercase().substring(2)
+                                initialColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
+                                recomposeColorPicker = !recomposeColorPicker
+                            }
+
+                            // reset to the original color
+                            vehicleInfo.colorValue = oldColor
+                        },
+                        colors = buttonColors,
+                        shape = RoundedCornerShape(10.dp),
+                    ) {
+                        Text(text = context.getString(R.string.activity_color_auto_button))
+                    }
+                }
+            }
+
         }
     }
 }

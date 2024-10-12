@@ -21,7 +21,7 @@ abstract class TokenIdDatabase : RoomDatabase() {
                 instance = databaseBuilder(
                     context.applicationContext,
                     TokenIdDatabase::class.java,
-                    "tokenid_db_2"
+                    "tokenId_db"
                 )
                     .setJournalMode(JournalMode.TRUNCATE)
                     .build()

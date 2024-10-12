@@ -121,7 +121,7 @@ object NetworkServiceGenerators {
     private val USASPICVHttpClient: OkHttpClient.Builder = OkHttpClient.Builder()
     @JvmStatic
     fun <S> createUSAPICVService(
-        serviceClass: Class<S>?, context: Context? //, UserInfo user
+        serviceClass: Class<S>?, context: Context?
     ): S {
         mContext = WeakReference(context)
         if (!USASPICVHttpClient.interceptors().contains(logging)) {

@@ -1079,9 +1079,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val lastUpdateInMillis = vehInfo.lastUpdateTime
 
                             // TODO: fix localization
-                            val userInfo = UserInfo()
                             val timeFormat =
-                                if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+                                if (false) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
                             val lastUpdate =
                                 Misc.convertMillisToDate(lastUpdateInMillis, timeFormat)
                             Toast.makeText(

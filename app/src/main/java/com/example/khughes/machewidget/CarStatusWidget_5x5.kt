@@ -138,9 +138,6 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         appWidgetId: Int, info: InfoRepository
     ) {
 
-        // Find which user is active.
-        val userInfo = UserInfo()
-
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return
         val widget_VIN = Constants.VIN_KEY + appWidgetId
@@ -237,9 +234,10 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
             }
         }
 
+        // TODO: fix localization
         // Show last refresh, odometer
         val timeFormat =
-            if (userInfo.country == "USA") Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+            if (false) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
         drawLastRefresh(context, views, carStatus, timeFormat)
         drawOdometer(context, views, carStatus, distanceConversion, distanceUnits)
 
