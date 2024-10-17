@@ -279,27 +279,6 @@ class Notifications : BroadcastReceiver() {
             notificationManager.notify(CHARGE_REMINDER, builder.build())
         }
 
-        private const val LOGIN_STATUS = 941
-        fun loginRequired(context: Context?) {
-            val intent = Intent(context, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            val pendingIntent =
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            val builder = NotificationCompat.Builder(
-                context!!, IMPORTANT_NOTIFICATIONS
-            )
-                .setSmallIcon(R.drawable.notification_icon)
-                .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                .setContentTitle(context.getString(R.string.login_issue_notification_title))
-                .setContentText(context.getString(R.string.login_issue_notification_description))
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-            val notificationManager = NotificationManagerCompat.from(context)
-            // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(LOGIN_STATUS, builder.build())
-        }
-
         private const val SURVEY_STATUS = 942
         fun surveyPrompt(context: Context) {
             val surveyVersion_key = context.resources.getString(R.string.surveyVersion_key)
