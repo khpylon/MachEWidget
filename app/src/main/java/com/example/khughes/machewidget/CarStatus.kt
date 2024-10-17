@@ -13,7 +13,7 @@ import javax.annotation.Generated
 
 class DoorConverters {
     @TypeConverter
-    fun stringToListDoorStatus(data: String?): List<NewDoorStatus>? {
+    fun toNewDoorStatus(data: String?): List<NewDoorStatus>? {
         if (data == null) {
             return Collections.emptyList()
         }
@@ -24,7 +24,7 @@ class DoorConverters {
     }
 
     @TypeConverter
-    fun listDoorStatusToString(someObjects: List<NewDoorStatus>?): String? {
+    fun FromNewDoorStatus(someObjects: List<NewDoorStatus>?): String? {
         val gson = Gson()
         return gson.toJson(someObjects)
     }
@@ -143,7 +143,7 @@ data class VehicleStatus(
     var ignitionStatus: IgnitionStatus = IgnitionStatus(),
 
     // TODO: finishing this typeconverter
-    @Ignore
+    @ColumnInfo(name = "door_status")
     var doorStatus: List<NewDoorStatus> = listOf(),
 
     var firmwareUpgradeInProgress: Boolean = false,
@@ -161,14 +161,14 @@ data class RemoteStartStatus(
 
 @Generated("jsonschema2pojo")
 data class ChargingStatus(
-    @ColumnInfo(name = "charging_status")
+//    @ColumnInfo(name = "charging_status")
     var value: String = "",
     // "NotReady", "ChargingAC"
 
-    @ColumnInfo(name = "charge_start_time")
+//    @ColumnInfo(name = "charge_start_time")
     var chargeStartTime: String = "",
 
-    @ColumnInfo(name = "charge_end_time")
+//    @ColumnInfo(name = "charge_end_time")
     var chargeEndTime: String = "",
 
 //    var timeStamp: String,
@@ -191,10 +191,13 @@ data class IgnitionStatus(
 
 @Generated("jsonschema2pojo")
 data class NewDoorStatus(
+    @ColumnInfo(name = "vehicle_door")
     var vehicleDoor: String = "",
     // "UNSPECIFIED_FRONT", "REAR_LEFT", "REAR_RIGHT", "TAILGATE", "HOOD_DOOR", "INNER_TAILGATE"
+    @ColumnInfo(name = "vehicle_door_value")
     var value: String = "",
     // "CLOSED", "AJAR"
+    @ColumnInfo(name = "vehicle_occupant_role")
     var vehicleOccupantRole: String = "",
     // "DRIVER", "PASSENGER", "NOT_APPLICABLE"
 //    var timeStamp: String,

@@ -6,8 +6,6 @@ import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.khughes.machewidget.DoorConverters
 import com.example.khughes.machewidget.Vehicle.Companion.Model
 import com.example.khughes.machewidget.VehicleInfo

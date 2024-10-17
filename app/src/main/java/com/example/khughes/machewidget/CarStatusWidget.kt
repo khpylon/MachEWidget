@@ -870,27 +870,10 @@ open class CarStatusWidget : AppWidgetProvider() {
         // Find anything that's open
         for (door in carStatus.vehicle.vehicleStatus.doorStatus) {
             if(door.value == "AJAR") {
-                whatsOpen.add(vehicleImages[drawables[door.vehicleOccupantRole+","+door.vehicleDoor]]!!)
+                val doorIdentifier = door.vehicleOccupantRole+","+door.vehicleDoor
+                whatsOpen.add(vehicleImages[drawables[doorIdentifier]]!!)
             }
         }
-//        if (!isDoorClosed(carStatus.vehicle.vehicleStatus.doorStatus?.hoodDoor?.value)) {
-//            whatsOpen.add(vehicleImages[Vehicle.HOOD]!!)
-//        }
-//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.tailgateDoor?.value)) {
-//            whatsOpen.add(vehicleImages[Vehicle.TAILGATE]!!)
-//        }
-//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.driverDoor?.value)) {
-//            whatsOpen.add(vehicleImages[Vehicle.LEFT_FRONT_DOOR]!!)
-//        }
-//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.passengerDoor?.value)) {
-//            whatsOpen.add(vehicleImages[Vehicle.RIGHT_FRONT_DOOR]!!)
-//        }
-//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.leftRearDoor?.value)) {
-//            whatsOpen.add(vehicleImages[Vehicle.LEFT_REAR_DOOR]!!)
-//        }
-//        if (!isDoorClosed(carStatus.vehiclestatus.doorStatus?.rightRearDoor?.value)) {
-//            whatsOpen.add(vehicleImages[Vehicle.RIGHT_REAR_DOOR]!!)
-//        }
         whatsOpen.removeAll(setOf<Any?>(null))
 
         // Determine the orientation of the image
