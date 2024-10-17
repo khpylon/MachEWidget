@@ -44,10 +44,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false"
-            android:label="@string/action_login" />
         <!--
         <activity
             android:name=".OTAViewActivity"

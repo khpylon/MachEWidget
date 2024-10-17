@@ -46,7 +46,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,12 +70,8 @@ import com.example.khughes.machewidget.Notifications.Companion.createNotificatio
 import com.example.khughes.machewidget.StatusReceiver.Companion.initateAlarm
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
-
 
 class MainActivity : ComponentActivity() {
 
@@ -238,37 +233,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("SetJavaScriptEnabled")
-private fun fordPassInfo(context: Context) {
-    val surveyWebview = WebView(context)
-
-    surveyWebview.settings.javaScriptEnabled = true
-    checkDarkMode(context, surveyWebview)
-    val assetLoader = WebViewAssetLoader.Builder()
-        .addPathHandler("/assets/", AssetsPathHandler(context))
-        .addPathHandler("/res/", ResourcesPathHandler(context))
-        .build()
-    surveyWebview.webViewClient = LocalContentWebViewClient(assetLoader)
-    val language = Locale.getDefault().language
-
-    val indexPage =
-        when (language) {
-            Locale.FRENCH.language -> "https://appassets.androidplatform.net/assets/fordpass_fr.html"
-            Locale.GERMAN.language -> "https://appassets.androidplatform.net/assets/fordpass_de.html"
-            Locale.ITALIAN.language -> "https://appassets.androidplatform.net/assets/fordpass_it.html"
-            POLISH.language -> "https://appassets.androidplatform.net/assets/fordpass_pl.html"
-            NORWAY_BOKMAL.language -> "https://appassets.androidplatform.net/assets/fordpass_nb.html"
-            FINNISH.language -> "https://appassets.androidplatform.net/assets/fordpass_fi.html"
-            SPANISH.language -> "https://appassets.androidplatform.net/assets/fordpass_es.html"
-            PORTUGUESE.language -> "https://appassets.androidplatform.net/assets/fordpass_pt.html"
-            else -> "https://appassets.androidplatform.net/assets/fordpass.html"
-        }
-    surveyWebview.loadUrl(indexPage)
-    AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-        .setTitle(R.string.fordpass_description)
-        .setNegativeButton(context.getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-        .setView(surveyWebview).show()
-}
 
 // Create Locales we can use for other languages
 private val NORWAY_BOKMAL = Locale("nb")
@@ -306,7 +270,6 @@ fun DisplayWebview() {
 
     // If we haven't bugged about the survey before, do it once and get it over with
     if (doSurvey(context)) {
-        fordPassInfo(context)
     }
 
     // Create a boolean variable
@@ -357,29 +320,6 @@ fun DisplayWebview() {
                         onDismissRequest = { mDisplayMenu = false },
                     ) {
                         // Add in each menu item
-                        DropdownMenuItem(
-                            onClick = {
-                                fordPassInfo(context)
-                                mDisplayMenu = false
-                            },
-                            text = { Text(text = context.getString(R.string.action_fordpass)) }
-                        )
-                        DropdownMenuItem(
-                            onClick = {
-                                val intent = Intent(context, LoginActivity::class.java)
-                                context.startActivity(intent)
-                                mDisplayMenu = false
-//                                AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-//                                    .setTitle(context.resources.getString(R.string.warning))
-//                                    .setMessage(context.getString(R.string.login_temp_disable_message))
-//                                    .setPositiveButton(
-//                                        android.R.string.ok
-//                                    ) {  _: DialogInterface?, _: Int -> }
-//                                    .setIcon(android.R.drawable.ic_dialog_alert)
-//                                    .show()
-                            },
-                            text = { Text(text = context.getString(R.string.action_login)) }
-                        )
                         DropdownMenuItem(
                             onClick = {
                                 val intent = Intent(context, VehicleActivity::class.java)
