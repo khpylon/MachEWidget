@@ -1,24 +1,15 @@
 package com.example.khughes.machewidget
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,24 +17,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.twotone.Add
-import androidx.compose.material.icons.twotone.Build
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -51,15 +31,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -68,23 +43,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.khughes.machewidget.Vehicle.Companion.modelMap
@@ -94,7 +62,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 private lateinit var mVehicleViewModel: VehicleViewModel
 private lateinit var info: InfoRepository
@@ -257,6 +224,7 @@ private fun ManageVehicle() {
     mVehicleViewModel = viewModel<VehicleViewModel>()
     val vehicles = mVehicleViewModel.allVehicles.observeAsState().value
     val context = LocalContext.current
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     Scaffold(
         topBar = {
@@ -265,15 +233,31 @@ private fun ManageVehicle() {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-//                    focusRequester.requestFocus()
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val msg = NetworkCalls.getAccessToken(context)
-                        val bundle = msg.data
-                        val tokenId = bundle.getString("tokenId")
-                        if (tokenId!! != "") {
-                            NetworkCalls.getVehicleList(context, tokenId)
+                    clipboardManager.getText()?.text?.let { text ->
+                        if (text.startsWith("https://localhost:3000/?state=123&code=")) {
+                            val code = text.substring(text.indexOf("code=")+5)
+                            Toast.makeText(context, "Attempting to access vehicle data.", Toast.LENGTH_LONG).show()
+                            CoroutineScope(Dispatchers.Main).launch {
+                                val msg = NetworkCalls.getAccessToken(context, code)
+                                val bundle = msg.data
+                                val tokenId = bundle.getString("tokenId")
+                                NetworkCalls.getVehicleList(context, tokenId!!)
+                            }
+                        } else {
+                            Toast.makeText(context, "Clipboard does not contain a valid token.", Toast.LENGTH_LONG).show()
                         }
                     }
+
+
+//                    focusRequester.requestFocus()
+//                    CoroutineScope(Dispatchers.Main).launch {
+//                        val msg = NetworkCalls.getAccessToken(context)
+//                        val bundle = msg.data
+//                        val tokenId = bundle.getString("tokenId")
+//                        if (tokenId!! != "") {
+//                            NetworkCalls.getVehicleList(context, tokenId)
+//                        }
+//                    }
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.secondary,
@@ -327,16 +311,16 @@ fun VehicleModel(
         mutableStateOf(false)
     }
     var pressOffset by remember {
-        mutableStateOf(DpOffset.Zero )
+        mutableStateOf(DpOffset.Zero)
     }
     var itemHeight by remember {
         mutableStateOf(0.dp)
     }
     var model by remember {
-        mutableStateOf(currentModel )
+        mutableStateOf(currentModel)
     }
 
-    Box (
+    Box(
         modifier = Modifier
             .clickable(onClick = {
                 isMenuVisible = true
@@ -350,8 +334,8 @@ fun VehicleModel(
     }
     DropdownMenu(
         expanded = isMenuVisible,
-        onDismissRequest = { isMenuVisible = false},
-        offset = pressOffset.copy(y = pressOffset.y - itemHeight)
+        onDismissRequest = { isMenuVisible = false },
+//        offset = pressOffset.copy(y = pressOffset.y - itemHeight)
     ) {
 
         val menuMap: MutableMap<String, Vehicle.Companion.Model> = mutableMapOf()
@@ -403,7 +387,7 @@ fun VehicleDisplay(vehicle: VehicleIds) {
             onCheckedChange = {
                 vehicle.enabled = it
                 checkBoxValue.value = it
-                mVehicleViewModel.setEnable(vehicle.vehicleId!!, vehicle.enabled)
+                mVehicleViewModel.setEnable(vehicle.vehicleId, vehicle.enabled)
             }
         )
         photo?.let {
@@ -423,10 +407,10 @@ fun VehicleDisplay(vehicle: VehicleIds) {
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
             VehicleModel(
-                currentModel = modelMap [vehicle.modelId]!!.modelName,
+                currentModel = modelMap[vehicle.modelId]!!.modelName,
                 onSelect = {
                     vehicle.modelId = it
-                    mVehicleViewModel.setModel(vehicle.vehicleId!!, vehicle.modelId)
+                    mVehicleViewModel.setModel(vehicle.vehicleId, vehicle.modelId)
                     CarStatusWidget.updateWidget(context)
                 }
             )

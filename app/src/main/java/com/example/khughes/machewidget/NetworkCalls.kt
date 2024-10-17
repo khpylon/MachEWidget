@@ -46,14 +46,18 @@ class NetworkCalls {
 
         suspend fun getAccessToken(
             context: Context?,
+            code: String
         ) : Message = withContext(Dispatchers.IO){
-            val intent = getAccessToken(context!!)
+            val intent = getAccessToken(context!!, code)
             val m = Message.obtain()
             m.data = intent.extras
             m
         }
 
-        private fun getAccessToken(context: Context): Intent {
+        private fun getAccessToken(
+            context: Context,
+            code: String
+        ): Intent {
             val data = Intent()
             var stage = 1
             val vehicleInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
@@ -71,10 +75,12 @@ class NetworkCalls {
 
                         // Start by getting token we need for OAuth2 authentication
                         if (stage == 1) {
-                            token = Authenticate.newAuthenticate(context, "", "")
-                            if (token != null) {
-                                stage = 2
-                            }
+//                            token = Authenticate.newAuthenticate(context, "", "")
+//                            if (token != null) {
+//                                stage = 2
+//                            }
+                            token = code
+                            stage = 2
                         }
 
                         // Next, try to get the actual token
