@@ -43,10 +43,10 @@ class InfoRepository internal constructor(mContext: Context) {
         return null
     }
 
-    fun getVehicleByVIN(VIN: String?): VehicleInfo {
-        if (VIN != null) {
+    fun getVehicleById(vehicleId: String?): VehicleInfo {
+        if (vehicleId != null) {
             for (vehicleInfo in vehicles) {
-                if (VIN == vehicleInfo.vin) {
+                if (vehicleId == vehicleInfo.carStatus.vehicle.vehicleId) {
                     return vehicleInfo
                 }
             }

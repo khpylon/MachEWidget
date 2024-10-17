@@ -61,8 +61,8 @@ data class CarStatusVehicle(
     var nickName: String? = null,
     var modemEnabled: Boolean = false,
     var lastUpdated: String = "",
-    var vehicleAuthorizationIndicator: Long = 0,
-    var serviceCompatible: Boolean = false,
+//    var vehicleAuthorizationIndicator: Long = 0,
+//    var serviceCompatible: Boolean = false,
     var engineType: String = "",
     @Embedded
     var vehicleDetails: VehicleDetails = VehicleDetails(),

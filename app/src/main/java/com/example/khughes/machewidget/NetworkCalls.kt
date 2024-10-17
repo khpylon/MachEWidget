@@ -2,14 +2,11 @@ package com.example.khughes.machewidget
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Handler
 import android.os.Message
-import androidx.core.os.ConfigurationCompat
-import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.CarStatusWidget.Companion.updateWidget
 import com.example.khughes.machewidget.NetworkServiceGenerators.createAPIMPSService
 import com.example.khughes.machewidget.NetworkServiceGenerators.createOAUTH2Service
@@ -46,22 +43,6 @@ class NetworkCalls {
         private const val CMD_STATUS_INPROGRESS = "INPROGRESS"
         private const val CMD_STATUS_FAILED = "FAILED"
         private const val CMD_STATUS_QUEUED = "QUEUED"
-
-        @JvmStatic
-        fun getAccessToken(
-            handler: Handler,
-            context: Context?,
-            username: String?,
-            password: String?
-        ) {
-            val t = Thread {
-                val intent = getAccessToken(context!!, username, password!!)
-                val m = Message.obtain()
-                m.data = intent.extras
-                handler.sendMessage(m)
-            }
-            t.start()
-        }
 
         suspend fun getAccessToken(
             context: Context?,
@@ -175,253 +156,17 @@ class NetworkCalls {
             return data
         }
 
+        // TODO: remove this when we remove LoginActivity
         suspend fun getAccessToken(
             context: Context?,
             username: String?,
             password: String?
         ) : Message = withContext(Dispatchers.IO){
-            val intent = getAccessToken(context!!, username, password!!)
+            val intent = Intent()
+            intent.putExtra("action", Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN)
             val m = Message.obtain()
             m.data = intent.extras
             m
-        }
-
-        private fun getAccessToken(context: Context, username: String?, password: String): Intent {
-            val data = Intent()
-            var nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN
-            var stage = 1
-//            val userDao = UserInfoDatabase.getInstance(context).userInfoDao()
-            val vehicleInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-            val tokenDao = TokenIdDatabase.getInstance(context).tokenIdDao()
-
-            var tokenId = TokenId()
-
-//            val vehInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-//            val vehicles = vehInfoDao.findVehicleInfo()
-            var userId: String? = null
-            var token: String? = null
-
-            if (username == null) {
-                LogFile.e(
-                    MainActivity.CHANNEL_ID,
-                    "NetworkCalls.getAccessToken() called with null username?"
-                )
-            } else if (checkInternetConnection(context)) {
-                for (retry in 2 downTo 0) {
-                    try {
-                        val OAuth2Client = createOAUTH2Service(OAuth2Service::class.java, context)
-                        var accessToken: AccessToken
-                        var call: Call<AccessToken?>?
-
-                        // Start by getting token we need for OAuth2 authentication
-                        if (stage == 1) {
-                            token = Authenticate.newAuthenticate(context, username, password)
-                            if (token == null) {
-                                continue
-                            } else if (token == Authenticate.ACCOUNT_BAD_USER_OR_PASSWORD) {
-                                nextState = Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN
-                                break
-                            } else if (token == Authenticate.ACCOUNT_DISABLED_CODE) {
-                                nextState = Constants.STATE_ACCOUNT_DISABLED
-                                break
-                            }
-                            stage = 2
-                        }
-
-                        // Next, try to get the actual token
-                        if (stage == 2) {
-                            call = OAuth2Client.getAccessToken(
-                                token = "B2C_1A_signup_signin_common",
-                                grantType = "authorization_code",
-                                clientId = FordConnectConstants.CLIENTID,
-                                clientSecret = FordConnectConstants.CLIENTSECRET,
-                                code = token!!,
-                                redirectURL = "https%3A%2F%2Flocalhost%3A3000"
-                            )
-                            val response = call!!.execute()
-                            if (!response.isSuccessful) {
-                                continue
-                            }
-                            accessToken = response.body()!!
-
-                            val id = UUID.nameUUIDFromBytes(accessToken.resource!!.toByteArray())
-                                .toString()
-
-                            // Create user profile
-                            tokenId.tokenId = id
-                            tokenId.accessToken = accessToken.accessToken!!
-                            tokenId.refreshToken = accessToken.refreshToken!!
-
-                            val time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(
-                                accessToken.expiresIn!!.toLong()
-                            )
-                            val nextTime =
-                                time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                            tokenId.expiresIn = nextTime
-
-                            val locale =
-                                ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0]
-//                            if (locale == null) {
-//                                userInfo.country = Locale.US.country
-//                                userInfo.language = Locale.US.toLanguageTag()
-//                            } else {
-//                                userInfo.country = locale.country
-//                                userInfo.language = locale.toLanguageTag()
-//                            }
-                            var units: String
-                            if (locale == null || locale.country == Locale.US.country) {
-//                                userInfo.uomSpeed = "MPH"
-//                                userInfo.uomPressure = "PSI"
-//                                userInfo.uomDistance = 1
-                                units = context.resources.getString(R.string.units_mphpsi)
-                            } else {
-//                                userInfo.uomSpeed = "KPH"
-//                                userInfo.uomPressure = "BAR"
-//                                userInfo.uomDistance = 0
-                                units = context.resources.getString(R.string.units_kphbar)
-                            }
-                            val edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
-                            edit.putString(context.resources.getString(R.string.units_key), units)
-                            edit.commit()
-
-                            val APIMPSClient =
-                                createAPIMPSService(APIMPSService::class.java, context)
-
-                            val callVehicleList =
-                                APIMPSClient.getVehicleList("Bearer " + tokenId.accessToken)
-                            val responseVehicleList = callVehicleList!!.execute()
-                            if (!responseVehicleList.isSuccessful) {
-                                continue
-                            }
-                            val newCars = responseVehicleList.body()
-                            var vehicleData: CarStatus
-                            if (newCars != null) {
-                                tokenId.users = newCars.vehicles.size
-                                for (vehicle in newCars.vehicles) {
-                                    val vehicleId = vehicle.vehicleId
-                                    val callVehicle = APIMPSClient.getStatus(
-                                        vehicleId,
-                                        "Bearer " + tokenId.accessToken
-                                    )
-                                    val responseVehicle = callVehicle!!.execute()
-                                    if (responseVehicle.isSuccessful) {
-                                        vehicleData = responseVehicle.body()!!
-                                        val vehicleInfo = VehicleInfo()
-                                        vehicleInfo.tokenId = tokenId.tokenId
-                                        vehicleInfo.vin = vehicleId
-                                        vehicleInfo.nickname = vehicleData.vehicle.nickName
-                                        vehicleInfoDao.insertVehicleInfo(vehicleInfo)
-
-                                        getVehicleImage(context = context,
-                                            token = "Bearer " + tokenId.accessToken,
-                                            vehicle = vehicle)
-                                        }
-                                }
-                            }
-
-
-//                            val acctAutoClient = createAcctAutonomicService(
-//                                AcctAutonomicService::class.java,
-//                                context
-//                            )
-//                            call = acctAutoClient.getAccessToken(
-//                                userInfo.accessToken!!,
-//                                "fordpass", "fordpass-prod",
-//                                "urn:ietf:params:oauth:grant-type:token-exchange",
-//                                "urn:ietf:params:oauth:token-type:jwt"
-//                            )
-//                            val response2 = call!!.execute()
-//                            accessToken = response2.body()!!
-
-//                            userInfo.autoAccessToken = accessToken.accessToken
-//                            val autoTime = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(
-//                                accessToken.expiresIn!!.toLong()
-//                            )
-//                            val autoNextTime =
-//                                autoTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-//                            userInfo.autoExpiresIn = autoNextTime
-
-//                            if (vehicles.size > 0) {
-//                                val VIN = vehicles[0].vin
-//                                val apiAutoClient = createApiAutonomicService(ApiAutonomicService::class.java, context)
-//                                val newcall = apiAutoClient.getStatus(VIN, "01-01-1970 00:00:00","Bearer " + autoAccessToken!!)
-//                                val response = newcall!!.execute()
-//                                val thestring = response.body()
-//                                val status = thestring as NewCarStatus
-//                                val cat = NewCarStatus.getCarStatus(status)
-//                                LogFile.e(context,"tag",status.vin)
-//                            }
-
-                            tokenId.programState = Constants.STATE_HAVE_TOKEN_AND_VIN
-                            tokenDao.insertTokenId(tokenId)
-
-//                            userDao.deleteAllUserInfo()
-//                            userDao.insertUserInfo(userInfo)
-
-//                            // Remove any existing vehicles associated with other user IDs
-//                            val dao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-//                            for (info in dao.findVehicleInfo()) {
-//                                if (info.userId != userId) {
-//                                    dao.deleteVehicleInfoByVIN(info.vin!!)
-//                                }
-//                            }
-//                            nextState =
-//                                if (VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-//                                        .findVINsByUserId(userId!!).isEmpty()
-//                                ) {
-//                                    Constants.STATE_HAVE_TOKEN
-//                                } else {
-//                                    Constants.STATE_HAVE_TOKEN_AND_VIN
-//                                }
-
-                            data.putExtra("userId", userId)
-                            break
-                        }
-                    } catch (ee: SocketTimeoutException) {
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            "java.net.SocketTimeoutException in NetworkCalls.getAccessToken"
-                        )
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            MessageFormat.format("    {0} retries remaining", retry)
-                        )
-                        try {
-                            Thread.sleep((3 * 1000).toLong())
-                        } catch (_: InterruptedException) {
-                        }
-                    } catch (e3: UnknownHostException) {
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            "java.net.UnknownHostException in NetworkCalls.getAccessToken"
-                        )
-                        break
-                    } catch (e1: java.lang.IllegalStateException) {
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            "IllegalStateException in NetworkCalls.getAccessToken: ", e1
-                        )
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            MessageFormat.format("    {0} retries remaining", retry)
-                        )
-                        try {
-                            Thread.sleep((3 * 1000).toLong())
-                        } catch (_: InterruptedException) {
-                        }
-                    } catch (e: java.lang.Exception) {
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            "exception in NetworkCalls.getAccessToken: ",
-                            e
-                        )
-                        break
-                    }
-                }
-            }
-//            userId?.let { userDao.updateProgramState(nextState, it) }
-            data.putExtra("action", nextState)
-            return data
         }
 
         private fun refreshAccessToken(
@@ -561,31 +306,22 @@ class NetworkCalls {
                         }
 
                         val newCars = responseVehicleList.body()
-                        var vehicleData: CarStatus
                         if (newCars != null) {
                             tokenInfo!!.users = newCars.vehicles.size
                             for (vehicle in newCars.vehicles) {
                                 val vehicleId = vehicle.vehicleId
-                                val existingVehicle = info.getVehicleByVIN(vehicleId)
-                                if (existingVehicle.vin == "") {
+                                val existingVehicle = info.getVehicleById(vehicleId)
+                                if (existingVehicle.carStatus.vehicle.vehicleId == "") {
                                     val callVehicle = APIMPSClient.getStatus(
                                         vehicleId,
                                         "Bearer " + tokenInfo!!.accessToken
                                     )
                                     val responseVehicle = callVehicle!!.execute()
                                     if (responseVehicle.isSuccessful) {
-                                        vehicleData = responseVehicle.body()!!
                                         val vehicleInfo = VehicleInfo()
+                                        vehicleInfo.carStatus = responseVehicle.body()!!
                                         vehicleInfo.tokenId = tokenInfo!!.tokenId
-                                        vehicleInfo.vin = vehicleId
-                                        vehicleInfo.nickname = vehicleData.vehicle.nickName
-
-                                        // TODO: add these fields
-//                                        vehicleInfo.make = vehicleData.vehicle.make
-//                                        vehicleInfo.model = vehicleData.vehicle.modelName
-//                                        vehicleInfo.year = vehicleData.vehicle.modelYear
-//
-                                        info.setVehicle(vehicleInfo)
+                                        info.insertVehicle(vehicleInfo)
 
                                         getVehicleImage(
                                             context = context,
@@ -599,6 +335,7 @@ class NetworkCalls {
                                 }
                             }
                             dao.updateTokenId(tokenInfo!!)
+                            break
                         }
                     }
                 }
@@ -626,19 +363,19 @@ class NetworkCalls {
             for (vehicle in infoDao.findVehicleInfo()) {
 
                 // Get the vehicles ID
-                val VIN = vehicle.vin
+                val vehicleId = vehicle.carStatus.vehicle.vehicleId
 
                 // Skip any vehicle which isn't enabled for use
                 if (!vehicle.isEnabled) {
                     LogFile.i(
                         MainActivity.CHANNEL_ID,
-                        "$VIN is disabled: skipping"
+                        "$vehicleId is disabled: skipping"
                     )
                     continue
                 } else {
                     LogFile.i(
                         MainActivity.CHANNEL_ID,
-                        "getting status for VIN $VIN"
+                        "getting status for VIN $vehicleId"
                     )
                 }
 
@@ -658,7 +395,7 @@ class NetworkCalls {
                                 createAPIMPSService(APIMPSService::class.java, context)
 
                             val callStatus = statusClient.getStatus(
-                                vehicleId = vehicle.vin!!,
+                                vehicleId = vehicle.carStatus.vehicle.vehicleId,
                                 accessToken = "Bearer " + accessToken
                             )
                             val responseStatus = callStatus!!.execute()
@@ -777,6 +514,7 @@ class NetworkCalls {
             return data
         }
 
+        // TODO: FordConnect API doesn't supply fast Charging info
         // Decide what to do with any charging data
 //        fun updateChargingStatus(
 //            context: Context,
@@ -875,285 +613,6 @@ class NetworkCalls {
 //            m
 //        }
 
-//        private fun getStatus(
-//            context: Context,
-//            tmpUserInfo: UserInfo,
-//            VIN: String,
-//            nickname: String
-//        ): Intent {
-//            val userDao = UserInfoDatabase.getInstance(context)
-//                .userInfoDao()
-//            val infoDao = VehicleInfoDatabase.getInstance(context)
-//                .vehicleInfoDao()
-//            val userId = tmpUserInfo.userId
-//            val language = tmpUserInfo.language
-//            val data = Intent()
-//            var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
-//            LogFile.d(MainActivity.CHANNEL_ID, "userId = $userId")
-//            LogFile.d(
-//                MainActivity.CHANNEL_ID,
-//                "getting status for " + infoDao.findVehicleInfoByUserId(
-//                    userId!!
-//                ).size + " vehicles"
-//            )
-//
-////        VehicleInfo info = infoDao.findVehicleInfoByVIN(VIN);
-//            LogFile.i(
-//                MainActivity.CHANNEL_ID,
-//                "getting status for VIN $VIN"
-//            )
-//            if (checkInternetConnection(context) && checkForRefresh(context, tmpUserInfo)) {
-//                val userInfo = userDao.findUserInfo(userId)
-//                val token = userInfo!!.accessToken
-//
-//                val statusClient =
-//                    createApiAutonomicService(ApiAutonomicService::class.java, context)
-//
-//                for (retry in 2 downTo 0) {
-//                    try {
-//                        // Try to get the latest car status
-//                        val autoAccessToken = userInfo.autoAccessToken
-//                        val callStatus = statusClient.getStatus(
-//                            VIN,
-//                            "01-01-1970 00:00:00",
-//                            "Bearer " + autoAccessToken
-//                        )
-//                        val responseStatus = callStatus!!.execute()
-//
-//                        if (responseStatus.isSuccessful) {
-//                            LogFile.i(MainActivity.CHANNEL_ID, "status successful.")
-//                            val newCar = responseStatus.body() as NewCarStatus
-//                            val car = NewCarStatus.getCarStatus(newCar)
-//
-////                            val lastRefreshTime = Calendar.getInstance()
-////                            val cal = Calendar.getInstance()
-////                            val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-////                            sdf.timeZone = TimeZone.getTimeZone("UTC")
-////                            cal.time = sdf.parse(car.lastRefresh) as Date
-////                            val currentRefreshTime =
-////                                lastRefreshTime.toInstant().toEpochMilli()
-//
-//                            val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
-//                            val time = LocalDateTime.parse(car.vehicle.lastUpdated, formatter).atZone(ZoneOffset.UTC)
-//                                .withZoneSameInstant(ZoneId.systemDefault())
-//                            val currentRefreshTime = time.toInstant().toEpochMilli()
-//
-////                            val lastRefreshTime = Calendar.getInstance()
-////                            val sdf = SimpleDateFormat(Constants.CHARGETIMEFORMAT, Locale.ENGLISH)
-////                            sdf.timeZone = TimeZone.getTimeZone("UTC")
-////                            var currentRefreshTime: Long = 0
-////                            try {
-////                                lastRefreshTime.time = sdf.parse(car.lastRefresh)
-////                                currentRefreshTime = lastRefreshTime.toInstant().toEpochMilli()
-////                            } catch (e: ParseException) {
-////                                e(
-////                                    context,
-////                                    MainActivity.CHANNEL_ID,
-////                                    "exception in NetworkCalls.getStatus: ",
-////                                    e
-////                                )
-////                            }
-//
-//                            val info = VehicleInfo()
-//                            info.vin = VIN
-//                            info.nickname = nickname
-//                            info.userId = userId
-//                            info.carStatus = car
-//                            info.setLastUpdateTime()
-//                            info.lastRefreshTime = currentRefreshTime
-//                            infoDao.insertVehicleInfo(info)
-//
-//                            val isPHEV = car.isPropulsionPHEV()
-//                            val isElectric = car.isPropulsionElectric()
-//
-//                            // If this vehicle is electric, update global setting
-//                            if (isElectric || isPHEV) {
-//                                val appInfo = StoredData(context)
-//                                appInfo.electricVehicles = true
-//                            }
-//                            LogFile.i(MainActivity.CHANNEL_ID, "got status")
-//                            nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
-//                        } else {
-//                            LogFile.i(
-//                                MainActivity.CHANNEL_ID,
-//                                responseStatus.raw().toString()
-//                            )
-//                            LogFile.i(MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.")
-//                            nextState = Constants.STATE_ACCOUNT_DISABLED
-//                        }
-//                        break
-//                    } catch (e2: SocketTimeoutException) {
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            "exception in NetworkCalls.getStatus",
-//                            e2
-//                        )
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            MessageFormat.format("    {0} retries remaining", retry)
-//                        )
-//                        try {
-//                            Thread.sleep((3 * 1000).toLong())
-//                        } catch (_: InterruptedException) {
-//                        }
-//                    } catch (e2: java.lang.IllegalStateException) {
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            "exception in NetworkCalls.getStatus",
-//                            e2
-//                        )
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            MessageFormat.format("    {0} retries remaining", retry)
-//                        )
-//                        try {
-//                            Thread.sleep((3 * 1000).toLong())
-//                        } catch (_: InterruptedException) {
-//                        }
-//                    } catch (e3: UnknownHostException) {
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            "java.net.UnknownHostException in NetworkCalls.getStatus"
-//                        )
-//                        // If the vehicle info changed, commit
-//                        break
-//                    } catch (e: java.lang.Exception) {
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            "exception in NetworkCalls.getStatus: ",
-//                            e
-//                        )
-//                        // If the vehicle info changed, commit
-//                        break
-//                    }
-//                }
-//            }
-//            userDao.updateProgramState(nextState, userId)
-//            data.putExtra("action", nextState)
-//            return data
-//        }
-
-        private fun getStatusByVehicleId(
-            context: Context,
-            vehicleId: String,
-        ): Intent {
-            val vehicleInfoDao = VehicleInfoDatabase.getInstance(context)
-                .vehicleInfoDao()
-            val tokenIdDao = TokenIdDatabase.getInstance(context)
-                .tokenIdDao()
-            val data = Intent()
-            var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
-            LogFile.d(MainActivity.CHANNEL_ID, "vehicleId = $vehicleId")
-            val vehicle = vehicleInfoDao.findVehicleInfoByVIN(vehicleId)
-
-            var tokenIdInfo = tokenIdDao.findTokenId(vehicle!!.tokenId!!) as TokenId
-            if (checkInternetConnection(context) && checkForRefresh(context, tokenIdInfo.accessToken!!)) {
-
-                // Update in case a refresh was done
-                tokenIdInfo = tokenIdDao.findTokenId(vehicle!!.tokenId!!) as TokenId
-
-                val APIMPSClient =
-                    createAPIMPSService(APIMPSService::class.java, context)
-
-                for (retry in 2 downTo 0) {
-                    try {
-                        // Try to get the latest car status
-                        val callStatus = APIMPSClient.getStatus(
-                            vehicleId = vehicle.vin!!,
-                            accessToken = "Bearer " + tokenIdInfo.accessToken!!
-                        )
-                        val responseStatus = callStatus!!.execute()
-
-                        if (responseStatus.isSuccessful) {
-                            LogFile.i(MainActivity.CHANNEL_ID, "status successful.")
-                            val car = responseStatus.body() as CarStatus
-
-                            val formatter = DateTimeFormatter.ofPattern(Constants.CHARGETIMEFORMAT, Locale.getDefault())
-                            val time = LocalDateTime.parse(car.vehicle.lastUpdated, formatter).atZone(ZoneOffset.UTC)
-                                .withZoneSameInstant(ZoneId.systemDefault())
-                            val currentRefreshTime = time.toInstant().toEpochMilli()
-
-                            val info = VehicleInfo()
-                            info.vin = vehicleId
-
-                            // TODO: remove this as redundant?
-                            info.nickname = car.vehicle.nickName
-                            info.carStatus = car
-                            info.setLastUpdateTime()
-                            info.lastRefreshTime = currentRefreshTime
-                            vehicleInfoDao.insertVehicleInfo(info)
-
-                            // If this vehicle is electric, update global setting
-                            val isPHEV = car.isPropulsionPHEV()
-                            val isElectric = car.isPropulsionElectric()
-
-                            if (isElectric || isPHEV) {
-                                val appInfo = StoredData(context)
-                                appInfo.electricVehicles = true
-                            }
-                            LogFile.i(MainActivity.CHANNEL_ID, "got status")
-                            nextState = Constants.STATE_HAVE_TOKEN_AND_VIN
-                        } else {
-                            LogFile.i(
-                                MainActivity.CHANNEL_ID,
-                                responseStatus.raw().toString()
-                            )
-                            LogFile.i(MainActivity.CHANNEL_ID, "status UNSUCCESSFUL.")
-                            nextState = Constants.STATE_ACCOUNT_DISABLED
-                        }
-                        break
-                    } catch (e2: SocketTimeoutException) {
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            "exception in NetworkCalls.getStatus",
-                            e2
-                        )
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            MessageFormat.format("    {0} retries remaining", retry)
-                        )
-                        try {
-                            Thread.sleep((3 * 1000).toLong())
-                        } catch (_: InterruptedException) {
-                        }
-                    } catch (e2: java.lang.IllegalStateException) {
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            "exception in NetworkCalls.getStatus",
-                            e2
-                        )
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            MessageFormat.format("    {0} retries remaining", retry)
-                        )
-                        try {
-                            Thread.sleep((3 * 1000).toLong())
-                        } catch (_: InterruptedException) {
-                        }
-                    } catch (e3: UnknownHostException) {
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            "java.net.UnknownHostException in NetworkCalls.getStatus"
-                        )
-                        // If the vehicle info changed, commit
-                        break
-                    } catch (e: java.lang.Exception) {
-                        LogFile.e(
-                            MainActivity.CHANNEL_ID,
-                            "exception in NetworkCalls.getStatus: ",
-                            e
-                        )
-                        // If the vehicle info changed, commit
-                        break
-                    }
-                }
-                tokenIdInfo.programState = nextState
-                tokenIdDao.updateTokenId(tokenIdInfo)
-            }
-            data.putExtra("action", nextState)
-            return data
-        }
-
         @JvmStatic
         fun getVehicleImage(context: Context, token: String, vehicle: VehicleData) {
             // Create the images folder if necessary
@@ -1192,6 +651,7 @@ class NetworkCalls {
                                             "vehicle image successful."
                                         )
                                         updateWidget(context)
+                                        break
                                     } else {
                                         LogFile.i(
                                             MainActivity.CHANNEL_ID,
@@ -1204,7 +664,8 @@ class NetworkCalls {
                                             )
                                         }
                                     }
-                                    break
+                                    Thread.sleep((1000).toLong())
+//                                    break
                                 } catch (ee: SocketTimeoutException) {
                                     LogFile.e(
                                         MainActivity.CHANNEL_ID,

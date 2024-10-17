@@ -4,15 +4,26 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.khughes.machewidget.DoorConverters
+import com.example.khughes.machewidget.Vehicle.Companion.Model
 import com.example.khughes.machewidget.VehicleInfo
 import java.util.concurrent.Executors
 
+class ModelConverters {
+    @TypeConverter
+    fun toModel(data: Int): Model
+        = Model.fromInt(data)
+    @TypeConverter
+    fun fromModel(value: Model)
+        = value.value
+}
+
 @Database(entities = [VehicleInfo::class], version = 1)
-@TypeConverters(DoorConverters::class)
+@TypeConverters(DoorConverters::class,ModelConverters::class)
 abstract class VehicleInfoDatabase : RoomDatabase() {
     abstract fun vehicleInfoDao(): VehicleInfoDao
 

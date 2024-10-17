@@ -1,480 +1,459 @@
 package com.example.khughes.machewidget
 
+import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.res.Configuration
-import android.content.res.Resources
-import android.graphics.*
-import android.graphics.drawable.ColorDrawable
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
-import android.text.Editable
-import android.text.InputFilter
-import android.text.SpannableString
-import android.text.TextWatcher
-import android.text.style.StrikethroughSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.twotone.Add
+import androidx.compose.material.icons.twotone.Build
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.*
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView.*
-import com.example.khughes.machewidget.databinding.ActivityVehicleBinding
-import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.*
-import java.lang.ref.WeakReference
-import java.util.*
-
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.khughes.machewidget.Vehicle.Companion.modelMap
+import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 private lateinit var mVehicleViewModel: VehicleViewModel
-private lateinit var activity: AppCompatActivity
-private lateinit var userId: String
+private lateinit var info: InfoRepository
 
-class VehicleActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityVehicleBinding
-    private lateinit var context: Context
-    private lateinit var newVINWidget: TextInputLayout
-
-    private fun getStatus(context: Context, VIN: String, nickname: String) {
-        CoroutineScope(Dispatchers.Main).launch {
-//            val msg = NetworkCalls.getStatus(context, userInfo, VIN, nickname)
-//            val bundle = msg.data
-//            val action = bundle.getString("action")
-//            if (action == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-//                Toast.makeText(
-//                    context,
-//                    getString(R.string.activity_vehicle_status_success_description),
-//                    Toast.LENGTH_LONG
-//                ).show()
-//                NetworkCalls.getVehicleImage(context, VIN, userInfo.country!!)
-//            } else {
-//                Toast.makeText(
-//                    context,
-//                    getString(R.string.activity_vehicle_status_failure_description),
-//                    Toast.LENGTH_LONG
-//                ).show()
-//            }
-        }
-    }
-
-    private var defaultLanguage: Locale? = null
-
-    private fun getContextForLanguage(context: Context): Context {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) return context
-
-        if (defaultLanguage == null) {
-            defaultLanguage = Resources.getSystem().configuration.locales[0]
-        }
-
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val languageTag =
-            sharedPref.getString(context.resources.getString(R.string.language_key), "")
-        val locale = if (languageTag!!.isEmpty()) {
-            defaultLanguage as Locale
-        } else {
-            Locale.forLanguageTag(languageTag)
-        }
-        Locale.setDefault(locale)
-        val resources: Resources = context.resources
-        val configuration: Configuration = resources.configuration
-        configuration.setLocale(locale)
-        return context.createConfigurationContext(configuration)
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(getContextForLanguage(newBase))
-    }
-
+class VehicleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityVehicleBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        context = applicationContext
-        activity = this
+        enableEdgeToEdge()
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        userId =
-            prefs.getString(context.resources.getString(R.string.userId_key), "") as String
+        lifecycleScope.launch {
+            info = getInfo(applicationContext)
 
-        binding.addVehicle.setOnClickListener {
-            // Create the alert dialog
-            val layout = layoutInflater.inflate(R.layout.newvehicle, null)
-            newVINWidget = layout.findViewById(R.id.new_vehicle_vin)
-            val newNicknameWidget = layout.findViewById<TextInputLayout>(R.id.new_vehicle_nickname)
-            val dialog = AlertDialog.Builder(
-                ContextThemeWrapper(
-                    activity,
-                    R.style.AlertDialogCustom
-                )
-            )
-                .setMessage(getString(R.string.activity_vehicle_enter_new_vehicle_information))
-                .setView(layout)
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create()
-            dialog.show()
-
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(View.OnClickListener {
-                val VIN = newVINWidget.editText?.text.toString().uppercase(Locale.getDefault())
-
-                val nickname = newNicknameWidget.editText?.text.toString()
-
-                mVehicleViewModel.allVehicles.value?.let {
-                    for (tmp in it) {
-                        if (tmp.vin == VIN) {
-                            Toast.makeText(
-                                context,
-                                getString(R.string.activity_vehicle_vin_exists), Toast.LENGTH_LONG
-                            )
-                                .show()
-                            return@OnClickListener
-                        } else if (nickname != "" && tmp.nickname == nickname) {
-                            Toast.makeText(
-                                context,
-                                getString(R.string.activity_vehicle_nickname_exists),
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                            return@OnClickListener
-                        }
-                    }
+            setContent {
+                MacheWidgetTheme {
+                    ManageVehicle()
                 }
-                getStatus(context, VIN, nickname)
-                dialog.dismiss()
-            })
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
-
-            // Force text to uppercase
-            newVINWidget.editText?.let { it.filters += InputFilter.AllCaps() }
-
-            // Process VIN text as it's typed
-            newVINWidget.editText?.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    val VIN = s.toString()
-
-                    // When we recognize something in the VIN, display a specific hint
-                    var message: String
-                    if (Vehicle.isVINRecognized(VIN)) {
-                        message = Vehicle.getVehicle(VIN).name
-                        if (message != "") {
-                            message = "VIN appears to be for " +
-                                    (if ("AEIOU".contains(
-                                            message.subSequence(
-                                                0,
-                                                1
-                                            )
-                                        )
-                                    ) "an " else "a ") + message
-                        }
-                        newVINWidget.hintTextColor =
-                            ContextCompat.getColorStateList(context, R.color.light_blue_200)
-                    } else {
-                        message = context.resources.getString(R.string.vehicles_vin)
-                        newVINWidget.hintTextColor =
-                            ContextCompat.getColorStateList(context, R.color.light_blue_600)
-                    }
-                    newVINWidget.hint = message
-
-                    // Display helper text if VIN string is too short; otherwise, enable the OK button
-                    val size = s.toString().length
-                    newVINWidget.helperText =
-                        if (size == 17) "" else context.resources.getString(R.string.correct_VIN_length)
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = size == 17
-                }
-
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                }
-            })
-        }
-
-        val adapter = VehicleListAdapter(VehicleDiff(), context)
-        binding.recyclerview.adapter = adapter
-        binding.recyclerview.layoutManager = LinearLayoutManager(this)
-
-        mVehicleViewModel = ViewModelProvider(this)[VehicleViewModel::class.java]
-        mVehicleViewModel.allVehicles.observe(this) { list: List<VehicleIds?>? ->
-            adapter.submitList(
-                list
-            )
-        }
-
-        val swipeToDelete = object : SwipeToDelete(context) {
-            override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-
-                val position = viewHolder.adapterPosition
-                val VIN = adapter.currentList[position].vin
-
-                AlertDialog.Builder(
-                    ContextThemeWrapper(activity, R.style.AlertDialogCustom)
-                )
-                    .setTitle(getString(R.string.activity_vehicle_remove_vehicle_title))
-                    .setMessage(getString(R.string.activity_vehicle_remove_vehicle_description))
-                    .setNegativeButton(
-                        android.R.string.cancel
-                    ) { _: DialogInterface?, _: Int ->
-                        adapter.refresh()
-                    }
-                    .setPositiveButton(
-                        android.R.string.ok
-                    ) { _: DialogInterface?, _: Int ->
-                        adapter.removeItem(position, VIN!!)
-                    }
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show()
             }
         }
+    }
 
-        val itemTouchHelper = ItemTouchHelper(swipeToDelete)
-        itemTouchHelper.attachToRecyclerView(binding.recyclerview)
+    private suspend fun getInfo(context: Context): InfoRepository =
+        coroutineScope {
+            withContext(Dispatchers.IO) { InfoRepository(context) }
+        }
+}
 
-//        CoroutineScope(Dispatchers.Main).launch {
-//            userInfo = getUserInfo(context, userId)
-//            if (userInfo.userId == null) {
-//                binding.addVehicle.hide()
-//                AlertDialog.Builder(
-//                    ContextThemeWrapper(activity, R.style.AlertDialogCustom)
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//private fun AddNewVehicle(
+//    vehicle: VehicleIds,
+//    popupWidth: Float,
+//    popupHeight: Float,
+//    showPopup: Boolean,
+//    focusRequester: FocusRequester,
+//    onClickOutside: () -> Unit,
+//) {
+//    val context = LocalContext.current
+//    var vin by remember { mutableStateOf("") }
+//    var help by remember { mutableStateOf("") }
+//    var recognizeVIN by remember { mutableStateOf(context.getString(R.string.activity_vehicle_enter_new_vehicle_information)) }
+//    val firstColor = MaterialTheme.colorScheme.secondary
+//    var recognizeVINColor by remember { mutableStateOf(firstColor) }
+//
+//    // popup
+//    Popup(
+//        alignment = Alignment.Center,
+//        properties = PopupProperties(
+//            focusable = true,
+//            dismissOnBackPress = true,
+//        ),
+//        // to dismiss on click outside
+//        onDismissRequest = { onClickOutside() },
+//    ) {
+//        val outlinedColors = OutlinedTextFieldDefaults.colors(
+//            cursorColor = MaterialTheme.colorScheme.secondary,
+//            focusedLabelColor = MaterialTheme.colorScheme.secondary,
+//            unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
+//            focusedBorderColor = MaterialTheme.colorScheme.secondary,
+//            unfocusedBorderColor = Color.Gray,
+//            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+//            unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+////            focusedTextColor = MaterialTheme.colorScheme.secondary,
+//        )
+//
+//        Box(
+//            modifier = Modifier
+//                .wrapContentSize()
+//                .clip(RoundedCornerShape(8.dp))
+//                .background(MaterialTheme.colorScheme.primaryContainer)
+//        )
+//        {
+//            Column(
+//                modifier = Modifier.padding(all = 10.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//
+//                Text(
+//                    text = context.getString(R.string.activity_vehicle_enter_new_vehicle_information),
+//                    color = MaterialTheme.colorScheme.secondary,
+//                    fontSize = 14.sp
 //                )
-//                    .setTitle(context.getString(R.string.misc_error_message))
-//                    .setMessage(getString(R.string.activity_vehicle_userId_missing))
-//                    .setPositiveButton(
-//                        android.R.string.ok
-//                    ) { _: DialogInterface?, _: Int -> finish() }
-//                    .setIcon(android.R.drawable.ic_dialog_alert)
-//                    .show()
+//                OutlinedTextField(
+//                    value = vin,
+//                    supportingText = {
+//                        Text(
+//                            text = help,
+//                            //              color = MaterialTheme.colorScheme.secondary
+//                        )
+//                    },
+//                    colors = outlinedColors,
+//                    onValueChange =
+//                    {
+//                        // Check that the string isn't too long, and that if only contains alphanumeric characters
+//                        if (it.length <= 12 && it.uppercase().replace("[A-Z0-9]".toRegex(), "")
+//                                .isEmpty()
+//                        ) {
+//                            vin = it.uppercase()
+//                            var message = ""
+//                            if (Vehicle.isVINRecognized(vin)) {
+//                                val model = Vehicle.getVehicle(vin).name
+//                                if (model != "") {
+//                                    message = "VIN appears to be for " +
+//                                            (if ("AEIOU".contains(
+//                                                    model.subSequence(
+//                                                        0,
+//                                                        1
+//                                                    )
+//                                                )
+//                                            ) "an " else "a ") + model
+//                                }
+//                                recognizeVINColor = Color.Red
+//                            } else {
+//                                message = context.resources.getString(R.string.vehicles_vin)
+//                                recognizeVINColor = firstColor
+//                            }
+//                            recognizeVIN = message
+//                            val len = vin.length
+//                            help =
+//                                if (vin.length == 12) "" else context.getString(R.string.correct_VIN_length) + " $len/12"
+//                        }
+//                    },
+//                    label = {
+//                        Text(
+//                            text = recognizeVIN,
+//                            color = recognizeVINColor
+//                        )
+//                    },
+//                    modifier = Modifier
+//                        .focusRequester(focusRequester)
+//
+//                )
+//                Button(
+//                    onClick = {
+//                        vehicle.vin = vin
+//                        onClickOutside()
+//                    }
+//                )
+//                {
+//                    Text("Save")
+//                }
+//                Button(
+//                    onClick = {
+//                        onClickOutside()
+//                    }
+//                )
+//                {
+//                    Text("Cancel")
+//                }
+//            }
+//            LaunchedEffect(Unit) {
+//                focusRequester.requestFocus()
 //            }
 //        }
-    }
+//    }
+//}
 
-//    private suspend fun getUserInfo(context: Context, userId: String): UserInfo =
-//        coroutineScope {
-//            withContext(Dispatchers.IO) {
-//                UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo(userId)
-//                    ?: UserInfo()
-////                if (user == null) {
-////                    val tmp = UserInfo()
-////                    tmp.userId = ""
-////                    tmp
-////                } else {
-////                    user
-////                }
-//            }
-//        }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ManageVehicle() {
+    mVehicleViewModel = viewModel<VehicleViewModel>()
+    val vehicles = mVehicleViewModel.allVehicles.observeAsState().value
+    val context = LocalContext.current
 
-    open class SwipeToDelete(context: Context) : ItemTouchHelper.Callback() {
-        val mContext = context
-        val mBackground = ColorDrawable()
-        val backgroundColor = Color.parseColor(context.resources.getString(R.color.light_blue_900))
-        val mClearPaint = Paint()
-        val deleteDrawable = ContextCompat.getDrawable(
-            mContext,
-            R.drawable.x_gray
-        ) as Drawable
-        val intrinsicWidth = deleteDrawable.intrinsicWidth
-        val intrinsicHeight = deleteDrawable.intrinsicWidth
-
-        init {
-            mClearPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-        }
-
-        override fun getMovementFlags(
-            recyclerView: RecyclerView,
-            viewHolder: ViewHolder
-        ): Int {
-            return makeMovementFlags(0, ItemTouchHelper.RIGHT)
-        }
-
-        override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: ViewHolder,
-            target: ViewHolder
-        ): Boolean {
-            return false
-        }
-
-        override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onChildDraw(
-            c: Canvas,
-            recyclerView: RecyclerView,
-            viewHolder: ViewHolder,
-            dX: Float,
-            dY: Float,
-            actionState: Int,
-            isCurrentlyActive: Boolean
-        ) {
-            val itemView = viewHolder.itemView
-            val itemHeight = itemView.height
-
-            val isCancelled = dX == 0F && !isCurrentlyActive
-
-            if (isCancelled) {
-                clearCanvas(
-                    c,
-                    itemView.right + dX,
-                    itemView.top.toFloat(),
-                    itemView.right.toFloat(),
-                    itemView.bottom.toFloat()
-                )
-            } else {
-                mBackground.color = backgroundColor
-                mBackground.setBounds(
-                    itemView.left,
-                    itemView.top,
-                    itemView.left + dX.toInt(),
-                    itemView.bottom
-                )
-                mBackground.draw(c)
-
-                val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-                val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
-                val deleteIconLeft: Int = itemView.left + deleteIconMargin
-                val deleteIconRight = itemView.left + deleteIconMargin + intrinsicWidth
-                val deleteIconBottom = deleteIconTop + intrinsicHeight
-
-                deleteDrawable.setBounds(
-                    deleteIconLeft,
-                    deleteIconTop,
-                    deleteIconRight,
-                    deleteIconBottom
-                )
-                deleteDrawable.draw(c)
-            }
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-        }
-
-        private fun clearCanvas(
-            c: Canvas,
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float
-        ) {
-            c.drawRect(left, top, right, bottom, mClearPaint)
-        }
-    }
-
-    class VehicleViewHolder(itemView: View) :
-        ViewHolder(itemView) {
-        val VINItemView: TextView
-        val nicknameItemView: TextView
-        val enabledView: CheckBox
-        val imageView: ImageView
-
-        companion object {
-            fun create(parent: ViewGroup): VehicleViewHolder {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.vehicleview_item, parent, false)
-                return VehicleViewHolder(view)
-            }
-        }
-
-        init {
-            VINItemView = itemView.findViewById(R.id.VIN)
-            nicknameItemView = itemView.findViewById(R.id.nickname)
-            enabledView = itemView.findViewById(R.id.checkBox)
-            imageView = itemView.findViewById(R.id.image)
-        }
-    }
-
-    class VehicleListAdapter(diffCallback: DiffUtil.ItemCallback<VehicleIds>, context: Context) :
-        ListAdapter<VehicleIds, VehicleViewHolder>(diffCallback) {
-        private val mContext: WeakReference<Context> = WeakReference(context)
-        private var changing = false
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VehicleViewHolder {
-            val tmp = VehicleViewHolder.create(parent)
-            tmp.enabledView.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
-                if (!changing) {
-                    val position = tmp.adapterPosition
-                    if (position >= 0) {
-                        val vehicle = getItem(position)
-                        vehicle?.let {
-                            val VIN = vehicle.vin
-                            VIN?.let {
-                                mVehicleViewModel.setEnable(VIN, isChecked)
-                                vehicle.enabled = isChecked
-                                notifyDataSetChanged()
-                            }
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text(stringResource(R.string.action_vehicle)) })
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+//                    focusRequester.requestFocus()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val msg = NetworkCalls.getAccessToken(context)
+                        val bundle = msg.data
+                        val tokenId = bundle.getString("tokenId")
+                        if (tokenId!! != "") {
+                            NetworkCalls.getVehicleList(context, tokenId)
                         }
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.secondary,
+                shape = CircleShape,
+                content = {
+                    Icon(
+                        imageVector = Icons.TwoTone.Add,
+                        contentDescription = "Add FAB",
+                        tint = MaterialTheme.colorScheme.secondary,
+                    )
+                }
+            )
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+    { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Text(
+                text = stringResource(id = R.string.vehicle_instructions),
+                fontSize = 14.sp,
+                lineHeight = 16.sp
+            )
+
+            vehicles?.let {
+                LazyColumn(
+                    contentPadding = PaddingValues(2.dp)
+                ) {
+                    items(vehicles) { vehicle ->
+                        VehicleDisplay(vehicle)
                     }
                 }
             }
-            return tmp
-        }
 
-        override fun onBindViewHolder(holder: VehicleViewHolder, position: Int) {
-            val current = getItem(position)
-            val VIN = current.vin as String
-
-            // if VIN isn't recognized, denote with a strike-through
-            val text = SpannableString(VIN)
-            if (!Vehicle.isVINRecognized(VIN)) {
-                text.setSpan(StrikethroughSpan(), 0, VIN.length, 0)
-            }
-            holder.VINItemView.text = text
-            holder.nicknameItemView.text = current.nickname
-            val bmp = VehicleImages.getRandomImage(mContext.get()!!, VIN)
-            if (bmp != null) {
-                holder.imageView.setImageBitmap(bmp)
-                holder.imageView.visibility = VISIBLE
-            } else {
-                holder.imageView.visibility = GONE
-            }
-            val nightModeFlags =
-                holder.itemView.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            holder.VINItemView.setTextColor(Color.parseColor(if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO) "#000000" else "#FFFFFF"))
-            holder.nicknameItemView.setTextColor(Color.parseColor(if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO) "#000000" else "#FFFFFF"))
-            if (position % 2 == 1) {
-                holder.itemView.setBackgroundColor(Color.parseColor(if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO) "#FFFFFF" else "#000000"))
-            } else {
-                holder.itemView.setBackgroundColor(Color.parseColor(if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO) "#F0F0F0" else "#202020"))
-            }
-            changing = true
-            holder.enabledView.isChecked = current.enabled
-            holder.enabledView.isEnabled =
-                !current.enabled || mVehicleViewModel.countEnabledVehicle() > 1
-            changing = false
-        }
-
-        fun removeItem(position: Int, VIN: String) {
-            mVehicleViewModel.removeVehicle(VIN)
-            notifyItemRemoved(position)
-        }
-
-        fun refresh() {
-            notifyDataSetChanged()
         }
     }
+}
 
-    class VehicleDiff : DiffUtil.ItemCallback<VehicleIds>() {
-        override fun areItemsTheSame(oldItem: VehicleIds, newItem: VehicleIds): Boolean {
-            return oldItem === newItem
-        }
+@Composable
+fun VehicleModel(
+    currentModel: String,
+    onSelect: (Vehicle.Companion.Model) -> Unit
+) {
+    var isMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var pressOffset by remember {
+        mutableStateOf(DpOffset.Zero )
+    }
+    var itemHeight by remember {
+        mutableStateOf(0.dp)
+    }
+    var model by remember {
+        mutableStateOf(currentModel )
+    }
 
-        override fun areContentsTheSame(oldItem: VehicleIds, newItem: VehicleIds): Boolean {
-            return oldItem == newItem
+    Box (
+        modifier = Modifier
+            .clickable(onClick = {
+                isMenuVisible = true
+            })
+    ) {
+        Text(
+            text = model,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+    }
+    DropdownMenu(
+        expanded = isMenuVisible,
+        onDismissRequest = { isMenuVisible = false},
+        offset = pressOffset.copy(y = pressOffset.y - itemHeight)
+    ) {
+
+        val menuMap: MutableMap<String, Vehicle.Companion.Model> = mutableMapOf()
+        modelMap.keys.forEach {
+            menuMap[modelMap[it]!!.modelName] = it
         }
+        menuMap.forEach {
+            DropdownMenuItem(text = {
+                Text(
+                    text = it.key,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+
+                )
+            }, onClick = {
+                onSelect(it.value)
+                model = it.key
+                isMenuVisible = false
+            })
+        }
+    }
+}
+
+@Composable
+fun VehicleDisplay(vehicle: VehicleIds) {
+//    var popupVisible by remember { mutableStateOf(false) }
+//    val focusRequester = remember { FocusRequester() }
+//
+//    if (popupVisible) {
+//        AddNewVehicle(vehicle = vehicle,
+//            500.0F, 500.0F, showPopup = false, onClickOutside = {
+//                popupVisible = false
+//            }, focusRequester = focusRequester
+//        )
+//    }
+
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier
+            .padding(vertical = 4.dp)
+            .fillMaxWidth()
+    )
+    {
+        val checkBoxValue = remember { mutableStateOf(vehicle.enabled) }
+        val context = LocalContext.current
+        val photo = VehicleImages.getRandomImage(context = context, vehicle.vehicleId)
+
+        Checkbox(checked = checkBoxValue.value,
+            onCheckedChange = {
+                vehicle.enabled = it
+                checkBoxValue.value = it
+                mVehicleViewModel.setEnable(vehicle.vehicleId!!, vehicle.enabled)
+            }
+        )
+        photo?.let {
+            Image(
+                bitmap = photo.asImageBitmap(),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(54.dp)
+                    .padding(start = 4.dp)
+            )
+        }
+        Column {
+            Text(
+                text = vehicle.nickname!!,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+            VehicleModel(
+                currentModel = modelMap [vehicle.modelId]!!.modelName,
+                onSelect = {
+                    vehicle.modelId = it
+                    mVehicleViewModel.setModel(vehicle.vehicleId!!, vehicle.modelId)
+                    CarStatusWidget.updateWidget(context)
+                }
+            )
+//            Text(text = vehicle.vin!!,
+//                fontSize = 10.sp,
+//                modifier = Modifier
+//                    .padding(horizontal = 8.dp)
+//                    .clickable {
+//                        popupVisible = true
+//                    }
+//            )
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+private fun LightPreview() {
+    MacheWidgetTheme {
+        ManageVehicle()
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun DarkPreview() {
+    MacheWidgetTheme {
+        ManageVehicle()
     }
 }

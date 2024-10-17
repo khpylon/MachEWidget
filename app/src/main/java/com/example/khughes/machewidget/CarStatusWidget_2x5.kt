@@ -2,7 +2,6 @@ package com.example.khughes.machewidget
 
 import com.example.khughes.machewidget.Vehicle.Companion.getVehicle
 import com.example.khughes.machewidget.VehicleColor.Companion.scanImageForColor
-import com.example.khughes.machewidget.VehicleColor.Companion.isFirstEdition
 import android.widget.RemoteViews
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -83,7 +82,7 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
 
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info!!, appWidgetId) ?: return
-        views.setTextViewText(R.id.profile, vehicleInfo.nickname)
+        views.setTextViewText(R.id.profile, vehicleInfo.carStatus.vehicle.nickName)
         //        views.setTextViewText(R.id.profile, "My Mach-E");
 
         // Get conversion factors and descriptions for measurement units
@@ -211,17 +210,18 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
         )
 
         // Get the right images to use for this vehicle
-        val vehicleImages = getVehicle(vehicleInfo.vin).horizontalDrawables
+        val vehicleImages = getVehicle(vehicleInfo.modelId).horizontalDrawables
 
         // See if we should guess vehicle color
         if (scanImageForColor(context, vehicleInfo)) {
             info.setVehicle(vehicleInfo)
         }
 
+        // TODO: re-enable if we're ever able to read the VIN again
         // If vehicle is a Mach-E First Edition, show mirrors in body color
-        if (isFirstEdition(context, vehicleInfo.vin!!)) {
-            vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_horz
-        }
+//        if (isFirstEdition(context, vehicleInfo.vin!!)) {
+//            vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_horz
+//        }
 
         // Draw the vehicle image
         drawVehicleImage(context, views, carStatus, vehicleInfo.colorValue, null, vehicleImages)

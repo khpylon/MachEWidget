@@ -241,10 +241,13 @@ open class Vehicle(val VIN: String) {
                 AU_LINE_SERIES_MACHE_GT_RWD,
             )
             val lineSeries = VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
-            // All Mach-E's (North America, Europe, and Australia) have line series in the smme location
+            // All Mach-E's (North America, Europe, and Australia) have line series in the same location
             return (wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY || wmi == WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV)
                     && macheLineSeries.contains(lineSeries)
         }
+
+        private const val MACHE_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_MEXICO_MPV + "_" + NA_LINE_SERIES_MACHE_SELECT_RWD
+        private const val MACHE_VEHICLE_NAME = "Mustang Mach-E"
 
         private fun isF150RegularCab(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -256,6 +259,9 @@ open class Vehicle(val VIN: String) {
             )
             return f150RegularCabsLineSeries.contains(lineSeries)
         }
+
+        private const val F150_REGULARCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F150_REGULAR_4X2
+        private const val F150_REGULARCAB_NAME = "F-150 Regular Cab"
 
         private fun isF150SuperCrew(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -271,12 +277,17 @@ open class Vehicle(val VIN: String) {
             return f150SuperCrewsLineSeries.contains(lineSeries)
         }
 
+        private const val F150_SUPERCREW_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F150_SUPERCREW_4X2
+        private const val F150_SUPERCREW_NAME = "F-150 Super Crew"
+
         private fun isF150Raptor(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
             return lineSeries == NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR
         }
+
+        private const val F150_RAPTOR_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F150_SUPERCREW_4X4_RAPTOR
 
         private fun isF150SuperCab(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -288,6 +299,9 @@ open class Vehicle(val VIN: String) {
             )
             return f150SuperCabsLineSeries.contains(lineSeries)
         }
+
+        private const val F150_SUPERCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F150_SUPERCAB_4X2
+        private const val F150_SUPERCAB_NAME = "F-150 Super Cab"
 
         private fun isF150(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -312,6 +326,8 @@ open class Vehicle(val VIN: String) {
             return f250RegularCabsLineSeries.contains(lineSeries)
         }
 
+        private const val F250_REGULARCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F250_REGULAR_4X2
+
         private fun isF250CrewCab(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
@@ -323,6 +339,8 @@ open class Vehicle(val VIN: String) {
             return f250CrewCabsLineSeries.contains(lineSeries)
         }
 
+        private const val F250_CREWCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F250_CREWCAB_4X2
+
         private fun isF250SuperCab(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
@@ -333,6 +351,8 @@ open class Vehicle(val VIN: String) {
             )
             return f250SuperCabsLineSeries.contains(lineSeries)
         }
+
+        private const val F250_SUPERCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F250_SUPERCAB_4X2
 
         private fun isF250(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -360,6 +380,8 @@ open class Vehicle(val VIN: String) {
             ).contains(lineSeries)
         }
 
+        private const val F350_REGULARCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F350_REGULAR_SRW_4X2_A
+
         private fun isF350CrewCab(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
@@ -376,6 +398,8 @@ open class Vehicle(val VIN: String) {
             ).contains(lineSeries)
         }
 
+        private const val F350_CREWCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F350_CREWCAB_SRW_4X2_A
+
         private fun isF350SuperCab(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val lineSeries =
@@ -391,6 +415,8 @@ open class Vehicle(val VIN: String) {
                 NA_LINE_SERIES_F350_SUPERCAB_DRW_4X4_H,
             ).contains(lineSeries)
         }
+
+        private const val F350_SUPERCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_F350_SUPERCAB_SRW_4X2_A
 
         private fun isF350(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -433,6 +459,8 @@ open class Vehicle(val VIN: String) {
                     && explorerLineSeries.contains(lineSeries)
         }
 
+        private const val EXPLORER_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_MPV + "_" + NA_LINE_SERIES_EXPLORER_BASE_RWD
+
         private val broncoLineSeries: Set<String> = setOf(
             NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4,
             NA_LINE_SERIES_BRONCO_BASE_4DOOR_4X4,
@@ -455,6 +483,8 @@ open class Vehicle(val VIN: String) {
                     && broncoLineSeries.contains(lineSeries)
         }
 
+        private const val BRONCO_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_MPV + "_" + NA_LINE_SERIES_BRONCO_BASE_2DOOR_4X4
+
         private val broncoSportLineSeries: Set<String> = setOf(
             NA_LINE_SERIES_BRONCOSPORT_BASE_4x4,
             NA_LINE_SERIES_BRONCOSPORT_BIGBEND_4x4,
@@ -474,6 +504,8 @@ open class Vehicle(val VIN: String) {
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_MPV
                     && broncoSportLineSeries.contains(lineSeries)
         }
+
+        private const val BRONCO_SPORT_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_MPV + "_" + NA_LINE_SERIES_BRONCOSPORT_BASE_4x4
 
         private val escapeLineSeries: Set<String> = setOf(
             NA_LINE_SERIES_ESCAPE_S_RWD,
@@ -506,6 +538,8 @@ open class Vehicle(val VIN: String) {
                     && escapeLineSeries.contains(lineSeries)
         }
 
+        private const val ESCAPE_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_MPV + "_" + NA_LINE_SERIES_ESCAPE_S_RWD
+
         private val edgeLineSeries: Set<String> = setOf(
             NA_LINE_SERIES_EDGE_ST_AWD,
             NA_LINE_SERIES_EDGE_SE_AWD,
@@ -524,6 +558,8 @@ open class Vehicle(val VIN: String) {
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_MPV
                     && edgeLineSeries.contains(lineSeries)
         }
+
+        private const val EDGE_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_MPV + "_" + NA_LINE_SERIES_EDGE_ST_AWD
 
         private fun isFocus(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -549,6 +585,8 @@ open class Vehicle(val VIN: String) {
                     focusLineSeries.contains(lineSeries)
         }
 
+        private const val FOCUS_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_CAR + "_" + NA_LINE_SERIES_FOCUS_S_SEDAN
+
         private fun isFusion(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
@@ -573,30 +611,44 @@ open class Vehicle(val VIN: String) {
                     && fusionLineSeries.contains(lineSeries)
         }
 
+        private const val FUSION_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_MEXICO_CAR + "_" + NA_LINE_SERIES_FUSION_S
 
-        private val expeditionLineSeries: Set<String> = setOf(
-            NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2,
-            NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4,
-            NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x2,
-            NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x4,
-            NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2,
-            NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4,
-            NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2,
-            NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4,
-            NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2,
-            NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4,
-            NA_LINE_SERIES_EXPEDITION_XL_4x2,
-            NA_LINE_SERIES_EXPEDITION_XL_4x4,
-            NA_LINE_SERIES_EXPEDITION_XLT_4x2,
-            NA_LINE_SERIES_EXPEDITION_XLT_4x4,
-            NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x2,
-            NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x4,
-            NA_LINE_SERIES_EXPEDITION_LIMITED_4x2,
-            NA_LINE_SERIES_EXPEDITION_LIMITED_4x4,
-            NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2,
-            NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4,
-            NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4,
-        )
+        private fun isExpedition(VIN: String): Boolean {
+            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
+            val wmi = VIN.substring(
+                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
+                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            val expeditionLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2,
+                NA_LINE_SERIES_EXPEDITION_MAX_XL_4x4,
+                NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x2,
+                NA_LINE_SERIES_EXPEDITION_MAX_XLT_4x4,
+                NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x2,
+                NA_LINE_SERIES_EXPEDITION_MAX_KINGRANCH_4x4,
+                NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x2,
+                NA_LINE_SERIES_EXPEDITION_MAX_LIMITED_4x4,
+                NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x2,
+                NA_LINE_SERIES_EXPEDITION_MAX_PLATINUM_4x4,
+                NA_LINE_SERIES_EXPEDITION_XL_4x2,
+                NA_LINE_SERIES_EXPEDITION_XL_4x4,
+                NA_LINE_SERIES_EXPEDITION_XLT_4x2,
+                NA_LINE_SERIES_EXPEDITION_XLT_4x4,
+                NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x2,
+                NA_LINE_SERIES_EXPEDITION_KINGRANCH_4x4,
+                NA_LINE_SERIES_EXPEDITION_LIMITED_4x2,
+                NA_LINE_SERIES_EXPEDITION_LIMITED_4x4,
+                NA_LINE_SERIES_EXPEDITION_PLATINUM_4x2,
+                NA_LINE_SERIES_EXPEDITION_PLATINUM_4x4,
+                NA_LINE_SERIES_EXPEDITION_TIMBERLINE_4x4,
+            )
+            val lineSeries =
+                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
+            return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_MPV
+                    && expeditionLineSeries.contains(lineSeries)
+        }
+
+        private const val EXPEDITION_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_MPV + "_" + NA_LINE_SERIES_EXPEDITION_MAX_XL_4x2
 
         private fun isRangerSuperCrew(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
@@ -619,6 +671,8 @@ open class Vehicle(val VIN: String) {
                     rangerSuperCrewsLineSeries.contains(naLineSeries)
         }
 
+        private const val RANGER_SUPERCREW_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_RANGER_SUPERCREW_4x2
+
         private fun isRangerSuperCab(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
@@ -639,6 +693,8 @@ open class Vehicle(val VIN: String) {
                     rangerSuperCabsLineSeries.contains(lineSeries)
         }
 
+        private const val RANGER_SUPERCAB_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK + "_" + NA_LINE_SERIES_RANGER_SUPERCAB_4x2
+
         private fun isRangerRaptor(VIN: String): Boolean {
             if (VIN.length < EURO_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
@@ -654,6 +710,8 @@ open class Vehicle(val VIN: String) {
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_THAILAND_FTM &&
                     rangerRaptorLineSeries.contains(euroLineSeries)
         }
+
+        private const val RANGER_RAPTOR_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_THAILAND_FTM + "_" + EURO_LINE_SERIES_RANGER_RAPTOR_PX
 
         private fun isRanger(VIN: String): Boolean {
             return isRangerSuperCab(VIN) || isRangerSuperCrew(VIN) || isRangerRaptor(VIN)
@@ -675,11 +733,21 @@ open class Vehicle(val VIN: String) {
                     maverickSuperCrewsLineSeries.contains(lineSeries)
         }
 
+        private const val MAVERICK_SUPERCREW_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_MEXICO_TRUCK + "_" + NA_LINE_SERIES_MAVERICK_SUPERCREW_4x2
+
         private fun isMustang(VIN: String): Boolean {
             if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
                 WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
                 WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
+            )
+            val mustangLineSeries: Set<String> = setOf(
+                NA_LINE_SERIES_MUSTANG_GT_COUPE,
+                NA_LINE_SERIES_MUSTANG_GT_CONVERTABLE,
+                NA_LINE_SERIES_MUSTANG_ECOBOOST_COUPE,
+                NA_LINE_SERIES_MUSTANG_ECOBOOST_CONVERTABLE,
+                NA_LINE_SERIES_MUSTANG_MACH1_COUPE,
+                NA_LINE_SERIES_MUSTANG_SHELBY_GT600_COUPE
             )
             val lineSeries =
                 VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
@@ -687,27 +755,7 @@ open class Vehicle(val VIN: String) {
                     && mustangLineSeries.contains(lineSeries)
         }
 
-        private val mustangLineSeries: Set<String> = setOf(
-            NA_LINE_SERIES_MUSTANG_GT_COUPE,
-            NA_LINE_SERIES_MUSTANG_GT_CONVERTABLE,
-            NA_LINE_SERIES_MUSTANG_ECOBOOST_COUPE,
-            NA_LINE_SERIES_MUSTANG_ECOBOOST_CONVERTABLE,
-            NA_LINE_SERIES_MUSTANG_MACH1_COUPE,
-            NA_LINE_SERIES_MUSTANG_SHELBY_GT600_COUPE
-        )
-
-        private fun isExpedition(VIN: String): Boolean {
-            if (VIN.length < NA_LINE_SERIES_END_INDEX) return false
-            val wmi = VIN.substring(
-                WORLD_MANUFACTURING_IDENTIFIER_START_INDEX,
-                WORLD_MANUFACTURING_IDENTIFIER_END_INDEX
-            )
-            val lineSeries =
-                VIN.substring(NA_LINE_SERIES_START_INDEX, NA_LINE_SERIES_END_INDEX)
-            return wmi == WORLD_MANUFACTURING_IDENTIFIER_USA_MPV
-                    && expeditionLineSeries.contains(lineSeries)
-        }
-
+        private const val MUSTANG_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_USA_CAR + "_" + NA_LINE_SERIES_MUSTANG_GT_COUPE
 
         private fun isKuga(VIN: String): Boolean {
             if (VIN.length < EURO_LINE_SERIES_END_INDEX) return false
@@ -720,6 +768,8 @@ open class Vehicle(val VIN: String) {
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY && lineSeries == EURO_LINE_SERIES_KUGA
         }
 
+        private const val KUGA_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_GERMANY + "___" + EURO_LINE_SERIES_KUGA
+
         private fun isPuma(VIN: String): Boolean {
             if (VIN.length < EURO_LINE_SERIES_END_INDEX) return false
             val wmi = VIN.substring(
@@ -730,6 +780,8 @@ open class Vehicle(val VIN: String) {
                 VIN.substring(EURO_LINE_SERIES_START_INDEX, EURO_LINE_SERIES_END_INDEX)
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY && lineSeries == EURO_LINE_SERIES_PUMA
         }
+
+        private const val PUMA_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_GERMANY + "___" + EURO_LINE_SERIES_PUMA
 
         private fun isEUFocus(VIN: String): Boolean {
             if (VIN.length < EURO_LINE_SERIES_END_INDEX) return false
@@ -742,6 +794,9 @@ open class Vehicle(val VIN: String) {
             return wmi == WORLD_MANUFACTURING_IDENTIFIER_GERMANY && lineSeries == EURO_LINE_SERIES_FOCUS
         }
 
+        // FOr now, no difference between US and EU Focus
+        // private const val EUFOCUS_VIN_PATTERN = WORLD_MANUFACTURING_IDENTIFIER_GERMANY + "___" + EURO_LINE_SERIES_FOCUS
+
         // Check to see if we recognize a VIN in general
         @JvmStatic
         fun isVINRecognized(VIN: String): Boolean =
@@ -752,52 +807,57 @@ open class Vehicle(val VIN: String) {
             || isMustang(VIN) || isKuga(VIN) || isPuma(VIN) || isEUFocus(VIN)
 
         @JvmStatic
-        fun getVehicle(VIN: String?): Vehicle {
-            // Check all the inherited classes first
-            if (VIN == null || VIN == "") return MachE("")
-            if (isMachE(VIN)) return MachE(VIN)
-            if (isBroncoSport(VIN)) return BroncoSport(VIN)
-            if (isExpedition(VIN)) return Expedition(VIN)
-            if (isMustang(VIN)) return Mustang(VIN)
-            if (isFusion(VIN)) return Fusion(VIN)
-            if (isKuga(VIN)) return Kuga(VIN)
-            if (isPuma(VIN)) return Puma(VIN)
-
-            if (isFocus(VIN) || isEUFocus(VIN)) return Focus(VIN)
-
-            // Next check for F-150 variants
-            if (isF150RegularCab(VIN)) return F150RegularCab(VIN)
-            if (isF150SuperCab(VIN)) return F150SuperCab(VIN)
-            if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) return F150SuperCrew(VIN)
-
-            // Next check for F-250 variants
-            if (isF250RegularCab(VIN)) return F250RegularCab(VIN)
-            if (isF250SuperCab(VIN)) return F250SuperCab(VIN)
-            if (isF250CrewCab(VIN)) return F250CrewCab(VIN)
-
-            // How about F-350 variants?
-            if (isF350RegularCab(VIN)) return F250RegularCab(VIN)
-            if (isF350SuperCab(VIN)) return F250SuperCab(VIN)
-            if (isF350CrewCab(VIN)) return F250CrewCab(VIN)
-
-            // Ranger variants?
-            if (isRangerSuperCrew(VIN)) return RangerSuperCrew(VIN)
-            if (isRangerSuperCab(VIN)) return RangerSuperCab(VIN)
-            if (isRangerRaptor(VIN)) return RangerRaptor(VIN)
-
-            // Check everything else
-            if (isBronco(VIN)) return Bronco(VIN)
-            if (isEdge(VIN)) return Edge(VIN)
-            if (isEscape(VIN)) return Escape(VIN)
-            if (isExplorer(VIN)) return Explorer(VIN)
-            if (isMaverick(VIN)) return Maverick(VIN)
-
-            // If none of the above, then see if it's a "truck"
-            if (VIN.startsWith(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK)) return F150RegularCab(VIN)
-
-            // Default to the Mach-E
-            return MachE(VIN)
+        fun getVehicle(model: Model): Vehicle {
+            return modelMap[model]!!.modelObject
         }
+
+//        @JvmStatic
+//        fun getVehicle(VIN: String?): Vehicle {
+//            // Check all the inherited classes first
+//            if (VIN == null || VIN == "") return MachE("")
+//            if (isMachE(VIN)) return MachE(VIN)
+//            if (isBroncoSport(VIN)) return BroncoSport(VIN)
+//            if (isExpedition(VIN)) return Expedition(VIN)
+//            if (isMustang(VIN)) return Mustang(VIN)
+//            if (isFusion(VIN)) return Fusion(VIN)
+//            if (isKuga(VIN)) return Kuga(VIN)
+//            if (isPuma(VIN)) return Puma(VIN)
+//
+//            if (isFocus(VIN) || isEUFocus(VIN)) return Focus(VIN)
+//
+//            // Next check for F-150 variants
+//            if (isF150RegularCab(VIN)) return F150RegularCab(VIN)
+//            if (isF150SuperCab(VIN)) return F150SuperCab(VIN)
+//            if (isF150SuperCrew(VIN) || isF150Raptor(VIN)) return F150SuperCrew(VIN)
+//
+//            // Next check for F-250 variants
+//            if (isF250RegularCab(VIN)) return F250RegularCab(VIN)
+//            if (isF250SuperCab(VIN)) return F250SuperCab(VIN)
+//            if (isF250CrewCab(VIN)) return F250CrewCab(VIN)
+//
+//            // How about F-350 variants?
+//            if (isF350RegularCab(VIN)) return F250RegularCab(VIN)
+//            if (isF350SuperCab(VIN)) return F250SuperCab(VIN)
+//            if (isF350CrewCab(VIN)) return F250CrewCab(VIN)
+//
+//            // Ranger variants?
+//            if (isRangerSuperCrew(VIN)) return RangerSuperCrew(VIN)
+//            if (isRangerSuperCab(VIN)) return RangerSuperCab(VIN)
+//            if (isRangerRaptor(VIN)) return RangerRaptor(VIN)
+//
+//            // Check everything else
+//            if (isBronco(VIN)) return Bronco(VIN)
+//            if (isEdge(VIN)) return Edge(VIN)
+//            if (isEscape(VIN)) return Escape(VIN)
+//            if (isExplorer(VIN)) return Explorer(VIN)
+//            if (isMaverick(VIN)) return Maverick(VIN)
+//
+//            // If none of the above, then see if it's a "truck"
+//            if (VIN.startsWith(WORLD_MANUFACTURING_IDENTIFIER_USA_TRUCK)) return F150RegularCab(VIN)
+//
+//            // Default to the Mach-E
+//            return MachE(VIN)
+//        }
 
         // Model year decoder
         private val modelYears: Map<String, Int> = mapOf(
@@ -821,6 +881,64 @@ open class Vehicle(val VIN: String) {
         private const val NA_MODEL_YEAR_END_INDEX = 10
         private const val EURO_MODEL_YEAR_START_INDEX = 11 - 1
         private const val EURO_MODEL_YEAR_END_INDEX = 11
+
+        // These need to be unique, and not change when a new value is added.  Always add new
+        // model values at the end of the list
+        enum class Model(val value:Int) {
+            UNKNOWN(0), MACHE(1), F150_REGULARCAB(2), F150_SUPERCAB(3),
+            F150_SUPERCREW(4), F250_REGULARCAB(5), F250_SUPERCAB(6),
+            F250_CREWCAB(7), F350_REGULARCAB(8), F350_SUPERCAB(9),
+            F350_CREWCAB(10), RANGER_SUPERCAB(11), RANGER_SUPERCREW(12),
+            RANGER_RAPTOR(13), MAVERICK_SUPERCREW(14),
+            BRONCO(15), BRONCO_SPORT(16), EDGE(17), ESCAPE(18),
+            MUSTANG(19), EXPLORER(20), EXPEDITION(21), FUSION(22),
+            FOCUS(23), KUGA(24), PUMA(25);
+
+            companion object {
+                fun fromInt(value: Int) = Model.values().first { it.value == value }
+            }
+        }
+
+        private const val UNKNOWN_VEHICLE_NAME = "Unknown vehicle"
+        class ModelInfo (
+            val modelVIN: String = "",
+            val modelName: String = UNKNOWN_VEHICLE_NAME,
+            val modelObject: Vehicle = MachE("")
+        )
+
+        val modelMap: Map<Model,ModelInfo> = mapOf(
+            Model.UNKNOWN to ModelInfo(),
+            Model.MACHE to ModelInfo(MACHE_VIN_PATTERN, MACHE_VEHICLE_NAME, MachE("")),
+            Model.F150_REGULARCAB to ModelInfo(F150_REGULARCAB_VIN_PATTERN, F150_REGULARCAB_NAME, F150RegularCab("")),
+            Model.F150_SUPERCAB to ModelInfo(F150_SUPERCAB_VIN_PATTERN, F150_SUPERCAB_NAME, F150SuperCab("")),
+            Model.F150_SUPERCREW to ModelInfo(F150_SUPERCREW_VIN_PATTERN, "F-150 Super Crew", F150SuperCrew("")),
+            Model.F250_REGULARCAB to ModelInfo(F250_REGULARCAB_VIN_PATTERN, "F-250 Regular Cab", F250RegularCab("")),
+            Model.F250_SUPERCAB to ModelInfo(F250_SUPERCAB_VIN_PATTERN, "F-250 Super Cab", F250SuperCab("")),
+            Model.F250_CREWCAB to ModelInfo(F250_CREWCAB_VIN_PATTERN, "F-250 Crew Cab", F250CrewCab("")),
+            Model.F350_REGULARCAB to ModelInfo(F350_REGULARCAB_VIN_PATTERN, "F-350 Regular Cab", F250RegularCab("")),
+            Model.F350_SUPERCAB to ModelInfo(F350_SUPERCAB_VIN_PATTERN, "F-350 Super Cab", F250SuperCab("")),
+            Model.F350_CREWCAB to ModelInfo(F350_CREWCAB_VIN_PATTERN, "F-350 Crew Cab", F250CrewCab("")),
+            Model.RANGER_SUPERCAB to ModelInfo(RANGER_SUPERCAB_VIN_PATTERN, "Ranger Super Cab", RangerSuperCab("")),
+            Model.RANGER_SUPERCREW to ModelInfo(RANGER_SUPERCREW_VIN_PATTERN, "Ranger Super Crew", RangerSuperCrew("")),
+            Model.RANGER_RAPTOR to ModelInfo(RANGER_RAPTOR_VIN_PATTERN, "Ranger Raptor", RangerRaptor("")),
+            Model.MAVERICK_SUPERCREW to ModelInfo(MAVERICK_SUPERCREW_VIN_PATTERN, "Maverick", Maverick("")),
+            Model.BRONCO to ModelInfo(BRONCO_VIN_PATTERN, "Bronco", Bronco("")),
+            Model.BRONCO_SPORT to ModelInfo(BRONCO_SPORT_VIN_PATTERN, "Bronco Sport", BroncoSport("")),
+            Model.EDGE to ModelInfo(EDGE_VIN_PATTERN, "Edge", Edge("")),
+            Model.ESCAPE to ModelInfo(ESCAPE_VIN_PATTERN, "Escape", Escape("")),
+            Model.MUSTANG to ModelInfo(MUSTANG_VIN_PATTERN, "Mustang", Mustang("")),
+            Model.EXPLORER to ModelInfo(EXPLORER_VIN_PATTERN, "Explorer", Explorer("")),
+            Model.EXPEDITION to ModelInfo(EXPEDITION_VIN_PATTERN, "Expedition", Expedition("")),
+            Model.FUSION to ModelInfo(FUSION_VIN_PATTERN, "Fusion", Fusion("")),
+            Model.FOCUS to ModelInfo(FOCUS_VIN_PATTERN, "Focus", Focus("")),
+            Model.KUGA to ModelInfo(KUGA_VIN_PATTERN, "Kuga", Kuga("")),
+            Model.PUMA to ModelInfo(PUMA_VIN_PATTERN, "Puma", Puma(""))
+        )
+
+        @JvmStatic
+        fun getModelDescFromModelEnum(key: Model): ModelInfo? {
+            return if (modelMap.containsKey(key)) modelMap[key] else null
+        }
 
         @JvmStatic
         fun getModelYear(VIN: String?): Int {

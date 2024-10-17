@@ -4,20 +4,23 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.khughes.machewidget.OTAStatus.FuseResponseList
-import com.example.khughes.machewidget.OTAStatus.LanguageText
+import androidx.room.TypeConverter
+import com.example.khughes.machewidget.Vehicle.Companion.Model
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.Collections
+
+
 
 @Entity(tableName = "vehicle_info")
 class VehicleInfo {
     @PrimaryKey(autoGenerate = true)
     var id = 0
 
-    @ColumnInfo(name = "VIN")
-    var vin: String? = ""
     var tokenId: String? = ""
-    var nickname: String? = ""
+    var modelId: Model = Model.UNKNOWN
     var lastRefreshTime: Long = 0
     var lastUpdateTime: Long = 0
 

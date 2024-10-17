@@ -23,14 +23,12 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.Misc.Companion.elapsedMinutesToDescription
-import com.example.khughes.machewidget.Misc.Companion.elapsedSecondsToDescription
 import com.example.khughes.machewidget.Notifications.Companion.chargeComplete
 import com.example.khughes.machewidget.ProfileManager.changeProfile
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import com.example.khughes.machewidget.VehicleColor.Companion.drawColoredVehicle
 import kotlinx.coroutines.*
 import java.time.Duration
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset.UTC
@@ -196,16 +194,16 @@ open class CarStatusWidget : AppWidgetProvider() {
     ): VehicleInfo? {
         // Find the VIN associated with this widget
         val widget_VIN = Constants.VIN_KEY + appWidgetId
-        var VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
+        var vehicleId = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
             .getString(widget_VIN, null)
 
         // If there's a VIN but no vehicle, then essentially there is no VIN
-        if (VIN != null && info.getVehicleByVIN(VIN).vin == "") {
-            VIN = null
+        if (vehicleId != null && info.getVehicleById(vehicleId).carStatus.vehicle.vehicleId == "") {
+            vehicleId = null
         }
 
         // if VIN is undefined, pick first VIN that we find
-        if (VIN == null) {
+        if (vehicleId == null) {
             val vehicles = info.vehicles
             // No vehicles; hmmm....
             if (vehicles.isEmpty()) {
@@ -214,17 +212,17 @@ open class CarStatusWidget : AppWidgetProvider() {
             //  Look for an enabled vehicle with this owner
             for (vehicleInfo in vehicles) {
                 if (vehicleInfo.isEnabled) {
-                    VIN = vehicleInfo.vin
+                    vehicleId = vehicleInfo.carStatus.vehicle.vehicleId
                     break
                 }
             }
             // If we found something, save it.
-            if (VIN != null) {
+            if (vehicleId != null) {
                 context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE).edit()
-                    .putString(widget_VIN, VIN).commit()
+                    .putString(widget_VIN, vehicleId).commit()
             }
         }
-        return info.getVehicleByVIN(VIN)
+        return info.getVehicleById(vehicleId)
     }
 
     protected fun getPendingSelfIntent(context: Context?, id: Int, action: String?): PendingIntent {
@@ -1075,7 +1073,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                                 Constants.WIDGET_FILE,
                                 Context.MODE_PRIVATE
                             ).getString(widget_VIN, null)
-                            val vehInfo = info.getVehicleByVIN(VIN)
+                            val vehInfo = info.getVehicleById(VIN)
                             val lastUpdateInMillis = vehInfo.lastUpdateTime
 
                             // TODO: fix localization
@@ -1221,28 +1219,28 @@ open class CarStatusWidget : AppWidgetProvider() {
                             )
                                 .getInt(widget_action, 0)
                         if (clickCount > 1) {
-                            val VIN = context.getSharedPreferences(
+                            val vehicleId = context.getSharedPreferences(
                                 Constants.WIDGET_FILE,
                                 Context.MODE_PRIVATE
                             ).getString(widget_VIN, null)
-                            val vehInfo = info.getVehicleByVIN(VIN)
+                            val vehInfo = info.getVehicleById(vehicleId)
                             val carStatus = vehInfo.carStatus
                             when (action) {
                                 IGNITION_CLICK -> if (carStatus.vehicle.vehicleStatus.ignitionStatus?.value == "Off") {
                                     carStatus.vehicle.vehicleStatus.remoteStartStatus?.status?.let { status ->
                                         if (status == "ENGINE_STOPPED") {
-                                            remoteStart(context, VIN!!)
+                                            remoteStart(context, vehicleId!!)
                                         } else {
-                                            remoteStop(context, VIN!!)
+                                            remoteStop(context, vehicleId!!)
                                         }
                                     }
                                 }
 
                                 LOCK_CLICK -> carStatus.vehicle.vehicleStatus.lockStatus?.value?.let {
                                     if (it == "LOCKED") {
-                                        unlock(context, VIN!!)
+                                        unlock(context, vehicleId!!)
                                     } else {
-                                        lock(context, VIN!!)
+                                        lock(context, vehicleId!!)
                                     }
                                 }
 

@@ -3,7 +3,6 @@ package com.example.khughes.machewidget
 import com.example.khughes.machewidget.Vehicle.Companion.getVehicle
 import com.example.khughes.machewidget.VehicleImages.Companion.getRandomImage
 import com.example.khughes.machewidget.VehicleColor.Companion.scanImageForColor
-import com.example.khughes.machewidget.VehicleColor.Companion.isFirstEdition
 import com.example.khughes.machewidget.ProfileManager.changeProfile
 import android.widget.RemoteViews
 import android.appwidget.AppWidgetManager
@@ -89,10 +88,11 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
     }
 
     // Based on the VIN, find the right widget layout
-    private fun getWidgetView(context: Context, widget_VIN: String): RemoteViews {
-        val VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
+    private fun getWidgetView(context: Context, widget_VIN: String, info: InfoRepository): RemoteViews {
+        val vehicleID = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
             .getString(widget_VIN, "")
-        return RemoteViews(context.packageName, getVehicle(VIN!!).layoutID)
+        val modelId = info.getVehicleById(vehicleID).modelId
+        return RemoteViews(context.packageName, getVehicle(modelId).layoutID)
     }
 
     override fun drawIcons(views: RemoteViews, carStatus: CarStatus) {
@@ -141,7 +141,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         // Find the vehicle for this widget
         val vehicleInfo = getVehicleInfo(context, info, appWidgetId) ?: return
         val widget_VIN = Constants.VIN_KEY + appWidgetId
-        val views = getWidgetView(context, widget_VIN)
+        val views = getWidgetView(context, widget_VIN, info)
 
         // Make sure the left side is visible depending on the widget width
         val appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId)
@@ -156,15 +156,16 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         // If the vehicle image has been downloaded, update it
         val useImage = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.resources.getString(R.string.use_image_key), true)
-        val bmp = getRandomImage(context, vehicleInfo.vin!!)
+        val vehicleId = vehicleInfo.carStatus.vehicle.vehicleId
+        val bmp = getRandomImage(context, vehicleId)
         if (useImage && bmp != null) {
             views.setImageViewBitmap(R.id.logo, bmp)
         } else {
-            views.setImageViewResource(R.id.logo, getVehicle(vehicleInfo.vin).logoID)
+            views.setImageViewResource(R.id.logo, getVehicle(vehicleInfo.modelId).logoID)
         }
 
         // Display the vehicle's nickname
-        views.setTextViewText(R.id.profile, vehicleInfo.nickname)
+        views.setTextViewText(R.id.profile, vehicleInfo.carStatus.vehicle.nickName)
         //        views.setTextViewText(R.id.profile, "My Mach-E");
         try {
             appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
@@ -322,17 +323,18 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 //        )
 
         // Get the right images to use for this vehicle
-        val vehicleImages = getVehicle(vehicleInfo.vin).verticalDrawables
+        val vehicleImages = getVehicle(vehicleInfo.modelId).verticalDrawables
 
         // See if we should guess vehicle color
         if (scanImageForColor(context, vehicleInfo)) {
             info.setVehicle(vehicleInfo)
         }
 
-        // If vehicle is a Mach-E First Edition, show mirrors in body color
-        if (isFirstEdition(context, vehicleInfo.vin!!)) {
-            vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_vert
-        }
+        // TODO: maybe implement once we can get a VIN again
+//        // If vehicle is a Mach-E First Edition, show mirrors in body color
+//        if (isFirstEdition(context, vehicleInfo.vin!!)) {
+//            vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_vert
+//        }
 
         // Draw the vehicle image
         drawVehicleImage(context, views, carStatus, vehicleInfo.colorValue, null, vehicleImages)
@@ -398,11 +400,10 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         appWidgetId: Int,
         newOptions: Bundle
     ) {
-        val widget_VIN = Constants.VIN_KEY + appWidgetId
-        val VIN = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
-            .getString(widget_VIN, "")
-        if (VIN != "") {
-            val views = getWidgetView(context, widget_VIN)
+        CoroutineScope(Dispatchers.Main).launch {
+            val info = getInfo(context)
+            val widget_VIN = Constants.VIN_KEY + appWidgetId
+            val views = getWidgetView(context, widget_VIN, info)
             onResize(newOptions, views)
             appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
         }
@@ -423,21 +424,25 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         val widget_VIN = Constants.VIN_KEY + appWidgetId
         when (action) {
             PHEVTOGGLE_CLICK -> {
-                val mode = intent.getStringExtra("nextMode")
-                val appWidgetManager = AppWidgetManager.getInstance(context)
-                val views = getWidgetView(context, widget_VIN)
-                val nextMode: String
-                if (mode == "showGasoline") {
-                    nextMode = "showElectric"
-                    views.setViewVisibility(R.id.bottom_electric, View.GONE)
-                    views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE)
-                } else {
-                    nextMode = "showGasoline"
-                    views.setViewVisibility(R.id.bottom_electric, View.VISIBLE)
-                    views.setViewVisibility(R.id.bottom_gasoline, View.GONE)
+                CoroutineScope(Dispatchers.Main).launch {
+                    val info = getInfo(context)
+
+                    val mode = intent.getStringExtra("nextMode")
+                    val appWidgetManager = AppWidgetManager.getInstance(context)
+                    val views = getWidgetView(context, widget_VIN, info)
+                    val nextMode: String
+                    if (mode == "showGasoline") {
+                        nextMode = "showElectric"
+                        views.setViewVisibility(R.id.bottom_electric, View.GONE)
+                        views.setViewVisibility(R.id.bottom_gasoline, View.VISIBLE)
+                    } else {
+                        nextMode = "showGasoline"
+                        views.setViewVisibility(R.id.bottom_electric, View.VISIBLE)
+                        views.setViewVisibility(R.id.bottom_gasoline, View.GONE)
+                    }
+                    setPHEVCallbacks(context, views, true, appWidgetId, nextMode)
+                    appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
                 }
-                setPHEVCallbacks(context, views, true, appWidgetId, nextMode)
-                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
             }
             DIESELTOGGLE_CLICK -> {
                 val mode = intent.getStringExtra("nextMode")

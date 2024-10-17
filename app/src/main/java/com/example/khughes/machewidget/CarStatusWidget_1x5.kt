@@ -2,7 +2,6 @@ package com.example.khughes.machewidget
 
 import com.example.khughes.machewidget.Vehicle.Companion.getVehicle
 import com.example.khughes.machewidget.VehicleColor.Companion.scanImageForColor
-import com.example.khughes.machewidget.VehicleColor.Companion.isFirstEdition
 import android.widget.RemoteViews
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -175,17 +174,18 @@ class CarStatusWidget_1x5 : CarStatusWidget() {
         )
 
         // Get the right images to use for this vehicle
-        val vehicleImages = getVehicle(vehicleInfo.vin).horizontalDrawables
+        val vehicleImages = getVehicle(vehicleInfo.modelId).horizontalDrawables
 
         // See if we should guess vehicle color
         if (scanImageForColor(context, vehicleInfo)) {
             info.setVehicle(vehicleInfo)
         }
 
-        // If vehicle is a Mach-E First Edition, show mirrors in body color
-        if (isFirstEdition(context, vehicleInfo.vin!!)) {
-            vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_horz
-        }
+        // TODO: implement once we can access the VIN
+//        // If vehicle is a Mach-E First Edition, show mirrors in body color
+//        if (isFirstEdition(context, vehicleInfo.carStatus.vehicle.vehicleId)) {
+//            vehicleImages[Vehicle.BODY_SECONDARY] = R.drawable.mache_secondary_no_mirrors_horz
+//        }
 
         // Draw the vehicle image
         drawVehicleImage(context, views, carStatus, vehicleInfo.colorValue, null, vehicleImages)

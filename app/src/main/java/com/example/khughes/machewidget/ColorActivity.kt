@@ -108,7 +108,7 @@ private suspend fun getInfo(context: Context): InfoRepository =
 private fun ChooseColor() {
     val context = LocalContext.current
     var vehicleInfo = vehicles[0]
-    var vehicleImages = Vehicle.getVehicle(vehicleInfo.vin).horizontalDrawables
+    var vehicleImages = Vehicle.getVehicle(vehicleInfo.modelId).horizontalDrawables
     var vehicleColor by remember { mutableIntStateOf(vehicleInfo.colorValue and VehicleColor.ARGB_MASK) }
     var wireframe by remember { mutableIntStateOf(vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK) }
     var hexColor by remember {
@@ -127,7 +127,7 @@ private fun ChooseColor() {
 
     val vehicleVINs: MutableList<String> = mutableListOf()
     for (vehicle in info.vehicles) {
-        vehicleVINs.add(vehicle.vin!!)
+        vehicleVINs.add(vehicle.carStatus.vehicle.vehicleId)
     }
 
     Scaffold(
@@ -148,9 +148,9 @@ private fun ChooseColor() {
             // IF there is more than one vehicle, show the VIN and set up a onclick callback to change
             if (vehicles.size > 1) {
 
-                CustomSpinner(initialLabel = vehicleInfo.vin!!, items = vehicleVINs)
-                { vin ->
-                    vehicleInfo = info.getVehicleByVIN(vin)
+                CustomSpinner(initialLabel = vehicleInfo.carStatus.vehicle.vehicleId, items = vehicleVINs)
+                { vehicleId ->
+                    vehicleInfo = info.getVehicleById(vehicleId)
                     vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
                     wireframe = vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
                     hexColor =
@@ -159,7 +159,7 @@ private fun ChooseColor() {
                             .uppercase()
                             .substring(2)
                     initialColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
-                    vehicleImages = Vehicle.getVehicle(vehicleInfo.vin).horizontalDrawables
+                    vehicleImages = Vehicle.getVehicle(vehicleInfo.modelId).horizontalDrawables
                     recomposeColorPicker = !recomposeColorPicker
                 }
             }
@@ -332,7 +332,7 @@ private fun ChooseColor() {
                 }
 
                 // "Auto" button: only applies if there is an image of the vehicle to read
-                if (VehicleImages.getImage(context, vehicleInfo.vin!!, 4) != null) {
+                if (VehicleImages.getImage(context, vehicleInfo.carStatus.vehicle.vehicleId, 4) != null) {
                     Button(
                         onClick = {
                             // Save current color, so we cab locate a color to read in the image

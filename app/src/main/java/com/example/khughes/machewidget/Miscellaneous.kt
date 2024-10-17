@@ -54,14 +54,14 @@ class VehicleColor {
             }
 
             // If the vehicle image doesn't exist, do nothing
-            val VIN = vehicleInfo.vin
-            val bmp = VehicleImages.getImage(context, VIN!!, 4)
+            val vehicleId = vehicleInfo.carStatus.vehicle.vehicleId
+            val bmp = VehicleImages.getImage(context, vehicleId, 4)
             if (bmp == null || vehicleInfo.colorValue != Color.WHITE) {
                 return false
             }
 
             // Based on the vehicle type, choose a small image patch to sample
-            val (startx, starty) = Vehicle.getVehicle(VIN).offsetPositions
+            val (startx, starty) = Vehicle.getVehicle(vehicleInfo.modelId).offsetPositions
 
             // get the RBG value of each pixel in the patch
             val RGB = IntArray(3)
@@ -89,26 +89,27 @@ class VehicleColor {
             return true
         }
 
-        @JvmStatic
-        fun isFirstEdition(context: Context, VIN: String): Boolean {
-            // If the vehicle isn't a Mach-E, nevermind
-            if (Vehicle.getVehicle(VIN) !is MachE) {
-                return false
-            }
-
-            // If the vehicle image doesn't exist, do nothing
-            val bmp = VehicleImages.getImage(context, VIN, 4) ?: return false
-
-            // Check if a pixel on the side view mirror is black or colored
-            val color = bmp.getPixel(220, 152)
-            val RGB = arrayOf(
-                (color shr 16) and 0xff,
-                (color shr 8) and 0xff,
-                color and 0xff
-            )
-
-            return RGB[0] > 0x08 || RGB[1] > 0x08 || RGB[2] > 0x08
-        }
+        // TODO: maybe implement when we can get the VIN
+//        @JvmStatic
+//        fun isFirstEdition(context: Context, VIN: String): Boolean {
+//            // If the vehicle isn't a Mach-E, nevermind
+//            if (Vehicle.getVehicle(VIN) !is MachE) {
+//                return false
+//            }
+//
+//            // If the vehicle image doesn't exist, do nothing
+//            val bmp = VehicleImages.getImage(context, VIN, 4) ?: return false
+//
+//            // Check if a pixel on the side view mirror is black or colored
+//            val color = bmp.getPixel(220, 152)
+//            val RGB = arrayOf(
+//                (color shr 16) and 0xff,
+//                (color shr 8) and 0xff,
+//                color and 0xff
+//            )
+//
+//            return RGB[0] > 0x08 || RGB[1] > 0x08 || RGB[2] > 0x08
+//        }
 
         @JvmStatic
         fun drawColoredVehicle(
@@ -289,11 +290,11 @@ class PrefManagement {
                 val VINs = ArrayList<String>()
                 for (info in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
                     .findVehicleInfo()) {
-                    VINs.add(info.vin!!)
+                    VINs.add(info.carStatus.vehicle.vehicleId)
                 }
 
-                var newVIN: String
-                var newUserId = ""
+                var newVehicleId: String
+//                var newUserId = ""
 
                 // Update users in the database, and remove all IDs from the current list
                 // Don't try to restore for older user IDs
@@ -326,10 +327,10 @@ class PrefManagement {
                             object : TypeToken<VehicleInfo?>() {}.type
                         )
                         // Save a valid VIN in case we need to change the current VIN
-                        newVIN = info.vin!!
+                        newVehicleId = info.carStatus.vehicle.vehicleId
 
                         val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                            .findVehicleInfoByVIN(newVIN)
+                            .findVehicleInfoByVIN(newVehicleId)
                         if (current == null) {
                             info.id = 0
                             VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
@@ -349,8 +350,8 @@ class PrefManagement {
 //                                user.country!!
 //                            )
 //                        }
-                        newVINs.add(newVIN)
-                        VINs.remove(newVIN)
+                        newVINs.add(newVehicleId)
+                        VINs.remove(newVehicleId)
                     }
 
                     // Update each widget instance to be sure there is a valid VIN
@@ -380,12 +381,13 @@ class PrefManagement {
 
                 }
 
+                // TODO: remove or replace with TokenId?
                 // Version 1 preferences didn't include user Id
-                if (version == 1) {
-                    val userIdkey = context.resources.getString(R.string.userId_key)
-                    PreferenceManager.getDefaultSharedPreferences(context).edit()
-                        .putString(userIdkey, newUserId).apply()
-                }
+//                if (version == 1) {
+//                    val userIdkey = context.resources.getString(R.string.userId_key)
+//                    PreferenceManager.getDefaultSharedPreferences(context).edit()
+//                        .putString(userIdkey, newUserId).apply()
+//                }
 
                 // Any user IDs or VINs which weren't restored get deleted
                 for (VIN in VINs) {

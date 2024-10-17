@@ -64,7 +64,7 @@ class ReminderActivity : ComponentActivity() {
             val vinList: MutableList<String> = mutableListOf()
             for (vehicle in info.vehicles) {
                 if (isPHEVorBEV(vehicle)) {
-                    vinList.add(vehicle.vin!!)
+                    vinList.add(vehicle.carStatus.vehicle.vehicleId)
                 }
             }
 
@@ -171,7 +171,7 @@ class ReminderActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ChargingReminder(vehicleVINs: MutableList<String>) {
+private fun ChargingReminder(vehicleIds: MutableList<String>) {
 
     fun isNotificationEnabled(chargeHour: Int) =
         (chargeHour and ReminderActivity.NOTIFICATION_BIT) != 0
@@ -188,12 +188,12 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
 
     val context = LocalContext.current
 
-    var currentVehicle: VehicleInfo = info.getVehicleByVIN(vehicleVINs[0])
+    var currentVehicle: VehicleInfo = info.getVehicleById(vehicleIds[0])
     var notificationEnabled by remember { mutableStateOf(isNotificationEnabled(currentVehicle.chargeHour)) }
     var hour = getHour(currentVehicle.chargeHour)
     var level = getLevel(currentVehicle.chargeThresholdLevel)
 
-    var vin by remember { mutableStateOf(vehicleVINs[0]) }
+    var vehicleId by remember { mutableStateOf(vehicleIds[0]) }
 
     val hours = mutableListOf("12 am")
     for (i in 1..11) {
@@ -218,11 +218,11 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
             if (isNotificationEnabled(chargeHour)) {
                 ReminderReceiver.setAlarm(
                     context = context,
-                    it.vin!!,
+                    it.carStatus.vehicle.vehicleId,
                     getHour(chargeHour)
                 )
             } else {
-                ReminderReceiver.cancelAlarm(context, it.vin!!)
+                ReminderReceiver.cancelAlarm(context, it.carStatus.vehicle.vehicleId)
             }
         }
     }
@@ -252,12 +252,12 @@ private fun ChargingReminder(vehicleVINs: MutableList<String>) {
             )
 
             // Vehicle VIN
-            CustomSpinner(initialLabel = vin,
-                items = vehicleVINs)
+            CustomSpinner(initialLabel = vehicleId,
+                items = vehicleIds)
             { item ->
                 updateVehicle()
-                vin = item
-                currentVehicle = info.getVehicleByVIN(vin)
+                vehicleId = item
+                currentVehicle = info.getVehicleById(vehicleId)
                 notificationEnabled =
                     isNotificationEnabled(currentVehicle.chargeHour)
                 hour = getHour(currentVehicle.chargeHour)

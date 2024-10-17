@@ -20,6 +20,10 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
         mRepository.enable(VIN, value)
     }
 
+    fun setModel(VIN: String, value: Vehicle.Companion.Model) {
+        mRepository.setModel(VIN, value)
+    }
+
     fun removeVehicle(VIN: String) {
         mRepository.remove(VIN)
     }
@@ -47,6 +51,10 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
 
         fun enable(VIN: String, value: Boolean) {
             Thread { mVehDao.updateEnable(VIN, value) }.start()
+        }
+
+        fun setModel(VIN: String, value: Vehicle.Companion.Model) {
+            Thread { mVehDao.updateModel(VIN, value) }.start()
         }
 
         fun remove(VIN: String) {
