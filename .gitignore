@@ -31,3 +31,6 @@ output-metadata.json
 /.idea/deploymentTargetSelector.xml
 /.idea/deviceManager.xml
 /.idea/other.xml
+/app/schemas/com.example.khughes.machewidget.db.TokenIdDatabase/4.json
+/app/src/main/java/com/example/khughes/machewidget/FordConnectConstants.kt
+/app/schemas/com.example.khughes.machewidget.db.TokenIdDatabase/1.json
