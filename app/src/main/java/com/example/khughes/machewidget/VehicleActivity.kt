@@ -384,6 +384,7 @@ fun VehicleDisplay(vehicle: VehicleIds) {
         val photo = VehicleImages.getRandomImage(context = context, vehicle.vehicleId)
 
         Checkbox(checked = checkBoxValue.value,
+            enabled = !vehicle.enabled || mVehicleViewModel.countEnabledVehicle() > 1,
             onCheckedChange = {
                 vehicle.enabled = it
                 checkBoxValue.value = it
