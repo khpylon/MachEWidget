@@ -21,19 +21,12 @@ object NetworkServiceGenerators {
 
     private val logging = HttpLoggingInterceptor { message ->
         var result = message
-        // If the line contains login credentials, scrub them before logging
-        if (result.contains("login-form-type=password")) {
-            val index = message.indexOf("&username")
-            if (index > 0) {
-                result = message.substring(0, index)
-                result += "&username=**redacted**&password=**redacted**"
-            }
+        // remove client secret and client ID
+        if (result.contains(FordConnectConstants.CLIENTID)) {
+            result = message.replace(FordConnectConstants.CLIENTID,"**redacted**")
         }
-        if (result.contains("UserProfile\":{")) {
-            result = message.replace(
-                "\"profile\":.[^}]*.[^}]*.[^}]*.".toRegex(),
-                "\"profile\":**redacted**"
-            )
+        if (result.contains(FordConnectConstants.CLIENTSECRET)) {
+            result = message.replace(FordConnectConstants.CLIENTSECRET,"**redacted**")
         }
         if (result.contains("\"userId\"")) {
             result =
