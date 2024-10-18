@@ -289,6 +289,8 @@ class PrefManagement {
                 // Don't try to restore for older user IDs
                 if (version >= JSON_SETTINGS_VERSION_FORDCONNECTAPI) {
 
+                    val info = InfoRepository(context)
+
                     // remove all token Ids from the database
                     val tokenIdDao = TokenIdDatabase.getInstance(context).tokenIdDao()
                     for (tokenId in tokenIdDao.findTokenIds() ) {
@@ -299,13 +301,13 @@ class PrefManagement {
                     val tokenIds = jsonObject.getAsJsonArray("tokenIds")
                     val accessTokens : MutableMap<String,TokenId> = mutableMapOf()
                     for (items in tokenIds) {
-                        val info = gson.fromJson<TokenId>(
+                        val tokenIdInfo = gson.fromJson<TokenId>(
                             items.toString(),
                             object : TypeToken<TokenId?>() {}.type
                         )
-                        info.id = 0
-                        tokenIdDao.insertTokenId(info)
-                        accessTokens[info.tokenId!!] = info
+                        tokenIdInfo.id = 0
+                        info.insertTokenId(tokenIdInfo)
+                        accessTokens[tokenIdInfo.tokenId!!] = tokenIdInfo
                     }
 
                     // remove all vehichles from the database
@@ -318,35 +320,22 @@ class PrefManagement {
                     val vehicles = jsonObject.getAsJsonArray("vehicles")
                     val newVINs : MutableList<String> = mutableListOf()
                     for (items in vehicles) {
-                        val info = gson.fromJson<VehicleInfo>(
+                        val vehicleInfo = gson.fromJson<VehicleInfo>(
                             items.toString(),
                             object : TypeToken<VehicleInfo?>() {}.type
                         )
-                        info.id = 0
-                        vehicleInfoDao.insertVehicleInfo(info)
+                        vehicleInfo.id = 0
+                        info.insertVehicle(vehicleInfo)
 
-                        newVINs.add(info.carStatus.vehicle.vehicleId)
+                        newVINs.add(vehicleInfo.carStatus.vehicle.vehicleId)
 
-                        val vehicle = info.carStatus.vehicle
-                        val vehicleData = VehicleData(
+                        val vehicle = vehicleInfo.carStatus.vehicle
+
+                        NetworkCalls.getVehicleImage(
+                            context = context,
                             vehicleId = vehicle.vehicleId,
-                            make = vehicle.make,
-                            modelName = vehicle.modelName,
-                            modelYear = vehicle.modelYear,
-                            color = "",
-                            engineType = "",
-                            modemEnabled = false,
-                            nickName = "",
-                            serviceCompatible = false,
-                            vehicleAuthorizationIndicator = 0,
+                            info = info,
                         )
-
-                        // TODO: make this work
-//                        NetworkCalls.getVehicleImage(
-//                            context = context,
-//                            token = "Bearer " + info.,
-//                            vehicle = vehicleData
-//                        )
                     }
 
                     // Update each widget instance to be sure there is a valid VIN

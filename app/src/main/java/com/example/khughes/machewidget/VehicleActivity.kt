@@ -237,11 +237,13 @@ private fun ManageVehicle() {
                         if (text.startsWith("https://localhost:3000/?state=123&code=")) {
                             val code = text.substring(text.indexOf("code=")+5)
                             Toast.makeText(context, "Attempting to access vehicle data.", Toast.LENGTH_LONG).show()
-                            CoroutineScope(Dispatchers.Main).launch {
+                            CoroutineScope(Dispatchers.IO).launch {
                                 val msg = NetworkCalls.getAccessToken(context, code)
                                 val bundle = msg.data
                                 val tokenId = bundle.getString("tokenId")
-                                NetworkCalls.getVehicleList(context, tokenId!!)
+                                tokenId?.let {
+                                    NetworkCalls.getVehicleList(context, tokenId, info)
+                                }
                             }
                         } else {
                             Toast.makeText(context, "Clipboard does not contain a valid token.", Toast.LENGTH_LONG).show()

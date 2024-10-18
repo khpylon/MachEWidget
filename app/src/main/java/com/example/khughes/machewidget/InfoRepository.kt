@@ -19,6 +19,7 @@ class InfoRepository internal constructor(mContext: Context) {
         mTokenInfoDao = TokenIdDatabase.getInstance(mContext).tokenIdDao()
         vehicles = mVehicleInfoDao.findVehicleInfo()
         mTokenIdList = mTokenInfoDao.findTokenIds()
+        mTokenIdInfo = mTokenIdList[0]
 
         // Check if any vehicles are electric
         val appInfo = StoredData(mContext)
@@ -36,11 +37,19 @@ class InfoRepository internal constructor(mContext: Context) {
         if (tokenId != null) {
             for (tokenIdInfo in mTokenIdList) {
                 if (tokenId == tokenIdInfo.tokenId) {
+                    mTokenIdInfo = tokenIdInfo
                     return tokenIdInfo
                 }
             }
         }
         return null
+    }
+
+    fun getActiveTokenId(): TokenId? {
+        if (mTokenIdInfo == null && mTokenIdList.size > 0) {
+            mTokenIdInfo = mTokenIdList.first()
+        }
+        return mTokenIdInfo
     }
 
     fun getVehicleById(vehicleId: String?): VehicleInfo {

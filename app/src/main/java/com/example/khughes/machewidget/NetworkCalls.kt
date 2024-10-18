@@ -103,7 +103,7 @@ class NetworkCalls {
                             token = UUID.nameUUIDFromBytes(accessToken.resource!!.toByteArray())
                                 .toString()
                             tokenId.tokenId = token
-                            tokenId.accessToken = accessToken.accessToken!!
+                            tokenId.accessToken = "Bearer " + accessToken.accessToken!!
                             tokenId.refreshToken = accessToken.refreshToken!!
 
                             val time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(
@@ -165,11 +165,11 @@ class NetworkCalls {
         private fun refreshAccessToken(
             context: Context,
             tokenId: String,
+            info: InfoRepository,
         ): Intent {
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
-            val dao = TokenIdDatabase.getInstance(context).tokenIdDao()
-            val tokenInfo = dao.findTokenId(tokenId)
+            val tokenInfo = info.getTokenId(tokenId)
 
             tokenInfo?.let {
                 if (checkInternetConnection(context)) {
@@ -188,9 +188,8 @@ class NetworkCalls {
                             if (response.isSuccessful) {
                                 LogFile.i(MainActivity.CHANNEL_ID, "refresh successful")
                                 var accessToken = response.body()
-                                val token = accessToken!!.accessToken
 
-                                tokenInfo!!.accessToken = token
+                                tokenInfo!!.accessToken = "Bearer " + accessToken!!.accessToken
                                 tokenInfo.refreshToken = accessToken.refreshToken
                                 val time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(
                                     accessToken.expiresIn!!.toLong()
@@ -263,36 +262,26 @@ class NetworkCalls {
                     }
                 }
                 tokenInfo.programState = nextState
-                dao.updateTokenId(tokenInfo!!)
+                info.setTokenId(tokenInfo)
             }
             data.putExtra("action", nextState)
             return data
         }
 
-//        suspend fun getVehicleList(
-//            context: Context?,
-//            tokenId: String
-//        ) = withContext(Dispatchers.IO) {
-//            getVehicleList(context!!, tokenId)
-//            val m = Message.obtain()
-//            m.data = intent.extras
-//            m
-//        }
+        suspend fun getVehicleList(
+            context: Context,
+            tokenId: String,
+            info: InfoRepository
+        ) = withContext(Dispatchers.IO) {
 
-        suspend fun getVehicleList(context: Context, tokenId: String) = withContext(Dispatchers.IO) {
-            val info = InfoRepository(context)
-            val dao = TokenIdDatabase.getInstance(context).tokenIdDao()
-            var tokenInfo = dao.findTokenId(tokenId)
-
-            tokenInfo?.let {
+            info.getTokenId(tokenId)?.let {
                 val APIMPSClient = createAPIMPSService(APIMPSService::class.java, context)
 
-                if (checkInternetConnection(context) && checkForRefresh(context, tokenInfo!!.tokenId!!)) {
-                    tokenInfo = dao.findTokenId(tokenId)
+                if (checkForRefresh(context, it.tokenId!!, info)) {
                     for (retry in 2 downTo 0) {
 
                         val callVehicleList =
-                            APIMPSClient.getVehicleList("Bearer " + tokenInfo!!.accessToken)
+                            APIMPSClient.getVehicleList(it.accessToken!!)
                         val responseVehicleList = callVehicleList!!.execute()
                         if (!responseVehicleList.isSuccessful) {
                             continue
@@ -300,26 +289,26 @@ class NetworkCalls {
 
                         val newCars = responseVehicleList.body()
                         if (newCars != null) {
-                            tokenInfo!!.users = newCars.vehicles.size
+                            it.users = newCars.vehicles.size
                             for (vehicle in newCars.vehicles) {
                                 val vehicleId = vehicle.vehicleId
                                 val existingVehicle = info.getVehicleById(vehicleId)
                                 if (existingVehicle.carStatus.vehicle.vehicleId == "") {
                                     val callVehicle = APIMPSClient.getStatus(
                                         vehicleId,
-                                        "Bearer " + tokenInfo!!.accessToken
+                                        it.accessToken!!
                                     )
                                     val responseVehicle = callVehicle!!.execute()
                                     if (responseVehicle.isSuccessful) {
                                         val vehicleInfo = VehicleInfo()
                                         vehicleInfo.carStatus = responseVehicle.body()!!
-                                        vehicleInfo.tokenId = tokenInfo!!.tokenId
+                                        vehicleInfo.tokenId = it.tokenId
                                         info.insertVehicle(vehicleInfo)
 
                                         getVehicleImage(
                                             context = context,
-                                            token = "Bearer " + tokenInfo!!.accessToken,
-                                            vehicle = vehicle
+                                            vehicleId = vehicleInfo.carStatus.vehicle.vehicleId,
+                                            info = info
                                         )
                                     }
                                 } else {
@@ -327,7 +316,7 @@ class NetworkCalls {
                                     info.setVehicle(existingVehicle)
                                 }
                             }
-                            dao.updateTokenId(tokenInfo!!)
+                            info.setTokenId(it)
                             break
                         }
                     }
@@ -351,6 +340,7 @@ class NetworkCalls {
                 .vehicleInfoDao()
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
+            val info = InfoRepository(context)
 
             // Iterate through all the vehicles in the database
             for (vehicle in infoDao.findVehicleInfo()) {
@@ -375,7 +365,7 @@ class NetworkCalls {
                 // Assume the update won't succeed
                 var statusUpdated = false
 
-                if (checkInternetConnection(context) && checkForRefresh(context, vehicle.tokenId!!)) {
+                if (checkForRefresh(context, vehicle.tokenId!!, info)) {
 
                     // Get token info for this vehicle
                     val tokenId = tokenIdDao.findTokenId(vehicle.tokenId!!) as TokenId
@@ -389,7 +379,7 @@ class NetworkCalls {
 
                             val callStatus = statusClient.getStatus(
                                 vehicleId = vehicle.carStatus.vehicle.vehicleId,
-                                accessToken = "Bearer " + accessToken
+                                accessToken = accessToken!!
                             )
                             val responseStatus = callStatus!!.execute()
 
@@ -594,116 +584,109 @@ class NetworkCalls {
 //            return 0
 //        }
 
-//        suspend fun getStatus(
-//            context: Context?,
-//            userInfo: UserInfo?,
-//            VIN: String?,
-//            nickname: String?
-//        ): Message = withContext(Dispatchers.IO ) {
-//            val intent = getStatus(context!!, userInfo!!, VIN!!, nickname!!)
-//            val m = Message.obtain()
-//            m.data = intent.extras
-//            m
-//        }
-
         @JvmStatic
-        fun getVehicleImage(context: Context, token: String, vehicle: VehicleData) {
+        fun getVehicleImage(
+            context: Context,
+            vehicleId: String,
+            info: InfoRepository
+        ) {
             // Create the images folder if necessary
             val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
             if (!imageDir.exists()) {
                 imageDir.mkdir()
             }
 
-            if (checkInternetConnection(context)) {
-                    val image = File(imageDir, vehicle.vehicleId +  ".png")
-                    if (!image.exists()) {
-                        val t = Thread {
-                            for (retry in 2 downTo 0) {
-                                try {
-                                    val vehicleImageClient =
-                                        createAPIMPSService(
-                                            APIMPSService::class.java,
-                                            context
-                                        )
-                                    val call =
-                                        vehicleImageClient.getVehicleImage(
-                                            vehicleId = vehicle.vehicleId,
-                                            accessToken = token,
-                                            make = vehicle.make,
-                                            model = vehicle.modelName,
-                                            year = vehicle.modelYear
-                                        )
-                                    val response = call!!.execute()
-                                    if (response.isSuccessful) {
-                                        Files.copy(
-                                            response.body()!!.byteStream(),
-                                            image.toPath()
-                                        )
-                                        LogFile.i(
-                                            MainActivity.CHANNEL_ID,
-                                            "vehicle image successful."
-                                        )
-                                        updateWidget(context)
-                                        break
-                                    } else {
-                                        LogFile.i(
-                                            MainActivity.CHANNEL_ID,
-                                            response.raw().toString()
-                                        )
-                                        if (response.code() == Constants.HTTP_BAD_REQUEST) {
-                                            LogFile.i(
-                                                MainActivity.CHANNEL_ID,
-                                                "vehicle image UNSUCCESSFUL."
-                                            )
-                                        }
-                                    }
-                                    Thread.sleep((1000).toLong())
-//                                    break
-                                } catch (ee: SocketTimeoutException) {
-                                    LogFile.e(
+            // If the image doesn't exist, then attempt to download it
+            val image = File(imageDir, "$vehicleId.png")
+            if (!image.exists()) {
+
+                // Find the vehicle's info
+                val vehicle = info.getVehicleById(vehicleId)
+                if (checkForRefresh(context = context, tokenId = vehicle.tokenId!!, info = info)) {
+                    val vehicle = info.getVehicleById(vehicleId)
+                    for (retry in 2 downTo 0) {
+                        try {
+                            val vehicleImageClient =
+                                createAPIMPSService(
+                                    APIMPSService::class.java,
+                                    context
+                                )
+                            val call =
+                                vehicleImageClient.getVehicleImage(
+                                    vehicleId = vehicleId,
+                                    accessToken = info.getTokenId(vehicle.tokenId)!!.accessToken!!,
+                                    make = vehicle.carStatus.vehicle.make,
+                                    model = vehicle.carStatus.vehicle.modelName,
+                                    year = vehicle.carStatus.vehicle.modelYear
+                                )
+                            val response = call!!.execute()
+                            if (response.isSuccessful) {
+                                Files.copy(
+                                    response.body()!!.byteStream(),
+                                    image.toPath()
+                                )
+                                LogFile.i(
+                                    MainActivity.CHANNEL_ID,
+                                    "get vehicle image successful."
+                                )
+                                updateWidget(context)
+                                return
+                            } else {
+                                LogFile.i(
+                                    MainActivity.CHANNEL_ID,
+                                    response.raw().toString()
+                                )
+                                if (response.code() == Constants.HTTP_BAD_REQUEST) {
+                                    LogFile.i(
                                         MainActivity.CHANNEL_ID,
-                                        "java.net.SocketTimeoutException in NetworkCalls.getVehicleImage"
+                                        "get vehicle image UNSUCCESSFUL."
                                     )
-                                    LogFile.e(
-                                        MainActivity.CHANNEL_ID,
-                                        MessageFormat.format("    {0} retries remaining", retry)
-                                    )
-                                    try {
-                                        Thread.sleep((3 * 1000).toLong())
-                                    } catch (_: InterruptedException) {
-                                    }
-                                } catch (e3: UnknownHostException) {
-                                    LogFile.e(
-                                        MainActivity.CHANNEL_ID,
-                                        "java.net.UnknownHostException in NetworkCalls.getVehicleImage"
-                                    )
-                                    break
-                                } catch (e2: java.lang.IllegalStateException) {
-                                    LogFile.e(
-                                        MainActivity.CHANNEL_ID,
-                                        "exception in NetworkCalls.getVehicleImage",
-                                        e2
-                                    )
-                                    LogFile.e(
-                                        MainActivity.CHANNEL_ID,
-                                        MessageFormat.format("    {0} retries remaining", retry)
-                                    )
-                                    try {
-                                        Thread.sleep((3 * 1000).toLong())
-                                    } catch (_: InterruptedException) {
-                                    }
-                                } catch (e: java.lang.Exception) {
-                                    LogFile.e(
-                                        MainActivity.CHANNEL_ID,
-                                        "exception in NetworkCalls.getVehicleImage: ",
-                                        e
-                                    )
-                                    break
                                 }
                             }
+                            Thread.sleep((1000).toLong())
+                        } catch (ee: SocketTimeoutException) {
+                            LogFile.e(
+                                MainActivity.CHANNEL_ID,
+                                "java.net.SocketTimeoutException in NetworkCalls.getVehicleImage"
+                            )
+                            LogFile.e(
+                                MainActivity.CHANNEL_ID,
+                                MessageFormat.format("    {0} retries remaining", retry)
+                            )
+                            try {
+                                Thread.sleep((3 * 1000).toLong())
+                            } catch (_: InterruptedException) {
+                            }
+                        } catch (e3: UnknownHostException) {
+                            LogFile.e(
+                                MainActivity.CHANNEL_ID,
+                                "java.net.UnknownHostException in NetworkCalls.getVehicleImage"
+                            )
+                            return
+                        } catch (e2: java.lang.IllegalStateException) {
+                            LogFile.e(
+                                MainActivity.CHANNEL_ID,
+                                "exception in NetworkCalls.getVehicleImage",
+                                e2
+                            )
+                            LogFile.e(
+                                MainActivity.CHANNEL_ID,
+                                MessageFormat.format("    {0} retries remaining", retry)
+                            )
+                            try {
+                                Thread.sleep((3 * 1000).toLong())
+                            } catch (_: InterruptedException) {
+                            }
+                        } catch (e: java.lang.Exception) {
+                            LogFile.e(
+                                MainActivity.CHANNEL_ID,
+                                "exception in NetworkCalls.getVehicleImage: ",
+                                e
+                            )
+                            return
                         }
-                        t.start()
                     }
+                }
             }
         }
 
@@ -774,10 +757,11 @@ class NetworkCalls {
 //            }
 //        }
 
-        private fun checkForRefresh(context: Context, tokenId: String): Boolean {
+        private fun checkForRefresh(context: Context, tokenId: String, info: InfoRepository): Boolean {
             val intent = refreshAccessToken(
-                context,
-                tokenId
+                context = context,
+                tokenId = tokenId,
+                info = info
             )
             val action = intent.extras?.getString("action")
             return action == Constants.STATE_HAVE_TOKEN_AND_VIN
