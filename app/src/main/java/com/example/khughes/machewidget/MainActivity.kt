@@ -183,18 +183,6 @@ class MainActivity : ComponentActivity() {
 
         // If app has been running OK, try to initiate status updates and count number of vehicles in the database
         initateAlarm(context)
-        // TODO:
-//        val userId = PreferenceManager.getDefaultSharedPreferences(context)
-//            .getString(applicationContext.resources.getString(R.string.userId_key), null)
-//        if (userId != null) {
-//            Thread {
-//                val info = InfoRepository(context)
-//                val userInfo = info.user
-//                if (userInfo.programState == Constants.STATE_HAVE_TOKEN_AND_VIN) {
-//                    initateAlarm(context)
-//                }
-//            }.start()
-//        }
 
         // Do bookkeeping on old charging logs
         purgeChargingData(context)

@@ -7,21 +7,6 @@ import retrofit2.http.*
 
 interface ApiAutonomicService {
     @Headers(
-        "Accept: */*",
-        "Accept-Language: en-US",
-        "User-Agent: okhttp/4.9.0",
-        "Accept-Encoding: gzip, deflate, br",
-        "Content-Type: application/json",
-        "Application-Id: " + FordConnectConstants.APID,
-    )
-    @GET("v1/telemetry/sources/fordpass/vehicles/{VIN}")
-    fun getStatus(
-        @Path("VIN") VIN: String?,
-        @Query("lrdt") lrdt: String?,
-        @Header("authorization") token: String?,
-    ): Call<NewCarStatus?>?
-
-    @Headers(
         "Accept-Encoding: gzip",
         "Application-Id: " + FordConnectConstants.APID,
         "Content-Type: application/json",
