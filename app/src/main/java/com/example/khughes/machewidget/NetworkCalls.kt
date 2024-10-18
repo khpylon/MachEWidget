@@ -162,19 +162,6 @@ class NetworkCalls {
             return data
         }
 
-        // TODO: remove this when we remove LoginActivity
-        suspend fun getAccessToken(
-            context: Context?,
-            username: String?,
-            password: String?
-        ) : Message = withContext(Dispatchers.IO){
-            val intent = Intent()
-            intent.putExtra("action", Constants.STATE_ATTEMPT_TO_GET_ACCESS_TOKEN)
-            val m = Message.obtain()
-            m.data = intent.extras
-            m
-        }
-
         private fun refreshAccessToken(
             context: Context,
             tokenId: String,
