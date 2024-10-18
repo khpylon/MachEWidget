@@ -20,6 +20,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.preference.PreferenceManager
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
+import com.example.khughes.machewidget.db.TokenIdDatabase
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
@@ -222,7 +223,10 @@ class VehicleColor {
 class PrefManagement {
 
     companion object {
-        private const val JSON_SETTINGS_VERSION = 4
+        // This is the latest version of the file format
+        private const val JSON_SETTINGS_VERSION = 5
+        // This is the first version of the setting files with the FordConnect API
+        private const val JSON_SETTINGS_VERSION_FORDCONNECTAPI = 5
     }
 
     private lateinit var jsonOutput: String
@@ -281,77 +285,68 @@ class PrefManagement {
                 val versionItem: JsonPrimitive = jsonObject.getAsJsonPrimitive("version")
                 val version = versionItem.asInt
 
-                // TODO: add TokenInfo
-                // Get the current set of user IDs and VINs
-//                val userIds = ArrayList<String>()
-//                for (info in UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()) {
-//                    userIds.add(info.userId!!)
-//                }
-                val VINs = ArrayList<String>()
-                for (info in VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                    .findVehicleInfo()) {
-                    VINs.add(info.carStatus.vehicle.vehicleId)
-                }
-
-                var newVehicleId: String
-//                var newUserId = ""
-
                 // Update users in the database, and remove all IDs from the current list
                 // Don't try to restore for older user IDs
-                if (version > 3) {
-                    // TODO: add TokenInfo
-//                    val users = jsonObject.getAsJsonArray("users")
-//                    for (items in users) {
-//                        val info = gson.fromJson<UserInfo>(
-//                            items.toString(),
-//                            object : TypeToken<UserInfo?>() {}.type
-//                        )
-//                        val current =
-//                            UserInfoDatabase.getInstance(context).userInfoDao()
-//                                .findUserInfo(info.userId!!)
-//                        if (current == null) {
-//                            info.id = 0
-//                            UserInfoDatabase.getInstance(context).userInfoDao().insertUserInfo(info)
-//                        } else {
-//                            UserInfoDatabase.getInstance(context).userInfoDao().updateUserInfo(info)
-//                        }
-//                        userIds.remove(info.userId)
-//                    }
+                if (version >= JSON_SETTINGS_VERSION_FORDCONNECTAPI) {
 
-                    // Insert missing VINs into the database, and remove all VINs from the current list
-                    val newVINs = mutableListOf<String>()
+                    // remove all token Ids from the database
+                    val tokenIdDao = TokenIdDatabase.getInstance(context).tokenIdDao()
+                    for (tokenId in tokenIdDao.findTokenIds() ) {
+                        tokenIdDao.deleteTokenId(tokenId)
+                    }
+
+                    // Insert saved Token Ids
+                    val tokenIds = jsonObject.getAsJsonArray("tokenIds")
+                    val accessTokens : MutableMap<String,TokenId> = mutableMapOf()
+                    for (items in tokenIds) {
+                        val info = gson.fromJson<TokenId>(
+                            items.toString(),
+                            object : TypeToken<TokenId?>() {}.type
+                        )
+                        info.id = 0
+                        tokenIdDao.insertTokenId(info)
+                        accessTokens[info.tokenId!!] = info
+                    }
+
+                    // remove all vehichles from the database
+                    val vehicleInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
+                    for (vehicle in vehicleInfoDao.findVehicleInfo() ) {
+                        vehicleInfoDao.deleteVehicleInfoByVIN(vehicle.carStatus.vehicle.vehicleId)
+                    }
+
+                    // Insert saved vehicles
                     val vehicles = jsonObject.getAsJsonArray("vehicles")
+                    val newVINs : MutableList<String> = mutableListOf()
                     for (items in vehicles) {
                         val info = gson.fromJson<VehicleInfo>(
                             items.toString(),
                             object : TypeToken<VehicleInfo?>() {}.type
                         )
-                        // Save a valid VIN in case we need to change the current VIN
-                        newVehicleId = info.carStatus.vehicle.vehicleId
+                        info.id = 0
+                        vehicleInfoDao.insertVehicleInfo(info)
 
-                        val current = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                            .findVehicleInfoByVIN(newVehicleId)
-                        if (current == null) {
-                            info.id = 0
-                            VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                                .insertVehicleInfo(info)
-                        } else {
-                            VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                                .updateVehicleInfo(info)
-                        }
-                        // TODO: refactor this
-//                        val user =
-//                            UserInfoDatabase.getInstance(context).userInfoDao()
-//                                .findUserInfo(info.userId!!)
-//                        if (user != null) {
-//                            NetworkCalls.getVehicleImage(
-//                                context,
-//                                newVIN,
-//                                user.country!!
-//                            )
-//                        }
-                        newVINs.add(newVehicleId)
-                        VINs.remove(newVehicleId)
+                        newVINs.add(info.carStatus.vehicle.vehicleId)
+
+                        val vehicle = info.carStatus.vehicle
+                        val vehicleData = VehicleData(
+                            vehicleId = vehicle.vehicleId,
+                            make = vehicle.make,
+                            modelName = vehicle.modelName,
+                            modelYear = vehicle.modelYear,
+                            color = "",
+                            engineType = "",
+                            modemEnabled = false,
+                            nickName = "",
+                            serviceCompatible = false,
+                            vehicleAuthorizationIndicator = 0,
+                        )
+
+                        // TODO: make this work
+//                        NetworkCalls.getVehicleImage(
+//                            context = context,
+//                            token = "Bearer " + info.,
+//                            vehicle = vehicleData
+//                        )
                     }
 
                     // Update each widget instance to be sure there is a valid VIN
@@ -380,26 +375,6 @@ class PrefManagement {
                     edit.apply()
 
                 }
-
-                // TODO: remove or replace with TokenId?
-                // Version 1 preferences didn't include user Id
-//                if (version == 1) {
-//                    val userIdkey = context.resources.getString(R.string.userId_key)
-//                    PreferenceManager.getDefaultSharedPreferences(context).edit()
-//                        .putString(userIdkey, newUserId).apply()
-//                }
-
-                // Any user IDs or VINs which weren't restored get deleted
-                for (VIN in VINs) {
-                    VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-                        .deleteVehicleInfoByVIN(VIN)
-                    VehicleImages.deleteImages(context, VIN)
-                }
-                // TODO: add TokenInfo
-
-//                for (user in userIds) {
-//                    UserInfoDatabase.getInstance(context).userInfoDao().deleteUserInfoByUserId(user)
-//                }
 
                 // Update all the default preferences
                 var edit = PreferenceManager.getDefaultSharedPreferences(context).edit()
@@ -506,9 +481,10 @@ class PrefManagement {
                 prefData.clear()
 
                 // Save database entries
-                // TODO: add TokenInfo
-//                jsonData["users"] =
-//                    UserInfoDatabase.getInstance(context).userInfoDao().findUserInfo()
+                jsonData["tokenIds"] =
+                    TokenIdDatabase.getInstance(context).tokenIdDao().findTokenIds()
+                GsonBuilder().create().toJson(jsonData)
+
                 jsonData["vehicles"] =
                     VehicleInfoDatabase.getInstance(context).vehicleInfoDao().findVehicleInfo()
                 GsonBuilder().create().toJson(jsonData)
