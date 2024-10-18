@@ -235,10 +235,9 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
             }
         }
 
-        // TODO: fix localization
         // Show last refresh, odometer
         val timeFormat =
-            if (false) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+            if (Locale.getDefault() == Locale.US) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
         drawLastRefresh(context, views, carStatus, timeFormat)
         drawOdometer(context, views, carStatus, distanceConversion, distanceUnits)
 
@@ -444,35 +443,35 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                     appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
                 }
             }
-            DIESELTOGGLE_CLICK -> {
-                val mode = intent.getStringExtra("nextMode")
-                val appWidgetManager = AppWidgetManager.getInstance(context)
-                val views = RemoteViews(context.packageName, R.layout.widget_2x5)
-                val nextMode: String
-                when (mode) {
-                    "showDEFLevel" -> {
-                        nextMode = "showDEFRange"
-                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
-                        views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
-                        views.setViewVisibility(R.id.DEFRange, View.GONE)
-                    }
-                    "showDEFRange" -> {
-                        nextMode = "showLVBVoltage"
-                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
-                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
-                        views.setViewVisibility(R.id.DEFRange, View.VISIBLE)
-                    }
-                    else -> {
-                        nextMode = "showDEFLevel"
-                        views.setViewVisibility(R.id.LVBDisplay, View.VISIBLE)
-                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
-                        views.setViewVisibility(R.id.DEFRange, View.GONE)
-                    }
-                }
-                val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
-                setDieselCallbacks(context, views, true, appWidgetId, nextMode)
-                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
-            }
+//            DIESELTOGGLE_CLICK -> {
+//                val mode = intent.getStringExtra("nextMode")
+//                val appWidgetManager = AppWidgetManager.getInstance(context)
+//                val views = RemoteViews(context.packageName, R.layout.widget_2x5)
+//                val nextMode: String
+//                when (mode) {
+//                    "showDEFLevel" -> {
+//                        nextMode = "showDEFRange"
+//                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
+//                        views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
+//                        views.setViewVisibility(R.id.DEFRange, View.GONE)
+//                    }
+//                    "showDEFRange" -> {
+//                        nextMode = "showLVBVoltage"
+//                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
+//                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
+//                        views.setViewVisibility(R.id.DEFRange, View.VISIBLE)
+//                    }
+//                    else -> {
+//                        nextMode = "showDEFLevel"
+//                        views.setViewVisibility(R.id.LVBDisplay, View.VISIBLE)
+//                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
+//                        views.setViewVisibility(R.id.DEFRange, View.GONE)
+//                    }
+//                }
+//                val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
+//                setDieselCallbacks(context, views, true, appWidgetId, nextMode)
+//                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
+//            }
             else -> super.onReceive(context, intent)
         }
     }

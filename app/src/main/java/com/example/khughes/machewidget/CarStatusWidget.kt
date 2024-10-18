@@ -264,11 +264,11 @@ open class CarStatusWidget : AppWidgetProvider() {
         )
         views.setOnClickPendingIntent(
             R.id.alarm,
-            getPendingSelfIntent(context, id, AMBIENTTEMP_CLICK)
+            getPendingSelfIntent(context, id, WIDGET_CLICK) // AMBIENTTEMP_CLICK)
         )
         views.setOnClickPendingIntent(
             R.id.plug,
-            getPendingSelfIntent(context, id, KWH_CLICK)
+            getPendingSelfIntent(context, id, WIDGET_CLICK) // KWH_CLICK)
         )
         views.setViewVisibility(R.id.refresh, if (forceUpdates) View.VISIBLE else View.GONE)
         val enableCommands = PreferenceManager.getDefaultSharedPreferences(context)
@@ -350,40 +350,40 @@ open class CarStatusWidget : AppWidgetProvider() {
                 R.id.DEFRange,
                 getPendingSelfIntent(context, id, WIDGET_CLICK)
             )
-        } else {
-            val intent = Intent(context, javaClass)
-            intent.putExtra(APPWIDGETID, id)
-            intent.putExtra("nextMode", mode)
-            intent.action = DIESELTOGGLE_CLICK
-            views.setOnClickPendingIntent(
-                R.id.LVBVoltage,
-                PendingIntent.getBroadcast(
-                    context,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            )
-            intent.action = DIESELTOGGLE_CLICK
-            views.setOnClickPendingIntent(
-                R.id.DEFLevel,
-                PendingIntent.getBroadcast(
-                    context,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            )
-            intent.action = DIESELTOGGLE_CLICK
-            views.setOnClickPendingIntent(
-                R.id.DEFRange,
-                PendingIntent.getBroadcast(
-                    context,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            )
+//        } else {
+//            val intent = Intent(context, javaClass)
+//            intent.putExtra(APPWIDGETID, id)
+//            intent.putExtra("nextMode", mode)
+//            intent.action = DIESELTOGGLE_CLICK
+//            views.setOnClickPendingIntent(
+//                R.id.LVBVoltage,
+//                PendingIntent.getBroadcast(
+//                    context,
+//                    0,
+//                    intent,
+//                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+//                )
+//            )
+//            intent.action = DIESELTOGGLE_CLICK
+//            views.setOnClickPendingIntent(
+//                R.id.DEFLevel,
+//                PendingIntent.getBroadcast(
+//                    context,
+//                    0,
+//                    intent,
+//                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+//                )
+//            )
+//            intent.action = DIESELTOGGLE_CLICK
+//            views.setOnClickPendingIntent(
+//                R.id.DEFRange,
+//                PendingIntent.getBroadcast(
+//                    context,
+//                    0,
+//                    intent,
+//                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+//                )
+//            )
         }
     }
 
@@ -393,12 +393,12 @@ open class CarStatusWidget : AppWidgetProvider() {
         isElectric: Boolean,
         id: Int
     ) {
-        if (isElectric) {
-            views.setOnClickPendingIntent(
-                R.id.HBVChargeProgress,
-                getPendingSelfIntent(context, id, HVB_CLICK)
-            )
-        }
+//        if (isElectric) {
+//            views.setOnClickPendingIntent(
+//                R.id.HBVChargeProgress,
+//                getPendingSelfIntent(context, id, HVB_CLICK)
+//            )
+//        }
     }
 
     protected open fun drawIcons(views: RemoteViews, carStatus: CarStatus) {
@@ -1059,9 +1059,8 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val vehInfo = info.getVehicleById(VIN)
                             val lastUpdateInMillis = vehInfo.lastUpdateTime
 
-                            // TODO: fix localization
                             val timeFormat =
-                                if (false) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+                                if (Locale.getDefault() == Locale.US) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
                             val lastUpdate =
                                 Misc.convertMillisToDate(lastUpdateInMillis, timeFormat)
                             Toast.makeText(
@@ -1375,12 +1374,13 @@ open class CarStatusWidget : AppWidgetProvider() {
         const val LOCK_CLICK = "LockButton"
         const val REFRESH_CLICK = "Refresh"
         const val PHEVTOGGLE_CLICK = "PHEVToggle"
-        const val DIESELTOGGLE_CLICK = "DieselToggle"
         const val UPDATE_CLICK = "ForceUpdate"
         const val APPWIDGETID = "appWidgetId"
         const val AMBIENTTEMP_CLICK = "Temperature"
-        const val KWH_CLICK = "KiloWahtHout"
-        const val HVB_CLICK = "HVBInfo"
+
+//        const val DIESELTOGGLE_CLICK = "DieselToggle"
+//        const val KWH_CLICK = "KiloWahtHout"
+//        const val HVB_CLICK = "HVBInfo"
 
         // Mapping from long state/territory names to abbreviations
         private var states = mutableMapOf(

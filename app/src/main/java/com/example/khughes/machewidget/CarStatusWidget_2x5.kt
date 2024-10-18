@@ -8,8 +8,10 @@ import android.content.Context
 import android.os.Bundle
 import android.content.Intent
 import android.view.View
+import androidx.compose.material3.LocalTonalElevationEnabled
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
+import java.util.Locale
 
 /**
  * Implementation of App Widget functionality.
@@ -147,10 +149,9 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
 //        setDieselCallbacks(context, views, isDiesel, appWidgetId, "showDEFLevel")
         setElectricCallbacks(context, views, isElectric, appWidgetId)
 
-        // TODO: fix localization
         // Show last refresh, odometer, OTA status
         val timeFormat =
-            if (false) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
+            if (Locale.getDefault() == Locale.US) Constants.LOCALTIMEFORMATUS else Constants.LOCALTIMEFORMAT
         drawLastRefresh(context, views, carStatus, timeFormat)
         drawOdometer(context, views, carStatus, distanceConversion, distanceUnits)
         //        drawOTAInfo(context, views, vehicleInfo, timeFormat);
@@ -288,35 +289,35 @@ class CarStatusWidget_2x5 : CarStatusWidget() {
                 setPHEVCallbacks(context, views, true, appWidgetId, nextMode)
                 appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
             }
-            DIESELTOGGLE_CLICK -> {
-                val mode = intent.getStringExtra("nextMode")
-                val appWidgetManager = AppWidgetManager.getInstance(context)
-                val views = RemoteViews(context.packageName, R.layout.widget_2x5)
-                val nextMode: String
-                when (mode) {
-                    "showDEFLevel" -> {
-                        nextMode = "showDEFRange"
-                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
-                        views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
-                        views.setViewVisibility(R.id.DEFRange, View.GONE)
-                    }
-                    "showDEFRange" -> {
-                        nextMode = "showLVBVoltage"
-                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
-                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
-                        views.setViewVisibility(R.id.DEFRange, View.VISIBLE)
-                    }
-                    else -> {
-                        nextMode = "showDEFLevel"
-                        views.setViewVisibility(R.id.LVBDisplay, View.VISIBLE)
-                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
-                        views.setViewVisibility(R.id.DEFRange, View.GONE)
-                    }
-                }
-                val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
-                setDieselCallbacks(context, views, true, appWidgetId, nextMode)
-                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
-            }
+//            DIESELTOGGLE_CLICK -> {
+//                val mode = intent.getStringExtra("nextMode")
+//                val appWidgetManager = AppWidgetManager.getInstance(context)
+//                val views = RemoteViews(context.packageName, R.layout.widget_2x5)
+//                val nextMode: String
+//                when (mode) {
+//                    "showDEFLevel" -> {
+//                        nextMode = "showDEFRange"
+//                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
+//                        views.setViewVisibility(R.id.DEFLevel, View.VISIBLE)
+//                        views.setViewVisibility(R.id.DEFRange, View.GONE)
+//                    }
+//                    "showDEFRange" -> {
+//                        nextMode = "showLVBVoltage"
+//                        views.setViewVisibility(R.id.LVBDisplay, View.GONE)
+//                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
+//                        views.setViewVisibility(R.id.DEFRange, View.VISIBLE)
+//                    }
+//                    else -> {
+//                        nextMode = "showDEFLevel"
+//                        views.setViewVisibility(R.id.LVBDisplay, View.VISIBLE)
+//                        views.setViewVisibility(R.id.DEFLevel, View.GONE)
+//                        views.setViewVisibility(R.id.DEFRange, View.GONE)
+//                    }
+//                }
+//                val appWidgetId = intent.getIntExtra(APPWIDGETID, -1)
+//                setDieselCallbacks(context, views, true, appWidgetId, nextMode)
+//                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
+//            }
             else -> {
                 super.onReceive(context, intent)
             }
