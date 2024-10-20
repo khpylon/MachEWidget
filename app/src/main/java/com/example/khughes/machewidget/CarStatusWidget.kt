@@ -866,12 +866,15 @@ open class CarStatusWidget : AppWidgetProvider() {
             "PASSENGER,REAR_RIGHT" to Vehicle.RIGHT_REAR_DOOR,
             "NOT_APPLICABLE,HOOD_DOOR" to Vehicle.HOOD,
             "PASSENGER,TAILGATE" to Vehicle.TAILGATE,
+            "PASSENGER,INNER_TAILGATE" to Vehicle.TAILGATE,
         )
         // Find anything that's open
         for (door in carStatus.vehicle.vehicleStatus.doorStatus) {
             if(door.value == "AJAR") {
                 val doorIdentifier = door.vehicleOccupantRole+","+door.vehicleDoor
-                whatsOpen.add(vehicleImages[drawables[doorIdentifier]]!!)
+                if (drawables.containsKey(doorIdentifier)) {
+                    whatsOpen.add(vehicleImages[drawables[doorIdentifier]]!!)
+                }
             }
         }
         whatsOpen.removeAll(setOf<Any?>(null))
