@@ -238,7 +238,7 @@ private fun ManageVehicle() {
                             val code = text.substring(text.indexOf("code=")+5)
                             Toast.makeText(context, "Attempting to access vehicle data.", Toast.LENGTH_LONG).show()
                             CoroutineScope(Dispatchers.IO).launch {
-                                val msg = NetworkCalls.getAccessToken(context, code)
+                                val msg = NetworkCalls.getAccessToken(context, code, info = info)
                                 val bundle = msg.data
                                 val tokenId = bundle.getString("tokenId")
                                 tokenId?.let {

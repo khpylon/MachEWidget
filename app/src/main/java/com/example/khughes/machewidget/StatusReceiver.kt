@@ -177,7 +177,7 @@ class StatusReceiver : BroadcastReceiver() {
 //
 //                Constants.STATE_HAVE_TOKEN_AND_VIN -> {
                     LogFile.d(MainActivity.CHANNEL_ID, "Grab status info")
-                    getStatus(context)
+                    getStatus(context, info)
 //                    appInfo.incCounter(StoredData.STATUS_UPDATED)
 //                }
 //
@@ -211,10 +211,12 @@ class StatusReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun getStatus(context: Context) {
-        CoroutineScope(Dispatchers.Main).launch {
-            val msg = NetworkCalls.getStatus(context)
-            val bundle = msg.data
+    private fun getStatus(context: Context, info: InfoRepository) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val intent = NetworkCalls.getStatus(context, info)
+            val m = Message.obtain()
+            m.data = intent.extras
+            val bundle = m.data
             val action = bundle.getString("action")
             LogFile.i(
                 MainActivity.CHANNEL_ID,

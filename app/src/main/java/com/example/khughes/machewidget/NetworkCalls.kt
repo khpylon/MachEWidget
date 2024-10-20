@@ -46,9 +46,10 @@ class NetworkCalls {
 
         suspend fun getAccessToken(
             context: Context?,
-            code: String
+            code: String,
+            info: InfoRepository
         ) : Message = withContext(Dispatchers.IO){
-            val intent = getAccessToken(context!!, code)
+            val intent = getAccessToken(context!!, code, info)
             val m = Message.obtain()
             m.data = intent.extras
             m
@@ -56,12 +57,11 @@ class NetworkCalls {
 
         private fun getAccessToken(
             context: Context,
-            code: String
+            code: String,
+            info: InfoRepository
         ): Intent {
             val data = Intent()
             var stage = 1
-            val vehicleInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-            val tokenDao = TokenIdDatabase.getInstance(context).tokenIdDao()
 
             var tokenId = TokenId()
             var token: String? = null
@@ -100,8 +100,7 @@ class NetworkCalls {
 
                             // Create tokenId
                             accessToken = response.body()!!
-                            token = UUID.nameUUIDFromBytes(accessToken.resource!!.toByteArray())
-                                .toString()
+                            token = UUID.randomUUID().toString()
                             tokenId.tokenId = token
                             tokenId.accessToken = "Bearer " + accessToken.accessToken!!
                             tokenId.refreshToken = accessToken.refreshToken!!
@@ -113,7 +112,7 @@ class NetworkCalls {
                                 time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                             tokenId.expiresIn = nextTime
                             tokenId.programState = Constants.STATE_HAVE_TOKEN_AND_VIN
-                            tokenDao.insertTokenId(tokenId)
+                            info.insertTokenId(tokenId)
                             break
                         }
                     } catch (ee: SocketTimeoutException) {
@@ -324,26 +323,19 @@ class NetworkCalls {
             }
         }
 
-        suspend fun getStatus(
-            context: Context?,
-        ): Message = withContext(Dispatchers.IO) {
-                val intent = getStatus(context!!)
-                val m = Message.obtain()
-                m.data = intent.extras
-                m
-            }
-
-        private fun getStatus(context: Context): Intent {
-            val tokenIdDao = TokenIdDatabase.getInstance(context)
-                .tokenIdDao()
-            val infoDao = VehicleInfoDatabase.getInstance(context)
-                .vehicleInfoDao()
+        fun getStatus(
+            context: Context,
+            info: InfoRepository
+        ): Intent {
+//            val tokenIdDao = TokenIdDatabase.getInstance(context)
+//                .tokenIdDao()
+//            val infoDao = VehicleInfoDatabase.getInstance(context)
+//                .vehicleInfoDao()
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
-            val info = InfoRepository(context)
 
             // Iterate through all the vehicles in the database
-            for (vehicle in infoDao.findVehicleInfo()) {
+            for (vehicle in info.vehicles) {
 
                 // Get the vehicles ID
                 val vehicleId = vehicle.carStatus.vehicle.vehicleId
@@ -368,8 +360,8 @@ class NetworkCalls {
                 if (checkForRefresh(context, vehicle.tokenId!!, info)) {
 
                     // Get token info for this vehicle
-                    val tokenId = tokenIdDao.findTokenId(vehicle.tokenId!!) as TokenId
-                    val accessToken = tokenId.accessToken
+//                    val tokenId = tokenIdDao.findTokenId(vehicle.tokenId!!) as TokenId
+                    val accessToken = info.getTokenId(vehicle.tokenId)!!.accessToken
 
                     for (retry in 2 downTo 0) {
                         try {
@@ -433,7 +425,8 @@ class NetworkCalls {
 
                             // If the vehicle info changed, commit
                             if (statusUpdated) {
-                                infoDao.updateVehicleInfo(vehicle)
+//                                infoDao.updateVehicleInfo(vehicle)
+                                info.setVehicle(vehicle)
                             }
 
                             break
@@ -472,7 +465,8 @@ class NetworkCalls {
                             )
                             // If the vehicle info changed, commit
                             if (statusUpdated) {
-                                infoDao.updateVehicleInfo(vehicle)
+//                                infoDao.updateVehicleInfo(vehicle)
+                                info.setVehicle(vehicle)
                             }
                             break
                         } catch (e: java.lang.Exception) {
@@ -483,13 +477,14 @@ class NetworkCalls {
                             )
                             // If the vehicle info changed, commit
                             if (statusUpdated) {
-                                infoDao.updateVehicleInfo(vehicle)
+//                                infoDao.updateVehicleInfo(vehicle)
+                                info.setVehicle(vehicle)
                             }
                             break
                         }
                     }
-                    tokenId.programState = nextState
-                    tokenIdDao.updateTokenId(tokenId)
+//                    tokenId.programState = nextState
+//                    tokenIdDao.updateTokenId(tokenId)
                 }
 
             }
