@@ -9,17 +9,17 @@ import com.example.khughes.machewidget.db.VehicleInfoDatabase
 class InfoRepository internal constructor(mContext: Context) {
     private val mVehicleInfoDao: VehicleInfoDao
     private val mTokenInfoDao: TokenIdDao
-    val vehicles: List<VehicleInfo>
+    var vehicles: MutableList<VehicleInfo>
     private var mVehicleInfo: VehicleInfo? = null
-    private val mTokenIdList: List<TokenId>
+    private val mTokenIdList: MutableList<TokenId>
     private var mTokenIdInfo: TokenId? = null
 
     init {
         mVehicleInfoDao = VehicleInfoDatabase.getInstance(mContext).vehicleInfoDao()
         mTokenInfoDao = TokenIdDatabase.getInstance(mContext).tokenIdDao()
-        vehicles = mVehicleInfoDao.findVehicleInfo()
-        mTokenIdList = mTokenInfoDao.findTokenIds()
-        mTokenIdInfo = mTokenIdList[0]
+        vehicles = mVehicleInfoDao.findVehicleInfo().toMutableList()
+        mTokenIdList = mTokenInfoDao.findTokenIds().toMutableList()
+        mTokenIdInfo = if (mTokenIdList.size > 0) mTokenIdList[0] else null
 
         // Check if any vehicles are electric
         val appInfo = StoredData(mContext)
@@ -66,6 +66,7 @@ class InfoRepository internal constructor(mContext: Context) {
     fun insertVehicle(info: VehicleInfo) {
         mVehicleInfo = info
         VehicleInfoDatabase.databaseWriteExecutor.execute { mVehicleInfoDao.insertVehicleInfo(info) }
+        vehicles.add(info)
     }
 
     fun setVehicle(info: VehicleInfo) {
@@ -76,6 +77,7 @@ class InfoRepository internal constructor(mContext: Context) {
     fun insertTokenId(info: TokenId) {
         mTokenIdInfo = info
         TokenIdDatabase.databaseWriteExecutor.execute { mTokenInfoDao.insertTokenId(info) }
+        mTokenIdList.add(info)
     }
 
     fun setTokenId(info: TokenId) {
