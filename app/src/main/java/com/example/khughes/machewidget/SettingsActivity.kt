@@ -123,21 +123,21 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
 
-            val commands = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(
-                    context.resources.getString(R.string.enable_commands_key),
-                    false
-                )
-            val forced = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(
-                    context.resources.getString(R.string.user_forcedUpdate_key),
-                    false
-                )
-            if (commands || forced) {
-                val intent = Intent(context, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
+//            val commands = PreferenceManager.getDefaultSharedPreferences(context)
+//                .getBoolean(
+//                    context.resources.getString(R.string.enable_commands_key),
+//                    false
+//                )
+//            val forced = PreferenceManager.getDefaultSharedPreferences(context)
+//                .getBoolean(
+//                    context.resources.getString(R.string.user_forcedUpdate_key),
+//                    false
+//                )
+//            if (commands || forced) {
+//                val intent = Intent(context, MainActivity::class.java)
+//                startActivity(intent)
+//                finish()
+//            }
 
             // If update frequency is changed, sent the info to the Alarm Manager
             var showApps: Preference? =

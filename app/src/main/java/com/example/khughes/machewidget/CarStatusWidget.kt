@@ -23,12 +23,14 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.Misc.Companion.elapsedMinutesToDescription
+import com.example.khughes.machewidget.Misc.Companion.elapsedSecondsToDescription
 import com.example.khughes.machewidget.Notifications.Companion.chargeComplete
 import com.example.khughes.machewidget.ProfileManager.changeProfile
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import com.example.khughes.machewidget.VehicleColor.Companion.drawColoredVehicle
 import kotlinx.coroutines.*
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset.UTC
@@ -915,10 +917,12 @@ open class CarStatusWidget : AppWidgetProvider() {
         return object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 val result = msg.data.getString("action")
-                if (result != null && result == NetworkCalls.COMMAND_SUCCESSFUL) {
-                    nextAlarm(context, 2)
+                if (result != null) {
+                    if (result == NetworkCalls.COMMAND_SUCCESSFUL) {
+                        nextAlarm(context, 2)
+                    }
+                    Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
                 }
-                Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -1229,92 +1233,72 @@ open class CarStatusWidget : AppWidgetProvider() {
                                     }
                                 }
 
-//                                UPDATE_CLICK -> {
-//                                    // If user is undefined, don't do anything
-//                                    val user = info.user
-//                                    user.let {
-//                                        if (carStatus.vehiclestatus.battery?.batteryHealth?.value == "STATUS_GOOD") {
-//                                            val nowTime = Instant.now().toEpochMilli()
-//                                            val firstTime = vehInfo.initialForcedRefreshTime
-//                                            val lastTime = vehInfo.lastForcedRefreshTime
-//                                            var seconds = (nowTime - firstTime) / MILLIS
-//
-//                                            // If it's been twelve hours since the initial refresh, reset the count
-//                                            if (seconds > TIMEOUT_INTERVAL) {
-//                                                vehInfo.forcedRefreshCount = 0
-//                                                info.setVehicle(vehInfo)
-//                                            }
-//
-//                                            // Calculate how long since the last refresh
-//                                            seconds = (nowTime - lastTime) / MILLIS
-//                                            val count = vehInfo.forcedRefreshCount
-//
-//                                            // The first three refreshes must have 2 minutes between them; the next
-//                                            // two refreshes must have 10 minutes
-//                                            if (count < FIRST_LIMIT && seconds > FIRST_INTERVAL || count < SECOND_LIMIT && seconds > SECOND_INTERVAL) {
-//                                                val timeout = user.expiresIn
-//                                                seconds = (timeout - nowTime) / MILLIS
-//                                                // If the access token has expired, or is about to, do a refresh first
-//                                                if (seconds < 30) {
-//                                                    Toast.makeText(
-//                                                        context,
-//                                                        context.getString(R.string.token_is_being_refreshed_description),
-//                                                        Toast.LENGTH_SHORT
-//                                                    ).show()
-//                                                    nextAlarm(context, 2)
-//
-//                                                    CoroutineScope(Dispatchers.Main).launch {
-//                                                        delay(15 * MILLIS)
-//                                                        forceUpdate(context, VIN!!)
-//                                                    }
-//                                                } else {
-//                                                    Toast.makeText(
-//                                                        context,
-//                                                        context.getString(R.string.forcing_a_refresh_description),
-//                                                        Toast.LENGTH_SHORT
-//                                                    ).show()
-//                                                    forceUpdate(context, VIN!!)
-//                                                }
-//                                            } else if (count < FIRST_LIMIT) {
-//                                                Toast.makeText(
-//                                                    context,
-//                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
-//                                                        context,
-//                                                        2 * 60 - seconds
-//                                                    ) + ".",
-//                                                    Toast.LENGTH_SHORT
-//                                                ).show()
-//                                            } else if (count < SECOND_LIMIT) {
-//                                                Toast.makeText(
-//                                                    context,
-//                                                    context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
-//                                                        context,
-//                                                        10 * 60 - seconds
-//                                                    ) + "",
-//                                                    Toast.LENGTH_SHORT
-//                                                ).show()
-//                                            } else {
-//                                                val remainingMinutes =
-//                                                    ((firstTime - nowTime) / MILLIS + TIMEOUT_INTERVAL) / SECONDS
-//                                                Toast.makeText(
-//                                                    context,
-//                                                    context.getString(R.string.too_many_forced_updates_description) +
-//                                                            elapsedMinutesToDescription(
-//                                                                context,
-//                                                                remainingMinutes
-//                                                            ) + ".",
-//                                                    Toast.LENGTH_SHORT
-//                                                ).show()
-//                                            }
-//                                        } else {
-//                                            Toast.makeText(
-//                                                context,
-//                                                context.getString(R.string.lvb_status_bad_description),
-//                                                Toast.LENGTH_SHORT
-//                                            ).show()
-//                                        }
+                                UPDATE_CLICK -> {
+                                    // If user is undefined, don't do anything
+                                    val nowTime = Instant.now().toEpochMilli()
+                                    val firstTime = vehInfo.initialForcedRefreshTime
+                                    val lastTime = vehInfo.lastForcedRefreshTime
+                                    var seconds = (nowTime - firstTime) / MILLIS
+
+                                    // If it's been twelve hours since the initial refresh, reset the count
+                                    if (seconds > TIMEOUT_INTERVAL) {
+                                        vehInfo.forcedRefreshCount = 0
+                                        info.setVehicle(vehInfo)
+                                    }
+
+                                    // Calculate how long since the last refresh
+                                    seconds = (nowTime - lastTime) / MILLIS
+                                    val count = vehInfo.forcedRefreshCount
+
+                                    // The first three refreshes must have 2 minutes between them; the next
+                                    // two refreshes must have 10 minutes
+                                    if (count < FIRST_LIMIT && seconds > FIRST_INTERVAL || count < SECOND_LIMIT && seconds > SECOND_INTERVAL) {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.forcing_a_refresh_description),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        forceUpdate(context, vehInfo.carStatus.vehicle.vehicleId)
+                                    } else if (count < FIRST_LIMIT) {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
+                                                context,
+                                                2 * 60 - seconds
+                                            ) + ".",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else if (count < SECOND_LIMIT) {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.force_update_delay_description) + elapsedSecondsToDescription(
+                                                context,
+                                                10 * 60 - seconds
+                                            ) + "",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        val remainingMinutes =
+                                            ((firstTime - nowTime) / MILLIS + TIMEOUT_INTERVAL) / SECONDS
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.too_many_forced_updates_description) +
+                                                    elapsedMinutesToDescription(
+                                                        context,
+                                                        remainingMinutes
+                                                    ) + ".",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+//                                    TODO: remove this string
+//                                        Toast.makeText(
+//                                            context,
+//                                            context.getString(R.string.lvb_status_bad_description),
+//                                            Toast.LENGTH_SHORT
+//                                        ).show()
 //                                    }
-//                                }
+                                }
                             }
                         }
                         context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)

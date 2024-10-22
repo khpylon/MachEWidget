@@ -51,6 +51,27 @@ interface APIMPSService {
     @Headers(
         "Application-id: " + FordConnectConstants.APID
     )
+    @POST("fordconnect/v1/vehicles/{vehicleID}/{operation}")
+    fun postOperation (
+        @Path("vehicleID") vehicleId: String,
+        @Path("operation") operation: String,
+        @Header("Authorization") accessToken: String
+    ) : Call<CommandStatus>?
+
+    @Headers(
+        "Application-id: " + FordConnectConstants.APID
+    )
+    @GET("fordconnect/v1/vehicles/{vehicleID}/{operation}/{startCommandId}")
+    fun getOperationStatus (
+        @Path("vehicleID") vehicleId: String,
+        @Path("operation") operation: String,
+        @Path("startCommandId") startCommandId: String,
+        @Header("Authorization") accessToken: String
+    ) : Call<CommandStatus>?
+
+    @Headers(
+        "Application-id: " + FordConnectConstants.APID
+    )
     @GET("fordconnect/v3/vehicles/{vehicleID}/vin")
     fun getVIN (
         @Path("vehicleID") vehicleId: String,

@@ -92,7 +92,6 @@
 
     <SwitchPreferenceCompat
         app:key="@string/enable_commands_key"
-        app:enabled="false"
         app:defaultValue="false"
         app:singleLineTitle="false"
         app:title="@string/enable_commands"
@@ -100,7 +99,6 @@
 
     <SwitchPreferenceCompat
         app:key="@string/user_forcedUpdate_key"
-        app:enabled="false"
         app:defaultValue="false"
         app:singleLineTitle="false"
         app:title="@string/user_force_updates"

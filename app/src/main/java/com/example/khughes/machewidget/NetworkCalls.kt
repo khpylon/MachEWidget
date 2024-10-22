@@ -6,7 +6,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
+import android.widget.Toast
 import com.example.khughes.machewidget.CarStatusWidget.Companion.updateWidget
 import com.example.khughes.machewidget.NetworkServiceGenerators.createAPIMPSService
 import com.example.khughes.machewidget.NetworkServiceGenerators.createOAUTH2Service
@@ -19,6 +21,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.nio.file.Files
 import java.text.MessageFormat
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -43,6 +46,13 @@ class NetworkCalls {
         private const val CMD_STATUS_INPROGRESS = "INPROGRESS"
         private const val CMD_STATUS_FAILED = "FAILED"
         private const val CMD_STATUS_QUEUED = "QUEUED"
+
+        private const val OPERATION_STARTENGINE = "startEngine"
+        private const val OPERATION_STOPENGINE = "stopEngine"
+        private const val OPERATION_LOCKDOORS = "stopEngine"
+        private const val OPERATION_UNLOCKDOORS = "stopEngine"
+        private const val OPERATION_STATUS = "status"
+        private const val OPERATION_STATUSREFRESH = "statusrefresh"
 
         suspend fun getAccessToken(
             context: Context?,
@@ -302,6 +312,9 @@ class NetworkCalls {
                                         val vehicleInfo = VehicleInfo()
                                         vehicleInfo.carStatus = responseVehicle.body()!!
                                         vehicleInfo.tokenId = it.tokenId
+                                        if (vehicleInfo.carStatus.vehicle.nickName == "") {
+                                            vehicleInfo.carStatus.vehicle.nickName = "No nickname"
+                                        }
                                         info.insertVehicle(vehicleInfo)
 
                                         getVehicleImage(
@@ -327,10 +340,6 @@ class NetworkCalls {
             context: Context,
             info: InfoRepository
         ): Intent {
-//            val tokenIdDao = TokenIdDatabase.getInstance(context)
-//                .tokenIdDao()
-//            val infoDao = VehicleInfoDatabase.getInstance(context)
-//                .vehicleInfoDao()
             val data = Intent()
             var nextState = Constants.STATE_ATTEMPT_TO_REFRESH_ACCESS_TOKEN
 
@@ -360,7 +369,6 @@ class NetworkCalls {
                 if (checkForRefresh(context, vehicle.tokenId!!, info)) {
 
                     // Get token info for this vehicle
-//                    val tokenId = tokenIdDao.findTokenId(vehicle.tokenId!!) as TokenId
                     val accessToken = info.getTokenId(vehicle.tokenId)!!.accessToken
 
                     for (retry in 2 downTo 0) {
@@ -377,7 +385,6 @@ class NetworkCalls {
 
                             if (responseStatus.isSuccessful) {
                                 LogFile.i(MainActivity.CHANNEL_ID, "status successful.")
-
 
                                 val car = responseStatus.body()
 
@@ -399,6 +406,9 @@ class NetworkCalls {
                                 // If the charging status changes, reset the old charge station info so we know to update it later
                                 val priorRefreshTime = vehicle.lastRefreshTime
                                 if (priorRefreshTime <= currentRefreshTime) {
+                                    if (car.vehicle.nickName == "") {
+                                        car.vehicle.nickName = "No nickname"
+                                    }
                                     vehicle.carStatus = car
                                     vehicle.setLastUpdateTime()
                                     vehicle.lastRefreshTime = currentRefreshTime
@@ -425,7 +435,6 @@ class NetworkCalls {
 
                             // If the vehicle info changed, commit
                             if (statusUpdated) {
-//                                infoDao.updateVehicleInfo(vehicle)
                                 info.setVehicle(vehicle)
                             }
 
@@ -465,7 +474,6 @@ class NetworkCalls {
                             )
                             // If the vehicle info changed, commit
                             if (statusUpdated) {
-//                                infoDao.updateVehicleInfo(vehicle)
                                 info.setVehicle(vehicle)
                             }
                             break
@@ -477,16 +485,12 @@ class NetworkCalls {
                             )
                             // If the vehicle info changed, commit
                             if (statusUpdated) {
-//                                infoDao.updateVehicleInfo(vehicle)
                                 info.setVehicle(vehicle)
                             }
                             break
                         }
                     }
-//                    tokenId.programState = nextState
-//                    tokenIdDao.updateTokenId(tokenId)
                 }
-
             }
             data.putExtra("action", nextState)
             return data
@@ -685,72 +689,400 @@ class NetworkCalls {
             }
         }
 
-        fun remoteStart(handler: Handler, context: Context, VIN: String) {
+        fun remoteStart(handler: Handler, context: Context, vehicleId: String) {
             CoroutineScope(Dispatchers.Main).launch {
                 val intent: Intent =
-                    execCommand(context, VIN, "v5", "engine", "start", "put")
+                    execCommand(context, vehicleId, OPERATION_STARTENGINE)
                 val m = Message.obtain()
                 m.data = intent.extras
                 handler.sendMessage(m)
             }
         }
 
-        fun remoteStop(handler: Handler, context: Context, VIN: String) {
+        fun remoteStop(handler: Handler, context: Context, vehicleId: String) {
             CoroutineScope(Dispatchers.Main).launch {
                 val intent: Intent =
-                    execCommand(context, VIN, "v5", "engine", "start", "delete")
+                    execCommand(context, vehicleId,  OPERATION_STOPENGINE)
                 val m = Message.obtain()
                 m.data = intent.extras
                 handler.sendMessage(m)
             }
         }
 
-        fun lockDoors(handler: Handler, context: Context, VIN: String) {
+        fun lockDoors(handler: Handler, context: Context, vehicleId: String) {
             CoroutineScope(Dispatchers.Main).launch {
                 val intent: Intent =
-                    execCommand(context, VIN, "v2", "doors", "lock", "put")
+                    execCommand(context, vehicleId,  OPERATION_LOCKDOORS)
                 val m = Message.obtain()
                 m.data = intent.extras
                 handler.sendMessage(m)
             }
         }
 
-        fun unlockDoors(handler: Handler, context: Context, VIN: String) {
+        fun unlockDoors(handler: Handler, context: Context, vehicleId: String) {
             CoroutineScope(Dispatchers.Main).launch {
                 val intent: Intent =
-                    execCommand(context, VIN, "v2", "doors", "lock", "delete")
+                    execCommand(context, vehicleId, OPERATION_UNLOCKDOORS)
                 val m = Message.obtain()
                 m.data = intent.extras
                 handler.sendMessage(m)
             }
         }
 
-        // TODO: remove once we've cleaned up other references
-//        private fun checkForRefresh(context: Context, user: UserInfo): Boolean {
-//            val MILLIS = 1000
-//
-//            val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-//            val delayInMillis = sharedPref.getString(
-//                context.resources.getString(R.string.update_frequency_key),
-//                "10"
-//            )!!.toInt() * 60 * MILLIS
-//
-//            val userId = user.userId as String
-//            val timeout = user.expiresIn
-//            val time = LocalDateTime.now(ZoneId.systemDefault())
-//            val nowtime = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-//            return if (true) { // (timeout - delayInMillis - 10 * MILLIS < nowtime) {
-//                val intent = refreshAccessToken(
-//                    context,
-//                    userId,
-//                    user.refreshToken!!
-//                )
-//                val action = intent.extras?.getString("action")
-//                action == Constants.STATE_HAVE_TOKEN_AND_VIN
-//            } else {
-//                true
-//            }
-//        }
+        private suspend fun execCommand(
+            context: Context,
+            vehicleId: String,
+            operation: String,
+        ): Intent = coroutineScope {
+            withContext(Dispatchers.IO) {
+                val data = Intent()
+                val info = InfoRepository(context)
+                val vehicle = info.getVehicleById(vehicleId)
+                if (checkForRefresh(context, vehicle.tokenId!!, info)) {
+                    // Get the user info again in case a refresh updated the access token
+                    try {
+                        val commandServiceClient = createAPIMPSService(
+                            APIMPSService::class.java, context
+                        )
+
+                        // Get token info for this vehicle
+                        val accessToken = info.getTokenId(vehicle.tokenId)!!.accessToken
+
+                        val call = commandServiceClient.postOperation(
+                            vehicleId = vehicleId,
+                            operation = operation,
+                            accessToken = accessToken!!
+                            )
+                        val response = call!!.execute()
+                        if (response.isSuccessful) {
+                            val status = response.body()
+                            if (status!!.status == CMD_STATUS_SUCCESS) {
+                                val commandId = status.commandId
+                                LogFile.i(MainActivity.CHANNEL_ID, "CMD send successful.")
+                                if (Looper.myLooper() == null) {
+                                    Looper.prepare()
+                                }
+                                Toast.makeText(context,
+                                    context.getString(R.string.networkcalls_command_transmitted), Toast.LENGTH_SHORT)
+                                    .show()
+                                // TODO: return operation and command ID in extra ?
+                                data.putExtra(
+                                    "action",
+                                    execResponse(
+                                        context = context,
+                                        vehicleInfo = vehicle,
+                                        operation = operation,
+                                        info = info,
+                                        idCode = status.commandId!!
+                                    )
+                                )
+//                            } else if (status.status == CMD_REMOTE_START_LIMIT) {
+//                                LogFile.i(
+//                                    context,
+//                                    MainActivity.CHANNEL_ID,
+//                                    "CMD send UNSUCCESSFUL."
+//                                )
+//                                data.putExtra("action", COMMAND_REMOTE_START_LIMIT)
+                            } else {
+                                data.putExtra("action", COMMAND_EXCEPTION)
+                                LogFile.i(
+                                    context,
+                                    MainActivity.CHANNEL_ID,
+                                    "CMD send unknown response."
+                                )
+                                LogFile.i(
+                                    context,
+                                    MainActivity.CHANNEL_ID,
+                                    response.raw().toString()
+                                )
+                            }
+                        } else {
+                            data.putExtra("action", COMMAND_FAILED)
+                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.")
+                            LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                        }
+                    } catch (e2: java.lang.IllegalStateException) {
+                        LogFile.e(
+                            MainActivity.CHANNEL_ID,
+                            "exception in NetworkCalls.execCommand",
+                            e2
+                        )
+                    } catch (e: java.lang.Exception) {
+                        data.putExtra("action", COMMAND_EXCEPTION)
+                        LogFile.e(
+                            MainActivity.CHANNEL_ID,
+                            "exception in NetworkCalls.execCommand: ",
+                            e
+                        )
+                    }
+                }
+                data
+            }
+        }
+
+        private fun execResponse(
+            context: Context,
+            vehicleInfo: VehicleInfo,
+            operation: String,
+            info: InfoRepository,
+            idCode: String
+        ): String? {
+            // Delay 5 seconds before starting to check on status
+            try {
+                Thread.sleep((5 * 1000).toLong())
+            } catch (e: InterruptedException) {
+                LogFile.e(
+                    MainActivity.CHANNEL_ID,
+                    "exception in NetworkCalls.execResponse: ",
+                    e
+                )
+            }
+            val commandServiceClient = createAPIMPSService(
+                APIMPSService::class.java, context
+            )
+            return try {
+                for (retries in 0..9) {
+                    val call = commandServiceClient.getOperationStatus(
+                        vehicleId = vehicleInfo.carStatus.vehicle.vehicleId,
+                        operation = operation,
+                        startCommandId = idCode,
+                        accessToken = info.getTokenId(vehicleInfo.tokenId!!)!!.accessToken!!
+                    )
+                    val response = call!!.execute()
+                    if (response.isSuccessful) {
+                        val status = response.body()
+                        when (status!!.commandStatus) {
+                            CMD_STATUS_COMPLETED -> {
+                                LogFile.i(
+                                    context,
+                                    MainActivity.CHANNEL_ID,
+                                    "CMD response successful."
+                                )
+                                return COMMAND_SUCCESSFUL
+                            }
+
+                            CMD_STATUS_FAILED -> {
+                                LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response failed.")
+                                return COMMAND_FAILED
+                            }
+
+                            CMD_STATUS_INPROGRESS -> LogFile.i(
+                                context,
+                                MainActivity.CHANNEL_ID,
+                                "CMD response waiting."
+                            )
+
+                            else -> {
+                                LogFile.i(
+                                    MainActivity.CHANNEL_ID,
+                                    "CMD response unknown: status = " + status.status
+                                )
+                                return COMMAND_FAILED
+                            }
+                        }
+                    } else {
+                        LogFile.i(MainActivity.CHANNEL_ID, response.raw().toString())
+                        LogFile.i(MainActivity.CHANNEL_ID, "CMD response UNSUCCESSFUL.")
+                        return COMMAND_FAILED
+                    }
+                    Thread.sleep((5 * 1000).toLong())
+                }
+                LogFile.i(context, MainActivity.CHANNEL_ID, "CMD timeout?")
+                COMMAND_FAILED
+            } catch (e: java.lang.Exception) {
+                LogFile.e(
+                    MainActivity.CHANNEL_ID,
+                    "exception in NetworkCalls.execResponse: ",
+                    e
+                )
+                COMMAND_EXCEPTION
+            }
+        }
+
+        @JvmStatic
+        fun updateStatus(handler: Handler,
+                         context: Context?,
+                         vehicleId: String?) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val intent = updateStatus(context = context!!, vehicleId = vehicleId!!)
+                val m = Message.obtain()
+                m.data = intent.extras
+                handler.sendMessage(m)
+            }
+        }
+
+        private suspend fun updateStatus(
+            context: Context,
+            vehicleId: String
+        ): Intent = coroutineScope {
+            withContext(Dispatchers.IO) {
+                val data = Intent()
+                val info = InfoRepository(context!!)
+                val vehInfo = info.getVehicleById(vehicleId)
+                if (checkForRefresh(context = context,
+                        tokenId = vehInfo.tokenId!!,
+                        info = info)
+                    )
+                {
+                    while (true) {
+                        try {
+                            val commandServiceClient = createAPIMPSService(
+                                APIMPSService::class.java, context
+                            )
+                            val call =
+                                commandServiceClient.postOperation(
+                                    vehicleId = vehicleId,
+                                    operation = OPERATION_STATUS,
+                                    accessToken = info.getTokenId(vehInfo.tokenId!!)!!.accessToken!!
+                                )
+                            val response = call!!.execute()
+                            if (response.isSuccessful) {
+                                val status = response.body()
+                                if (status!!.status == CMD_STATUS_SUCCESS) {
+                                    LogFile.i(
+                                        MainActivity.CHANNEL_ID,
+                                        "updatestatus send successful."
+                                    )
+                                    if (Looper.myLooper() == null) {
+                                        Looper.prepare()
+                                    }
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.networkcalls_command_transmitted),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    data.putExtra(
+                                        "action",
+                                        pollStatus(context = context, vehicleId = vehicleId, info = info, idCode = status.commandId)
+                                    )
+                                } else {
+                                    data.putExtra("action", COMMAND_EXCEPTION)
+                                    LogFile.i(
+                                        MainActivity.CHANNEL_ID,
+                                        "updatestatus returned unknown response."
+                                    )
+                                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                                }
+                            } else {
+                                data.putExtra("action", COMMAND_FAILED)
+                                LogFile.i(
+                                    MainActivity.CHANNEL_ID,
+                                    "updatestatus send UNSUCCESSFUL."
+                                )
+                                LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                            }
+                            break
+                        } catch (e1: java.lang.IllegalStateException) {
+                            data.putExtra("action", COMMAND_EXCEPTION)
+                            LogFile.e(
+                                MainActivity.CHANNEL_ID,
+                                "IllegalStateException in NetworkCalls.updateStatus(): ", e1
+                            )
+                        } catch (e: java.lang.Exception) {
+                            data.putExtra("action", COMMAND_EXCEPTION)
+                            LogFile.e(
+                                MainActivity.CHANNEL_ID,
+                                "exception in NetworkCalls.updateStatus(): ",
+                                e
+                            )
+                        }
+                        Thread.sleep((3 * 1000).toLong())
+                    }
+                }
+                data
+            }
+        }
+
+        private fun pollStatus(
+            context: Context,
+            vehicleId: String,
+            idCode: String?,
+            info: InfoRepository
+        ): String? {
+            // Delay 5 seconds before starting to check on status
+            try {
+                Thread.sleep((10 * 1000).toLong())
+            } catch (e: InterruptedException) {
+                LogFile.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e)
+            }
+            val commandServiceClient = createAPIMPSService(
+                APIMPSService::class.java, context
+            )
+            val vehicle = info.getVehicleById(vehicleId)
+            return try {
+                for (retries in 0..9) {
+                    val call = commandServiceClient.getOperationStatus(
+                        vehicleId = vehicleId,
+                        operation = OPERATION_STATUSREFRESH,
+                        startCommandId = idCode!!,
+                        accessToken = info.getTokenId(vehicle.tokenId)!!.accessToken!!
+                    )
+                    val response = call!!.execute()
+                    if (response.isSuccessful) {
+                        val status = response.body()
+                        when (status!!.status) {
+                            CMD_STATUS_SUCCESS -> {
+                                LogFile.i(
+                                    context!!,
+                                    MainActivity.CHANNEL_ID,
+                                    "poll response successful."
+                                )
+                                val now = Instant.now().toEpochMilli()
+                                vehicle.lastForcedRefreshTime = now
+                                var count = vehicle.forcedRefreshCount
+                                if (count == 0L) {
+                                    vehicle.initialForcedRefreshTime = now
+                                }
+                                vehicle.forcedRefreshCount = ++count
+                                info.setVehicle(vehicle)
+                                return COMMAND_SUCCESSFUL
+                            }
+
+                            CMD_STATUS_FAILED -> {
+                                LogFile.i(
+                                    context!!,
+                                    MainActivity.CHANNEL_ID,
+                                    "poll response failed."
+                                )
+                                return COMMAND_FAILED
+                            }
+
+                            CMD_STATUS_QUEUED -> {
+                                LogFile.i(
+                                    context!!,
+                                    MainActivity.CHANNEL_ID,
+                                    "poll response failed."
+                                )
+                            }
+
+                            CMD_STATUS_INPROGRESS -> {
+                                LogFile.i(
+                                    context!!, MainActivity.CHANNEL_ID, "poll response waiting."
+                                )
+                            }
+
+                            else -> {
+                                LogFile.i(
+                                    MainActivity.CHANNEL_ID,
+                                    "poll response unknown: status = " + status.status
+                                )
+                                return COMMAND_FAILED
+                            }
+                        }
+                    } else {
+                        LogFile.i(MainActivity.CHANNEL_ID, response.raw().toString())
+                        LogFile.i(MainActivity.CHANNEL_ID, "poll response UNSUCCESSFUL.")
+                        return COMMAND_FAILED
+                    }
+                    Thread.sleep((3 * 1000).toLong())
+                }
+                LogFile.i(MainActivity.CHANNEL_ID, "poll timeout?")
+                COMMAND_FAILED
+            } catch (e: java.lang.Exception) {
+                LogFile.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus(): ", e)
+                COMMAND_EXCEPTION
+            }
+        }
 
         private fun checkForRefresh(context: Context, tokenId: String, info: InfoRepository): Boolean {
             val intent = refreshAccessToken(
@@ -760,377 +1092,6 @@ class NetworkCalls {
             )
             val action = intent.extras?.getString("action")
             return action == Constants.STATE_HAVE_TOKEN_AND_VIN
-        }
-
-        private suspend fun execCommand(
-            context: Context,
-            VIN: String,
-            version: String,
-            component: String,
-            operation: String,
-            request: String
-        ): Intent = coroutineScope {
-            withContext(Dispatchers.IO) {
-                val vehInfo = VehicleInfoDatabase.getInstance(context)
-                    .vehicleInfoDao().findVehicleInfoByVIN(VIN)
-                val data = Intent()
-//                if (!checkInternetConnection(context)) {
-//                    data.putExtra("action", COMMAND_NO_NETWORK)
-//                } else if (!checkForRefresh(context, tmpUserInfo!!)) {
-//                    data.putExtra("action", COMMAND_EXCEPTION)
-//                } else {
-//                    // Get the user info again in case a refresh updated the access token
-//                    val userInfo = UserInfoDatabase.getInstance(context)
-//                        .userInfoDao().findUserInfo(vehInfo.userId!!)
-//                    val token = userInfo!!.accessToken
-//                    try {
-//                        val commandServiceClient = createUSAPICVService(
-//                            USAPICVService::class.java, context
-//                        )
-//                        val call: Call<CommandStatus?>? = if (request == "put") {
-//                            commandServiceClient.putCommand(
-//                                token, FordConnectConstants.APID,
-//                                version, VIN, component, operation
-//                            )
-//                        } else {
-//                            commandServiceClient.deleteCommand(
-//                                token, FordConnectConstants.APID,
-//                                version, VIN, component, operation
-//                            )
-//                        }
-//                        val response = call!!.execute()
-//                        if (response.isSuccessful) {
-//                            val status = response.body()
-//                            if (status!!.status == CMD_STATUS_SUCCESS) {
-//                                LogFile.i(MainActivity.CHANNEL_ID, "CMD send successful.")
-//                                if (Looper.myLooper() == null) {
-//                                    Looper.prepare()
-//                                }
-//                                Toast.makeText(context,
-//                                    context.getString(R.string.networkcalls_command_transmitted), Toast.LENGTH_SHORT)
-//                                    .show()
-//                                data.putExtra(
-//                                    "action",
-//                                    execResponse(
-//                                        context,
-//                                        token!!,
-//                                        VIN,
-//                                        component,
-//                                        operation,
-//                                        status.commandId!!
-//                                    )
-//                                )
-//                            } else if (status.status == CMD_REMOTE_START_LIMIT) {
-//                                LogFile.i(
-//                                    context,
-//                                    MainActivity.CHANNEL_ID,
-//                                    "CMD send UNSUCCESSFUL."
-//                                )
-//                                data.putExtra("action", COMMAND_REMOTE_START_LIMIT)
-//                            } else {
-//                                data.putExtra("action", COMMAND_EXCEPTION)
-//                                LogFile.i(
-//                                    context,
-//                                    MainActivity.CHANNEL_ID,
-//                                    "CMD send unknown response."
-//                                )
-//                                LogFile.i(
-//                                    context,
-//                                    MainActivity.CHANNEL_ID,
-//                                    response.raw().toString()
-//                                )
-//                            }
-//                        } else {
-//                            data.putExtra("action", COMMAND_FAILED)
-//                            LogFile.i(context, MainActivity.CHANNEL_ID, "CMD send UNSUCCESSFUL.")
-//                            LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
-//                        }
-//                    } catch (e2: java.lang.IllegalStateException) {
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            "exception in NetworkCalls.execCommand",
-//                            e2
-//                        )
-//                    } catch (e: java.lang.Exception) {
-//                        data.putExtra("action", COMMAND_EXCEPTION)
-//                        LogFile.e(
-//                            MainActivity.CHANNEL_ID,
-//                            "exception in NetworkCalls.execCommand: ",
-//                            e
-//                        )
-//                    }
-//                }
-                data
-            }
-        }
-
-//        private fun execResponse(
-//            context: Context,
-//            token: String,
-//            VIN: String,
-//            component: String,
-//            operation: String,
-//            idCode: String
-//        ): String? {
-//            // Delay 5 seconds before starting to check on status
-//            try {
-//                Thread.sleep((5 * 1000).toLong())
-//            } catch (e: InterruptedException) {
-//                LogFile.e(
-//                    MainActivity.CHANNEL_ID,
-//                    "exception in NetworkCalls.execResponse: ",
-//                    e
-//                )
-//            }
-//            val commandServiceClient = createUSAPICVService(
-//                USAPICVService::class.java, context
-//            )
-//            return try {
-//                for (retries in 0..9) {
-//                    val call = commandServiceClient.getCommandResponse(
-//                        token,
-//                        FordConnectConstants.APID, VIN, component, operation, idCode
-//                    )
-//                    val response = call!!.execute()
-//                    if (response.isSuccessful) {
-//                        val status = response.body()
-//                        when (status!!.commandStatus) {
-//                            CMD_STATUS_COMPLETED -> {
-//                                LogFile.i(
-//                                    context,
-//                                    MainActivity.CHANNEL_ID,
-//                                    "CMD response successful."
-//                                )
-//                                return COMMAND_SUCCESSFUL
-//                            }
-//
-//                            CMD_STATUS_FAILED -> {
-//                                LogFile.i(context, MainActivity.CHANNEL_ID, "CMD response failed.")
-//                                return COMMAND_FAILED
-//                            }
-//
-//                            CMD_STATUS_INPROGRESS -> LogFile.i(
-//                                context,
-//                                MainActivity.CHANNEL_ID,
-//                                "CMD response waiting."
-//                            )
-//
-//                            else -> {
-//                                LogFile.i(
-//                                    MainActivity.CHANNEL_ID,
-//                                    "CMD response unknown: status = " + status.status
-//                                )
-//                                return COMMAND_FAILED
-//                            }
-//                        }
-//                    } else {
-//                        LogFile.i(MainActivity.CHANNEL_ID, response.raw().toString())
-//                        LogFile.i(MainActivity.CHANNEL_ID, "CMD response UNSUCCESSFUL.")
-//                        return COMMAND_FAILED
-//                    }
-//                    Thread.sleep((2 * 1000).toLong())
-//                }
-//                LogFile.i(context, MainActivity.CHANNEL_ID, "CMD timeout?")
-//                COMMAND_FAILED
-//            } catch (e: java.lang.Exception) {
-//                LogFile.e(
-//                    MainActivity.CHANNEL_ID,
-//                    "exception in NetworkCalls.execResponse: ",
-//                    e
-//                )
-//                COMMAND_EXCEPTION
-//            }
-//        }
-
-        @JvmStatic
-        fun updateStatus(handler: Handler, context: Context?, VIN: String?) {
-            CoroutineScope(Dispatchers.Main).launch {
-                val intent = updateStatus(context, VIN)
-                val m = Message.obtain()
-                m.data = intent.extras
-                handler.sendMessage(m)
-            }
-        }
-
-        private suspend fun updateStatus(
-            context: Context?,
-            VIN: String?
-        ): Intent = coroutineScope {
-            withContext(Dispatchers.IO) {
-                val data = Intent()
-//                val userDao = UserInfoDatabase.getInstance(context!!)
-//                    .userInfoDao()
-//                val infoDao = VehicleInfoDatabase.getInstance(context)
-//                    .vehicleInfoDao()
-//                val vehInfo = infoDao.findVehicleInfoByVIN(VIN!!)
-//                val tmpUserInfo = userDao.findUserInfo(vehInfo!!.userId!!)
-//                if (!checkInternetConnection(context)) {
-//                    data.putExtra("action", COMMAND_NO_NETWORK)
-//                } else if (!checkForRefresh(context, tmpUserInfo!!)) {
-//                    data.putExtra("action", COMMAND_EXCEPTION)
-//                } else {
-//                    // Get the user info again in case a refresh updated the access token
-//                    val userInfo = UserInfoDatabase.getInstance(context)
-//                        .userInfoDao().findUserInfo(vehInfo.userId!!)
-//                    val token = userInfo!!.accessToken
-//
-//                    while (true) {
-//                        try {
-//                            val commandServiceClient = createUSAPICVService(
-//                                USAPICVService::class.java, context
-//                            )
-//                            val call: Call<CommandStatus?>? =
-//                                commandServiceClient.putStatus(token, FordConnectConstants.APID, VIN)
-//                            val response = call!!.execute()
-//                            if (response.isSuccessful) {
-//                                val status = response.body()
-//                                if (status!!.status == CMD_STATUS_SUCCESS) {
-//                                    LogFile.i(
-//                                        MainActivity.CHANNEL_ID,
-//                                        "statusrefresh send successful."
-//                                    )
-//                                    if (Looper.myLooper() == null) {
-//                                        Looper.prepare()
-//                                    }
-//                                    Toast.makeText(
-//                                        context,
-//                                        context.getString(R.string.networkcalls_command_transmitted),
-//                                        Toast.LENGTH_SHORT
-//                                    )
-//                                        .show()
-//                                    data.putExtra(
-//                                        "action",
-//                                        pollStatus(context, token, vehInfo, status.commandId)
-//                                    )
-//                                } else if (status.status == CMD_REMOTE_START_LIMIT) {
-//                                    LogFile.i(
-//                                        MainActivity.CHANNEL_ID,
-//                                        "statusrefresh send UNSUCCESSFUL."
-//                                    )
-//                                    data.putExtra("action", COMMAND_REMOTE_START_LIMIT)
-//                                } else {
-//                                    data.putExtra("action", COMMAND_EXCEPTION)
-//                                    LogFile.i(
-//                                        MainActivity.CHANNEL_ID,
-//                                        "statusrefresh send unknown response."
-//                                    )
-//                                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
-//                                }
-//                            } else {
-//                                data.putExtra("action", COMMAND_FAILED)
-//                                LogFile.i(
-//                                    MainActivity.CHANNEL_ID,
-//                                    "statusrefresh send UNSUCCESSFUL."
-//                                )
-//                                LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
-//                            }
-//                            break
-//                        } catch (e1: java.lang.IllegalStateException) {
-//                            data.putExtra("action", COMMAND_EXCEPTION)
-//                            LogFile.e(
-//                                MainActivity.CHANNEL_ID,
-//                                "IllegalStateException in NetworkCalls.updateStatus(): ", e1
-//                            )
-//                        } catch (e: java.lang.Exception) {
-//                            data.putExtra("action", COMMAND_EXCEPTION)
-//                            LogFile.e(
-//                                MainActivity.CHANNEL_ID,
-//                                "exception in NetworkCalls.updateStatus(): ",
-//                                e
-//                            )
-//                        }
-//                        Thread.sleep((3 * 1000).toLong())
-//                    }
-//                }
-                data
-            }
-        }
-
-        private fun pollStatus(
-            context: Context?,
-            token: String?,
-            vehInfo: VehicleInfo,
-            idCode: String?
-        ): String? {
-            // Delay 5 seconds before starting to check on status
-//            try {
-//                Thread.sleep((10 * 1000).toLong())
-//            } catch (e: InterruptedException) {
-//                LogFile.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus: ", e)
-//            }
-//            val VIN = vehInfo.vin
-//            val commandServiceClient = createUSAPICVService(
-//                USAPICVService::class.java, context
-//            )
-//            return try {
-//                for (retries in 0..9) {
-//                    val call = commandServiceClient.pollStatus(token, FordConnectConstants.APID, VIN, idCode)
-//                    val response = call!!.execute()
-//                    if (response.isSuccessful) {
-//                        val status = response.body()
-//                        when (status!!.status) {
-//                            CMD_STATUS_SUCCESS -> {
-//                                LogFile.i(
-//                                    context!!,
-//                                    MainActivity.CHANNEL_ID,
-//                                    "poll response successful."
-//                                )
-//                                val now = Instant.now().toEpochMilli()
-//                                vehInfo.lastForcedRefreshTime = now
-//                                var count = vehInfo.forcedRefreshCount
-//                                if (count == 0L) {
-//                                    vehInfo.initialForcedRefreshTime = now
-//                                }
-//                                vehInfo.forcedRefreshCount = ++count
-//                                VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
-//                                    .updateVehicleInfo(vehInfo)
-//                                return COMMAND_SUCCESSFUL
-//                            }
-//
-//                            CMD_STATUS_FAILED -> {
-//                                LogFile.i(
-//                                    context!!,
-//                                    MainActivity.CHANNEL_ID,
-//                                    "poll response failed."
-//                                )
-//                                return COMMAND_FAILED
-//                            }
-//
-//                            CMD_STATUS_QUEUED -> {
-//                                LogFile.i(
-//                                    context!!,
-//                                    MainActivity.CHANNEL_ID,
-//                                    "poll response failed."
-//                                )
-//                            }
-//
-//                            CMD_STATUS_INPROGRESS -> {
-//                                LogFile.i(
-//                                    context!!, MainActivity.CHANNEL_ID, "poll response waiting."
-//                                )
-//                            }
-//
-//                            else -> {
-//                                LogFile.i(
-//                                    MainActivity.CHANNEL_ID,
-//                                    "poll response unknown: status = " + status.status
-//                                )
-//                                return COMMAND_FAILED
-//                            }
-//                        }
-//                    } else {
-//                        LogFile.i(MainActivity.CHANNEL_ID, response.raw().toString())
-//                        LogFile.i(MainActivity.CHANNEL_ID, "poll response UNSUCCESSFUL.")
-                        return COMMAND_FAILED
-//                    }
-//                    Thread.sleep((3 * 1000).toLong())
-//                }
-//                LogFile.i(MainActivity.CHANNEL_ID, "poll timeout?")
-//                COMMAND_FAILED
-//            } catch (e: java.lang.Exception) {
-//                LogFile.e(MainActivity.CHANNEL_ID, "exception in NetworkCalls.pollStatus(): ", e)
-//                COMMAND_EXCEPTION
-//            }
         }
 
         @JvmStatic

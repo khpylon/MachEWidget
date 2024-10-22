@@ -82,37 +82,37 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     fun checkCommandsEnabled(context: Context) {
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-
-        // Check status of remote commands and forced updates
-        val commandsKey = context.resources.getString(R.string.enable_commands_key)
-        val commands = prefs.getBoolean(commandsKey, false)
-        val forcedKey = context.resources.getString(R.string.user_forcedUpdate_key)
-        val forced = prefs.getBoolean(forcedKey, false)
-
-        // if either is set, let the user know why they're disabled
-        if (commands || forced) {
-            AlertDialog.Builder(ContextThemeWrapper(this, R.style.AlertDialogCustom))
-                .setTitle(context.getString(R.string.remote_commands_disabled_title))
-                .setNegativeButton(context.getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-                .setMessage(
-                    context.getString(R.string.remote_commands_disabled_description)
-                )
-                .show()
-
-            // disable active settings and store them for future use
-            var result = StoredData.NO_COMMANDS
-            if (commands) {
-                result += StoredData.REMOTE_COMMANDS
-                prefs.edit().putBoolean(commandsKey, false).commit()
-            }
-            if (forced) {
-                result += StoredData.FORCED_REFRESH
-                prefs.edit().putBoolean(forcedKey, false).commit()
-            }
-            val appInfo = StoredData(context)
-            appInfo.remoteCommands = result
-        }
+//        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+//
+//        // Check status of remote commands and forced updates
+//        val commandsKey = context.resources.getString(R.string.enable_commands_key)
+//        val commands = prefs.getBoolean(commandsKey, false)
+//        val forcedKey = context.resources.getString(R.string.user_forcedUpdate_key)
+//        val forced = prefs.getBoolean(forcedKey, false)
+//
+//        // if either is set, let the user know why they're disabled
+//        if (commands || forced) {
+//            AlertDialog.Builder(ContextThemeWrapper(this, R.style.AlertDialogCustom))
+//                .setTitle(context.getString(R.string.remote_commands_disabled_title))
+//                .setNegativeButton(context.getString(R.string.close_button)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+//                .setMessage(
+//                    context.getString(R.string.remote_commands_disabled_description)
+//                )
+//                .show()
+//
+//            // disable active settings and store them for future use
+//            var result = StoredData.NO_COMMANDS
+//            if (commands) {
+//                result += StoredData.REMOTE_COMMANDS
+//                prefs.edit().putBoolean(commandsKey, false).commit()
+//            }
+//            if (forced) {
+//                result += StoredData.FORCED_REFRESH
+//                prefs.edit().putBoolean(forcedKey, false).commit()
+//            }
+//            val appInfo = StoredData(context)
+//            appInfo.remoteCommands = result
+//        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
