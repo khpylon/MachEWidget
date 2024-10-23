@@ -170,8 +170,6 @@
     <string name="activity_color_rgb_value">RGB value: #</string>
     <string name="close_button">Close</string>
     <string name="ignore_button">Ignore</string>
-    <string name="remote_commands_disabled_title">Remote commands have been disabled.</string>
-    <string name="remote_commands_disabled_description">Ford has changed the API and remote commands (lock and start) no longer work. If they are exposed in the future public API, they will automatically be re-enabled in the app.</string>
     <string name="permission_granted">Permission Granted!</string>
     <string name="permission_denied">Permission Denied!</string>
     <string name="refresh_in_5_seconds_description">Refresh scheduled in 5 seconds.</string>

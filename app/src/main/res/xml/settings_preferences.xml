@@ -1,30 +1,5 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditTextPreference
-        app:key="@string/VIN_key"
-        app:title="@string/VIN"
-        app:useSimpleSummaryProvider="true"
-        app:enabled="false"
-        app:isPreferenceVisible="false"/>
-
-    <SwitchPreferenceCompat
-        app:key = "showMMOTA"
-        app:useSimpleSummaryProvider="true"
-        app:enabled="false"
-        app:isPreferenceVisible="false"/>
-
-    <SwitchPreferenceCompat
-        app:key = "checkMMOTA"
-        app:title="Check MMOTA"
-        app:useSimpleSummaryProvider="true"
-        app:enabled="true"/>
-
-    <EditTextPreference
-        app:key="@string/userId_key"
-        app:defaultValue=""
-        app:useSimpleSummaryProvider="true"
-        app:enabled="false" />
-
     <SwitchPreferenceCompat
         app:key="@string/hibernate_api_key"
         app:defaultValue="false"
@@ -114,6 +89,7 @@
         app:title="@string/units"
         app:useSimpleSummaryProvider="true" />
 
+    <!-- TODO: FordConnect API doesn't supply 12VB info
     <ListPreference
         app:key="@string/lvb_display_key"
         app:defaultValue="VSOC"
@@ -123,7 +99,7 @@
         app:positiveButtonText="@null"
         app:title="@string/lvb_display_description"
         app:useSimpleSummaryProvider="true" />
-
+    -->
 
     <SwitchPreferenceCompat
         app:defaultValue="false"
@@ -146,6 +122,8 @@
     <Preference
         app:key="@string/battery_opt_key"
         app:title="@string/battery_opt"/>
+
+    <!-- TODO: does FordConnect API provide fast charging info?
 
     <PreferenceCategory
         app:key="@string/charging_preferences_key"
@@ -177,6 +155,8 @@
         app:summary="@string/dcfclog_summary"/>
 
     </PreferenceCategory>
+
+    -->
 
     <PreferenceCategory
         app:title="Developer options">

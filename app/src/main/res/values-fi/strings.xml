@@ -129,8 +129,6 @@
     <string name="activity_color_rgb_value">RGB-arvo: #</string>
     <string name="close_button">kiinni</string>
     <string name="ignore_button">Jättää huomiotta</string>
-    <string name="remote_commands_disabled_title">Etäkomennot on poistettu käytöstä.</string>
-    <string name="remote_commands_disabled_description">Ford on muuttanut API:ta ja kauko-komennot (lukitus ja käynnistys) eivät enää toimi. Jos ne tulevat esille tulevassa julkisessa sovellusliittymässä, ne otetaan automaattisesti uudelleen käyttöön sovelluksessa.</string>
     <string name="permission_granted">Lupa myönnetty!</string>
     <string name="permission_denied">Lupa kielletty!</string>
     <string name="refresh_in_5_seconds_description">Päivitys ajoitettu 5 sekunnin kuluttua.</string>

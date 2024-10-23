@@ -129,8 +129,6 @@
     <string name="activity_color_rgb_value">Wartość RGB: #</string>
     <string name="close_button">Zamknij</string>
     <string name="ignore_button">Ignorować</string>
-    <string name="remote_commands_disabled_title">Polecenia zdalne zostały wyłączone</string>
-    <string name="remote_commands_disabled_description">Ford zmienił API, a polecenia zdalne (blokowanie i uruchamianie) nie działają już.  Jeśli zostaną one udostępnione w przyszłym publicznym API, automatycznie zostaną ponownie włączone w aplikacji.</string>
     <string name="permission_granted">Uprawnienie udzielone!</string>
     <string name="permission_denied">Uprawnienie odmówione!</string>
     <string name="refresh_in_5_seconds_description">Odświeżenie zaplanowane za 5 sekund.</string>

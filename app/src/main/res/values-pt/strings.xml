@@ -129,8 +129,6 @@
     <string name="activity_color_rgb_value">"Valor RGB: #"</string>
     <string name="close_button">"Fechar"</string>
     <string name="ignore_button">Ignorar</string>
-    <string name="remote_commands_disabled_title">"Os comandos remotos foram desativados."</string>
-    <string name="remote_commands_disabled_description">“A Ford alterou a API e os comandos remotos (bloquear e iniciar) não funcionam mais. Se forem expostos na futura API pública, serão automaticamente reativados no aplicativo.”</string>
     <string name="permission_granted">"Permissão garantida!"</string>
     <string name="permission_denied">"Permissão negada!"</string>
     <string name="refresh_in_5_seconds_description">"Atualização agendada em 5 segundos."</string>

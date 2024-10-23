@@ -129,8 +129,6 @@
     <string name="activity_color_rgb_value">"RGB-verdi: #"</string>
     <string name="close_button">"Lukk"</string>
     <string name="ignore_button">Overse</string>
-    <string name="remote_commands_disabled_title">"Fjernkommandoer har blitt deaktivert."</string>
-    <string name="remote_commands_disabled_description">"Ford har endret API og fjernkommandoer (lås og start) fungerer ikke lenger. Hvis de blir eksponert i fremtidens offentlige API, vil de automatisk bli reaktivert i appen."</string>
     <string name="permission_granted">"Tillatelse gitt!"</string>
     <string name="permission_denied">"Tillatelse avslått!"</string>
     <string name="refresh_in_5_seconds_description">"Oppdater planlagt om 5 sekunder."</string>

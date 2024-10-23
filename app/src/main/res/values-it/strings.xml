@@ -129,8 +129,6 @@
     <string name="activity_color_rgb_value">Valore RGB: #</string>
     <string name="close_button">Chiudi</string>
     <string name="ignore_button">Ignorare</string>
-    <string name="remote_commands_disabled_title">I comandi remoti sono stati disabilitati.</string>
-    <string name="remote_commands_disabled_description">Ford ha cambiato i comandi API e remoti (chiusura e avvio), non sono più funzionanti.</string>
     <string name="permission_granted">Permesso Concesso!</string>
     <string name="permission_denied">Permesso Negato!</string>
     <string name="refresh_in_5_seconds_description">Aggiornamento programmato tra 5 secondi.</string>

@@ -129,8 +129,6 @@
     <string name="activity_color_rgb_value">RGB-Wert: #</string>
     <string name="close_button">Schließen</string>
     <string name="ignore_button">Ignorieren</string>
-    <string name="remote_commands_disabled_title">Fernbefehle wurden deaktiviert.</string>
-    <string name="remote_commands_disabled_description">Ford hat die API geändert und Fernbefehle (Sperren und Starten) funktionieren nicht mehr. Wenn sie in der zukünftigen öffentlichen API verfügbar gemacht werden</string>
     <string name="permission_granted">Zugriff erteilt!</string>
     <string name="permission_denied">Zugriff verweigert!</string>
     <string name="refresh_in_5_seconds_description">Aktualisierung in 5 Sekunden geplant.</string>

@@ -123,22 +123,6 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
 
-//            val commands = PreferenceManager.getDefaultSharedPreferences(context)
-//                .getBoolean(
-//                    context.resources.getString(R.string.enable_commands_key),
-//                    false
-//                )
-//            val forced = PreferenceManager.getDefaultSharedPreferences(context)
-//                .getBoolean(
-//                    context.resources.getString(R.string.user_forcedUpdate_key),
-//                    false
-//                )
-//            if (commands || forced) {
-//                val intent = Intent(context, MainActivity::class.java)
-//                startActivity(intent)
-//                finish()
-//            }
-
             // If update frequency is changed, sent the info to the Alarm Manager
             var showApps: Preference? =
                 findPreference(this.resources.getString(R.string.update_frequency_key))
@@ -146,7 +130,11 @@ class SettingsActivity : AppCompatActivity() {
                 Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any? ->
                     val newInterval = newValue as String?
                     newInterval?.let {
-                        nextAlarm(context, newInterval.toInt())
+                        val interval = it.toInt()
+                        // Don't force update if interval is now "manual"
+                        if (interval != 0) {
+                            nextAlarm(context, interval)
+                        }
                     }
                     true
                 }
@@ -159,14 +147,15 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
 
+            // TODO: FordConnect API doesn't supply 12VB info
             // Update the widget once the user picks a new LVB status preference.
-            val lvbDisplay: Preference? =
-                findPreference(this.resources.getString(R.string.lvb_display_key))
-            lvbDisplay?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _: Preference?, _: Any? ->
-                    CarStatusWidget.updateWidget(context)
-                    true
-                }
+//            val lvbDisplay: Preference? =
+//                findPreference(this.resources.getString(R.string.lvb_display_key))
+//            lvbDisplay?.onPreferenceChangeListener =
+//                Preference.OnPreferenceChangeListener { _: Preference?, _: Any? ->
+//                    CarStatusWidget.updateWidget(context)
+//                    true
+//                }
 
             // Erase the old log file on enable.
             val verbose: Preference? =

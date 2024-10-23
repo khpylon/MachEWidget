@@ -129,8 +129,6 @@
     <string name="activity_color_rgb_value">Valeur RVB : #</string>
     <string name="close_button">Fermer</string>
     <string name="ignore_button">Ignorer</string>
-    <string name="remote_commands_disabled_title">Les commandes à distance ont été désactivées.</string>
-    <string name="remote_commands_disabled_description">Ford a modifié l\'API et les commandes à distance (verrouillage et démarrage) ne fonctionnent plus. S\'ils sont visibles dans la future API publique</string>
     <string name="permission_granted">Permission accordée!</string>
     <string name="permission_denied">Permission refusée!</string>
     <string name="refresh_in_5_seconds_description">Actualisation programmée dans 5 secondes.</string>
