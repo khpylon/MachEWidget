@@ -125,9 +125,9 @@ private fun ChooseColor() {
     val controller = rememberColorPickerController()
     val bitmap = Bitmap.createBitmap(225, 100, Bitmap.Config.ARGB_8888)
 
-    val vehicleVINs: MutableList<String> = mutableListOf()
+    val vehicleIds: MutableList<String> = mutableListOf()
     for (vehicle in info.vehicles) {
-        vehicleVINs.add(vehicle.carStatus.vehicle.vehicleId)
+        vehicleIds.add(vehicle.carStatus.vehicle.vehicleId)
     }
 
     Scaffold(
@@ -145,10 +145,11 @@ private fun ChooseColor() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // IF there is more than one vehicle, show the VIN and set up a onclick callback to change
+            // TODO: use nickname instead?
+            // If there is more than one vehicle, show the vehicle ID  and set up a onclick callback to change
             if (vehicles.size > 1) {
 
-                CustomSpinner(initialLabel = vehicleInfo.carStatus.vehicle.vehicleId, items = vehicleVINs)
+                CustomSpinner(initialLabel = vehicleInfo.carStatus.vehicle.vehicleId, items = vehicleIds)
                 { vehicleId ->
                     vehicleInfo = info.getVehicleById(vehicleId)
                     vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
@@ -332,7 +333,7 @@ private fun ChooseColor() {
                 }
 
                 // "Auto" button: only applies if there is an image of the vehicle to read
-                if (VehicleImages.getImage(context, vehicleInfo.carStatus.vehicle.vehicleId, 4) != null) {
+                if (VehicleImages.getImage(context, vehicleInfo.carStatus.vehicle.vehicleId) != null) {
                     Button(
                         onClick = {
                             // Save current color, so we cab locate a color to read in the image

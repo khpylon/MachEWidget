@@ -16,16 +16,16 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
         allVehicles = mRepository.allVehicles
     }
 
-    fun setEnable(VIN: String, value: Boolean) {
-        mRepository.enable(VIN, value)
+    fun setEnable(vehicleId: String, value: Boolean) {
+        mRepository.enable(vehicleId, value)
     }
 
-    fun setModel(VIN: String, value: Vehicle.Companion.Model) {
-        mRepository.setModel(VIN, value)
+    fun setModel(vehicleId: String, value: Vehicle.Companion.Model) {
+        mRepository.setModel(vehicleId, value)
     }
 
-    fun removeVehicle(VIN: String) {
-        mRepository.remove(VIN)
+    fun removeVehicle(vehicleId: String) {
+        mRepository.remove(vehicleId)
     }
 
     fun countEnabledVehicle(): Int {
@@ -49,17 +49,17 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
             mContext = context
         }
 
-        fun enable(VIN: String, value: Boolean) {
-            Thread { mVehDao.updateEnable(VIN, value) }.start()
+        fun enable(vehicleId: String, value: Boolean) {
+            Thread { mVehDao.updateEnable(vehicleId, value) }.start()
         }
 
-        fun setModel(VIN: String, value: Vehicle.Companion.Model) {
-            Thread { mVehDao.updateModel(VIN, value) }.start()
+        fun setModel(vehicleId: String, value: Vehicle.Companion.Model) {
+            Thread { mVehDao.updateModel(vehicleId, value) }.start()
         }
 
-        fun remove(VIN: String) {
+        fun remove(vehicleId: String) {
             Thread {
-                mVehDao.deleteVehicleInfoByVIN(VIN)
+                mVehDao.deleteVehicleInfoByVehicleId(vehicleId)
                 // Force recalculation of electric vehicles
                 val info = InfoRepository(mContext)
                 info.vehicles.size

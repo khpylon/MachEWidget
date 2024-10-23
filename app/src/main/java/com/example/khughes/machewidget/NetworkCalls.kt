@@ -359,7 +359,7 @@ class NetworkCalls {
                 } else {
                     LogFile.i(
                         MainActivity.CHANNEL_ID,
-                        "getting status for VIN $vehicleId"
+                        "getting status for vehicleId $vehicleId"
                     )
                 }
 

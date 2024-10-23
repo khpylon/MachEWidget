@@ -15,13 +15,13 @@ interface VehicleInfoDao {
     fun findVehicleInfo(): List<VehicleInfo>
 
     @Query("SELECT * FROM vehicle_info WHERE car_vehicleId LIKE :vehicleId")
-    fun findVehicleInfoByVIN(vehicleId: String): VehicleInfo?
+    fun findVehicleInfoByVehicleId(vehicleId: String): VehicleInfo?
 
     @get:Query("SELECT car_nickName, car_vehicleId, modelId, enabled FROM vehicle_info")
     val liveDataVehicleInfo: LiveData<List<VehicleIds>>
 
     @Query("DELETE FROM vehicle_info WHERE car_vehicleId LIKE :vehicleId")
-    fun deleteVehicleInfoByVIN(vehicleId: String)
+    fun deleteVehicleInfoByVehicleId(vehicleId: String)
 
     @Query("UPDATE vehicle_info SET enabled = :value WHERE car_vehicleId = :vehicleId")
     fun updateEnable(vehicleId: String, value: Boolean)

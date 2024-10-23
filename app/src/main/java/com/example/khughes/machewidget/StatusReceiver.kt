@@ -86,7 +86,7 @@ class StatusReceiver : BroadcastReceiver() {
             ).boxed().collect(Collectors.toList())
         )
 
-        // If any widgets have been removed, delete their VIN entry
+        // If any widgets have been removed, delete their vehicle Id entry
         for (key in context.getSharedPreferences(
             Constants.WIDGET_FILE,
             Context.MODE_PRIVATE

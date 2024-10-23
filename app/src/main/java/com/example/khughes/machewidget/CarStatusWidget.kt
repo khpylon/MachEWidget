@@ -199,12 +199,12 @@ open class CarStatusWidget : AppWidgetProvider() {
         var vehicleId = context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
             .getString(widget_VIN, null)
 
-        // If there's a VIN but no vehicle, then essentially there is no VIN
+        // If there's an ID but no vehicle, then essentially there is no vehicle
         if (vehicleId != null && info.getVehicleById(vehicleId).carStatus.vehicle.vehicleId == "") {
             vehicleId = null
         }
 
-        // if VIN is undefined, pick first VIN that we find
+        // if ID is undefined, pick first one that we find
         if (vehicleId == null) {
             val vehicles = info.vehicles
             // No vehicles; hmmm....
@@ -927,23 +927,23 @@ open class CarStatusWidget : AppWidgetProvider() {
         }
     }
 
-    private fun remoteStart(context: Context, VIN: String) {
-        NetworkCalls.remoteStart(getHandler(context), context, VIN)
+    private fun remoteStart(context: Context, vehicleId: String) {
+        NetworkCalls.remoteStart(getHandler(context), context, vehicleId)
     }
 
-    private fun remoteStop(context: Context, VIN: String) {
-        NetworkCalls.remoteStop(getHandler(context), context, VIN)
+    private fun remoteStop(context: Context, vehicleId: String) {
+        NetworkCalls.remoteStop(getHandler(context), context, vehicleId)
     }
 
-    private fun lock(context: Context, VIN: String) {
-        NetworkCalls.lockDoors(getHandler(context), context, VIN)
+    private fun lock(context: Context, vehicleId: String) {
+        NetworkCalls.lockDoors(getHandler(context), context, vehicleId)
     }
 
-    private fun unlock(context: Context, VIN: String) {
-        NetworkCalls.unlockDoors(getHandler(context), context, VIN)
+    private fun unlock(context: Context, vehicleId: String) {
+        NetworkCalls.unlockDoors(getHandler(context), context, vehicleId)
     }
 
-    private fun forceUpdate(context: Context, VIN: String) {
+    private fun forceUpdate(context: Context, vehicleId: String) {
         NetworkCalls.updateStatus(
             object : Handler(Looper.getMainLooper()) {
                 override fun handleMessage(msg: Message) {
@@ -954,7 +954,7 @@ open class CarStatusWidget : AppWidgetProvider() {
                     }
                 }
             },
-            context, VIN
+            context, vehicleId
         )
     }
 
@@ -1059,11 +1059,11 @@ open class CarStatusWidget : AppWidgetProvider() {
                             )
                                 .getInt(widget_action, 0)
                         if (clickCount > 2) {
-                            val VIN = context.getSharedPreferences(
+                            val vehicleId = context.getSharedPreferences(
                                 Constants.WIDGET_FILE,
                                 Context.MODE_PRIVATE
                             ).getString(widget_VIN, null)
-                            val vehInfo = info.getVehicleById(VIN)
+                            val vehInfo = info.getVehicleById(vehicleId)
                             val lastUpdateInMillis = vehInfo.lastUpdateTime
 
                             val timeFormat =

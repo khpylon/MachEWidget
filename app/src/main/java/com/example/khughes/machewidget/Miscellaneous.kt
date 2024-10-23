@@ -28,7 +28,6 @@ import kotlinx.coroutines.*
 import java.io.*
 import java.lang.Integer.min
 import java.nio.charset.StandardCharsets
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -56,7 +55,7 @@ class VehicleColor {
 
             // If the vehicle image doesn't exist, do nothing
             val vehicleId = vehicleInfo.carStatus.vehicle.vehicleId
-            val bmp = VehicleImages.getImage(context, vehicleId, 4)
+            val bmp = VehicleImages.getImage(context, vehicleId)
             if (bmp == null || vehicleInfo.colorValue != Color.WHITE) {
                 return false
             }
@@ -313,12 +312,12 @@ class PrefManagement {
                     // remove all vehichles from the database
                     val vehicleInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
                     for (vehicle in vehicleInfoDao.findVehicleInfo() ) {
-                        vehicleInfoDao.deleteVehicleInfoByVIN(vehicle.carStatus.vehicle.vehicleId)
+                        vehicleInfoDao.deleteVehicleInfoByVehicleId(vehicle.carStatus.vehicle.vehicleId)
                     }
 
                     // Insert saved vehicles
                     val vehicles = jsonObject.getAsJsonArray("vehicles")
-                    val newVINs : MutableList<String> = mutableListOf()
+                    val newVehicleIds : MutableList<String> = mutableListOf()
                     for (items in vehicles) {
                         val vehicleInfo = gson.fromJson<VehicleInfo>(
                             items.toString(),
@@ -327,7 +326,7 @@ class PrefManagement {
                         vehicleInfo.id = 0
                         info.insertVehicle(vehicleInfo)
 
-                        newVINs.add(vehicleInfo.carStatus.vehicle.vehicleId)
+                        newVehicleIds.add(vehicleInfo.carStatus.vehicle.vehicleId)
 
                         val vehicle = vehicleInfo.carStatus.vehicle
 
@@ -338,7 +337,7 @@ class PrefManagement {
                         )
                     }
 
-                    // Update each widget instance to be sure there is a valid VIN
+                    // Update each widget instance to be sure there is a valid vehicle Id
                     val edit =
                         context.getSharedPreferences(Constants.WIDGET_FILE, Context.MODE_PRIVATE)
                             .edit()
@@ -347,18 +346,17 @@ class PrefManagement {
                         Context.MODE_PRIVATE
                     ).all
 
-                    // If there aren't any new VINs, insert a blank one
-                    if (newVINs.isEmpty()) {
-                        newVINs.add("")
+                    // If there aren't any new IDs, insert a blank one
+                    if (newVehicleIds.isEmpty()) {
+                        newVehicleIds.add("")
                     }
 
-                    // If an old VIN isn't among the new VINs, substitute a
-                    // new one
+                    // If an old vehicle Id isn't among the new ones, substitute a new one
                     for (item in widgetPrefs) {
                         val key = item.key
                         val value = item.value
-                        if (key.startsWith(Constants.VIN_KEY) && value !in newVINs) {
-                            edit.putString(key, newVINs[0])
+                        if (key.startsWith(Constants.VIN_KEY) && value !in newVehicleIds) {
+                            edit.putString(key, newVehicleIds[0])
                         }
                     }
                     edit.apply()
@@ -485,10 +483,10 @@ class VehicleImages {
     companion object {
 
         @JvmStatic
-        fun deleteImages(context: Context, VIN: String) {
+        fun deleteImages(context: Context, vehicleId: String) {
             val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
             for (angle in 1..5) {
-                val image = File(imageDir, "${VIN}_angle${angle}.png")
+                val image = File(imageDir, "${vehicleId}.png")
                 if (image.exists()) {
                     image.delete()
                 }
@@ -496,27 +494,15 @@ class VehicleImages {
         }
 
         @JvmStatic
-        fun getImage(context: Context, VIN: String, angle: Int): Bitmap? {
+        fun getImage(context: Context, vehicleId: String): Bitmap? {
             val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
-            val image = File(imageDir, "${VIN}.png")
+            val image = File(imageDir, "${vehicleId}.png")
             return if (image.exists()) BitmapFactory.decodeFile(image.path) else null
         }
 
         @JvmStatic
-        fun getRandomImage(context: Context, VIN: String): Bitmap? {
-            val imageDir = File(context.dataDir, Constants.IMAGES_FOLDER)
-            val byVIN = Predicate { thisVIN: String -> thisVIN.contains(VIN) }
-            val allImages = imageDir.list()?.let { listOf(*it) }?.let { ArrayList(it) }
-            allImages?.let {
-                val myImages =
-                    ArrayList(allImages.stream().filter(byVIN).collect(Collectors.toList()))
-                if (myImages.isNotEmpty()) {
-                    val angle = Random(System.currentTimeMillis()).nextInt(myImages.size)
-                    val image = File(imageDir, myImages[angle])
-                    return BitmapFactory.decodeFile(image.path)
-                }
-            }
-            return null
+        fun getRandomImage(context: Context, vehicleId: String): Bitmap? {
+            return getImage(context, vehicleId)
         }
     }
 }

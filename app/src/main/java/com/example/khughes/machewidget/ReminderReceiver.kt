@@ -13,12 +13,12 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private const val VIN_ID = "VIN"
+private const val VEHICLE_ID = "VEHICLEID"
 
 class ReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val vehicleId = intent.getStringExtra(VIN_ID)
+        val vehicleId = intent.getStringExtra(VEHICLE_ID)
         vehicleId?.let {
             CoroutineScope(Dispatchers.IO).launch {
                 val info = getInfo(context)
@@ -77,7 +77,7 @@ class ReminderReceiver : BroadcastReceiver() {
             )
 
             // Create intent including the VIN
-            val intent = Intent(context, ReminderReceiver::class.java).putExtra(VIN_ID, vehicleId)
+            val intent = Intent(context, ReminderReceiver::class.java).putExtra(VEHICLE_ID, vehicleId)
             val pendingIntent = PendingIntent.getBroadcast(
                 context, vehicleId.hashCode(),
                 intent, PendingIntent.FLAG_IMMUTABLE
