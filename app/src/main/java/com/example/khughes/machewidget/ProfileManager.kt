@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.widget.Toast
-import androidx.preference.PreferenceManager
 import java.util.ArrayList
 
 object ProfileManager : AppCompatActivity() {

@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import androidx.preference.*
-import com.example.khughes.machewidget.ProfileManager.finish
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
 import java.util.Locale
 
@@ -75,13 +74,13 @@ class SettingsActivity : AppCompatActivity() {
 
             // get the system language
             val locales = ConfigurationCompat.getLocales(Resources.getSystem().configuration)
-            val systemLanguage = locales[0]!!.toLanguageTag()
+//            val systemLanguage = locales[0]!!.toLanguageTag()
 
             // get the setting saved within the app
             val settingsLanguage = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.resources.getString(R.string.language_key), "") as String
 
-            var currentLanguage : String
+            val currentLanguage : String
 
             // For Android 13 and later, have to jump through some hoops
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

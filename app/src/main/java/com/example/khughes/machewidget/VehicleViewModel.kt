@@ -8,11 +8,10 @@ import com.example.khughes.machewidget.db.VehicleInfoDao
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
 
 class VehicleViewModel(application: Application?) : AndroidViewModel(application!!) {
-    private val mRepository: VehicleRepository
+    private val mRepository: VehicleRepository = VehicleRepository(application?.applicationContext as Context)
     val allVehicles: LiveData<List<VehicleIds>>
 
     init {
-        mRepository = VehicleRepository(application?.applicationContext as Context)
         allVehicles = mRepository.allVehicles
     }
 
@@ -39,12 +38,11 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
     }
 
     internal inner class VehicleRepository(context: Context) {
-        private val mVehDao: VehicleInfoDao
+        private val mVehDao: VehicleInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
         private var mContext: Context
         val allVehicles: LiveData<List<VehicleIds>>
 
         init {
-            mVehDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
             this.allVehicles = mVehDao.liveDataVehicleInfo
             mContext = context
         }

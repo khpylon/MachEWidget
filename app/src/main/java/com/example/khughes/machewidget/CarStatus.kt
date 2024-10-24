@@ -2,7 +2,6 @@ package com.example.khughes.machewidget
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
-import androidx.room.Ignore
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.annotations.Expose
@@ -24,7 +23,7 @@ class DoorConverters {
     }
 
     @TypeConverter
-    fun FromNewDoorStatus(someObjects: List<NewDoorStatus>?): String? {
+    fun fromNewDoorStatus(someObjects: List<NewDoorStatus>?): String? {
         val gson = Gson()
         return gson.toJson(someObjects)
     }

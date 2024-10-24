@@ -1,19 +1,21 @@
 package com.example.khughes.machewidget
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.provider.Settings
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.preference.PreferenceManager
 import com.example.khughes.machewidget.Misc.Companion.ignoringBatteryOptimizations
-import java.text.MessageFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -21,20 +23,20 @@ class Notifications : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            LVB_NOTIFICATION -> LVBNotificationVisible = false
+//            LVB_NOTIFICATION -> LVBNotificationVisible = false
             TPMS_NOTIFICATION -> TPMSNotificationVisible = false
             CHARGE_NOTIFICATION -> ChargeNotificationVisible = false
         }
     }
 
     companion object {
-        val NORMAL_NOTIFICATIONS = "NORMAL_NOTIFICATIONS"
-        val IMPORTANT_NOTIFICATIONS = "IMPORTANT_NOTIFICATIONS"
-        val CHARGE_NOTIFICATIONS = "CHARGER_NOTIFICATIONS"
+        const val NORMAL_NOTIFICATIONS = "NORMAL_NOTIFICATIONS"
+        const val IMPORTANT_NOTIFICATIONS = "IMPORTANT_NOTIFICATIONS"
+        const val CHARGE_NOTIFICATIONS = "CHARGER_NOTIFICATIONS"
 
         @JvmStatic
         fun removeNotificationChannels(context: Context) {
-            var notificationManager: NotificationManager = getSystemService<NotificationManager>(
+            val notificationManager: NotificationManager = getSystemService(
                 context,
                 NotificationManager::class.java
             ) as NotificationManager
@@ -49,7 +51,7 @@ class Notifications : BroadcastReceiver() {
         @JvmStatic
         fun createNotificationChannels(context: Context) {
 
-            val notificationManager: NotificationManager = getSystemService<NotificationManager>(context,
+            val notificationManager: NotificationManager = getSystemService(context,
                 NotificationManager::class.java
             ) as NotificationManager
 
@@ -94,10 +96,11 @@ class Notifications : BroadcastReceiver() {
         //        // notificationId is a unique int for each notification that you must define
         //        notificationManager.notify(OTA_NOTIFICATION, builder.build());
         //    }
-        private const val LVB_STATUS = 936
-        private const val LVB_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.LVB"
-        private var LVBNotificationVisible = false
 
+//        private const val LVB_STATUS = 936
+//        private const val LVB_NOTIFICATION = BuildConfig.APPLICATION_ID + ".Notifications.LVB"
+//        private var LVBNotificationVisible = false
+//
 //        @JvmStatic
 //        fun checkLVBStatus(context: Context, carStatus: CarStatus, vehInfo: VehicleInfo) {
 //            val lastLVBStatus = vehInfo.lastLVBStatus
@@ -206,7 +209,7 @@ class Notifications : BroadcastReceiver() {
             if (!ChargeNotificationVisible) {
                 val intent = Intent(context, Notifications::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent.action = LVB_NOTIFICATION
+                intent.action = CHARGE_NOTIFICATION
                 val pendingIntent =
                     PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                 val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
@@ -276,17 +279,23 @@ class Notifications : BroadcastReceiver() {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
             // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(CHARGE_REMINDER, builder.build())
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationManager.notify(CHARGE_REMINDER, builder.build())
+            }
         }
 
         private const val SURVEY_STATUS = 942
         fun surveyPrompt(context: Context) {
-            val surveyVersion_key = context.resources.getString(R.string.surveyVersion_key)
+            val surveyVersionKey = context.resources.getString(R.string.surveyVersion_key)
             val currentSurveyVersion =
-                PreferenceManager.getDefaultSharedPreferences(context).getInt(surveyVersion_key, 0)
+                PreferenceManager.getDefaultSharedPreferences(context).getInt(surveyVersionKey, 0)
             if (currentSurveyVersion < Constants.SURVEY_VERSION) {
                 PreferenceManager.getDefaultSharedPreferences(context).edit()
-                    .putInt(surveyVersion_key, Constants.SURVEY_VERSION).apply()
+                    .putInt(surveyVersionKey, Constants.SURVEY_VERSION).apply()
                 val intent = Intent(context, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 val pendingIntent =
@@ -301,44 +310,14 @@ class Notifications : BroadcastReceiver() {
                     .setAutoCancel(true)
                 val notificationManager = NotificationManagerCompat.from(context)
                 // notificationId is a unique int for each notification that you must define
-                notificationManager.notify(SURVEY_STATUS, builder.build())
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    notificationManager.notify(SURVEY_STATUS, builder.build())
+                }
             }
-        }
-
-        private const val ACCOUNT_ERROR = 943
-        fun accountError(context: Context, state: String) {
-            if (state === Constants.STATE_ACCOUNT_DISABLED) {
-                val builder = NotificationCompat.Builder(context, IMPORTANT_NOTIFICATIONS)
-                    .setSmallIcon(R.drawable.notification_icon)
-                    .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                    .setContentTitle(context.getString(R.string.account_disabled_notification_title))
-                    .setContentText(context.getString(R.string.account_disabled_notification_description))
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setAutoCancel(true)
-                val notificationManager = NotificationManagerCompat.from(context)
-                // notificationId is a unique int for each notification that you must define
-                notificationManager.notify(ACCOUNT_ERROR, builder.build())
-            }
-        }
-
-        private const val NO_VEHICLES = 944
-        fun missingVehicles(context: Context) {
-            val intent = Intent(context, VehicleActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            val pendingIntent =
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            val builder = NotificationCompat.Builder(
-                context!!, IMPORTANT_NOTIFICATIONS
-            )
-                .setSmallIcon(R.drawable.notification_icon)
-                .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
-                .setContentTitle(context.getString(R.string.no_vehicles_notification_title))
-                .setContentText(context.getString(R.string.no_vehicles_notification_description))
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-            val notificationManager = NotificationManagerCompat.from(context)
-            notificationManager.notify(NO_VEHICLES, builder.build())
         }
     }
 }

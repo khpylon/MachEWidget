@@ -12,8 +12,6 @@ import android.widget.Toast
 import com.example.khughes.machewidget.CarStatusWidget.Companion.updateWidget
 import com.example.khughes.machewidget.NetworkServiceGenerators.createAPIMPSService
 import com.example.khughes.machewidget.NetworkServiceGenerators.createOAUTH2Service
-import com.example.khughes.machewidget.db.TokenIdDatabase
-import com.example.khughes.machewidget.db.VehicleInfoDatabase
 import kotlinx.coroutines.*
 import retrofit2.Call
 import java.io.File
@@ -30,16 +28,13 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
 
-
 class NetworkCalls {
 
     companion object {
 
         const val COMMAND_SUCCESSFUL = "Command successful."
-        const val COMMAND_FAILED = "Command failed."
-        const val COMMAND_NO_NETWORK = "Network error."
-        const val COMMAND_EXCEPTION = "Exception occurred."
-        const val COMMAND_REMOTE_START_LIMIT = "Cannot extend remote start time without driving."
+        private const val COMMAND_FAILED = "Command failed."
+        private const val COMMAND_EXCEPTION = "Exception occurred."
 
         private const val CMD_STATUS_COMPLETED = "COMPLETED"
         private const val CMD_STATUS_SUCCESS = "SUCCESS"
@@ -58,7 +53,7 @@ class NetworkCalls {
             context: Context?,
             code: String,
             info: InfoRepository
-        ) : Message = withContext(Dispatchers.IO){
+        ): Message = withContext(Dispatchers.IO) {
             val intent = getAccessToken(context!!, code, info)
             val m = Message.obtain()
             m.data = intent.extras
@@ -73,7 +68,7 @@ class NetworkCalls {
             val data = Intent()
             var stage = 1
 
-            var tokenId = TokenId()
+            val tokenId = TokenId()
             var token: String? = null
 
             if (checkInternetConnection(context)) {
@@ -196,9 +191,9 @@ class NetworkCalls {
                             val response = call!!.execute()
                             if (response.isSuccessful) {
                                 LogFile.i(MainActivity.CHANNEL_ID, "refresh successful")
-                                var accessToken = response.body()
+                                val accessToken = response.body()
 
-                                tokenInfo!!.accessToken = "Bearer " + accessToken!!.accessToken
+                                tokenInfo.accessToken = "Bearer " + accessToken!!.accessToken
                                 tokenInfo.refreshToken = accessToken.refreshToken
                                 val time = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(
                                     accessToken.expiresIn!!.toLong()
@@ -398,9 +393,14 @@ class NetworkCalls {
 //                                }
 
                                 // TODO: this probably isn't the correct format
-                                val formatter = DateTimeFormatter.ofPattern(Constants.STATUSTIMEFORMAT, Locale.ENGLISH)
-                                val lastRefreshTIme = LocalDateTime.parse(car!!.vehicle.lastUpdated, formatter).atZone(ZoneOffset.UTC)
-                                    .withZoneSameInstant(ZoneId.systemDefault())
+                                val formatter = DateTimeFormatter.ofPattern(
+                                    Constants.STATUSTIMEFORMAT,
+                                    Locale.ENGLISH
+                                )
+                                val lastRefreshTIme =
+                                    LocalDateTime.parse(car!!.vehicle.lastUpdated, formatter)
+                                        .atZone(ZoneOffset.UTC)
+                                        .withZoneSameInstant(ZoneId.systemDefault())
                                 val currentRefreshTime = lastRefreshTIme.toInstant().toEpochMilli()
 
                                 // If the charging status changes, reset the old charge station info so we know to update it later
@@ -602,7 +602,6 @@ class NetworkCalls {
                 // Find the vehicle's info
                 val vehicle = info.getVehicleById(vehicleId)
                 if (checkForRefresh(context = context, tokenId = vehicle.tokenId!!, info = info)) {
-                    val vehicle = info.getVehicleById(vehicleId)
                     for (retry in 2 downTo 0) {
                         try {
                             val vehicleImageClient =
@@ -702,7 +701,7 @@ class NetworkCalls {
         fun remoteStop(handler: Handler, context: Context, vehicleId: String) {
             CoroutineScope(Dispatchers.Main).launch {
                 val intent: Intent =
-                    execCommand(context, vehicleId,  OPERATION_STOPENGINE)
+                    execCommand(context, vehicleId, OPERATION_STOPENGINE)
                 val m = Message.obtain()
                 m.data = intent.extras
                 handler.sendMessage(m)
@@ -712,7 +711,7 @@ class NetworkCalls {
         fun lockDoors(handler: Handler, context: Context, vehicleId: String) {
             CoroutineScope(Dispatchers.Main).launch {
                 val intent: Intent =
-                    execCommand(context, vehicleId,  OPERATION_LOCKDOORS)
+                    execCommand(context, vehicleId, OPERATION_LOCKDOORS)
                 val m = Message.obtain()
                 m.data = intent.extras
                 handler.sendMessage(m)
@@ -752,18 +751,20 @@ class NetworkCalls {
                             vehicleId = vehicleId,
                             operation = operation,
                             accessToken = accessToken!!
-                            )
+                        )
                         val response = call!!.execute()
                         if (response.isSuccessful) {
                             val status = response.body()
                             if (status!!.status == CMD_STATUS_SUCCESS) {
-                                val commandId = status.commandId
                                 LogFile.i(MainActivity.CHANNEL_ID, "CMD send successful.")
                                 if (Looper.myLooper() == null) {
                                     Looper.prepare()
                                 }
-                                Toast.makeText(context,
-                                    context.getString(R.string.networkcalls_command_transmitted), Toast.LENGTH_SHORT)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.networkcalls_command_transmitted),
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                                 // TODO: return operation and command ID in extra ?
                                 data.putExtra(
@@ -900,9 +901,11 @@ class NetworkCalls {
         }
 
         @JvmStatic
-        fun updateStatus(handler: Handler,
-                         context: Context?,
-                         vehicleId: String?) {
+        fun updateStatus(
+            handler: Handler,
+            context: Context?,
+            vehicleId: String?
+        ) {
             CoroutineScope(Dispatchers.Main).launch {
                 val intent = updateStatus(context = context!!, vehicleId = vehicleId!!)
                 val m = Message.obtain()
@@ -917,13 +920,14 @@ class NetworkCalls {
         ): Intent = coroutineScope {
             withContext(Dispatchers.IO) {
                 val data = Intent()
-                val info = InfoRepository(context!!)
+                val info = InfoRepository(context)
                 val vehInfo = info.getVehicleById(vehicleId)
-                if (checkForRefresh(context = context,
+                if (checkForRefresh(
+                        context = context,
                         tokenId = vehInfo.tokenId!!,
-                        info = info)
+                        info = info
                     )
-                {
+                ) {
                     while (true) {
                         try {
                             val commandServiceClient = createAPIMPSService(
@@ -953,7 +957,12 @@ class NetworkCalls {
                                     ).show()
                                     data.putExtra(
                                         "action",
-                                        pollStatus(context = context, vehicleId = vehicleId, info = info, idCode = status.commandId)
+                                        pollStatus(
+                                            context = context,
+                                            vehicleId = vehicleId,
+                                            info = info,
+                                            idCode = status.commandId
+                                        )
                                     )
                                 } else {
                                     data.putExtra("action", COMMAND_EXCEPTION)
@@ -961,7 +970,11 @@ class NetworkCalls {
                                         MainActivity.CHANNEL_ID,
                                         "updatestatus returned unknown response."
                                     )
-                                    LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                                    LogFile.i(
+                                        context,
+                                        MainActivity.CHANNEL_ID,
+                                        response.raw().toString()
+                                    )
                                 }
                             } else {
                                 data.putExtra("action", COMMAND_FAILED)
@@ -969,7 +982,11 @@ class NetworkCalls {
                                     MainActivity.CHANNEL_ID,
                                     "updatestatus send UNSUCCESSFUL."
                                 )
-                                LogFile.i(context, MainActivity.CHANNEL_ID, response.raw().toString())
+                                LogFile.i(
+                                    context,
+                                    MainActivity.CHANNEL_ID,
+                                    response.raw().toString()
+                                )
                             }
                             break
                         } catch (e1: java.lang.IllegalStateException) {
@@ -1023,7 +1040,6 @@ class NetworkCalls {
                         when (status!!.status) {
                             CMD_STATUS_SUCCESS -> {
                                 LogFile.i(
-                                    context!!,
                                     MainActivity.CHANNEL_ID,
                                     "poll response successful."
                                 )
@@ -1040,7 +1056,6 @@ class NetworkCalls {
 
                             CMD_STATUS_FAILED -> {
                                 LogFile.i(
-                                    context!!,
                                     MainActivity.CHANNEL_ID,
                                     "poll response failed."
                                 )
@@ -1049,7 +1064,6 @@ class NetworkCalls {
 
                             CMD_STATUS_QUEUED -> {
                                 LogFile.i(
-                                    context!!,
                                     MainActivity.CHANNEL_ID,
                                     "poll response failed."
                                 )
@@ -1057,7 +1071,7 @@ class NetworkCalls {
 
                             CMD_STATUS_INPROGRESS -> {
                                 LogFile.i(
-                                    context!!, MainActivity.CHANNEL_ID, "poll response waiting."
+                                    MainActivity.CHANNEL_ID, "poll response waiting."
                                 )
                             }
 
@@ -1084,7 +1098,11 @@ class NetworkCalls {
             }
         }
 
-        private fun checkForRefresh(context: Context, tokenId: String, info: InfoRepository): Boolean {
+        private fun checkForRefresh(
+            context: Context,
+            tokenId: String,
+            info: InfoRepository
+        ): Boolean {
             val intent = refreshAccessToken(
                 context = context,
                 tokenId = tokenId,
@@ -1108,25 +1126,29 @@ class NetworkCalls {
                     @Suppress("DEPRECATION")
                     networkInfo.isConnected && networkInfo.isAvailable
                 } ?: false
-                LogFile.d(MainActivity.CHANNEL_ID, "NetworkCalls.checkInternetConnection() returns $netStatus")
+                LogFile.d(
+                    MainActivity.CHANNEL_ID,
+                    "NetworkCalls.checkInternetConnection() returns $netStatus"
+                )
                 netStatus
             } else {
                 val netStatus = if (connManager.activeNetwork == null) {
+                    false
+                } else {
+                    val networkInfo = connManager.activeNetwork ?: return false
+                    val networkCapabilities = connManager.getNetworkCapabilities(networkInfo)
+                    if (networkCapabilities == null) {
                         false
                     } else {
-                        val networkInfo = connManager.activeNetwork ?: return false
-                        val networkCapabilities = connManager.getNetworkCapabilities(networkInfo)
-                        if (networkCapabilities == null) {
-                            false
-                        } else {
-                            networkCapabilities?.let {
-                                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                                    || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                                    || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
-                            } ?: false
-                        }
+                        (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                                || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                                || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
                     }
-                LogFile.d(MainActivity.CHANNEL_ID, "NetworkCalls.checkInternetConnection() returns $netStatus")
+                }
+                LogFile.d(
+                    MainActivity.CHANNEL_ID,
+                    "NetworkCalls.checkInternetConnection() returns $netStatus"
+                )
                 netStatus
             }
         }

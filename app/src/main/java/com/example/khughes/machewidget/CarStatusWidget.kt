@@ -1215,23 +1215,21 @@ open class CarStatusWidget : AppWidgetProvider() {
                             val vehInfo = info.getVehicleById(vehicleId)
                             val carStatus = vehInfo.carStatus
                             when (action) {
-                                IGNITION_CLICK -> if (carStatus.vehicle.vehicleStatus.ignitionStatus?.value == "Off") {
-                                    carStatus.vehicle.vehicleStatus.remoteStartStatus?.status?.let { status ->
-                                        if (status == "ENGINE_STOPPED") {
-                                            remoteStart(context, vehicleId!!)
-                                        } else {
-                                            remoteStop(context, vehicleId!!)
-                                        }
+                                IGNITION_CLICK -> if (carStatus.vehicle.vehicleStatus.ignitionStatus.value == "Off") {
+                                    if (carStatus.vehicle.vehicleStatus.remoteStartStatus.status == "ENGINE_STOPPED") {
+                                        remoteStart(context, vehicleId!!)
+                                    } else {
+                                        remoteStop(context, vehicleId!!)
                                     }
                                 }
 
-                                LOCK_CLICK -> carStatus.vehicle.vehicleStatus.lockStatus?.value?.let {
-                                    if (it == "LOCKED") {
+                                LOCK_CLICK ->
+                                    if (carStatus.vehicle.vehicleStatus.lockStatus.value == "LOCKED") {
                                         unlock(context, vehicleId!!)
                                     } else {
                                         lock(context, vehicleId!!)
                                     }
-                                }
+
 
                                 UPDATE_CLICK -> {
                                     // If user is undefined, don't do anything

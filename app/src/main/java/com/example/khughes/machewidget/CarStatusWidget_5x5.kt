@@ -3,19 +3,15 @@ package com.example.khughes.machewidget
 import com.example.khughes.machewidget.Vehicle.Companion.getVehicle
 import com.example.khughes.machewidget.VehicleImages.Companion.getRandomImage
 import com.example.khughes.machewidget.VehicleColor.Companion.scanImageForColor
-import com.example.khughes.machewidget.ProfileManager.changeProfile
 import android.widget.RemoteViews
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
 import android.content.Intent
-import android.icu.text.DecimalFormat
-import android.icu.text.DecimalFormatSymbols
 import android.icu.text.MessageFormat
 import android.view.View
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
-import java.lang.NumberFormatException
 import java.util.*
 
 class CarStatusWidget_5x5 : CarStatusWidget() {
@@ -97,7 +93,7 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 
     override fun drawIcons(views: RemoteViews, carStatus: CarStatus) {
         // Door locks
-        carStatus.vehicle.vehicleStatus.lockStatus?.value?.let { lockStatus ->
+        carStatus.vehicle.vehicleStatus.lockStatus.value.let { lockStatus ->
             views.setImageViewResource(
                 R.id.lock_electric,
                 if (lockStatus == "LOCKED") R.drawable.locked_icon_green else R.drawable.unlocked_icon_red
@@ -109,9 +105,9 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         }
 
         // Ignition and remote start
-        if (carStatus.vehicle.vehicleStatus.remoteStartStatus?.status != "ENGINE_STOPPED") {
+        if (carStatus.vehicle.vehicleStatus.remoteStartStatus.status != "ENGINE_STOPPED") {
             views.setImageViewResource(R.id.ignition, R.drawable.ignition_icon_yellow)
-        } else carStatus.vehicle.vehicleStatus.ignitionStatus?.value?.let { ignition ->
+        } else carStatus.vehicle.vehicleStatus.ignitionStatus.value.let { ignition ->
             views.setImageViewResource(
                 R.id.ignition,
                 if (ignition.uppercase() == "OFF") R.drawable.ignition_icon_gray else R.drawable.ignition_icon_green
@@ -119,16 +115,14 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
         }
 
         // Motion alarm and deep sleep state
-        if (carStatus.vehicle.vehicleStatus.deepSleepInProgress == true) {
+        if (carStatus.vehicle.vehicleStatus.deepSleepInProgress) {
             views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_zzz_red)
         } else {
-            carStatus.vehicle.vehicleStatus.alarmStatus?.value?.let { alarm ->
+            carStatus.vehicle.vehicleStatus.alarmStatus.value.let { alarm ->
                 views.setImageViewResource(
                     R.id.alarm,
                     if (alarm == "NOTSET") R.drawable.bell_icon_red else R.drawable.bell_icon_green
                 )
-            } ?: run {
-                views.setImageViewResource(R.id.alarm, R.drawable.bell_icon_gray)
             }
         }
     }
@@ -267,14 +261,14 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
 //            views.setTextViewText(R.id.odometer, "Odo: ---")
 //        }
         views.setTextViewText(R.id.odometer,
-            context.getString(R.string.odometer_label) +
-            carStatus.vehicle.vehicleDetails.odometer?.let {
-                MessageFormat.format(
-                    "{0} {1}",
-                    java.lang.Double.valueOf(it * distanceConversion).toInt(),
-                    distanceUnits
-                )
-            } ?: "---"
+            (context.getString(R.string.odometer_label) +
+                    carStatus.vehicle.vehicleDetails.odometer.let {
+                        MessageFormat.format(
+                            "{0} {1}",
+                            java.lang.Double.valueOf(it * distanceConversion).toInt(),
+                            distanceUnits
+                        )
+                    })
         )
 
         // Tire pressures
@@ -353,8 +347,8 @@ class CarStatusWidget_5x5 : CarStatusWidget() {
                 appWidgetManager,
                 appWidgetId,
                 views,
-                carStatus.vehicle.vehicleLocation?.latitude,
-                carStatus.vehicle.vehicleLocation?.longitude
+                carStatus.vehicle.vehicleLocation.latitude,
+                carStatus.vehicle.vehicleLocation.longitude
             )
         } else {
             views.setViewVisibility(R.id.location_container, View.GONE)

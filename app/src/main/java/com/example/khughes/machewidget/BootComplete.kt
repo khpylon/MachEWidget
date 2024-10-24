@@ -63,9 +63,9 @@ class BootComplete : BroadcastReceiver() {
             LogFile.d(MainActivity.CHANNEL_ID, "BootComplete: running package updates")
 
             // If package was replaced, then the "new version" is this version.
-            val appInfo = StoredData(context);
-            val version = appInfo.latestVersion;
-            if (version != null && BuildConfig.VERSION_NAME.compareTo(version) >= 0 ) {
+            val appInfo = StoredData(context)
+            val version = appInfo.latestVersion
+            if (version != null && BuildConfig.VERSION_NAME >= version) {
                 LogFile.d(MainActivity.CHANNEL_ID, "BootComplete: new app version found")
                 appInfo.latestVersion = BuildConfig.VERSION_NAME
             }

@@ -3,7 +3,6 @@ package com.example.khughes.machewidget
 import com.google.gson.annotations.Expose
 import javax.annotation.Generated
 
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*

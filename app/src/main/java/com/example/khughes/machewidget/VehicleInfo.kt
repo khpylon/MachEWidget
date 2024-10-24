@@ -4,15 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
 import com.example.khughes.machewidget.Vehicle.Companion.Model
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Collections
-
-
 
 @Entity(tableName = "vehicle_info")
 class VehicleInfo {

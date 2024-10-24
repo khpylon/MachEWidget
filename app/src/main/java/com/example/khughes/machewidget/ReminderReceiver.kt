@@ -13,7 +13,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private const val VEHICLE_ID = "VEHICLEID"
+private const val VEHICLE_ID = "VEHICLE_ID"
 
 class ReminderReceiver : BroadcastReceiver() {
 

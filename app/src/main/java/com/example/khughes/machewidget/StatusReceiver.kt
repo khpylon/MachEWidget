@@ -8,8 +8,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.icu.text.MessageFormat
-import android.os.Handler
-import android.os.Looper
 import android.os.Message
 import android.provider.Settings
 import android.text.format.DateUtils
@@ -120,6 +118,8 @@ class StatusReceiver : BroadcastReceiver() {
         // Do the actual update
         CoroutineScope(Dispatchers.Main).launch {
             info = getInfo(context)
+            LogFile.d(MainActivity.CHANNEL_ID, "Grab status info")
+            getStatus(context, info)
 
 //            val userInfo = info.user
 //            val timeout = userInfo.expiresIn
@@ -176,8 +176,8 @@ class StatusReceiver : BroadcastReceiver() {
 //                }
 //
 //                Constants.STATE_HAVE_TOKEN_AND_VIN -> {
-                    LogFile.d(MainActivity.CHANNEL_ID, "Grab status info")
-                    getStatus(context, info)
+//                    LogFile.d(MainActivity.CHANNEL_ID, "Grab status info")
+//                    getStatus(context, info)
 //                    appInfo.incCounter(StoredData.STATUS_UPDATED)
 //                }
 //

@@ -71,7 +71,7 @@ class ColorActivity : ComponentActivity() {
             info = getInfo(applicationContext)
             vehicles = info.vehicles
 
-            if (vehicles.size == 0) {
+            if (vehicles.isEmpty()) {
                 AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
                     .setTitle(getString(R.string.misc_error_message))
                     .setMessage(getString(R.string.activity_misc_novehicles_description))

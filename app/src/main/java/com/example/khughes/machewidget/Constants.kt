@@ -59,7 +59,7 @@ object Constants {
     // less than SURVEY_VERSION and the current version will be updated to SURVEY_VERSION.  The actual
     // survey will be displayed by MainActivity if the current version is less thatn or equal to
     // SURVEY_VERSION, and the current version will be set to SURVEY_VERSION+1.
-    const val SURVEY_VERSION = 2;
+    const val SURVEY_VERSION = 2
 
     const val APPLICATION_JSON = "application/json"
     const val APPLICATION_ZIP = "application/zip"
