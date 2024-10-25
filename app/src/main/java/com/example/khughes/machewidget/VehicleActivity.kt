@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
@@ -43,6 +45,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -53,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.khughes.machewidget.Vehicle.Companion.modelMap
@@ -294,12 +299,33 @@ private fun ManageVehicle() {
                 LazyColumn(
                     contentPadding = PaddingValues(2.dp)
                 ) {
-                    items(vehicles) { vehicle ->
-                        VehicleDisplay(vehicle)
+                    itemsIndexed(vehicles) { index, vehicle ->
+                        // Get Dark Mode Setting, then choose alternating colors for each row's background
+                        val nightModeFlags =
+                            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                        val bgColor1 = ContextCompat.getColor(
+                            context,
+                            if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO)
+                                R.color.white else R.color.black
+                        )
+                        val bgColor2 = ContextCompat.getColor(
+                            context,
+                            if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO)
+                                R.color.white95percent else R.color.black20percent
+                        )
+
+                        VehicleDisplay(vehicle,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = Color(if (index % 2 == 1) bgColor1 else bgColor2),
+                                    shape = RectangleShape// RoundedCornerShape(0.dp)
+                                )
+
+                        )
                     }
                 }
             }
-
         }
     }
 }
@@ -362,7 +388,8 @@ fun VehicleModel(
 }
 
 @Composable
-fun VehicleDisplay(vehicle: VehicleIds) {
+fun VehicleDisplay(vehicle: VehicleIds,
+                   modifier: Modifier) {
 //    var popupVisible by remember { mutableStateOf(false) }
 //    val focusRequester = remember { FocusRequester() }
 //
@@ -376,26 +403,28 @@ fun VehicleDisplay(vehicle: VehicleIds) {
 
     Row(
         horizontalArrangement = Arrangement.Start,
-        modifier = Modifier
+        modifier = modifier
             .padding(vertical = 4.dp)
             .fillMaxWidth()
     )
     {
-        val checkBoxValue = remember { mutableStateOf(vehicle.enabled) }
         val context = LocalContext.current
-        val photo = VehicleImages.getRandomImage(context = context, vehicle.vehicleId)
+        val checkBoxValue = remember { mutableStateOf(vehicle.enabled) }
+        val photo = remember {
+            mutableStateOf( VehicleImages.getImage(context = context, vehicle.vehicleId) ) }
+        val vehicleViewModel = remember { mutableStateOf(mVehicleViewModel) }
 
         Checkbox(checked = checkBoxValue.value,
-            enabled = !vehicle.enabled || mVehicleViewModel.countEnabledVehicle() > 1,
+            enabled = !vehicle.enabled || vehicleViewModel.value.countEnabledVehicle() > 1,
             onCheckedChange = {
                 vehicle.enabled = it
                 checkBoxValue.value = it
                 mVehicleViewModel.setEnable(vehicle.vehicleId, vehicle.enabled)
             }
         )
-        photo?.let {
+        photo.value?.let {
             Image(
-                bitmap = photo.asImageBitmap(),
+                bitmap = photo.value!!.asImageBitmap(),
                 contentDescription = "",
                 modifier = Modifier
                     .size(54.dp)
@@ -415,6 +444,7 @@ fun VehicleDisplay(vehicle: VehicleIds) {
                     vehicle.modelId = it
                     mVehicleViewModel.setModel(vehicle.vehicleId, vehicle.modelId)
                     CarStatusWidget.updateWidget(context)
+                    photo.value = VehicleImages.getImage(context = context, vehicle.vehicleId)
                 }
             )
 //            Text(text = vehicle.vin!!,
