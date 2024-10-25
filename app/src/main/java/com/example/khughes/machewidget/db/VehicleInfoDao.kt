@@ -9,7 +9,7 @@ import com.example.khughes.machewidget.VehicleInfo
 @Dao
 interface VehicleInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertVehicleInfo(info: VehicleInfo)
+    fun insertVehicleInfo(info: VehicleInfo) : Long
 
     @Query("SELECT * FROM vehicle_info")
     fun findVehicleInfo(): List<VehicleInfo>

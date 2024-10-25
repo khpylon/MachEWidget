@@ -6,7 +6,7 @@ import com.example.khughes.machewidget.TokenId
 @Dao
 interface TokenIdDao {
     @Insert
-    fun insertTokenId(info: TokenId)
+    fun insertTokenId(info: TokenId) : Long
 
     @Update
     fun updateTokenId(info: TokenId)

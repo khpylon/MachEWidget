@@ -65,7 +65,7 @@ class InfoRepository internal constructor(mContext: Context) {
 
     fun insertVehicle(info: VehicleInfo) {
         mVehicleInfo = info
-        VehicleInfoDatabase.databaseWriteExecutor.execute { mVehicleInfoDao.insertVehicleInfo(info) }
+        info.id = mVehicleInfoDao.insertVehicleInfo(info).toInt()
         vehicles.add(info)
     }
 
@@ -76,7 +76,8 @@ class InfoRepository internal constructor(mContext: Context) {
 
     fun insertTokenId(info: TokenId) {
         mTokenIdInfo = info
-        TokenIdDatabase.databaseWriteExecutor.execute { mTokenInfoDao.insertTokenId(info) }
+//        TokenIdDatabase.databaseWriteExecutor.execute { info.id = mTokenInfoDao.insertTokenId(info).toInt() }
+        info.id = mTokenInfoDao.insertTokenId(info).toInt()
         mTokenIdList.add(info)
     }
 
@@ -84,4 +85,14 @@ class InfoRepository internal constructor(mContext: Context) {
         mTokenIdInfo = info
         TokenIdDatabase.databaseWriteExecutor.execute { mTokenInfoDao.updateTokenId(info) }
     }
+
+    fun removeTokenIdUser(info: TokenId) {
+        --info.users
+        mTokenIdInfo = info
+        if (info.users == 0) {
+            TokenIdDatabase.databaseWriteExecutor.execute { mTokenInfoDao.deleteTokenId(info) }
+            mTokenIdList.remove(info)
+        }
+    }
+
 }

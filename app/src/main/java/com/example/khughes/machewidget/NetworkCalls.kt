@@ -294,6 +294,7 @@ class NetworkCalls {
                         val newCars = responseVehicleList.body()
                         if (newCars != null) {
                             it.users = newCars.vehicles.size
+                            info.setTokenId(it)
                             for (vehicle in newCars.vehicles) {
                                 val vehicleId = vehicle.vehicleId
                                 val existingVehicle = info.getVehicleById(vehicleId)
@@ -319,11 +320,14 @@ class NetworkCalls {
                                         )
                                     }
                                 } else {
+                                    val tokenIdInfo = info.getTokenId(existingVehicle.tokenId)
+                                    tokenIdInfo?.let {
+                                        info.removeTokenIdUser(tokenIdInfo)
+                                    }
                                     existingVehicle.tokenId = tokenId
                                     info.setVehicle(existingVehicle)
                                 }
                             }
-                            info.setTokenId(it)
                             break
                         }
                     }
