@@ -55,6 +55,8 @@ object Constants {
 
     const val TEMP_ACCOUNT = "temporary"
 
+    const val NO_NICKNAME = "No nickname"
+
     // Survey numbers should be even.  A notification will be displayed if the current version is
     // less than SURVEY_VERSION and the current version will be updated to SURVEY_VERSION.  The actual
     // survey will be displayed by MainActivity if the current version is less thatn or equal to

@@ -309,7 +309,7 @@ class NetworkCalls {
                                         vehicleInfo.carStatus = responseVehicle.body()!!
                                         vehicleInfo.tokenId = it.tokenId
                                         if (vehicleInfo.carStatus.vehicle.nickName == "") {
-                                            vehicleInfo.carStatus.vehicle.nickName = "No nickname"
+                                            vehicleInfo.carStatus.vehicle.nickName = Constants.NO_NICKNAME
                                         }
                                         info.insertVehicle(vehicleInfo)
 
@@ -411,7 +411,7 @@ class NetworkCalls {
                                 val priorRefreshTime = vehicle.lastRefreshTime
                                 if (priorRefreshTime <= currentRefreshTime) {
                                     if (car.vehicle.nickName == "") {
-                                        car.vehicle.nickName = "No nickname"
+                                        car.vehicle.nickName = Constants.NO_NICKNAME
                                     }
                                     vehicle.carStatus = car
                                     vehicle.setLastUpdateTime()
