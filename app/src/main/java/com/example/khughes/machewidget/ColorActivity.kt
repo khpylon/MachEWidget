@@ -103,6 +103,16 @@ private suspend fun getInfo(context: Context): InfoRepository =
         withContext(Dispatchers.IO) { InfoRepository(context) }
     }
 
+private fun getIdentifier (vehicle: VehicleInfo) : String {
+    val v = vehicle.carStatus.vehicle
+    val key = if (v.nickName in listOf("",Constants.NO_NICKNAME)) {
+        v.modelName + " (" + v.nickName!! + ")"
+    } else {
+        v.nickName!!
+    }
+    return key
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChooseColor() {
@@ -125,9 +135,9 @@ private fun ChooseColor() {
     val controller = rememberColorPickerController()
     val bitmap = Bitmap.createBitmap(225, 100, Bitmap.Config.ARGB_8888)
 
-    val vehicleIds: MutableList<String> = mutableListOf()
+    val vehicleIds: MutableMap<String,String> = mutableMapOf()
     for (vehicle in info.vehicles) {
-        vehicleIds.add(vehicle.carStatus.vehicle.vehicleId)
+        vehicleIds[getIdentifier(vehicle)] = vehicle.carStatus.vehicle.vehicleId
     }
 
     Scaffold(
@@ -149,8 +159,9 @@ private fun ChooseColor() {
             // If there is more than one vehicle, show the vehicle ID  and set up a onclick callback to change
             if (vehicles.size > 1) {
 
-                CustomSpinner(initialLabel = vehicleInfo.carStatus.vehicle.vehicleId, items = vehicleIds)
-                { vehicleId ->
+                CustomSpinner(initialLabel = getIdentifier(vehicleInfo), items = vehicleIds.keys.toList())
+                { nickname ->
+                    val vehicleId = vehicleIds[nickname]
                     vehicleInfo = info.getVehicleById(vehicleId)
                     vehicleColor = vehicleInfo.colorValue and VehicleColor.ARGB_MASK
                     wireframe = vehicleInfo.colorValue and VehicleColor.WIREFRAME_MASK
