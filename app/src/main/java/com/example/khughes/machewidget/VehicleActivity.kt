@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -31,6 +31,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -38,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,6 +72,7 @@ import kotlinx.coroutines.withContext
 
 private lateinit var mVehicleViewModel: VehicleViewModel
 private lateinit var info: InfoRepository
+private var totalEnabled = 0
 
 class VehicleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +96,9 @@ class VehicleActivity : ComponentActivity() {
         }
 }
 
+// This was used in an earlier implementation and was difficult to get working.  I'm leaving it here
+// in case I ever need to use it somewhere else.
+//
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
 //private fun AddNewVehicle(
@@ -230,6 +236,7 @@ private fun ManageVehicle() {
     val vehicles = mVehicleViewModel.allVehicles.observeAsState().value
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val enabledChanged = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -240,8 +247,12 @@ private fun ManageVehicle() {
                 onClick = {
                     clipboardManager.getText()?.text?.let { text ->
                         if (text.startsWith("https://localhost:3000/?state=123&code=")) {
-                            val code = text.substring(text.indexOf("code=")+5)
-                            Toast.makeText(context, "Attempting to access vehicle data.", Toast.LENGTH_LONG).show()
+                            val code = text.substring(text.indexOf("code=") + 5)
+                            Toast.makeText(
+                                context,
+                                "Attempting to access vehicle data.",
+                                Toast.LENGTH_LONG
+                            ).show()
                             CoroutineScope(Dispatchers.IO).launch {
                                 val msg = NetworkCalls.getAccessToken(context, code, info = info)
                                 val bundle = msg.data
@@ -251,7 +262,11 @@ private fun ManageVehicle() {
                                 }
                             }
                         } else {
-                            Toast.makeText(context, "Clipboard does not contain a valid token.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                context,
+                                "Clipboard does not contain a valid token.",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
 
@@ -295,37 +310,151 @@ private fun ManageVehicle() {
                 lineHeight = 16.sp
             )
 
+            Box(modifier = Modifier.height(8.dp))
+            {
+                HorizontalDivider(
+                    thickness = 4.dp,
+                    modifier = Modifier
+                        .align(alignment = Alignment.Center)
+                )
+            }
+
             vehicles?.let {
-                LazyColumn(
-                    contentPadding = PaddingValues(2.dp)
-                ) {
-                    itemsIndexed(vehicles) { index, vehicle ->
-                        // Get Dark Mode Setting, then choose alternating colors for each row's background
-                        val nightModeFlags =
-                            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-                        val bgColor1 = ContextCompat.getColor(
-                            context,
-                            if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO)
-                                R.color.white else R.color.black
-                        )
-                        val bgColor2 = ContextCompat.getColor(
-                            context,
-                            if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO)
-                                R.color.white95percent else R.color.black20percent
-                        )
 
-                        VehicleDisplay(vehicle,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    color = Color(if (index % 2 == 1) bgColor1 else bgColor2),
-                                    shape = RectangleShape// RoundedCornerShape(0.dp)
-                                )
+                // Force a refresh of everything when a vehicle's enable status changes
+                key(enabledChanged.value) {
+                    // Find the number of vehicles which are enabled
+                    val count = countEnabled(vehicles)
+                    totalEnabled = count
 
-                        )
+                    LazyColumn(
+                        contentPadding = PaddingValues(2.dp)
+                    ) {
+                        itemsIndexed(vehicles) { index, vehicle ->
+                            // Get Dark Mode Setting, then choose alternating colors for each row's background
+                            val nightModeFlags =
+                                context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                            val bgColor1 = ContextCompat.getColor(
+                                context,
+                                if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO)
+                                    R.color.white else R.color.black
+                            )
+                            val bgColor2 = ContextCompat.getColor(
+                                context,
+                                if (nightModeFlags == Configuration.UI_MODE_NIGHT_NO)
+                                    R.color.white95percent else R.color.black20percent
+                            )
+
+                            VehicleDisplay(vehicle,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        color = Color(if (index % 2 == 1) bgColor1 else bgColor2),
+                                        shape = RectangleShape// RoundedCornerShape(0.dp)
+                                    ),
+                                enabledVehicles = count,
+                                onEnableChange = {
+                                    enabledChanged.value = !enabledChanged.value
+                                }
+
+                            )
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+// Count the number of enabled vehicles
+fun countEnabled(vehicles: List<VehicleIds>): Int {
+    var count = 0
+    for (vehicle in vehicles) {
+        if (vehicle.enabled) {
+            ++count
+        }
+    }
+    return count
+}
+
+@Composable
+fun VehicleDisplay(
+    vehicle: VehicleIds,
+    modifier: Modifier,
+    enabledVehicles: Int,
+    onEnableChange: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        modifier = modifier
+            .padding(vertical = 4.dp)
+            .fillMaxWidth()
+    )
+    {
+        val context = LocalContext.current
+        val checkBoxValue = remember { mutableStateOf(vehicle.enabled) }
+        val photo = remember {
+            mutableStateOf(VehicleImages.getImage(context = context, vehicle.vehicleId))
+        }
+
+        // Enable this check box if (1) this vehicle isn't enabled, or (2) if there are move than
+        // one vehicle enabled.  We don't want it enabled if it's the only vehicle, because the
+        // app assumes in general there's one vehicle enabled.
+        Checkbox(checked = checkBoxValue.value,
+            modifier = Modifier
+                .align(alignment = Alignment.CenterVertically),
+            enabled = !vehicle.enabled || enabledVehicles > 1,
+            onCheckedChange = {
+                checkBoxValue.value = it
+                vehicle.enabled = it
+                mVehicleViewModel.setEnable(vehicle.vehicleId, vehicle.enabled)
+
+                // It feels really dirty tracking things this way
+                totalEnabled += if(it) 1 else -1
+
+                // If enabling/disabling this vehicles changes whether or not a
+                // single vehicle is enabled, then force a recomposition
+                if ((it && totalEnabled == 2) ||
+                    (!it && totalEnabled == 1)
+                ) {
+                    onEnableChange()
+                }
+            }
+        )
+        photo.value?.let {
+            Image(
+                bitmap = photo.value!!.asImageBitmap(),
+                contentDescription = "",
+                modifier = Modifier
+                        .align(alignment = Alignment.CenterVertically)
+                        .size(64.dp)
+                        .padding(start = 4.dp)
+            )
+        }
+        Column {
+            Text(
+                text = vehicle.nickname!!,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+            VehicleModel(
+                currentModel = modelMap[vehicle.modelId]!!.modelName,
+                onSelect = {
+                    vehicle.modelId = it
+                    mVehicleViewModel.setModel(vehicle.vehicleId, vehicle.modelId)
+                    CarStatusWidget.updateWidget(context)
+                    photo.value = VehicleImages.getImage(context = context, vehicle.vehicleId)
+                }
+            )
+//            Text(text = vehicle.vin!!,
+//                fontSize = 10.sp,
+//                modifier = Modifier
+//                    .padding(horizontal = 8.dp)
+//                    .clickable {
+//                        popupVisible = true
+//                    }
+//            )
         }
     }
 }
@@ -383,78 +512,6 @@ fun VehicleModel(
                 model = it.key
                 isMenuVisible = false
             })
-        }
-    }
-}
-
-@Composable
-fun VehicleDisplay(vehicle: VehicleIds,
-                   modifier: Modifier) {
-//    var popupVisible by remember { mutableStateOf(false) }
-//    val focusRequester = remember { FocusRequester() }
-//
-//    if (popupVisible) {
-//        AddNewVehicle(vehicle = vehicle,
-//            500.0F, 500.0F, showPopup = false, onClickOutside = {
-//                popupVisible = false
-//            }, focusRequester = focusRequester
-//        )
-//    }
-
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        modifier = modifier
-            .padding(vertical = 4.dp)
-            .fillMaxWidth()
-    )
-    {
-        val context = LocalContext.current
-        val checkBoxValue = remember { mutableStateOf(vehicle.enabled) }
-        val photo = remember {
-            mutableStateOf( VehicleImages.getImage(context = context, vehicle.vehicleId) ) }
-        val vehicleViewModel = remember { mutableStateOf(mVehicleViewModel) }
-
-        Checkbox(checked = checkBoxValue.value,
-            enabled = !vehicle.enabled || vehicleViewModel.value.countEnabledVehicle() > 1,
-            onCheckedChange = {
-                vehicle.enabled = it
-                checkBoxValue.value = it
-                mVehicleViewModel.setEnable(vehicle.vehicleId, vehicle.enabled)
-            }
-        )
-        photo.value?.let {
-            Image(
-                bitmap = photo.value!!.asImageBitmap(),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(54.dp)
-                    .padding(start = 4.dp)
-            )
-        }
-        Column {
-            Text(
-                text = vehicle.nickname!!,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-            VehicleModel(
-                currentModel = modelMap[vehicle.modelId]!!.modelName,
-                onSelect = {
-                    vehicle.modelId = it
-                    mVehicleViewModel.setModel(vehicle.vehicleId, vehicle.modelId)
-                    CarStatusWidget.updateWidget(context)
-                    photo.value = VehicleImages.getImage(context = context, vehicle.vehicleId)
-                }
-            )
-//            Text(text = vehicle.vin!!,
-//                fontSize = 10.sp,
-//                modifier = Modifier
-//                    .padding(horizontal = 8.dp)
-//                    .clickable {
-//                        popupVisible = true
-//                    }
-//            )
         }
     }
 }
