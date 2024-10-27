@@ -155,8 +155,7 @@ private fun ChooseColor() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // TODO: use nickname instead?
-            // If there is more than one vehicle, show the vehicle ID  and set up a onclick callback to change
+            // If there is more than one vehicle, show the vehicle info and set up a onclick callback to change
             if (vehicles.size > 1) {
 
                 CustomSpinner(initialLabel = getIdentifier(vehicleInfo), items = vehicleIds.keys.toList())
