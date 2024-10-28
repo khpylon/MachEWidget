@@ -269,17 +269,6 @@ private fun ManageVehicle() {
                             ).show()
                         }
                     }
-
-
-//                    focusRequester.requestFocus()
-//                    CoroutineScope(Dispatchers.Main).launch {
-//                        val msg = NetworkCalls.getAccessToken(context)
-//                        val bundle = msg.data
-//                        val tokenId = bundle.getString("tokenId")
-//                        if (tokenId!! != "") {
-//                            NetworkCalls.getVehicleList(context, tokenId)
-//                        }
-//                    }
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.secondary,
@@ -447,14 +436,6 @@ fun VehicleDisplay(
                     photo.value = VehicleImages.getImage(context = context, vehicle.vehicleId)
                 }
             )
-//            Text(text = vehicle.vin!!,
-//                fontSize = 10.sp,
-//                modifier = Modifier
-//                    .padding(horizontal = 8.dp)
-//                    .clickable {
-//                        popupVisible = true
-//                    }
-//            )
         }
     }
 }
@@ -495,21 +476,29 @@ fun VehicleModel(
 //        offset = pressOffset.copy(y = pressOffset.y - itemHeight)
     ) {
 
+        // Map vehicle names to their description
         val menuMap: MutableMap<String, Vehicle.Companion.Model> = mutableMapOf()
-        modelMap.keys.forEach {
+        modelMap.keys.sorted().forEach {
             menuMap[modelMap[it]!!.modelName] = it
         }
-        menuMap.forEach {
+
+        // Sort vehicle names alphabetically, and put "Unknown" first
+        val keys = menuMap.keys.toList().sorted().toMutableList()
+        val unknown = modelMap[Vehicle.Companion.Model.UNKNOWN]
+        keys.remove(unknown!!.modelName)
+        keys.add(0,unknown!!.modelName)
+
+        keys.forEach {
             DropdownMenuItem(text = {
                 Text(
-                    text = it.key,
+                    text = it,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(horizontal = 8.dp)
-
                 )
             }, onClick = {
-                onSelect(it.value)
-                model = it.key
+                val item = menuMap[it]
+                onSelect(item!!)
+                model = it
                 isMenuVisible = false
             })
         }
