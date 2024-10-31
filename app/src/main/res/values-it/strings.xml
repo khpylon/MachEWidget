@@ -24,7 +24,10 @@
 
     <string name="reminder_instructions">Imposta un promemoria per ricaricare se la carica è inferiore a una certa soglia.</string>
     <string name="profile_instructions">Clicca su un profilo per effettuare il log in con quel VIN.  Clicca su una voce inutilizzata per creare un login per un nuovo veicolo. Clicca su "X" per eliminare un profilo.</string>
-    <string name="vehicle_instructions">Seleziona quali veicoli rendere visibili nel Widget. Clicca sull\'icona \"+\" per aggiungere un nuovo veicolo. Trascinare a destra un veicolo per eliminarlo. I veicoli il cui VIN è barrato non sono supportati; per chiedere supporto, abilita il log per registrare i dati e segnalare su GitHub (https://github.com/khpylon/MachEWidget).</string>
+    <string name="vehicle_instructions">Seleziona quali veicoli rendere visibili nel Widget. Clicca sull\'icona \"+\" per aggiungere un nuovo veicolo.
+        <!-- Trascinare a destra un veicolo per eliminarlo. -->
+        Se il modello di un veicolo è "Sconosciuto", fare clic sul testo per selezionarlo da un elenco (queste informazioni vengono utilizzate per visualizzare l\'immagine corretta sul widget).
+        Se il tuo modello non è elencato, abilita la registrazione per acquisire dati e creare un problema su GitHub (https://github.com/khpylon/MachEWidget).</string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">"Il VIN del tuo veicolo"</string>
@@ -89,7 +92,6 @@
 
     <string name="charging_information_title">Info ricarica</string>
     <string name="charging_infomation_summary">Applicabile solo a veicoli elettrici</string>
-    <string name="enable_commands_summary">NOTA: non disponibile fino al rilascio di una API pubblica da parte di Ford.</string>
     <string name="lvb_display_description">Info batteria 12V</string>
 
     <!-- Strings used within the app in various activities-->
@@ -113,7 +115,6 @@
     <string name="forcing_a_refresh_description">Aggiornamento in corso; può impiegare 30 secondi.</string>
     <string name="force_update_delay_description">"Impossibile forzare l\'aggiornamento per "</string>
     <string name="too_many_forced_updates_description">"Troppi aggiornamenti forzati; funzione disattivata per "</string>
-    <string name="lvb_status_bad_description">Lo stato LVB non è buono.</string>
     <string name="error_title">Errore</string>
     <string name="no_apps_found">Altre applicazioni non trovate.</string>
     <string name="remove_app_selection">Rimuovi questa app</string>

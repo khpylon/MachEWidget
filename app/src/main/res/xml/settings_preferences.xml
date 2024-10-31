@@ -69,8 +69,7 @@
         app:key="@string/enable_commands_key"
         app:defaultValue="false"
         app:singleLineTitle="false"
-        app:title="@string/enable_commands"
-        app:summary= "@string/enable_commands_summary"/>
+        app:title="@string/enable_commands"/>
 
     <SwitchPreferenceCompat
         app:key="@string/user_forcedUpdate_key"

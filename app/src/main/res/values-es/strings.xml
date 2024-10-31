@@ -24,7 +24,10 @@
 
     <string name="reminder_instructions">"Establezca una hora de recordatorio para enchufar si la carga del vehículo está por debajo de un umbral determinado."</string>
     <string name="profile_instructions">"Haga clic en un perfil para iniciar sesión con ese VIN. Haga clic en una entrada no utilizada para crear un inicio de sesión para un vehículo nuevo. Haga clic en la \"X\" para eliminar un perfil."</string>
-    <string name="vehicle_instructions">"Seleccione qué vehículos deben ser visibles dentro del widget. Haga clic en el ícono \"+\" para agregar un vehículo nuevo. Deslice el dedo hacia la derecha en un vehículo para eliminarlo. Los vehículos cuyo VIN está tachado no son compatibles actualmente; para solicitar soporte , habilite el registro para capturar datos y crear un problema en GitHub (https://github.com/khpylon/MachEWidget)."</string>
+    <string name="vehicle_instructions">"Seleccione qué vehículos deben ser visibles dentro del widget. Haga clic en el ícono \"+\" para agregar un vehículo nuevo
+        <!-- Deslice el dedo hacia la derecha en un vehículo para eliminarlo. -->
+        Si el modelo de un vehículo es "Desconocido", haga clic en el texto para seleccionarlo de una lista (esta información se utiliza para mostrar la imagen correcta en el widget).
+        Si su modelo no aparece en la lista, habilite el registro para capturar datos y crear un problema en GitHub (https://github.com/khpylon/MachEWidget)."</string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">"El VIN de tu vehículo"</string>
@@ -89,7 +92,6 @@
 
     <string name="charging_information_title">"Información de carga"</string>
     <string name="charging_infomation_summary">"Sólo aplicable a vehículos eléctricos"</string>
-    <string name="enable_commands_summary">"AVISO: no disponible hasta que se lance la API pública de Ford"</string>
     <string name="lvb_display_description">"Se muestra información de la batería de 12 V"</string>
 
     <!-- Strings used within the app in various activities-->
@@ -113,7 +115,6 @@
     <string name="forcing_a_refresh_description">"Forzar una actualización; esto puede tardar 30 segundos"</string>
     <string name="force_update_delay_description">"No se puede forzar la actualización para otro "</string>
     <string name="too_many_forced_updates_description">"Demasiadas actualizaciones forzadas; función deshabilitada para "</string>
-    <string name="lvb_status_bad_description">"La situación de la LVB no es buena"</string>
     <string name="error_title">"Error"</string>
     <string name="no_apps_found">"No se encontraron otras aplicaciones"</string>
     <string name="remove_app_selection">"Eliminar esta aplicación"</string>

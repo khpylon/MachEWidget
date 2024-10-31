@@ -24,7 +24,10 @@
 
     <string name="reminder_instructions">"Defina um horário de lembrete para conectar se a carga do veículo estiver abaixo de um determinado limite."</string>
     <string name="profile_instructions">"Clique em um perfil para fazer login com esse VIN. Clique em uma entrada não utilizada para criar um login para um novo veículo. Clique no \" X \" para excluir um perfil."</string>
-    <string name="vehicle_instructions">"Selecione quais veículos devem estar visíveis no widget. Clique no ícone \"+\" para adicionar um novo veículo. Deslize para a direita em um veículo para removê-lo. Veículos cujo VIN está tachado não são suportados atualmente; para solicitar suporte , ative o registro para capturar dados e criar um problema no GitHub (https://github.com/khpylon/MachEWidget)."</string>
+    <string name="vehicle_instructions">"Selecione quais veículos devem estar visíveis no widget. Clique no ícone \"+\" para adicionar um novo veículo.
+        <!-- Deslize para a direita em um veículo para removê-lo. -->
+        Se o modelo do veículo for \"Desconhecido\", clique no texto para selecioná-lo em uma lista (esta informação é usada para exibir a imagem correta no widget).
+        Se o seu modelo não estiver listado, habilite o log para capturar dados e criar um problema no GitHub (https://github.com/khpylon/MachEWidget)."</string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">"VIN do seu veículo"</string>
@@ -89,7 +92,6 @@
 
     <string name="charging_information_title">"Informações de carregamento"</string>
     <string name="charging_infomation_summary">"Aplicável apenas a veículos elétricos"</string>
-    <string name="enable_commands_summary">"AVISO: indisponível até que a API pública da Ford seja lançada."</string>
     <string name="lvb_display_description">"Informações da bateria de 12 V exibidas"</string>
 
     <!-- Strings used within the app in various activities-->
@@ -113,7 +115,6 @@
     <string name="forcing_a_refresh_description">"Forçando uma atualização; isso pode levar 30 segundos."</string>
     <string name="force_update_delay_description">"Não é possível forçar a atualização para outro "</string>
     <string name="too_many_forced_updates_description">"Muitas atualizações forçadas; recurso desativado para "</string>
-    <string name="lvb_status_bad_description">"O status BVB não é bom."</string>
     <string name="error_title">"Erro"</string>
     <string name="no_apps_found">"Nenhum outro aplicativo foi encontrado."</string>
     <string name="remove_app_selection">"Remover este aplicativo"</string>

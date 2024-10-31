@@ -24,7 +24,11 @@
 
     <string name="reminder_instructions">Aseta muistutusaika virran kytkemiselle, jos ajoneuvon lataus on alle tietyn kynnyksen.</string>
     <string name="profile_instructions">Napsauta profiilia kirjautuaksesi sisään sillä VIN-koodilla. Napsauta käyttämätöntä merkintää luodaksesi kirjautumistunnuksen uudelle ajoneuvolle. Napsauta "X" poistaaksesi profiilin.</string>
-    <string name="vehicle_instructions">Valitse, mitkä ajoneuvot näkyvät widgetissä. Lisää uusi ajoneuvo napsauttamalla \"+\" -kuvaketta. Poista se pyyhkäisemällä oikealle ajoneuvossa. Ajoneuvoja, joiden VIN-numero on merkitty läpi, ei tällä hetkellä tueta. Jos haluat pyytää tukea, ota kirjaus käyttöön tietojen keräämiseksi ja luo ongelma GitHubissa (https://github.com/khpylon/MachEWidget).</string>
+    <string name="vehicle_instructions">Valitse, mitkä ajoneuvot näkyvät widgetissä. Lisää uusi ajoneuvo napsauttamalla \"+\" -kuvaketta.
+        <!-- Poista se pyyhkäisemällä oikealle ajoneuvossa. -->
+        Se ajoneuvomalli on "Tuntematon", napsauta tekstiä valitaksesi sen luettelosta (tätä tietoa käytetään oikean kuvan näyttämiseen widgetissä).
+        Jos malliasi ei ole luettelossa, ota kirjaus käyttöön tietojen keräämiseksi ja ongelman luomiseksi GitHubissa (https://github.com/khpylon/MachEWidget).
+    </string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">"Autosi VIN"</string>
@@ -89,7 +93,6 @@
 
     <string name="charging_information_title">Lataustiedot</string>
     <string name="charging_infomation_summary">Koskee vain sähköautoja</string>
-    <string name="enable_commands_summary">HUOMAUTUS: ei saatavilla ennen kuin Fordin julkinen API on julkaistu.</string>
     <string name="lvb_display_description">Näytetään 12 V akun tiedot</string>
 
     <!-- Strings used within the app in various activities-->
@@ -113,7 +116,6 @@
     <string name="forcing_a_refresh_description">Päivityksen pakottaminen; tämä voi kestää 30 sekuntia.</string>
     <string name="force_update_delay_description">"Ei voi pakottaa päivitystä toiselle"</string>
     <string name="too_many_forced_updates_description">"Liian monta pakotettua päivitystä; ominaisuus poistettu käytöstä"</string>
-    <string name="lvb_status_bad_description">LVB-tila ei ole hyvä.</string>
     <string name="error_title">Virhe</string>
     <string name="no_apps_found">Muita sovelluksia ei löytynyt.</string>
     <string name="remove_app_selection">Poista tämä sovellus</string>

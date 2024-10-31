@@ -24,7 +24,10 @@
 
     <string name="reminder_instructions">Ustaw przypomnienie o ładowaniu jeśli poziom naładowania baterii jest poniżej zadanego poziomu.</string>
     <string name="profile_instructions">Kliknij profil, aby zalogować się przy użyciu tego VIN. Kliknij na niezajęte pole, aby utworzyć logowanie dla nowego pojazdu. Kliknij  "X", aby usunąć profil.</string>
-    <string name="vehicle_instructions">Wybierz, które pojazdy powinny być widoczne w widżecie. Kliknij na ikonę "+" aby dodać nowy pojazd. Przesuń w prawo na pojeździe, aby go usunąć. Pojazdy, których numery VIN są przekreślone, obecnie nie są obsługiwane; aby poprosić o wsparcie, włącz zapis logów, aby przechwycić dane i utwórz zgłoszenie na GitHubie (https://github.com/khpylon/MachEWidget).</string>
+    <string name="vehicle_instructions">Wybierz, które pojazdy powinny być widoczne w widżecie. Kliknij na ikonę "+" aby dodać nowy pojazd.
+        <!-- Przesuń w prawo na pojeździe, aby go usunąć. -->
+        Jeśli model pojazdu jest „Nieznany”, kliknij tekst, aby wybrać go z listy (ta informacja służy do wyświetlania prawidłowego obrazu w widżecie).
+        Jeśli Twojego modelu nie ma na liście, włącz rejestrowanie w celu przechwytywania danych i utwórz problem w GitHubie (https://github.com/khpylon/MachEWidget).</string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">"VIN twojego samochodu"</string>
@@ -89,7 +92,6 @@
 
     <string name="charging_information_title">Informacje o ładowaniu</string>
     <string name="charging_infomation_summary">Dotyczy tylko pojazdów elektrycznych</string>
-    <string name="enable_commands_summary">UWAGA: niedostępne do czasu wydania publicznego API Forda.</string>
     <string name="lvb_display_description">Informacje o akumulatorze 12V</string>
 
     <!-- Strings used within the app in various activities-->
@@ -113,7 +115,6 @@
     <string name="forcing_a_refresh_description">Wymuszanie odświeżenia; może to potrwać 30 sekund.</string>
     <string name="force_update_delay_description">"Nie można wymusić kolejnej aktualizacji przez "</string>
     <string name="too_many_forced_updates_description">"Zbyt wiele wymuszonych aktualizacji; funkcja wyłączona na "</string>
-    <string name="lvb_status_bad_description">Zły stan akumulatora 12V.</string>
     <string name="error_title">Błąd</string>
     <string name="no_apps_found">Nie znaleziono innych aplikacji.</string>
     <string name="remove_app_selection">Usuń tę aplikację</string>

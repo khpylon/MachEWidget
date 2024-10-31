@@ -24,7 +24,11 @@
 
     <string name="reminder_instructions">Définissez une activity_charging_one_missing_setting_errore de rappel pour brancher si la charge du véhicule est inférieure à un seuil donné.</string>
     <string name="profile_instructions">Cliquez sur un profil pour vous connecter avec ce NIV. Cliquez sur une entrée inutilisée pour créer un identifiant pour un nouveau véhicule. Cliquez sur le «X» pour supprimer un profil.</string>
-    <string name="vehicle_instructions">Sélectionnez les véhicules qui doivent être visibles dans le widget. Cliquez sur l\'icône «+» pour ajouter un nouveau véhicule. Balayez vers la droite sur un véhicule pour le supprimer. Les véhicules dont le NIV est barré ne sont actuellement pas pris en charge; demander de l\'aide</string>
+    <string name="vehicle_instructions">Sélectionnez les véhicules qui doivent être visibles dans le widget. Cliquez sur l\'icône «+» pour ajouter un nouveau véhicule.
+        <!-- Balayez vers la droite sur un véhicule pour le supprimer. -->
+        Si un modèle de véhicule est "Inconnu", cliquez sur le texte pour le sélectionner dans une liste (cette information permet d\'afficher la bonne image sur le widget).
+        Si votre modèle n\'est pas répertorié, activez la journalisation pour capturer les données et créer un problème sur GitHub (https://github.com/khpylon/MachEWidget).
+    </string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">Le NIV de votre véhicule</string>
@@ -89,7 +93,6 @@
 
     <string name="charging_information_title">Informations sur la recharge</string>
     <string name="charging_infomation_summary">Uniquement applicable aux véhicules électriques</string>
-    <string name="enable_commands_summary">AVIS : indisponible jusqu\'à la sortie de l\'API publique de Ford.</string>
     <string name="lvb_display_description">Informations sur la batterie 12 V affichées</string>
 
     <!-- Strings used within the app in various activities-->
@@ -113,7 +116,6 @@
     <string name="forcing_a_refresh_description">Forcer l\'actualisation; cela peut prendre 30 secondes.</string>
     <string name="force_update_delay_description">Impossible de forcer la mise à jour pour un autre</string>
     <string name="too_many_forced_updates_description">Trop de mises à jour forcées; fonctionnalité désactivée pour</string>
-    <string name="lvb_status_bad_description">L\'état de la batterie B.T. n\'est pas bon.</string>
     <string name="error_title">Erreur</string>
     <string name="no_apps_found">Aucune autre application n\'a été trouvée.</string>
     <string name="remove_app_selection">Supprimer cette application</string>

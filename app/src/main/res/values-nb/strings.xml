@@ -24,7 +24,10 @@
 
     <string name="reminder_instructions">"Angi en påminnelsestid for å koble til hvis kjøretøyets lading er under en gitt terskel."</string>
     <string name="profile_instructions">"Klikk på en profil for å logge inn med det VIN-nummeret. Klikk på en ubrukt oppføring for å opprette en pålogging for et nytt kjøretøy. Klikk på \"X\" for å slette en profil."</string>
-    <string name="vehicle_instructions">"Velg hvilke kjøretøyer som skal være synlige i widgeten. Klikk på \"+\"-ikonet for å legge til et nytt kjøretøy. Sveip til høyre på et kjøretøy for å fjerne det. Kjøretøy med VIN-nummer er ikke støttet for øyeblikket; for å be om støtte , aktiver logging for å fange data og opprette et problem på GitHub (https://github.com/khpylon/MachEWidget)."</string>
+    <string name="vehicle_instructions">"Velg hvilke kjøretøyer som skal være synlige i widgeten. Klikk på \"+\"-ikonet for å legge til et nytt kjøretøy.
+        <!-- Sveip til høyre på et kjøretøy for å fjerne det. -->
+        Hvis en kjøretøymodell er \"Ukjent\", klikk på teksten for å velge den fra en liste (denne informasjonen brukes til å vise riktig bilde på widgeten).
+        Hvis modellen din ikke er oppført, aktiver logging for å fange data og opprette et problem på GitHub (https://github.com/khpylon/MachEWidget)."</string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">"Kjøretøyets VIN"</string>
@@ -89,7 +92,6 @@
 
     <string name="charging_information_title">"Ladeinformasjon"</string>
     <string name="charging_infomation_summary">"Gjelder kun for elektriske kjøretøy"</string>
-    <string name="enable_commands_summary">"MERKNAD: utilgjengelig før Fords offentlige API er utgitt."</string>
     <string name="lvb_display_description">"12V batteriinformasjon vises"</string>
 
     <!-- Strings used within the app in various activities-->
@@ -113,7 +115,6 @@
     <string name="forcing_a_refresh_description">"Tvinger en oppdatering; dette kan ta 30 sekunder."</string>
     <string name="force_update_delay_description">"Kan ikke tvinge oppdatering for en annen"</string>
     <string name="too_many_forced_updates_description">"For mange tvungne oppdateringer; funksjonen er deaktivert for "</string>
-    <string name="lvb_status_bad_description">"LSB-statusen er ikke god."</string>
     <string name="error_title">"Feil"</string>
     <string name="no_apps_found">"Ingen andre apper ble funnet."</string>
     <string name="remove_app_selection">"Fjern denne appen"</string>

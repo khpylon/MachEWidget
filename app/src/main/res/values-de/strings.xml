@@ -24,7 +24,11 @@
 
     <string name="reminder_instructions">Erinnerungszeit festlegen, um das Gerät anzuschließen, wenn der Ladezustand des Fahrzeugs unter einem bestimmten Schwellenwert liegt.</string>
     <string name="profile_instructions">Klicken Sie auf ein Profil, um sich mit dieser VIN anzumelden. Klicken Sie auf einen unbenutzten Eintrag, um ein Login für ein neues Fahrzeug zu erstellen. Klicken Sie auf das „X“, um ein Profil zu löschen.</string>
-    <string name="vehicle_instructions">Wählen Sie aus, welche Fahrzeuge im Widget sichtbar sein sollen. Klicken Sie auf das Symbol „+“, um ein neues Fahrzeug hinzuzufügen. Wischen Sie auf einem Fahrzeug nach rechts, um es zu entfernen. Fahrzeuge, deren Fahrgestellnummer durchgestrichen ist, werden derzeit nicht unterstützt; um Unterstützung anzufordern</string>
+    <string name="vehicle_instructions">Wählen Sie aus, welche Fahrzeuge im Widget sichtbar sein sollen.
+        Klicken Sie auf das Symbol „+“, um ein neues Fahrzeug hinzuzufügen.
+        <!-- Wischen Sie auf einem Fahrzeug nach rechts, um es zu entfernen. -->
+        Wenn ein Fahrzeugmodell „Unbekannt“ ist, klicken Sie auf den Text, um es aus einer Liste auszuwählen (diese Information wird verwendet, um das richtige Bild im Widget anzuzeigen).
+        Wenn Ihr Modell nicht aufgeführt ist, aktivieren Sie die Protokollierung, um Daten zu erfassen und ein Problem auf GitHub zu erstellen (https://github.com/khpylon/MachEWidget).(</string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">Die Fahrgestellnummer Ihres Fahrzeugs</string>
@@ -89,7 +93,6 @@
 
     <string name="charging_information_title">Ladeinformationen</string>
     <string name="charging_infomation_summary">Gilt nur für Elektrofahrzeuge</string>
-    <string name="enable_commands_summary">HINWEIS: Nicht verfügbar, bis die öffentliche Ford API veröffentlicht wird.</string>
     <string name="lvb_display_description">12-V-Batterieinformationsanzeige</string>
 
     <!-- Strings used within the app in various activities-->
@@ -113,7 +116,6 @@
     <string name="forcing_a_refresh_description">Aktualisierung erzwingen; Dies kann 30 Sekunden dauern.</string>
     <string name="force_update_delay_description">Das Update für ein anderes kann nicht erzwungen werden</string>
     <string name="too_many_forced_updates_description">Zu viele erzwungene Updates; Funktion deaktiviert für</string>
-    <string name="lvb_status_bad_description">Der LVB-Status ist nicht gut.</string>
     <string name="error_title">Fehler</string>
     <string name="no_apps_found">Es wurden keine anderen Apps gefunden.</string>
     <string name="remove_app_selection">Entfernen Sie diese App</string>

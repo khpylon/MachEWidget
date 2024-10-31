@@ -24,7 +24,10 @@
 
     <string name="reminder_instructions">Set a reminder time to plug in if the vehicle\'s charge is below a given threshold.</string>
     <string name="profile_instructions">Click on a profile to log in with that VIN.  Click on an unused entry to create a login for a new vehicle.  Click on the "X" to delete a profile.</string>
-    <string name="vehicle_instructions">Select which vehicles should be visible within the widget. Click on the \"+\" icon to add a new vehicle. Swipe right on a vehicle to remove it. Vehicles whose VIN are struck-through are not currently supported; to request support, enable logging to capture data and create an issue on GitHub (https://github.com/khpylon/MachEWidget).</string>
+    <string name="vehicle_instructions">Select which vehicles should be visible within the widget. Click on the \"+\" icon to add a new vehicle.
+        <!-- Swipe right on a vehicle to remove it. -->
+        It a vehicle model is "Unknown", click on the text to select it from a list (this info is used to display the correct image on the widget).
+        If your model is not listed, enable logging to capture data and create an issue on GitHub (https://github.com/khpylon/MachEWidget).</string>
 
     <!-- Preference Titles and Summaries-->
     <string name="VIN">"Your vehicle's VIN"</string>
@@ -130,7 +133,6 @@
     <string name="title_activity_charging" translatable="false">ChargingActivity</string>
     <string name="charging_information_title">Charging Information</string>
     <string name="charging_infomation_summary">Only applicable to electric vehicles</string>
-    <string name="enable_commands_summary">NOTICE: unavailable until Ford\'s public API is released.</string>
     <string name="lvb_display_description">12V Battery Info Displayed</string>
 
     <!-- Strings used within the app in various activities-->
@@ -154,7 +156,6 @@
     <string name="forcing_a_refresh_description">Forcing a refresh; this may take 30 seconds.</string>
     <string name="force_update_delay_description">"Cannot force update for another "</string>
     <string name="too_many_forced_updates_description">"Too many forced updates; feature disabled for "</string>
-    <string name="lvb_status_bad_description">The LVB status is not good.</string>
     <string name="error_title">Error</string>
     <string name="no_apps_found">No other apps were found.</string>
     <string name="remove_app_selection">Remove this app</string>
