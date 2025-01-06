@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -60,8 +61,10 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.khughes.machewidget.Misc.Companion.copyStreams
 import com.example.khughes.machewidget.Vehicle.Companion.modelMap
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
 import kotlinx.coroutines.CoroutineScope
@@ -69,6 +72,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 private lateinit var mVehicleViewModel: VehicleViewModel
 private lateinit var info: InfoRepository
@@ -81,6 +87,26 @@ class VehicleActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             info = getInfo(applicationContext)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                Thread.sleep((5 * 1000).toLong())
+//                try {
+//                    val vehicleId = "8a7f059c788450730179011bccf40284"
+//                    val vehicle = info.getVehicleById(vehicleId)
+//                    // Copy all logfile contents to a temporary file
+//                    val imageDir = File(applicationContext.dataDir, Constants.IMAGES_FOLDER)
+//                    val inFile = File(imageDir, "tmp.png")
+//                    val inputStream = FileInputStream(inFile)
+//                    val outFile = File(imageDir, "${vehicleId}.png")
+//                    val outStream = FileOutputStream(outFile)
+//                    copyStreams(inputStream, outStream)
+//                    inputStream.close()
+//                    outStream.close()
+//                    vehicle.modelId =  Vehicle.Companion.Model.UNKNOWN
+//                    info.setVehicle(vehicle)
+//                    } catch (e: Exception) {
+//                    Log.e(MainActivity.CHANNEL_ID, "exception in LogFile.copyLogFile()", e)
+//                }
+//            }
 
             setContent {
                 MacheWidgetTheme {
@@ -233,7 +259,8 @@ class VehicleActivity : ComponentActivity() {
 @Composable
 private fun ManageVehicle() {
     mVehicleViewModel = viewModel<VehicleViewModel>()
-    val vehicles = mVehicleViewModel.allVehicles.observeAsState().value
+//    val vehicles = mVehicleViewModel.allVehicles.observeAsState().value
+    val vehicles = mVehicleViewModel.allVehicles.collectAsStateWithLifecycle(initialValue = mutableListOf())
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val enabledChanged = remember { mutableStateOf(false) }
@@ -313,13 +340,13 @@ private fun ManageVehicle() {
                 // Force a refresh of everything when a vehicle's enable status changes
                 key(enabledChanged.value) {
                     // Find the number of vehicles which are enabled
-                    val count = countEnabled(vehicles)
+                    val count = countEnabled(vehicles.value)
                     totalEnabled = count
 
                     LazyColumn(
                         contentPadding = PaddingValues(2.dp)
                     ) {
-                        itemsIndexed(vehicles) { index, vehicle ->
+                        itemsIndexed(vehicles.value) { index, vehicle ->
                             // Get Dark Mode Setting, then choose alternating colors for each row's background
                             val nightModeFlags =
                                 context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -415,9 +442,9 @@ fun VehicleDisplay(
                 bitmap = photo.value!!.asImageBitmap(),
                 contentDescription = "",
                 modifier = Modifier
-                        .align(alignment = Alignment.CenterVertically)
-                        .size(64.dp)
-                        .padding(start = 4.dp)
+                    .align(alignment = Alignment.CenterVertically)
+                    .size(64.dp)
+                    .padding(start = 4.dp)
             )
         }
         Column {

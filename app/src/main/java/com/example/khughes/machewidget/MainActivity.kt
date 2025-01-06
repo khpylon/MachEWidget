@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -12,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.ContextThemeWrapper
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -23,7 +21,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -69,7 +66,11 @@ import com.example.khughes.machewidget.Notifications.Companion.batteryOptimizati
 import com.example.khughes.machewidget.Notifications.Companion.createNotificationChannels
 import com.example.khughes.machewidget.StatusReceiver.Companion.initateAlarm
 import com.example.khughes.machewidget.StatusReceiver.Companion.nextAlarm
+import com.example.khughes.machewidget.db.VehicleInfoDatabase
 import com.example.khughes.machewidget.ui.theme.MacheWidgetTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
 
@@ -117,6 +118,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CoroutineScope(Dispatchers.IO).launch {
+            val vehicleDb = VehicleInfoDatabase.getInstance(applicationContext)
+            val vehicleDao = vehicleDb.vehicleInfoDao()
+            val vehicles = vehicleDao.liveDataVehicleInfo
+        }
+
         val context = applicationContext
         LogFile.defineContext(context)
 

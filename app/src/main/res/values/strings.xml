@@ -230,6 +230,9 @@
     <string name="account_disabled_notification_description">The app is unable to access your information.  Contact Ford to reactivate your account.</string>
     <string name="no_vehicles_notification_title">No vehicles found</string>
     <string name="no_vehicles_notification_description">No vehicles are associated with te app.</string>
+    <string name="hibernation_notification_title">Hibernation is over</string>
+    <string name="hibernation_notification_description">The app now uses Ford\'s public API. Click here to add your vehicle, or go to \"Manage Vehicles\".</string>
+
     <string name="misc_error_message">Error</string>
     <string name="activity_misc_novehicles_description">No matching vehicles were found.</string>
     <string name="settings_battery_opts_off_description">Off (recommended)</string>

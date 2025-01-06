@@ -32,6 +32,7 @@ class Notifications : BroadcastReceiver() {
     companion object {
         const val NORMAL_NOTIFICATIONS = "NORMAL_NOTIFICATIONS"
         const val IMPORTANT_NOTIFICATIONS = "IMPORTANT_NOTIFICATIONS"
+        const val HIBERNATE_NOTIFICATIONS = "HIBERNATE_NOTIFICATIONS"
         const val CHARGE_NOTIFICATIONS = "CHARGER_NOTIFICATIONS"
 
         @JvmStatic
@@ -45,12 +46,10 @@ class Notifications : BroadcastReceiver() {
             for (channel in channels) {
                 notificationManager.deleteNotificationChannel(channel.id)
             }
-
         }
 
         @JvmStatic
         fun createNotificationChannels(context: Context) {
-
             val notificationManager: NotificationManager = getSystemService(context,
                 NotificationManager::class.java
             ) as NotificationManager
@@ -285,6 +284,34 @@ class Notifications : BroadcastReceiver() {
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 notificationManager.notify(CHARGE_REMINDER, builder.build())
+            }
+        }
+
+        private const val HIBERNATE_OVER = 941
+
+        fun hibernateOver(context: Context) {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                val intent = Intent(context, VehicleActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                val pendingIntent =
+                    PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                val builder = NotificationCompat.Builder(
+                    context!!, IMPORTANT_NOTIFICATIONS
+                )
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
+                    .setContentTitle(context.getString(R.string.hibernation_notification_title))
+                    .setContentText(context.getString(R.string.hibernation_notification_description))
+                    .setContentIntent(pendingIntent)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                val notificationManager = NotificationManagerCompat.from(context)
+                // notificationId is a unique int for each notification that you must define
+                notificationManager.notify(HIBERNATE_OVER, builder.build())
             }
         }
 

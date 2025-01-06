@@ -5,6 +5,7 @@ import com.example.khughes.machewidget.db.TokenIdDao
 import com.example.khughes.machewidget.db.TokenIdDatabase
 import com.example.khughes.machewidget.db.VehicleInfoDao
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
+import kotlinx.coroutines.flow.Flow
 
 class InfoRepository internal constructor(mContext: Context) {
     private val mVehicleInfoDao: VehicleInfoDao

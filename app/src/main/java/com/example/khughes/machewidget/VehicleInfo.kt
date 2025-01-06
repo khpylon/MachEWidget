@@ -9,48 +9,48 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 @Entity(tableName = "vehicle_info")
-class VehicleInfo {
+data class VehicleInfo (
     @PrimaryKey(autoGenerate = true)
-    var id = 0
+    var id: Int = 0,
 
-    var tokenId: String? = ""
-    var modelId: Model = Model.UNKNOWN
-    var lastRefreshTime: Long = 0
-    var lastUpdateTime: Long = 0
+    var tokenId: String? = "",
+    var modelId: Model = Model.UNKNOWN,
+    var lastRefreshTime: Long = 0,
+    var lastUpdateTime: Long = 0,
 
     @ColumnInfo(defaultValue = "0")
-    var lastLVBStatus: String? = "STATUS_GOOD"
-    var lastTPMSStatus: String? = "Normal"
+    var lastLVBStatus: String? = "STATUS_GOOD",
+    var lastTPMSStatus: String? = "Normal",
 
     @ColumnInfo(defaultValue = "''")
-    var lastChargeStatus = "''"
-    var lastDTE = 0.0
-    var lastFuelLevel = 0.0
+    var lastChargeStatus: String = "''",
+    var lastDTE : Double = 0.0,
+    var lastFuelLevel : Double = 0.0,
 
     @ColumnInfo(defaultValue = "0")
-    var initialForcedRefreshTime: Long = 0
+    var initialForcedRefreshTime: Long = 0,
 
     @ColumnInfo(defaultValue = "0")
-    var lastForcedRefreshTime: Long = 0
+    var lastForcedRefreshTime: Long = 0,
 
     @ColumnInfo(defaultValue = "0")
-    var forcedRefreshCount: Long = 0
+    var forcedRefreshCount: Long = 0,
 
     @ColumnInfo(name = "enabled", defaultValue = "1")
-    var isEnabled = true
+    var isEnabled : Boolean = true,
 
     @ColumnInfo(defaultValue = "0xffffffff")
-    var colorValue: Int
+    var colorValue: Int = -0x1,
 
     @ColumnInfo(defaultValue = "0")
-    var chargeHour: Int
+    var chargeHour: Int = 0,
 
     @ColumnInfo(defaultValue = "7")
-    var chargeThresholdLevel: Int
+    var chargeThresholdLevel: Int = 7,
 
     @Embedded(prefix = "car_")
     var carStatus: CarStatus = CarStatus()
-
+) {
     init {
         // for new database entries, this will generate a new id
         colorValue = -0x1

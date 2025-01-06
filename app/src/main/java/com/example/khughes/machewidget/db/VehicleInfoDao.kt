@@ -1,10 +1,10 @@
 package com.example.khughes.machewidget.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.khughes.machewidget.Vehicle.Companion.Model
 import com.example.khughes.machewidget.VehicleIds
 import com.example.khughes.machewidget.VehicleInfo
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface VehicleInfoDao {
@@ -18,7 +18,7 @@ interface VehicleInfoDao {
     fun findVehicleInfoByVehicleId(vehicleId: String): VehicleInfo?
 
     @get:Query("SELECT car_nickName, car_vehicleId, modelId, enabled FROM vehicle_info")
-    val liveDataVehicleInfo: LiveData<List<VehicleIds>>
+    val liveDataVehicleInfo: Flow<List<VehicleIds>>
 
     @Query("DELETE FROM vehicle_info WHERE car_vehicleId LIKE :vehicleId")
     fun deleteVehicleInfoByVehicleId(vehicleId: String)

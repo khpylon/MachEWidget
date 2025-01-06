@@ -4,8 +4,8 @@
 </head>
 <body>
 <h2>Introduction</h2>
-The widget provides a quick view of many aspects of your Ford vehicle.  Once you log in to your FordPass account through the
-app, enter your vehicle information, and place the widget somewhere on your phone's screen, it will periodically update to show your car's status.<p>
+The widget provides a quick view of many aspects of your Ford vehicle.  Once you've authenticated with Ford
+and placed the widget somewhere on your phone's screen, it will periodically update to show your car's status.<p>
 
 The widget is shown below. Remember: <b>You need to place the widget on your phone's screen </b>
 <ol>
@@ -25,8 +25,7 @@ The widget is shown below. Remember: <b>You need to place the widget on your pho
 <h2>Using The App</h2>
 <p>All controls are located in the three-dot menu.
     <ul>
-    <li>Select "Ford Log-in" to get started.  Your user name and password are <b>not</b> stored.</li>
-    <li>Select "Manage Vehicles" to enter the VIN and nickname of your vehicle(s).</li>
+    <li>Select "Manage Vehicles" to authenticate with Ford to allow access to your vehicle(s).</li>
     <li>Select "Refresh" to force a query of Ford's servers.</li>
     <li>Select "Choose Linked Apps" to choose which apps can be launched from the widget (located to the right of the
         Settings ("gear") icon</li>
@@ -38,27 +37,37 @@ The widget is shown below. Remember: <b>You need to place the widget on your pho
             <li>set the frequency at which the widget updates</li>
             <li>enable commands for lock/unlock and remote start when pressing the icons (future feature)</li>
             <li>enable the location (if applicable) on the widget</li>
-            <li>display charging session information (see below)</li>
+            <!--
+                <li>display charging session information (see below)</li>
+            -->
         </ul>
     </ul>
 </p>
 
 <h2>Icon Information</h2>
 <p>Red is normally used to indicate something unusual happening when you're not using the car.  The hood/frunk, trunk/hatch/tailgate, and doors will be highlighted
-    in red to indicate they are not closed.  Similarly, if a window is not fully closed, either a red icon will appear near the corresponding door (full-sized widget) or
-    the actual window will appear in red (medium and miniature widgets).</p>
+    in red to indicate they are not closed.
+    <!--
+        Similarly, if a window is not fully closed, either a red icon will appear near the corresponding door (full-sized widget) or
+        the actual window will appear in red (medium and miniature widgets).
+    -->
+</p>
 <p>The bell icon <img src="/assets/alarm_green.png" width="18"> indicates the alarm status; green is armed, red is disarmed, and red with a "Z" indicates the vehicle is in deep sleep.
 </p>
 <p>The ignition icon <img src="/assets/ignition_green.png" width="18"> is green when the vehicle is on, gray when off, and yellow when remote start is active.</p>
-<p>The information displayed for the 12V (low-voltage or LV) battery can show voltage, state of charge (SoC), or both.  This is selectable under "Settings".  When shown in a progress bar,
-green indicates the SOC is above 80%, yellow above 50%, and red below 50%.</p>
+<!--
+    <p>The information displayed for the 12V (low-voltage or LV) battery can show voltage, state of charge (SoC), or both.  This is selectable under "Settings".  When shown in a progress bar,
+    green indicates the SOC is above 80%, yellow above 50%, and red below 50%.</p>
+-->
 
 <h2>Accessing Other Features</h2>
 <p>
 Tapping on various parts of the widget will give access to other features.
 <ul>
-    <li>A single tap on the alarm icon <img src="/assets/alarm_green.png" width="18"> will display the vehicle's interior temperature.
-        This value is apparently only valid when the ignition is on.</li>
+    <!--
+        <li>A single tap on the alarm icon <img src="/assets/alarm_green.png" width="18"> will display the vehicle's interior temperature.
+            This value is apparently only valid when the ignition is on.</li>
+    -->
     <li>A triple tap on the "Last refresh" text (or for the widget without "Last refresh", triple tap on the vehicle's image on the right) will show information about the last time the app
         updated with widget and the last time information was read from the servers.</li>
     <li>The ignition icon controls remote start/stop and the lock icon controls lock/unlock (remote commands can be enabled under Settings).  Double tap on the
@@ -66,23 +75,26 @@ Tapping on various parts of the widget will give access to other features.
     <li>The refresh icon on the lower left of the vehicle's image will send a command to the vehicle forcing it to refresh its status (this can be enabled under Settings).
     <b>Warning</b>: Since this has the potential to drain the 12V battery, the app limits how often you can perform a refresh in a 24 hour period.</li>
     <li>Plug-in hybrids only: a single tap on the percentage progress bar will switch between gas and electric information.</li>
-    <li>Diesels only: a single tap on the low-voltage battery display will switch between LV battery, DEF level, and DEF range.</li>
-    <li>Electric and plug-in only: a single tap on the plug icon <img src="/assets/plug_green.png" height="18">
-        will display the kilowatt-hours remaining in the high-voltage battery.  A single tap on the high-voltage
-        battery's progress bar at the bottom of the widget will display its voltage and temperature.</li>
+    <!--
+        <li>Diesels only: a single tap on the low-voltage battery display will switch between LV battery, DEF level, and DEF range.</li>
+        <li>Electric and plug-in only: a single tap on the plug icon <img src="/assets/plug_green.png" height="18">
+            will display the kilowatt-hours remaining in the high-voltage battery.  A single tap on the high-voltage
+            battery's progress bar at the bottom of the widget will display its voltage and temperature.</li>
+    -->
     <li>A single tap on all other locations will take you to this page.</li>
 </ul>
 
 </p>
 
 <h2>Multiple Vehicles</h2>
-<p>If you own more than one vehicle compatible with FordPass, each vehicle's status can be accessed from the widget.  To see the next vehicle:
+<p>If you own more than one vehicle compatible with FordPass, each vehicle's status can be accessed from the widget.  To select the next vehicle:
 <ul>
     <li><b>Smaller widgets</b>: double tap on the vehicle image on the right.</li>
     <li><b>Large widget</b>: single tap on your vehicle's image in the upper left corner.</li>
 </ul>
-You can use "Manage Vehicles" in the three-dot menu to choose which vehicle(s) the app will display.
+You can also use "Manage Vehicles" in the three-dot menu to choose which vehicle(s) the app will display.
 </p>
+
 
 <H2>Charging Information (for Plug-in Vehicles)</H2>
 <p>The charging status is indicated by icons for the charge plug
@@ -99,19 +111,21 @@ icon will indicate what is happening:
     <li>Charge finished -- <img src="/assets/battery_full.png" width="15"></li>
 </ul>
 </p>
-<p>Information about AC charging sessions can be displayed on the widget by enabling "Display charge
-session info" in "Settings".  When charging, the current power and total energy delivered will be
-shown on the charging progress bar.  Information about DC fast charging can be display by
-also enabling "Display charge session info".  Once DC fast charging is detected by the app, it will automatically
-request updates from the servers every 30 seconds (note that you mey want to manually refresh
-once you initiate charging to have updates start sooner).
-</p>
-<p>Enabling "Save DCFC logs" in addition to the above settings will allow you to view recent DC fast
-charging sessions via "View Fast Charge Logs" in the three-dot menu.  If you are currently charging, the
-data is updated in real-time as information is read from the servers. The logs will show power, energy,
-and SOC during each charging session.  Data for each session is stored for 180 days then deleted.
-All session data is deleted if this setting is disabled.
-</p>
+<!--
+    <p>Information about AC charging sessions can be displayed on the widget by enabling "Display charge
+    session info" in "Settings".  When charging, the current power and total energy delivered will be
+    shown on the charging progress bar.  Information about DC fast charging can be display by
+    also enabling "Display charge session info".  Once DC fast charging is detected by the app, it will automatically
+    request updates from the servers every 30 seconds (note that you mey want to manually refresh
+    once you initiate charging to have updates start sooner).
+    </p>
+    <p>Enabling "Save DCFC logs" in addition to the above settings will allow you to view recent DC fast
+    charging sessions via "View Fast Charge Logs" in the three-dot menu.  If you are currently charging, the
+    data is updated in real-time as information is read from the servers. The logs will show power, energy,
+    and SOC during each charging session.  Data for each session is stored for 180 days then deleted.
+    All session data is deleted if this setting is disabled.
+    </p>
+-->
 
 <h2>Per-app Language Preferences</h2>
 <p>
@@ -122,8 +136,8 @@ Portuguese, and Finnish are supported.  If you would like support for another la
 </p>
 
 <h2>FAQs and Other Information</h2>
-<p>See the <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">FAQ (https://github.com/khpylon/ MachEWidget/blob/master/ FAQ.md)</a> on GitHub for other questions (feel free to submit suggestions for other questions).
-
+<p>See the <a href="https://github.com/khpylon/MachEWidget/blob/master/FAQ.md">FAQ (https://github.com/khpylon/ MachEWidget/blob/master/ FAQ.md)</a>
+on GitHub for other questions (feel free to submit suggestions for other questions).
 </p>
 </body>
 </html>

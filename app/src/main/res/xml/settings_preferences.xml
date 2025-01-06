@@ -5,6 +5,7 @@
         app:defaultValue="false"
         app:singleLineTitle="false"
         app:disableDependentsState="true"
+        app:isPreferenceVisible="false"
         app:title="@string/hibernate_api"
         app:summary="@string/hibernate_api_summary"/>
 

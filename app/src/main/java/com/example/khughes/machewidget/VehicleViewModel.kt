@@ -3,13 +3,16 @@ package com.example.khughes.machewidget
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.example.khughes.machewidget.db.VehicleInfoDao
 import com.example.khughes.machewidget.db.VehicleInfoDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class VehicleViewModel(application: Application?) : AndroidViewModel(application!!) {
     private val mRepository: VehicleRepository = VehicleRepository(application?.applicationContext as Context)
-    val allVehicles: LiveData<List<VehicleIds>>
+    val allVehicles: Flow<List<VehicleIds>>
 
     init {
         allVehicles = mRepository.allVehicles
@@ -20,48 +23,48 @@ class VehicleViewModel(application: Application?) : AndroidViewModel(application
     }
 
     fun setModel(vehicleId: String, value: Vehicle.Companion.Model) {
-        mRepository.setModel(vehicleId, value)
+        viewModelScope.launch {
+            mRepository.setModel(vehicleId, value)
+        }
     }
 
     fun removeVehicle(vehicleId: String) {
         mRepository.remove(vehicleId)
     }
 
-    fun countEnabledVehicle(): Int {
-        var count = 0
-        for (id in allVehicles.value!!) {
-            if (id.enabled) {
-                ++count
-            }
-        }
-        return count
-    }
-
     internal inner class VehicleRepository(context: Context) {
         private val mVehDao: VehicleInfoDao = VehicleInfoDatabase.getInstance(context).vehicleInfoDao()
         private var mContext: Context
-        val allVehicles: LiveData<List<VehicleIds>>
+        var allVehicles: Flow<List<VehicleIds>>
 
         init {
-            this.allVehicles = mVehDao.liveDataVehicleInfo
+            allVehicles = mVehDao.liveDataVehicleInfo
             mContext = context
         }
 
         fun enable(vehicleId: String, value: Boolean) {
-            Thread { mVehDao.updateEnable(vehicleId, value) }.start()
+            viewModelScope.launch {
+                mVehDao.updateEnable(vehicleId, value)
+            }
         }
 
         fun setModel(vehicleId: String, value: Vehicle.Companion.Model) {
-            Thread { mVehDao.updateModel(vehicleId, value) }.start()
+            viewModelScope.launch(Dispatchers.IO) {
+                mVehDao.updateModel(vehicleId, value)
+//                mVehDao.liveDataVehicleInfo.collectLatest {
+//                    allVehicles = it
+//                }
+            }
         }
 
         fun remove(vehicleId: String) {
-            Thread {
+            viewModelScope.launch{
                 mVehDao.deleteVehicleInfoByVehicleId(vehicleId)
+                allVehicles = mVehDao.liveDataVehicleInfo
                 // Force recalculation of electric vehicles
                 val info = InfoRepository(mContext)
                 info.vehicles.size
-            }.start()
+            }
         }
     }
 }

@@ -6,7 +6,7 @@
 
     <application
         android:allowBackup="true"
-        android:label="@string/app_name"
+        android:label="FSW Beta"
         android:roundIcon="@mipmap/mache_launcher_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.MacheWidget">
