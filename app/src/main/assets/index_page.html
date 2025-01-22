@@ -3,6 +3,41 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
+
+<h2>The situation as of Jan 27, 2025</h2>
+
+<p>
+Ford made changes in May 2024 to the authentication process in the FordPass API (the "private" API)
+which broke the ability for this app to work correctly. Users who had not already logged in using
+their username and password could no longer use the app; users who were logged in could continue to
+use the app until tokens could no longer refreshed.
+</p>
+
+<p>
+We began communicating with Ford in early 2023 to gain access to the FordConnect API (the "public"
+API) and around August 2023 we began to see some progress.  But although the API itself was
+published, Ford was not providing an easy way to authenticate for it. We began adapting the app to
+use the FordConnect API in late September 2024 after it became clear there was no workaround for
+the FordPass API problems.  This work took about three weeks.  While some features of the app
+had to be removed since the new API didn't provide the necessary information, in the end the app
+was again functional.
+</p>
+
+<p>
+Shortly after this work was completed in end of October 2024, Ford disabled the authentication
+process for the FordConnect API as well.  We learned through back channels that the cyber security
+team at Ford disapproved of some things in the API and shut it down until those issues were
+resolved.  Since then nothing on Ford developer's website appears to have changed -- the same API
+documentation is still there -- but depending on what changes need to be made in order for the
+cyber security team to approve it, there may be more weeks still needed to again adapt the app
+to use their API.
+</p>
+
+<p>
+That is where things stand today.  The app itself is not dead, but we are in a waiting
+state until Ford once again provides a way to use the new API.
+</p>
+
 <h2>Introduction</h2>
 The widget provides a quick view of many aspects of your Ford vehicle.  Once you log in to your FordPass account through the
 app, enter your vehicle information, and place the widget somewhere on your phone's screen, it will periodically update to show your car's status.<p>
