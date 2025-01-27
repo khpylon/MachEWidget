@@ -4,6 +4,10 @@ Wszystkie istotne zmiany w tym projekcie zostaną udokumentowane w tym pliku.
 
 Format opiera się na [Prowadź dziennik zmian] (https://keepachangelog.com/en/1.0.0/), ale w tej chwili projekt nie jest zgodny z [wersją semantyczną] (https://semver.org/spec/v2.0.0.html).
 
+## 2025.01.27-10
+### Dodano
+- Daj użytkownikom aktualne informacje o stanie aplikacji.
+
 ## 2024.05.29-17
 ### Naprawił
 - Dodaj brakujący wariant VIN wersji Mach-E Select

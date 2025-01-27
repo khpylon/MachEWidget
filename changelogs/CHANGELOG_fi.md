@@ -5,6 +5,10 @@ Kaikki merkittävät muutokset tähän projektiin dokumentoidaan tässä tiedost
 Muoto perustuu [Keep a Changelog] -palveluun (https://keepachangelog.com/en/1.0.0/),
 mutta tällä hetkellä projekti ei noudata [semanttista versiota](https://semver.org/spec/v2.0.0.html).
 
+## 2025.01.27-10
+### Lisätty
+- Anna käyttäjille päivitys sovelluksen tilasta.
+
 ## 2024.05.29-17
 ### Korjattu
 - Lisää puuttuva Mach-E Select version VIN-versio
