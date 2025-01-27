@@ -3,6 +3,47 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
+
+<h2>Situation au 27 janvier 2025</h2>
+
+<p>
+Ford a apporté des modifications en mai 2024 au processus d'authentification dans l'API FordPass (l'API « privée »)
+ce qui a empêché le bon fonctionnement de cette application.
+Les utilisateurs qui ne s'étaient pas
+encore connectés en utilisant leur nom d'utilisateur
+et leur mot de passe ne pouvaient plus utiliser l'application;
+les utilisateurs qui étaient connectés
+pouvaient continuer à utiliser l'application jusqu'à ce que les jetons ne puissent plus être actualisés.
+</p>
+
+<p>
+Nous avons commencé à communiquer avec Ford au début de l'année 2023 pour obtenir l'accès à l'API
+FordConnect (l'API « publique »)et vers le mois d'août 2023, nous avons commencé à voir des progrès.
+Mais bien que l'API elle-même ait été publiée, Ford ne fournissait pas de moyen facile de s'authentifier.
+Nous avons commencé à adapter l'application pour utiliser l'API FordConnect à la fin du
+mois de septembre 2024 après qu'il soit devenu clair qu'il n'y avait pas de solution aux problèmes de l'API FordPass.
+Ce travail a duré environ trois semaines. Bien que certaines fonctionnalités de l'application
+ont dû être supprimées car la nouvelle API ne fournissait pas les informations
+nécessaires, l'application était à nouveau fonctionnelle.
+</p>
+
+<p>
+Peu après l'achèvement de ce travail, fin octobre 2024,
+Ford a désactivé aussi le processus d'authentification pour l'API FordConnect.
+Nous avons appris entre les branches que l'équipe de cybersécurité de Ford
+désapprouvait certains éléments de l'API et l'avait désactivée jusqu'à ce que ces problèmes soient résolus.
+Depuis lors, rien ne semble avoir changé sur le site web des développeurs de Ford - la même documentation sur l'API
+est toujours présente, mais en fonction des modifications à apporter
+pour que l'équipe de cybersécurité l'approuve, il faudra peut-être encore quelques
+semaines pour adapter à nouveau l'application à leur API.
+</p>
+
+<p>
+Voilà où en sont les choses aujourd'hui.  L'application elle-même n'est pas morte,
+mais nous sommes en attente jusqu'à ce que Ford fournisse à nouveau un moyen d'utiliser la nouvelle API.
+</p>
+
+
 <h2>Introduction</h2>
 Le widget offre un aperçu rapide de nombreux aspects de votre véhicule Ford. Une fois que vous vous
 êtes connecté à votre compte FordPass par le biais de l'application, que vous avez saisi les

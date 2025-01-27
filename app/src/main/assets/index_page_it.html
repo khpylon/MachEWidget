@@ -3,6 +3,42 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
+
+<h2>Situazione al 27 Gennaio 2025</h2>
+
+<p>
+Ford ha cambiato a Maggio 2024 la modalità di autenticazione nell'API FordPass (API "privata")
+che ha impedito a questa app di funzionare correttamente. Gli utenti che non avevano ancora
+effettuato l'accesso con username e password non potevano più utilizzare l'app; gli utenti che
+avevano effettuato l'accesso potevano continuare ad utilizzare l'app fino a che i tokens non sono
+stati più rinnovati.
+</p>
+
+<p>
+Abbiamo contattato Ford a inizio 2023 per avere accesso all'API FordConnect (API "pubblica") e
+intorno ad Agosto 2023 abbiamo iniziato a vedere progressi. Ma sebbene l'API fosse stata
+pubblicata, Ford non consentiva l'autenticazione. Abbiamo iniziato ad adattare l'app per
+l'utilizzo dell'API FordConnect a fine Settembre 2024 dopo aver capito che non c'era soluzione
+per i problemi di API FordPass. Questo lavoro ha richiesto circa tre settimane. Mentre alcune
+funzionalità dell'app sono state rimosse poiché la nuova API non forniva più le informazioni
+necessarie, l'app era di nuovo funzionante.
+</p>
+
+<p>
+Subito dopo aver completato questo lavoro alla fine di Ottobre 2024, Ford ha disabilitato
+l'autenticazione anche per l'API FordConnect. Abbiamo appreso che il team di cyber security di
+Ford non approvava alcuni aspetti dell'API e l'ha bloccata fino alla soluzione dei problemi.
+Da allora niente sembra variato sul portale di sviluppo di Ford -- la stessa documentazione API
+è ancora presente -- ma a seconda di quali modifiche devono esser fatte per l'approvazione da
+parte del team di cyber security, potrebbero servire altre settimane di lavoro per adattare
+l'app all'uso della loro API.
+</p>
+
+<p>
+Questa è la situazione ad oggi. L'app non è abbandonata, ma siamo in attesa che Ford fornisca di
+nuovo un modo per l'utilizzo della nuova API.
+</p>
+
 <h2>Introduzione</h2>
 Il widget fornisce una visualizzazione rapida di molti aspetti del tuo veicolo Ford.  Una volta effettuato il log in nell'account FordPass attraverso l'app, inserisci i dati del tuo veicolo, e posiziona il widget sullo schermo del tuo smartphone, si aggiornerà periodicamente per mostrare lo stato del tuo veicolo.<p>
 

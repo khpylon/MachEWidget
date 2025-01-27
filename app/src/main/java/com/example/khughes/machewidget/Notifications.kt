@@ -362,5 +362,30 @@ class Notifications : BroadcastReceiver() {
             val notificationManager = NotificationManagerCompat.from(context)
             notificationManager.notify(NO_VEHICLES, builder.build())
         }
+
+        private const val JAN25STATUS = 945
+        fun statusUpdate(context: Context) {
+            val statusVersion_key = "viewJan25status"
+            val currentStatusVersion =
+                PreferenceManager.getDefaultSharedPreferences(context).getInt(statusVersion_key, 0)
+            if (currentStatusVersion < Constants.STATUS_UPDATE_VERSION) {
+                val intent = Intent(context, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                val pendingIntent =
+                    PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                val builder = NotificationCompat.Builder(context, NORMAL_NOTIFICATIONS)
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setColor(ContextCompat.getColor(context, R.color.light_blue_900))
+                    .setContentTitle("App status update")
+                    .setContentText("There is a new update on the app's status.")
+                    .setContentIntent(pendingIntent)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true)
+                val notificationManager = NotificationManagerCompat.from(context)
+                // notificationId is a unique int for each notification that you must define
+                notificationManager.notify(JAN25STATUS, builder.build())
+            }
+        }
+
     }
 }

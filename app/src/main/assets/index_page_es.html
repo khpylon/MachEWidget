@@ -3,6 +3,45 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
+
+<h2>La situación al 27 de enero de 2025</h2>
+
+<p>
+    Ford realizó cambios en mayo de 2024 en el proceso de autenticación
+    en la API FordPass (la API "privada") lo que rompió la capacidad de esta
+    aplicación para funcionar correctamente. Usuarios que aún no habían iniciado
+    sesión usando su nombre de usuario y contraseña ya no podían utilizar la
+    aplicación; Los usuarios que iniciaron sesión podrían continuar use la
+    aplicación hasta que los tokens ya no puedan actualizarse.  </p>
+
+<p>
+    Comenzamos a comunicarnos con Ford a principios de 2023 para obtener acceso
+    a la API FordConnect (la API "pública" API) y alrededor de agosto de 2023
+    comenzamos a ver algunos avances.  Pero aunque la API en sí era publicado,
+    Ford no proporcionaba una manera fácil de autenticarse. Comenzamos a adaptar
+    la aplicación a utilizar la API FordConnect a finales de septiembre de
+    2024 después de que quedó claro que no había solución alternativa para
+    los problemas de la API de FordPass.  Este trabajo duró unas tres semanas.
+    Si bien algunas características de la aplicación tuvo que ser eliminado
+    ya que la nueva API no proporcionaba la información necesaria, al final la
+    aplicación volvió a ser funcional.  </p>
+
+<p> Poco después de que se completara este trabajo a finales de octubre de
+    2024, Ford desactivó la autenticación.  proceso para la API FordConnect
+    también.  Aprendimos a través de canales secundarios que la seguridad
+    cibernética El equipo de Ford desaprobó algunas cosas en la API y lo cerró
+    hasta que esos problemas se resolvieran.  resuelto.  Desde entonces, nada en
+    el sitio web del desarrollador de Ford parece haber cambiado: la misma API La
+    documentación todavía está allí, pero dependiendo de los cambios que se
+    deban realizar para que el equipo de seguridad cibernética para aprobarlo,
+    es posible que aún sean necesarias más semanas para volver a adaptar la
+    aplicación para utilizar su API.  </p>
+
+<p>
+    Así están las cosas hoy.  La aplicación en sí no está muerta, pero
+    estamos a la espera.  estado hasta que Ford proporcione una vez más una
+    forma de utilizar la nueva API.  </p>
+
 <!-- Corrections welcome -->
 <h3>Correcciones bienvenidas</h3>
 <!--
@@ -12,10 +51,11 @@ incorrect, please create an
 with corrections.
 -->
 <p>
-Las traducciones del inglés se realizaron con Google Translate. Si ve algo incorrecto, cree un 
-<a href="https://github.com/khpylon/MachEWidget/blob/master/issues">problema en GitHub</a>
-con correcciones.
+    Las traducciones del inglés se realizaron con Google Translate. Si ve algo incorrecto, cree un
+    <a href="https://github.com/khpylon/MachEWidget/blob/master/issues">problema en GitHub</a>
+    con correcciones.
 </p>
+
 <h2>Introducción</h2>
 <p>
 El widget proporciona una vista rápida de muchos aspectos de su vehículo Ford. Una vez que inicie sesión en su cuenta FordPass a través de la aplicación, ingrese la información de su vehículo y coloque el widget en algún lugar de la pantalla de su teléfono, se actualizará periódicamente para mostrar el estado de su automóvil.

@@ -3,6 +3,26 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
+
+<h2>Sytuacja na dzień 27 stycznia 2025 roku</h2>
+
+<p>
+Ford wprowadził zmiany w maju 2024 roku w procesie uwierzytelniania w API FordPass (tzw. „prywatnym” API), które uniemożliwiły poprawne działanie tej aplikacji. Użytkownicy, którzy wcześniej nie zalogowali się przy użyciu swojej nazwy użytkownika i hasła, nie mogli już korzystać z aplikacji; użytkownicy, którzy byli zalogowani, mogli nadal korzystać z aplikacji do momentu, gdy nie było już możliwe odświeżenie tokenów.
+</p>
+
+<p>
+Rozpoczęliśmy komunikację z Fordem na początku 2023 roku, aby uzyskać dostęp do API FordConnect (tzw. „publicznego” API), a około sierpnia 2023 roku zaczęliśmy dostrzegać pewne postępy. Jednak pomimo opublikowania samego API, Ford nie udostępnił łatwego sposobu uwierzytelniania. Zaczęliśmy dostosowywać aplikację do korzystania z API FordConnect pod koniec września 2024 roku, gdy stało się jasne, że nie ma obejścia problemów z API FordPass. Prace te zajęły około trzech tygodni. Chociaż niektóre funkcje aplikacji musiały zostać usunięte, ponieważ nowe API nie dostarczało niezbędnych informacji, ostatecznie aplikacja znów stała się funkcjonalna.
+</p>
+
+<p>
+Krótko po zakończeniu tych prac, pod koniec października 2024 roku, Ford wyłączył również proces uwierzytelniania dla API FordConnect. Dowiedzieliśmy się nieoficjalnymi kanałami, że zespół ds. cyberbezpieczeństwa w Fordzie nie zaakceptował niektórych elementów API i wyłączył je do czasu rozwiązania tych problemów. Od tego czasu na stronie dla deweloperów Forda nic się nie zmieniło — dokumentacja API pozostaje taka sama — jednak w zależności od tego, jakie zmiany muszą zostać wprowadzone, aby zespół ds. cyberbezpieczeństwa je zatwierdził, może być potrzebnych jeszcze kilka tygodni na ponowne dostosowanie aplikacji do korzystania z tego API.
+</p>
+
+<p>
+Tak wygląda obecna sytuacja. Sama aplikacja nie jest "martwa", ale znajdujemy się w stanie oczekiwania, aż Ford ponownie udostępni sposób na korzystanie z nowego API.
+</p>
+
+
 <h2>Wprowadzenie</h2>
 Widżet zapewnia szybki podgląd wielu aspektów Twojego pojazdu Ford. Po zalogowaniu się do konta FordPass za pośrednictwem aplikacji, wprowadzeniu informacji o Twoim pojeździe i umieszczeniu widżetu gdzieś na ekranie telefonu, będzie on okresowo aktualizowany, aby pokazywać status Twojego samochodu.<p>
 

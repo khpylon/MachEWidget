@@ -62,6 +62,8 @@ object Constants {
     // SURVEY_VERSION, and the current version will be set to SURVEY_VERSION+1.
     const val SURVEY_VERSION = 2;
 
+    const val STATUS_UPDATE_VERSION = 1;
+
     const val APPLICATION_JSON = "application/json"
     const val APPLICATION_ZIP = "application/zip"
     const val APPLICATION_OCTETSTREAM = "application/octet-stream"

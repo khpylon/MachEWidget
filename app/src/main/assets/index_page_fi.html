@@ -3,6 +3,40 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
+
+<h2>Tilanne 27.1.2025</h2>
+
+<p>
+    Ford teki muutoksia toukokuussa 2024 FordPass API:n ("yksityinen" API) todennusprosessiin.
+    mikä rikkoi tämän sovelluksen kyvyn toimia oikein. Käyttäjät, jotka eivät olleet vielä kirjautuneet sisään käyttämällä
+    heidän käyttäjätunnuksensa ja salasanansa eivät voineet enää käyttää sovellusta; sisäänkirjautuneet käyttäjät voivat jatkaa
+    käytä sovellusta, kunnes tunnuksia ei voitu enää päivittää.
+</p>
+
+<p>
+    Aloitimme yhteydenpidon Fordin kanssa vuoden 2023 alussa saadaksemme pääsyn FordConnect-sovellusliittymään ("julkinen"
+    API) ja elokuun 2023 tienoilla aloimme nähdä jonkin verran edistystä.  Mutta vaikka itse API oli
+    julkaistiin, Ford ei tarjonnut helppoa tapaa todentaa se. Aloimme mukauttaa sovellusta
+    Käytä FordConnect-sovellusliittymää syyskuun 2024 lopulla sen jälkeen, kun kävi selväksi, ettei ongelmalle ollut ratkaisua
+    FordPass API -ongelmia.  Tämä työ kesti noin kolme viikkoa.  Vaikka jotkut sovelluksen ominaisuudet
+    oli poistettava, koska uusi API ei antanut tarvittavia tietoja, lopulta sovellus
+    oli taas toimiva.
+</p>
+
+<p>
+    Pian tämän työn valmistumisen jälkeen lokakuun 2024 lopussa Ford poisti todennuksen käytöstä
+    prosessi myös FordConnect API:lle.  Opimme takakanavien kautta, että kyberturvallisuus
+    Fordin tiimi hylkäsi joitakin API:n asioita ja sulki sen, kunnes ongelmat ratkesivat
+    ratkaistu.  Sen jälkeen mikään Fordin kehittäjän verkkosivustolla ei näytä muuttuneen - sama API
+    dokumentaatio on edelleen olemassa – mutta riippuen siitä, mitä muutoksia on tehtävä, jotta
+    Kyberturvatiimi voi hyväksyä sen, sovelluksen mukauttamiseen voi kulua vielä viikkoja
+    käyttääkseen niiden API:ta.
+</p>
+
+<p>
+    Siinä asiat ovat nykyään.  Itse sovellus ei ole kuollut, mutta odotamme
+    kunnes Ford tarjoaa jälleen tavan käyttää uutta API:ta.
+</p>
 <!-- Corrections welcome -->
 <h3>Oikaisut tervetulleita</h3>
 <!--

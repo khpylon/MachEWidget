@@ -218,6 +218,10 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        // Update the status version value
+        val statusVersion_key = "viewJan25status"
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(statusVersion_key, Constants.STATUS_UPDATE_VERSION).apply()
+
         setContent {
             MacheWidgetTheme {
                 Surface (color = MaterialTheme.colorScheme.background,

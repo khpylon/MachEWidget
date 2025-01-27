@@ -3,6 +3,45 @@
 <link rel="stylesheet" href="/assets/stylesheet.css">
 </head>
 <body>
+
+<h2>Situasjonen per 27. januar 2025</h2>
+
+<p>
+    Ford gjorde endringer i mai 2024 i autentiseringsprosessen i FordPass API
+    (den "private" APIen) som ødela muligheten for denne appen til å fungere
+    riktig. Brukere som ikke allerede hadde logget på vha brukernavnet og
+    passordet deres kunne ikke lenger bruke appen; brukere som var pålogget
+    kunne fortsette til bruk appen til tokens ikke lenger kunne oppdateres.
+</p>
+
+<p>
+    Vi begynte å kommunisere med Ford tidlig i 2023 for å få tilgang til
+    FordConnect API (det "offentlige" API) og rundt august 2023 begynte vi å
+    se en viss fremgang.  Men selv om API selv var publisert, ga Ford ikke en
+    enkel måte å autentisere for det. Vi begynte å tilpasse appen til bruke
+    FordConnect API i slutten av september 2024 etter at det ble klart at det ikke
+    var noen løsning for FordPass API-problemene.  Dette arbeidet tok omtrent
+    tre uker.  Mens noen funksjoner i appen måtte fjernes siden det nye API-et
+    ikke ga den nødvendige informasjonen, til slutt appen var igjen funksjonell.
+</p>
+
+<p>
+    Kort tid etter at dette arbeidet ble fullført i slutten av oktober 2024,
+    deaktiverte Ford autentiseringen prosess for FordConnect API også.  Vi lærte
+    gjennom bakkanaler at cybersikkerheten teamet hos Ford avviste noen ting i
+    API-en og stengte det ned til disse problemene var løst.  Siden den gang
+    ser det ut til at ingenting på Ford-utviklerens nettsted har endret seg
+    – det samme API-et dokumentasjon er der fortsatt -- men avhengig av hvilke
+    endringer som må gjøres for at cybersikkerhetsteamet for å godkjenne det,
+    kan det være flere uker som fortsatt trengs for å tilpasse appen igjen å
+    bruke deres API.
+</p>
+
+<p>
+    Det er der ting står i dag.  Selve appen er ikke død, men vi venter
+    tilstand til Ford nok en gang gir en måte å bruke det nye API-et på.
+</p>
+
 <!-- Corrections welcome -->
 <h3>Rettelser velkommen </h3>
 <!--

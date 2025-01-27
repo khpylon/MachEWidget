@@ -57,6 +57,9 @@ class BootComplete : BroadcastReceiver() {
 
             // Restart any charging reminders that exist
             ReminderReceiver.checkAlarms(context)
+
+            // See if we need to notify the user to read the status update
+            Notifications.statusUpdate(context)
         }
 
         if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED, ignoreCase = true)) {
