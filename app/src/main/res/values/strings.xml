@@ -314,5 +314,7 @@
     <string name="update_receiver_notification_title">App update</string>
     <string name="update_receiver_notification_message">A new app version is available.  Click to install.</string>
     <string name="login_temp_disable_message">Temporarily disabled due to Ford API changes.</string>
+    <string name="app_status_update_title">App status update</string>
+    <string name="app_status_update_text">Read the latest update on the app\'s status.</string>
 
 </resources>

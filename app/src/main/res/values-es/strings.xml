@@ -273,5 +273,7 @@
     <string name="update_receiver_notification_message">Hay una nueva versión de la aplicación disponible. Haga clic para instalar.</string>
     <string name="activity_charging_of_label">de</string>
     <string name="login_temp_disable_message">Desactivado temporalmente debido a cambios en la API de Ford.</string>
+    <string name="app_status_update_title">Actualización del estado de la aplicación</string>
+    <string name="app_status_update_text">Lea la última actualización sobre el estado de la aplicación.</string>
 
 </resources>

@@ -273,5 +273,7 @@
     <string name="update_receiver_notification_message">Dostępna jest nowa wersja aplikacji. Kliknij by zainstalować.</string>
     <string name="activity_charging_of_label">z</string>
     <string name="login_temp_disable_message">Tymczasowo wyłączone z powodu zmian w interfejsie API Forda.</string>
+    <string name="app_status_update_title">Aktualizacja stanu aplikacji</string>
+    <string name="app_status_update_text">Przeczytaj najnowszą aktualizację statusu aplikacji.</string>
 
 </resources>

@@ -273,5 +273,7 @@
     <string name="update_receiver_notification_message">Uusi sovellusversio on saatavilla. Napsauta asentaaksesi.</string>
     <string name="activity_charging_of_label">/</string>
     <string name="login_temp_disable_message">Tilapäisesti poistettu käytöstä Fordin API-muutosten vuoksi.</string>
+    <string name="app_status_update_title">Sovelluksen tilan päivitys</string>
+    <string name="app_status_update_text">Lue viimeisin päivitys sovelluksen tilasta.</string>
 
 </resources>
