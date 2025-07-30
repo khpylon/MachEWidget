@@ -4,6 +4,10 @@ Todas as alterações notáveis ​​neste projeto serão documentadas neste ar
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), mas neste momento o projeto não adere ao [Versionamento Semântico](https://semver.org/spec/v2.0.0.html).
 
+## 2025.07.30-12
+### Mudado
+- Atualizar a versão de destino para Android 16 (API 36).
+
 ## 2025.01.27-10
 ### Adicionado
 - Forneça aos usuários uma atualização sobre o status do aplicativo.

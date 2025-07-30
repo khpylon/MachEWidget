@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 but at this time the project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2025.07.30-12
+### Changed
+- Update target version to Android 16 (API 36).
+
 ## 2025.01.27-10
 ### Added
 - Give users an update on the app's status.

@@ -5,6 +5,10 @@ Kaikki merkittävät muutokset tähän projektiin dokumentoidaan tässä tiedost
 Muoto perustuu [Keep a Changelog] -palveluun (https://keepachangelog.com/en/1.0.0/),
 mutta tällä hetkellä projekti ei noudata [semanttista versiota](https://semver.org/spec/v2.0.0.html).
 
+## 2025.07.30-12
+### Muutettu
+- Päivitä kohdeversio Android 16:een (API 36).
+
 ## 2025.01.27-10
 ### Lisätty
 - Anna käyttäjille päivitys sovelluksen tilasta.
