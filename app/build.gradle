@@ -11,9 +11,9 @@ plugins {
 android {
     defaultConfig {
         applicationId "com.example.khughes.machewidget"
-        compileSdk 34
+        compileSdk 36
         minSdkVersion 28
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode 118
         versionName "2025.01.27-10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -116,7 +116,7 @@ Application-name: com.example.khughes.machewidget
         kotlinCompilerExtensionVersion '1.5.7'
     }
     namespace 'com.example.khughes.machewidget'
-    compileSdk 34
+    compileSdk 35
 }
 
 dependencies {

@@ -769,7 +769,7 @@ class Misc {
         @JvmStatic
         fun checkDarkMode(context: Context, view: WebView) {
             val webViewPackageInfo = WebView.getCurrentWebViewPackage()
-            val (major, _, _) = webViewPackageInfo!!.versionName.split(".").map { it.toInt() }
+            val (major, _, _) = webViewPackageInfo!!.versionName!!.split(".").map { it.toInt() }
                 .toTypedArray()
             if (major < 75) {
                 LogFile.i(
